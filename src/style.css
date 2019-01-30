@@ -1,0 +1,49 @@
+body{
+	text-align:center;
+	background:#333;
+	font-family:sans-serif;
+	padding:0;
+	margin:0;
+}
+
+h3{
+	color:#333;
+	background:#fff;
+	padding:30px;
+	margin:0;
+}
+
+a{
+	display:inline-block;
+	margin-top:20px;
+	background:#fff;
+	padding:20px;
+	text-decoration:none;
+	font-size:20px;
+	color:#333;
+	border-radius:3px;
+	transition:all 0.3s;
+	width:300px;
+}
+
+a:hover{
+	box-shadow:0 0 10px rgba(255,255,255,0.8);
+}
+
+.ui{
+	background:#fff;
+	position:fixed;
+	bottom:0;
+	left:0;
+	height:60px;
+	width:100%;
+}
+
+canvas{
+	width:100%;
+	max-width:100%;
+}
+
+.text-editor{
+	
+}
