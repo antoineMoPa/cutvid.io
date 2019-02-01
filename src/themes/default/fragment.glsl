@@ -78,7 +78,10 @@ void main(void){
     col.r += 0.4;
     col.rg += 1.0 - 2.0 * p.y;
     col.b += 0.4;
-    col.rgb *= 1.1 + clamp(1.0 - 0.1 * vec3(0.9, 0.5, 0.4) * pow(10.0 * length(p + vec2(0.0, -0.1 + time * 6.2832)), 10.0) , 0.0, 1.0) * clamp(pow(4.0 * cos(-p.y * 160.0 + time * 6.2832),4.0), 0.0, 1.0);
+    col.rgb *= 1.1 + 0.3 * clamp(1.0 - 0.1 * vec3(0.9, 0.5, 0.4) * 
+       pow(4.5 * length(p + vec2(0.0, -0.1)), 10.0), 0.0, 1.0) 
+       *
+       clamp(pow(4.0 * cos(-p.y * 160.0 + time * 6.2832), 3.0), 0.0, 1.0);
     col.b += 0.1;
     
     if(p_backup.y < 0.0){
@@ -99,9 +102,34 @@ void main(void){
     
     col *= 1.0 + length(p) * 0.2 * pow(0.8, 1.0);
     
-    vec4 tex = texture(texture0,  UV * vec2(1.0, -1.0) + vec2(0.0, 1.0));
-    
-    col = tex.a * tex + (1.0 - tex.a) * col;
+	vec2 uv = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
+	
+
+	uv.y -= 0.04;
+	
+	uv -= 0.5;
+	
+	uv *= 1.0 + 0.1 * cos(time * 6.2832 + 0.3 * tan(p.x * 2.0 + time * 6.2832) + p.y * 10.0);
+	
+	uv += 0.5;
+	
+    vec4 tex = texture(texture0,  uv);
+	vec4 tex1 = texture(texture0,  uv + vec2( 0.000, 0.004));
+	vec4 tex2 = texture(texture0,  uv + vec2( 0.004, 0.000));
+	vec4 tex3 = texture(texture0,  uv + vec2( 0.000,-0.004));
+	vec4 tex4 = texture(texture0,  uv + vec2(-0.004, 0.000));
+
+	tex += tex1 * 0.2;
+	tex += tex2 * 0.2;
+	tex += tex3 * 0.2;
+	tex += tex4 * 0.2;
+	
+	float highlight = clamp(pow(cos(time * 6.2832 - p.x * 10.0), 20.0), 0.0, 1.0);
+	highlight *= cos(p.y * 100.0 + p.x * 20.0);
+	
+	tex.rgb += 0.5 * highlight * tex.a;
+	
+	col = tex.a * tex + (1.0 - tex.a) * col;
     
     col.a = 1.0;
     out_color = col;

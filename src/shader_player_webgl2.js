@@ -557,20 +557,13 @@ class ShaderPlayerWebGL2 {
     this.anim_already_started = true;
 
     function _animate() {
-      const anim_delay = Math.floor(1000 / this.fps);
-
-      frame %= (this.frames);
-
+	  let time = (new Date().getTime() % 2000) / 2000;
       // When rendering gif, draw is done elsewhere
       if (!player.rendering_gif && player.window_focused && !player.paused) {
-        player.draw_gl((frame + 1) / player.frames);
+        player.draw_gl(time);
       }
 	  
-      this.anim_timeout = window.setTimeout(() => {
-        window.requestAnimationFrame(_animate.bind(this));
-      }, anim_delay);
-
-      frame++;
+      window.requestAnimationFrame(_animate.bind(this));
     }
 
     window.requestAnimationFrame(_animate.bind(this));

@@ -20,8 +20,8 @@ Vue.component('player', {
 	let app = this;
     
     function on_resize(){
-      let x_spacing = 40;
-      let y_spacing = 40 + 100;
+      let x_spacing = 40 + 200; // 300: left theme settings panel
+      let y_spacing = 40 + 100; // 100: bottom ui
       
       let available_size = Math.min(
         window.innerWidth - x_spacing, 

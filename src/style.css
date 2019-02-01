@@ -64,9 +64,11 @@ a:hover{
 
 /* END UI --------------- */
 
-canvas{
+#main-player canvas{
 	width:100%;
 	margin-top:20px;
+	margin-left:300px;
+	margin-top:60px;
 }
 
 .theme-settings{

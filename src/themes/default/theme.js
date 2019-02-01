@@ -14,20 +14,22 @@ Vue.component('default-theme-settings', {
 <div class="theme-settings">
   <h3>Theme settings</h3>
   <label>Text</label>
-  <input v-model="text" type="text">
-  <input v-model="size" type="number">
-  <select v-model="font">
+  <input v-model="text.text" type="text">
+  <input v-model="text.size" type="number">
+  <select v-model="text.font">
     <option value="Sans">Sans</option>
     <option value="Serif">Serif</option>
-    <option value="Lobster">Lobster</option>
+    <option value="Lobster" style="font-family:Lobster;">Lobster</option>
   </select>
 </div>`,
   data: function(){
     return {
-	  text: "test",
-	  font: "Sans",
-	  size: 200,
-	  color: "#000000",
+      text:{
+	    text: "test",
+	    font: "Sans",
+	    size: 200,
+	    color: "#000000",
+      },
       playerAlreadyHasTexture: false,
 	  x: 1920/2,
 	  y: 1080/2
@@ -36,7 +38,6 @@ Vue.component('default-theme-settings', {
   props: ["player", "textCanvas"],
   methods: {
     updateTexts(){
-      let texts = this.texts;
       let textCanvas = this.textCanvas;
       
       if(textCanvas == null || this.player == null){
@@ -46,11 +47,11 @@ Vue.component('default-theme-settings', {
       let ctx = textCanvas.getContext("2d");
       
       ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
-      ctx.font = this.size + "px " + this.font;
+      ctx.font = this.text.size + "px " + this.text.font;
       
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
-      ctx.fillText(this.text, this.x, this.y);
+      ctx.fillText(this.text.text, this.x, this.y);
       
       if(this.playerAlreadyHasTexture){
         this.player.delete_texture(0);
