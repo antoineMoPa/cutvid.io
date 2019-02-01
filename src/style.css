@@ -50,6 +50,7 @@ a:hover{
 	background:#3af;
 	border-radius:50%;
 	margin-top:10px;
+	cursor:pointer;
 }
 
 .play-icon{
@@ -67,8 +68,7 @@ a:hover{
 #main-player canvas{
 	width:100%;
 	margin-top:20px;
-	margin-left:300px;
-	margin-top:60px;
+	margin-left:0;
 }
 
 .theme-settings{
@@ -87,6 +87,7 @@ a:hover{
 .theme-settings h3{
 	margin:0;
 	padding:10px 0;
+	background:transparent;
 }
 
 .theme-settings input[type=number]{
@@ -104,3 +105,38 @@ a:hover{
 	font-size:10px;
 }
 
+/* PANEL-SELECTOR --------------- */
+
+.panel-selector{
+	text-align: center;
+	position:absolute;
+	bottom:10px;
+	width:100%;
+	margin-left:-10px;
+}
+
+.panel-bullet{
+	display:inline-block;
+	width:10px;
+	height:10px;
+	background:#666;
+	border-radius:50%;
+	margin-right:3px;
+	cursor:pointer;
+	border:2px solid #ddd;
+}
+
+.panel-bullet.selected-bullet{
+	background:#3af;
+	border:2px solid transparent;
+}
+
+.switchable-panel{
+	display:none;
+}
+
+.switchable-panel-shown{
+	display:block;
+}
+
+/* END PANEL-SELECTOR --------------- */

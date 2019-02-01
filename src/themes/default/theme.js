@@ -11,7 +11,7 @@
 
 Vue.component('default-theme-settings', {
   template: `
-<div class="theme-settings">
+<div>
   <h3>Theme settings</h3>
   <label>Text</label>
   <input v-model="text.text" type="text">
@@ -31,8 +31,6 @@ Vue.component('default-theme-settings', {
 	    color: "#000000",
       },
       playerAlreadyHasTexture: false,
-	  x: 1920/2,
-	  y: 1080/2
     };
   },
   props: ["player", "textCanvas"],
@@ -51,7 +49,7 @@ Vue.component('default-theme-settings', {
       
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
-      ctx.fillText(this.text.text, this.x, this.y);
+      ctx.fillText(this.text.text, this.player.width/2, this.player.height/2);
       
       if(this.playerAlreadyHasTexture){
         this.player.delete_texture(0);
