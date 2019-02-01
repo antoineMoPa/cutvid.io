@@ -54,6 +54,10 @@ h3{
 	right:180px;
 }
 
+.ui-progress{
+	height:3px;
+	background:#3af;
+}
 
 .play-button{
 	display:inline-block;

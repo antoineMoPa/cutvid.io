@@ -37,20 +37,23 @@ Vue.component('player', {
         <label>Presets</label>
         <a v-on:click="set_dimensions(1920,1080)">Full HD 1080p</a>
         <a v-on:click="set_dimensions(1280,720)">HD 720p</a>
-        <a v-on:click="set_dimensions(540,540)">Square 540</a>
+        <a v-on:click="set_dimensions(540,540);fps=10;duration=3">Square 540</a>
         <a v-on:click="set_dimensions(3840,2160)">UHD</a>
         <a v-on:click="set_dimensions(4096,2160)">Movie 4K</a>
         <label>Duration (seconds)</label>
         <input v-model.number="duration" type="number">
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
-        
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
     <div id="main-player">
     </div>
-    <ui v-on:play="play" v-on:pause="pause" v-on:buy="make_buy" v-on:gif="make_gif"/>
+    <ui ref="ui"
+        v-on:play="play" 
+        v-on:pause="pause" 
+        v-on:buy="make_buy" 
+        v-on:gif="make_gif"/>
   </div>`,
   data(){
     return {
@@ -173,6 +176,10 @@ Vue.component('player', {
       if(this.fps > 20){
         alert("Please set a smaller fps (less than 20) before exporting a gif.");
       }
+      
+      
+      this.$refs.ui.set_progress(0.5);
+      
     },
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");

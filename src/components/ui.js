@@ -1,5 +1,7 @@
 Vue.component('ui', {
   template: `<div class="ui">
+    <div class="ui-progress" v-bind:style="'width:' + progress_width + 'px'">
+    </div>
     <div class="play-button" v-on:click="toggle_play">
       <img v-if="!playing" 
            class="play-icon"
@@ -19,7 +21,8 @@ Vue.component('ui', {
   </div>`,
   data(){
 	return {
-	  playing: true
+	  playing: true,
+	  progress_width: 0
 	}
   },
   methods: {
@@ -36,6 +39,9 @@ Vue.component('ui', {
 	},
 	gif(){
 	  this.$emit("gif");
+	},
+	set_progress(progress_ratio){
+	  this.progress_width = progress_ratio * window.innerWidth;
 	}
   }
 })
