@@ -44,7 +44,7 @@ class ShaderPlayerWebGL2 {
 
     {
       // Init canvas
-      const gl = this.canvas.getContext('webgl2');
+      var gl = this.canvas.getContext('webgl2');
 
       // Detect webgl2 native problems
       // (read: my old laptop's graphics card is too old)
@@ -127,9 +127,7 @@ class ShaderPlayerWebGL2 {
   }
 
   update() {
-    const now = new Date().getTime();
-
-    if (this.fragmentShader == '' || this.vertex_shader == '') {
+    if (this.fragment_shader == '' || this.vertex_shader == '') {
       return;
     }
 
@@ -182,7 +180,6 @@ class ShaderPlayerWebGL2 {
 
     const image = new Image();
     image.onload = function () {
-	  console.log("loaded image");
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
@@ -281,13 +278,13 @@ class ShaderPlayerWebGL2 {
 
       // Render to texture stuff
       this.framebuffer[i] = gl.createFramebuffer();
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[i]);
-
-      this.renderbuffer = gl.createRenderbuffer();
-      gl.bindRenderbuffer(gl.RENDERBUFFER, this.renderbuffer);
+	  gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[i]);
+	  
+      var renderbuffer = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
 
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.rttTexture[i], 0);
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.renderbuffer[i]);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
       gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, ww, hh);
     }
 
@@ -325,20 +322,20 @@ class ShaderPlayerWebGL2 {
       gl.useProgram(gl.program);
       if (this.fragment_shader_object > -1) {
         gl.detachShader(gl.program, this.fragment_shader_object);
+		gl.deleteShader(gl.fragment_shader);
       }
       if (this.vertex_shader_object > -1) {
         gl.detachShader(gl.program, this.vertex_shader_object);
+		gl.deleteShader(gl.vertex_shader);
       }
-      gl.deleteShader(gl.fragment_shader);
-      gl.deleteShader(gl.vertex_shader);
       gl.deleteProgram(gl.program);
     }
 
     gl.program = gl.createProgram();
 
-    const vertex_shader =      add_shader(gl.VERTEX_SHADER, this.vertex_shader);
+    const vertex_shader = add_shader(gl.VERTEX_SHADER, this.vertex_shader);
 
-    const fragment_shader =      add_shader(gl.FRAGMENT_SHADER, this.fragment_shader);
+    const fragment_shader = add_shader(gl.FRAGMENT_SHADER, this.fragment_shader);
 
     this.fragment_shader_object = fragment_shader;
     this.vertex_shader_object = vertex_shader;
@@ -364,6 +361,7 @@ class ShaderPlayerWebGL2 {
     }
 
     if (vertex_shader == -1 || fragment_shader == -1) {
+	  console.error("Shader compilation error.");
       return;
     }
 
@@ -498,7 +496,7 @@ class ShaderPlayerWebGL2 {
       gl.uniform1f(soundTimeAttribute, this.lastChunk);
 
       // Set time attribute
-      const tot_time = this.frames * this.anim_delay;
+      const tot_time = this.frames * this.anim_timeout;
 
       const timeAttribute = gl.getUniformLocation(gl.program, 'time');
       gl.uniform1f(timeAttribute, time);

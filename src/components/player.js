@@ -1,65 +1,75 @@
 Vue.component('player', {
   template: 
-  `<div class="player" id="main-player">
-    <div class="text-editor">
-      <div class="text-grabber">
-      </div>
-    </div>  
+  `<div class="player">
+    <div class="theme-settings">
+      <default-theme-settings v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings"/>
+    </div>
+    <div id="main-player">
+    </div>
   </div>`,
   data(){
     return {
-      texts: [{
-        text: "test",
-        font: "sans",
-        size: 200,
-        color: "#000000",
-        x: 1920/2,
-        y: 1080/2,
-        textCanvas: null,
-        player: null,
-        playerAlreadyHasTexture: false
-      }]
+      textCanvas: null,
+      player: null,
+      aspect: 1920.0/1080.0
     };
   },
-  methods: {
-    updateTexts(){
-      let texts = this.texts;
-      let textCanvas = this.textCanvas;
-      let ctx = textCanvas.getContext("2d");
-    
-      texts.map((text) => {
-        ctx.font = text.size + "px " + text.font + "bold";
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "center";
-        ctx.fillText(text.text, text.x, text.y);
-      });
-
-      if(this.playerAlreadyHasTexture){
-        this.player.delete_texture(0);
-      }
-      this.player.add_texture(textCanvas.toDataURL());
-      //document.body.appendChild(textCanvas);
-      this.playerAlreadyHasTexture = true;
-    }
-  },
+  
   mounted: function(){
-    let textCanvas = document.createElement("canvas");
-    this.textCanvas = textCanvas;
+	let app = this;
     
-    let player = new ShaderPlayerWebGL2();
-    this.player = player;
-    player.set_vertex_shader(default_shader.vertex);
-    player.set_code(default_shader.fragment);
+    function on_resize(){
+      let x_spacing = 40;
+      let y_spacing = 40 + 100;
+      
+      let available_size = Math.min(
+        window.innerWidth - x_spacing, 
+        window.innerHeight * app.aspect - y_spacing
+      );
+      
+      if(!app.player){
+        return;
+      }
+      
+      app.player.canvas.style.maxWidth = (available_size - x_spacing) + "px";
+      app.player.canvas.style.maxHeight = (available_size * app.aspect - y_spacing) + "px";
+    }
     
-    let container = document.querySelectorAll("#main-player")[0];
-    player.set_container(container);
+    window.addEventListener("resize", on_resize);
+
+    function on_shaders_ready(vertex, fragment){
+      var textCanvas = document.createElement("canvas");
+      app.textCanvas = textCanvas;    
+      let ctx = textCanvas.getContext("2d");
+      ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
+      
+      app.player = new ShaderPlayerWebGL2();
+      
+      let container = document.querySelectorAll("#main-player")[0];
+      app.player.set_container(container);
+      app.player.set_vertex_shader(vertex);
+      app.player.set_code(fragment);
+      
+      app.textCanvas.width = 1920;
+      app.textCanvas.height = 1080;
+      app.player.set_width(1920);
+      app.player.set_height(1080);
+      on_resize();
+      
+    }
     
-    this.textCanvas.width = 1920;
-    this.textCanvas.height = 1080;
-    player.set_width(1920);
-    player.set_height(1080);
-    
-    this.updateTexts();
-    
+    Promise.all([
+      fetch("themes/default/vertex.glsl"),
+      fetch("themes/default/fragment.glsl")
+    ]).then((values) => {
+      Promise.all([
+        values[0].text(),
+        values[1].text()
+      ]).then((values) => {
+        let vertex = values[0];
+        let fragment = values[1];
+        on_shaders_ready(vertex, fragment);
+      });
+    });
   }
 })
