@@ -63,7 +63,8 @@ Vue.component('player', {
       height: 1080,
       aspect: 1920.0/1080,
       duration: 3,
-      fps: 50
+      fps: 50,
+      watermark: ""
     };
   },
   mounted: function(){
@@ -166,20 +167,246 @@ Vue.component('player', {
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
     },
+    render(options) {
+      if (typeof (options) === 'undefined') {
+        options = {
+          zip: false,
+          stack: true,
+          gif: false
+        };
+      }
+
+      // Renders all the frames to a png
+      const app = this;
+
+      app.player.rendering_gif = true;
+      if (app.player.pause_anim) {
+        app.player.pause_anim();
+      }
+      
+      const to_export = {};
+
+      if (options.gif) {
+        to_export.delay = Math.floor(1000 / app.fps);
+        to_export.data = [];
+      }
+
+      const tempCanvas = document.createElement('canvas');
+      const canvas = tempCanvas;
+
+      canvas.width = app.width;
+      canvas.height = app.height;
+
+      if (options.stack) {
+        canvas.height = app.player.canvas.height * app.player.frames;
+      }
+
+      const ctx = canvas.getContext('2d');
+
+      let i = 0;
+
+      /*
+        "Unrolled" async loop:
+        for every image:
+        render & load image
+        onload: add to canvas
+        when all are loaded: create image from canvas
+      */
+      function next() {
+        const pl = app.player;
+        if (i < pl.frames) {
+          const curr = i;
+
+          const w = pl.width;
+          const h = pl.height;
+          const watermark = app.watermark;
+          const offset_x = 10;
+          const color = '#888888';
+          ctx.textAlign = 'end';
+          const temp_img = document.createElement('img');
+
+          temp_img.onload = function () {
+            if (options.stack) {
+              const offset = curr * pl.canvas.height;
+              ctx.drawImage(temp_img, 0, offset);
+              ctx.fillStyle = color;
+              ctx.fillText(watermark, -offset_x, h - 10 + offset);
+              next();
+            } else if (options.gif) {
+              ctx.drawImage(temp_img, 0, 0);
+              ctx.fillStyle = color;
+              ctx.fillText(watermark, w - offset_x, h - 10);
+              to_export.data.push(canvas.toDataURL());
+              next();
+            } else if (options.zip) {
+              const zip = window.shadergif_zip;
+              ctx.drawImage(temp_img, 0, 0);
+              ctx.fillStyle = color;
+              ctx.fillText(watermark, w - offset_x, h - 10);
+
+              // 4-Zero pad number
+              let filename = 'image-';
+              const numzeros = 4;
+              const numlen = (`${curr}`).length;
+
+              for (let i = 0; i < numzeros - numlen; i++) {
+                filename += '0';
+              }
+
+              filename += `${curr}.png`;
+
+              canvas.toBlob((blob) => {
+                zip.file(
+                  filename,
+                  blob
+                );
+                next();
+              });
+            }
+          };
+          app.$refs.ui.set_progress((curr + 1) / pl.frames);
+          // Render
+          app.player.render((curr + 1) / pl.frames, (canvas) => {
+            let image_data = '';
+            /*
+              Shader player return a canvas,
+              but iframed players (javascript)
+              return a dataurl
+             */
+            if (typeof (canvas) != 'string') {
+              image_data = canvas.toDataURL();
+            } else {
+              image_data = canvas;
+            }
+
+            temp_img.src = image_data;
+          }, curr);
+        } else {
+          // Final step
+          if (options.gif) {
+            app.export_gif(to_export);
+            app.player.rendering_gif = false;
+            if (app.player.resume_anim) {
+              app.player.resume_anim();
+            }
+          } else if (options.zip) {
+            const zip = window.shadergif_zip;
+            app.player.rendering_gif = false;
+            if (app.player.resume_anim) {
+              app.player.resume_anim();
+            }
+            zip.generateAsync({ type: 'blob' })
+              .then((content) => {
+                app.has_zip = true;
+                app.zip_url = URL.createObjectURL(content);
+              });
+          }
+        }
+        i++;
+      }
+
+      next();
+    },
+    export_gif(to_export) {
+      // Make the gif from the frames
+      const app = this;
+
+      app.$nextTick(() => {
+        const gif = new GIF({
+          workers: 2,
+          quality: 10,
+          dither: 'FloydSteinberg',
+          workerScript: '/libs/gif.worker.js'
+        });
+        
+        let data = to_export.data;
+
+        const images = [];
+
+        for (let i = 0; i < data.length; i++) {
+          const image = new Image();
+          image.src = data[i];
+          image.onload = imageLoaded;
+          images.push(image);
+        }
+
+        let number_loaded = 0;
+        function imageLoaded() {
+          number_loaded++;
+          if (number_loaded == data.length) {
+            convert();
+          }
+        }
+
+        function convert() {
+          for (let i = 0; i < images.length; i++) {
+            gif.addFrame(images[i], { delay: to_export.delay });
+          }
+          app.$refs.ui.set_progress(0.2);
+          gif.render();
+          
+          gif.on('finished', (blob) => {
+            // Create image
+            const size = (blob.size / 1000).toFixed(2);
+            app.$refs.ui.set_progress(0.8);
+            // Create base64 version
+            // PERF: TODO: generate image on submit only
+            const reader = new window.FileReader();
+            
+            reader.onloadend = function () {
+              console.log("here");
+              // reader.result = base64 data
+              let div = document.createElement("div");
+              div.classList.add("gif-popup");
+              let content = "<img src='" + URL.createObjectURL(blob) + "'/>";
+              content += "<p>To save gif: Right-Click image + save-as!</p>";
+              div.innerHTML = content;
+              
+              let close_button = document.createElement("a");
+              close_button.classList.add("popup-close-button");
+              close_button.innerHTML = "Close";
+              close_button.addEventListener("click", () => {
+                document.body.removeChild(div);
+              });
+              div.appendChild(close_button);
+              
+              document.body.appendChild(div);
+              app.$refs.ui.set_progress(0);
+            };
+            reader.readAsDataURL(blob);
+          });
+        }
+      });
+    },
     make_gif(){
+      let basic_error = false;
+      
+      // We'll show all relevant warnings.
+      
       if(this.width > 1000 || this.height > 1000){
         alert("Please set a lower resolution (less than 1000x1000) before exporting a gif.");
+        basic_error = true;
       }
       if(this.duration > 5){
         alert("Please set a smaller duration (less than 5 seconds) before exporting a gif.");
+        basic_error = true;
       }
       if(this.fps > 20){
         alert("Please set a smaller fps (less than 20) before exporting a gif.");
+        basic_error = true;
       }
       
+      if(basic_error){
+        return;
+      }
       
-      this.$refs.ui.set_progress(0.5);
+      this.$refs.ui.set_progress(0.0);
       
+      this.render({
+        zip: false,
+        stack: false,
+        gif: true
+      });
     },
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");
@@ -191,6 +418,12 @@ Vue.component('player', {
     },
     height(){
       this.update_dimensions();
+    },
+    duration(){
+      this.player.frames = this.duration * this.fps;
+    },
+    fps(){
+      this.player.frames = this.duration * this.fps;
     }
   }
 })
