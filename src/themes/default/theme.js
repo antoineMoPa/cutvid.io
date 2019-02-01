@@ -15,7 +15,10 @@ Vue.component('default-theme-settings', {
   <h3>Theme settings</h3>
   <label>Text</label>
   <input v-model="text.text" type="text">
+  <label>Font size</label>
   <input v-model="text.size" type="number">
+  <label>Top (y) offset</label>
+  <input v-model.number="text.offsetTop" type="number">
   <select v-model="text.font">
     <option value="Sans">Sans</option>
     <option value="Serif">Serif</option>
@@ -26,8 +29,9 @@ Vue.component('default-theme-settings', {
     return {
       text:{
 	    text: "test",
-	    font: "Sans",
+	    font: "Lobster",
 	    size: 200,
+        offsetTop: 20,
 	    color: "#000000",
       },
       playerAlreadyHasTexture: false,
@@ -49,7 +53,11 @@ Vue.component('default-theme-settings', {
       
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
-      ctx.fillText(this.text.text, this.player.width/2, this.player.height/2);
+      ctx.fillText(
+        this.text.text, 
+        this.player.width/2,
+        this.player.height/2 + this.text.offsetTop
+      );
       
       if(this.playerAlreadyHasTexture){
         this.player.delete_texture(0);

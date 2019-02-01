@@ -34,12 +34,23 @@ Vue.component('player', {
         <label>width x height (pixels):</label>
         <input v-model.number="width" type="number"> x
         <input v-model.number="height" type="number">
+        <label>Presets</label>
+        <a v-on:click="set_dimensions(1920,1080)">Full HD 1080p</a>
+        <a v-on:click="set_dimensions(1280,720)">HD 720p</a>
+        <a v-on:click="set_dimensions(540,540)">Square 540</a>
+        <a v-on:click="set_dimensions(3840,2160)">UHD</a>
+        <a v-on:click="set_dimensions(4096,2160)">Movie 4K</a>
+        <label>Duration (seconds)</label>
+        <input v-model.number="duration" type="number">
+        <label>FPS (frames per seconds)</label>
+        <input v-model.number="fps" type="number">
+        
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
     <div id="main-player">
     </div>
-    <ui v-on:play="play" v-on:pause="pause"/>
+    <ui v-on:play="play" v-on:pause="pause" v-on:buy="make_buy" v-on:gif="make_gif"/>
   </div>`,
   data(){
     return {
@@ -47,7 +58,9 @@ Vue.component('player', {
       player: null,
       width: 1920,
       height: 1080,
-      aspect: 1920.0/1080
+      aspect: 1920.0/1080,
+      duration: 3,
+      fps: 50
     };
   },
   mounted: function(){
@@ -74,7 +87,6 @@ Vue.component('player', {
       app.player.set_width(app.width);
       app.player.set_height(app.height);
       app.on_resize();
-      
     }
     
     Promise.all([
@@ -92,6 +104,11 @@ Vue.component('player', {
     });
   },
   methods: {
+    set_dimensions(w, h){
+      this.width = w;
+      this.height = h;
+      this.update_dimensions();
+    },
     play(){
       this.player.play();
     },
@@ -145,6 +162,20 @@ Vue.component('player', {
       let panel = this.$el.querySelectorAll(".switchable-panel");
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
+    },
+    make_gif(){
+      if(this.width > 1000 || this.height > 1000){
+        alert("Please set a lower resolution (less than 1000x1000) before exporting a gif.");
+      }
+      if(this.duration > 5){
+        alert("Please set a smaller duration (less than 5 seconds) before exporting a gif.");
+      }
+      if(this.fps > 20){
+        alert("Please set a smaller fps (less than 20) before exporting a gif.");
+      }
+    },
+    make_buy(){
+      alert("Sorry, you cannot buy videos yet.");
     }
   },
   watch: {

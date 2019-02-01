@@ -8,6 +8,14 @@ Vue.component('ui', {
            class="pause-icon" 
            src="icons/feather/pause.svg"/>
     </div>
+    <a class="ui-button button-2" v-on:click="gif">
+      <img class="feather-button" src="icons/feather-dark/image.svg"/>
+      Export Gif
+    </a>
+    <a class="ui-button buy-button button-1" v-on:click="buy">
+      <img class="feather-button" src="icons/feather/download-cloud.svg"/>
+      Buy Video
+    </a>
   </div>`,
   data(){
 	return {
@@ -22,6 +30,12 @@ Vue.component('ui', {
 	  } else {
 		this.$emit('pause');
 	  }
+	},
+	buy(){
+	  this.$emit("buy");
+	},
+	gif(){
+	  this.$emit("gif");
 	}
   }
 })

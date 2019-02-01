@@ -13,23 +13,6 @@ h3{
 	margin:0;
 }
 
-a{
-	display:inline-block;
-	margin-top:20px;
-	background:#fff;
-	padding:20px;
-	text-decoration:none;
-	font-size:20px;
-	color:#333;
-	border-radius:3px;
-	transition:all 0.3s;
-	width:300px;
-}
-
-a:hover{
-	box-shadow:0 0 10px rgba(255,255,255,0.8);
-}
-
 /* UI -------------- */
 
 .ui{
@@ -42,6 +25,35 @@ a:hover{
 	z-index:100;
 	text-align:center;
 }
+
+.ui-button{
+	padding:8px;
+	box-shadow:0 0 3px rgba(0,0,0,0.5);
+	border-radius:3px;
+	position:absolute;
+	bottom:12px;
+	right:200px;
+	color:#333;
+	cursor:pointer;
+}
+
+.ui .feather-button{
+	margin-bottom:-5px;
+	margin-right:4px;
+}
+
+.ui-button.buy-button{
+	background:#3af;
+	color:#fff;
+}
+
+.ui-button.button-1{
+	right:20px;
+}
+.ui-button.button-2{
+	right:180px;
+}
+
 
 .play-button{
 	display:inline-block;
@@ -65,11 +77,24 @@ a:hover{
 
 /* END UI --------------- */
 
+/* PLAYER --------------- */
+
 #main-player canvas{
 	width:100%;
 	margin-top:20px;
 	margin-left:0;
 }
+
+.theme-settings a{
+	cursor:pointer;
+	font-size:10px;
+	background:transparent;
+	border:1px solid #aaa;
+	padding:3px;
+	border-radius:3px;
+}
+
+/* END PLAYER --------------- */
 
 .theme-settings{
 	background: #fff;
@@ -103,6 +128,7 @@ a:hover{
 .theme-settings label{
 	display:block;
 	font-size:10px;
+	margin-top:5px;
 }
 
 /* PANEL-SELECTOR --------------- */
