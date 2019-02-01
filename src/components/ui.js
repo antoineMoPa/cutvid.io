@@ -1,7 +1,7 @@
 Vue.component('ui', {
   template: `<div class="ui">
     <div class="play-button" v-on:click="toggle_play">
-      <img v-if="playing" 
+      <img v-if="!playing" 
            class="play-icon"
            src="icons/feather/play.svg"/>
       <img v-else
