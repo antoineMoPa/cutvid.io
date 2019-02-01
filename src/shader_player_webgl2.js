@@ -16,6 +16,7 @@ class ShaderPlayerWebGL2 {
     this.native_webgl2_supported = false;
     this.window_focused = true;
     this.anim_timeout = null;
+	this.paused = false;
 
     // TODO: synchronize with vue
     this.width = 540;
@@ -72,6 +73,14 @@ class ShaderPlayerWebGL2 {
     }
   }
 
+  play(){
+	this.paused = false;
+  }
+  
+  pause(){
+	this.paused = true;
+  }
+  
   /*
      Generic player functions
      (That would be in an interface if Javascript had that)
@@ -553,10 +562,10 @@ class ShaderPlayerWebGL2 {
       frame %= (this.frames);
 
       // When rendering gif, draw is done elsewhere
-      if (!player.rendering_gif && player.window_focused) {
+      if (!player.rendering_gif && player.window_focused && !player.paused) {
         player.draw_gl((frame + 1) / player.frames);
       }
-
+	  
       this.anim_timeout = window.setTimeout(() => {
         window.requestAnimationFrame(_animate.bind(this));
       }, anim_delay);

@@ -30,6 +30,8 @@ a:hover{
 	box-shadow:0 0 10px rgba(255,255,255,0.8);
 }
 
+/* UI -------------- */
+
 .ui{
 	background:#fff;
 	position:fixed;
@@ -37,7 +39,30 @@ a:hover{
 	left:0;
 	height:60px;
 	width:100%;
+	z-index:100;
+	text-align:center;
 }
+
+.play-button{
+	display:inline-block;
+	width:40px;
+	height:40px;
+	background:#3af;
+	border-radius:50%;
+	margin-top:10px;
+}
+
+.play-icon{
+	margin-top:8px;
+	margin-left:3px;
+}
+
+.pause-icon{
+	margin-top:8px;
+	margin-left:0px;
+}
+
+/* END UI --------------- */
 
 canvas{
 	width:100%;
@@ -76,3 +101,4 @@ canvas{
 	display:block;
 	font-size:10px;
 }
+

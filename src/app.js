@@ -4,6 +4,5 @@ var app = new Vue({
   },
   template: `<div>
                  <player></player>
-                 <ui></ui>
              </div>`,
 })

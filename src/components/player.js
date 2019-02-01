@@ -6,6 +6,7 @@ Vue.component('player', {
     </div>
     <div id="main-player">
     </div>
+    <ui v-on:play="play" v-on:pause="pause"/>
   </div>`,
   data(){
     return {
@@ -71,5 +72,13 @@ Vue.component('player', {
         on_shaders_ready(vertex, fragment);
       });
     });
+  },
+  methods: {
+    play(){
+      this.player.play();
+    },
+    pause(){
+      this.player.pause();
+    }
   }
 })
