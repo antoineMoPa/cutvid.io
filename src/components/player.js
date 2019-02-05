@@ -368,9 +368,9 @@ Vue.component('player', {
               content += "<p>To save gif: Right-Click image + save-as!</p>";
               div.innerHTML = content;
               
-              let close_button = document.createElement("a");
-              close_button.classList.add("popup-close-button");
-              close_button.innerHTML = "Close";
+              let close_button = document.createElement("div");
+              close_button.classList.add("close-button");
+              close_button.innerHTML = '<img src="icons/feather-dark/x.svg" width="40"/>';
               close_button.addEventListener("click", () => {
                 document.body.removeChild(div);
               });

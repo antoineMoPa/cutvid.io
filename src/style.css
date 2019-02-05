@@ -56,8 +56,10 @@ h3{
 	right:340px;
 }
 
-
 .ui-progress{
+	position:absolute;
+	top:-10px;
+	left:0;
 	height:8px;
 	background:#3af;
 }
@@ -68,7 +70,7 @@ h3{
 	height:40px;
 	background:#888;
 	border-radius:50%;
-	margin-top:3px;
+	margin-top:10px;
 	cursor:pointer;
 }
 
@@ -81,6 +83,14 @@ h3{
 	margin-top:8px;
 	margin-left:0px;
 }
+
+.close-button{
+	position:absolute;
+	top:10px;
+	right:10px;
+	cursor:pointer;
+}
+
 
 /* END UI --------------- */
 
@@ -186,21 +196,13 @@ h3{
 	left:20px;
 	z-index:1000;
 	max-width:1000px;
-	left: calc(50% - 220px);
+	left: 20px;
 	box-shadow: 0 0 10px rgba(0,0,0,0.8);
 	background:#fff;
 	border-radius:3px;
 	padding:20px;
+	padding-top:60px;
 }
-
-.popup-close-button{
-	padding: 8px;
-	box-shadow: 0 0 3px rgba(0,0,0,0.5);
-	border-radius: 3px;
-	color: #333;
-	cursor: pointer;
-}
-
 
 /* THEME-SELECTOR --------------- */
 
@@ -237,13 +239,6 @@ h3{
 	box-shadow:0 0 10px rgba(0,0,0,0.0);
 	border-radius:10px;
 	transition:all 0.1s;
-}
-
-.theme-selector .close-button{
-	position:absolute;
-	top:10px;
-	right:10px;
-	cursor:pointer;
 }
 
 .theme-box img{
