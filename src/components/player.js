@@ -266,7 +266,7 @@ Vue.component('player', {
               });
             }
           };
-          app.$refs.ui.set_progress((curr + 1) / pl.frames);
+          app.$refs.ui.set_progress((curr + 1) / pl.frames * 0.5);
           // Render
           app.player.render((curr + 1) / pl.frames, (canvas) => {
             let image_data = '';
@@ -330,6 +330,7 @@ Vue.component('player', {
           image.src = data[i];
           image.onload = imageLoaded;
           images.push(image);
+          
         }
 
         let number_loaded = 0;
@@ -344,8 +345,12 @@ Vue.component('player', {
           for (let i = 0; i < images.length; i++) {
             gif.addFrame(images[i], { delay: to_export.delay });
           }
-          app.$refs.ui.set_progress(0.2);
+          
           gif.render();
+          
+          gif.on('progress', (p) => {
+            app.$refs.ui.set_progress(0.5 + 0.5 * p);  
+          });
           
           gif.on('finished', (blob) => {
             // Create image
@@ -356,7 +361,6 @@ Vue.component('player', {
             const reader = new window.FileReader();
             
             reader.onloadend = function () {
-              console.log("here");
               // reader.result = base64 data
               let div = document.createElement("div");
               div.classList.add("gif-popup");
@@ -382,6 +386,10 @@ Vue.component('player', {
     },
     make_gif(){
       let basic_error = false;
+      
+      if(this.player.rendering_gif){
+        return;
+      }
       
       // We'll show all relevant warnings.
       
