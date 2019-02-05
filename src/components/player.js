@@ -40,6 +40,8 @@ Vue.component('player', {
         <a v-on:click="set_dimensions(540,540);fps=10;duration=3">Square 540</a>
         <a v-on:click="set_dimensions(3840,2160)">UHD</a>
         <a v-on:click="set_dimensions(4096,2160)">Movie 4K</a>
+        <a v-on:click="set_dimensions(600,315)">Instagram Ad</a>
+        <a v-on:click="set_dimensions(864,1080)">Instagram Video</a>
         <label>Duration (seconds)</label>
         <input v-model.number="duration" type="number">
         <label>FPS (frames per seconds)</label>

@@ -13,6 +13,7 @@ Vue.component('default-theme-settings', {
   template: `
 <div>
   <h3>Theme settings</h3>
+  <h4>Epic Sunset</h4>
   <label>Text</label>
   <input v-model="text.text" type="text">
   <label>Font size</label>

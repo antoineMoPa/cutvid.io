@@ -113,10 +113,16 @@ h3{
 	padding-left:15px;
 }
 
-.theme-settings h3{
+.theme-settings h3, .theme-settings h4{
 	margin:0;
 	padding:10px 0;
 	background:transparent;
+}
+
+.theme-settings h4{
+	font-style: italic;
+	font-weight: 300;
+	margin-top: -15px;
 }
 
 .theme-settings input[type=number]{
