@@ -217,6 +217,10 @@ h3{
 	text-align:left;
 }
 
+.theme-selector h3 img{
+	margin-bottom:-7px;
+}
+
 .theme-selector.hidden{
 	display:none;
 }
