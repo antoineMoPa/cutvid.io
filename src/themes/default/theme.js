@@ -64,12 +64,7 @@ Vue.component('theme-settings', {
         this.player.height/2 + this.text.offsetTop
       );
 
-      if(this.playerAlreadyHasTexture){
-        this.player.delete_texture(0);
-      }
-
-      this.player.add_texture(textCanvas.toDataURL());
-      this.playerAlreadyHasTexture = true;
+      this.$emit("texture-ready");
     }
   },
   watch: {

@@ -16,18 +16,23 @@ Vue.component('theme-settings', {
   <h4>Retrowave</h4>
   <label>Top text</label>
   <input v-model="textTop.text" type="text">
-  <label>Font size</label>
-  <input v-model="textTop.size" type="number">
+  <label>Font size | offset</label>
+  <input v-model.number="textTop.size" type="number">
+  <input v-model.number="textTop.offsetTop" type="number">
+
 
   <label>Middle text</label>
   <input v-model="textMiddle.text" type="text">
-  <label>Font size</label>
-  <input v-model="textMiddle.size" type="number">
+  <label>Font size | offset</label>
+  <input v-model.number="textMiddle.size" type="number">
+  <input v-model.number="textMiddle.offsetTop" type="number">
 
   <label>Bottom text</label>
   <input v-model="textBottom.text" type="text">
-  <label>Font size</label>
-  <input v-model="textBottom.size" type="number">
+  <label>Font size | offset</label>
+  <input v-model.number="textBottom.size" type="number">
+  <input v-model.number="textBottom.offsetTop" type="number">
+
 
 </div>`,
   data: function(){
@@ -103,13 +108,8 @@ Vue.component('theme-settings', {
         "px Contrail One";
 
       ctx.fillText(this.textBottom.text, this.player.width/2, 2/3*this.player.height + tsize/2 + this.textBottom.offsetTop);
-
-      if(this.playerAlreadyHasTexture){
-        this.player.delete_texture(0);
-      }
-
-      this.player.add_texture(textCanvas.toDataURL());
-      this.playerAlreadyHasTexture = true;
+	  
+	  this.$emit("texture-ready");
     }
   },
   watch: {

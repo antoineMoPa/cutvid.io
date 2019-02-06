@@ -28,7 +28,7 @@ Vue.component('player', {
   template: 
   `<div class="player">
     <div class="theme-settings">
-      <theme-settings class="switchable-panel" v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings"/>
+      <theme-settings class="switchable-panel" v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings" v-on:texture-ready="loadTextCanvas"/>
       <div class="switchable-panel">
         <h3>Video settings</h3>
         <label>width x height (pixels):</label>
@@ -420,7 +420,15 @@ Vue.component('player', {
     },
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");
-    }
+    },
+	loadTextCanvas(){
+	  if(this.playerAlreadyHasTexture){
+        this.player.delete_texture(0);
+      }
+	  
+      this.player.add_texture(this.textCanvas.toDataURL());
+      this.playerAlreadyHasTexture = true;
+	}
   },
   watch: {
     width(){
