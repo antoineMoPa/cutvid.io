@@ -28,7 +28,7 @@ Vue.component('player', {
   template: 
   `<div class="player">
     <div class="theme-settings">
-      <default-theme-settings class="switchable-panel" v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings"/>
+      <theme-settings class="switchable-panel" v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings"/>
       <div class="switchable-panel">
         <h3>Video settings</h3>
         <label>width x height (pixels):</label>
@@ -96,8 +96,8 @@ Vue.component('player', {
     }
     
     Promise.all([
-      fetch("themes/default/vertex.glsl"),
-      fetch("themes/default/fragment.glsl")
+      fetch("themes/"+theme_name+"/vertex.glsl"),
+      fetch("themes/"+theme_name+"/fragment.glsl")
     ]).then((values) => {
       Promise.all([
         values[0].text(),

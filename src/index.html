@@ -4,16 +4,15 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="style.css">
-		
-		
-		<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
-
 	</head>
 	<body>
 	  <div id="main_app">
 	  </div>
 	  
 	  <div class="theme-selector hidden">
+		<div class="close-button">
+		  <img src="icons/feather-dark/x.svg" width="40"/>
+		</div>
 		<h3>
 		  <img src="icons/feather-dark/image.svg" width="30"/>
 		  Themes
@@ -23,34 +22,25 @@
 		  <br>
 		  Epic Sunset
 		</a>
-		<a class="theme-box" href="?theme=default">
-		  <img src="themes/default/image.gif"/>
+		<a class="theme-box" href="?theme=retrowave">
+		  <img src="themes/retrowave/image.gif"/>
 		  <br>
-		  80's sunset
+		  Retrowave
 		</a>
-		<a class="theme-box" href="?theme=default">
-		  <img src="themes/default/image.gif"/>
-		  <br>
-		  80's sunset
-		</a>
-		<a class="theme-box" href="?theme=default">
-		  <img src="themes/default/image.gif"/>
-		  <br>
-		  80's sunset
-		</a>
-		<a class="theme-box" href="?theme=default">
-		  <img src="themes/default/image.gif"/>
-		  <br>
-		  80's sunset
-		</a>
-		<div class="close-button">
-		  <img src="icons/feather-dark/x.svg" width="40"/>
-		</div>
 	  </div>
 	  
 	  <script src="libs/vue.js"></script>
+	  <script src="libs/utils.js"></script>
 	  <script src="libs/gif.js"></script>
-	  <script src="themes/default/theme.js"></script>
+	  
+	  <script type="text/javascript">
+		let available_themes = ["default", "retrowave"];
+		var theme_name = new URL(window.location.href).searchParams.get("theme") || "default";
+		if(available_themes.find((el) => {return el == theme_name})){
+		  document.write("\<script src='themes/"+theme_name+"/theme.js'\>\</script\>");
+		}
+	  </script>
+	  
 	  <script src="shader_player_webgl2.js"></script>
 	  <script src="components/player.js"></script>
 	  <script src="components/ui.js"></script>
