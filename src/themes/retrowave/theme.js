@@ -48,7 +48,7 @@ Vue.component('theme-settings', {
 		offsetTop: 0
 	  },
 	  textBottom:{
-		text: "Party",
+		text: "NIGHT",
 		size: 80,
 		offsetTop: 0
 	  },

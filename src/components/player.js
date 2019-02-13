@@ -9,7 +9,7 @@ Vue.component('panel-selector', {
   </div>`,
   data(){
     return {
-	  panel_names: ["theme", "general"],
+	  panel_names: ["background", "vid. settings", "theme settings", "post-processing"],
       selected: 0,
     };
   },
@@ -25,9 +25,11 @@ Vue.component('player', {
   template: 
   `<div class="player">
     <div class="theme-settings">
-      <theme-settings class="switchable-panel" v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings" v-on:texture-ready="loadTextCanvas"/>
       <div class="switchable-panel">
-        <h3>Video settings</h3>
+        <h3>Background</h3>
+      </div>
+      <div class="switchable-panel">
+        <h3>Video Settings</h3>
         <label>width x height (pixels):</label>
         <input v-model.number="width" type="number"> x
         <input v-model.number="height" type="number">
@@ -43,6 +45,10 @@ Vue.component('player', {
         <input v-model.number="duration" type="number">
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
+      </div>
+      <theme-settings class="switchable-panel" v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings" v-on:texture-ready="loadTextCanvas"/>
+      <div class="switchable-panel">
+        <h3>Post Processing</h3>
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
