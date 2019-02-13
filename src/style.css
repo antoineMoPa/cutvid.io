@@ -12,10 +12,17 @@ h3{
 	margin:0;
 }
 
+input{
+	border-radius:2px;
+	border: 1px solid #aaa;
+	padding:5px;
+	background:#eee;
+}
+
 /* UI -------------- */
 
 .ui{
-	background:#fff;
+	background:#111;
 	position:fixed;
 	bottom:0;
 	left:0;
@@ -32,7 +39,8 @@ h3{
 	position:absolute;
 	bottom:12px;
 	right:200px;
-	color:#333;
+	background:#333;
+	color:#eee;
 	cursor:pointer;
 }
 
@@ -68,7 +76,7 @@ h3{
 	display:inline-block;
 	width:40px;
 	height:40px;
-	background:#888;
+	background:#222;
 	border-radius:50%;
 	margin-top:10px;
 	cursor:pointer;
@@ -102,19 +110,15 @@ h3{
 	margin-left:0;
 }
 
-.theme-settings a{
-	cursor:pointer;
-	font-size:10px;
-	background:transparent;
-	border:1px solid #aaa;
-	padding:3px;
-	border-radius:3px;
-}
 
 /* END PLAYER --------------- */
 
+
+/* THEME SETTINGS --------------- */
+
 .theme-settings{
-	background: #fff;
+	background: #111;
+	color:#eee;
 	border-radius:3px;
 	position:fixed;
 	top:20px;
@@ -126,7 +130,19 @@ h3{
 	padding-left:15px;
 }
 
+.theme-settings a.preset{
+	cursor:pointer;
+	font-size:10px;
+	background:transparent;
+	border:1px solid #aaa;
+	padding:3px;
+	border-radius:3px;
+	margin-bottom:4px;
+	line-height: 22px;
+}
+
 .theme-settings h3, .theme-settings h4{
+	color:#fff;
 	margin:0;
 	padding:10px 0;
 	background:transparent;
@@ -146,6 +162,15 @@ h3{
 .theme-settings input{
 	height:10px;
 	margin-top:5px;
+	background:#222;
+	color:#eee;
+	border:1px solid #000;
+}
+
+.theme-settings input:focus{
+	color:#fff;
+	box-shadow:0 0 8px rgba(255,255,255,0.3);	
+	border:1px solid #fff;
 }
 
 .theme-settings label{
@@ -153,6 +178,8 @@ h3{
 	font-size:10px;
 	margin-top:5px;
 }
+
+/* END THEME SETTINGS --------------- */
 
 /* PANEL-SELECTOR --------------- */
 
@@ -166,13 +193,14 @@ h3{
 
 .panel-bullet{
 	display:inline-block;
-	width:10px;
-	height:10px;
 	background:#666;
-	border-radius:50%;
+	border-radius:3px;
 	margin-right:3px;
+	padding:3px;
 	cursor:pointer;
-	border:2px solid #ddd;
+	border:2px solid #444;
+	color:#fff;
+	font-size:10px;
 }
 
 .panel-bullet.selected-bullet{
@@ -182,6 +210,10 @@ h3{
 
 .switchable-panel{
 	display:none;
+	overflow-y: auto;
+	max-height: calc(100% - 50px);
+	scrollbar-color: #888 #222;
+    scrollbar-width: thin;
 }
 
 .switchable-panel-shown{

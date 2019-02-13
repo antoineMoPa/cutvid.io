@@ -1,20 +1,17 @@
 Vue.component('panel-selector', {
   template: `
   <div class="panel-selector">
-    <div v-for="i in count_i"
-         v-on:click="switch_to(i-1)"
-         v-bind:class="'panel-bullet' + ' ' + (selected == i - 1? 'selected-bullet': '')">
+    <div v-for="(name, i) in panel_names"
+         v-on:click="switch_to(i)"
+         v-bind:class="'panel-bullet' + ' ' + (selected == i? 'selected-bullet': '')">
+      {{ name }}
     </div>
   </div>`,
   data(){
     return {
-      count_i: 1,
-      selected: 0
+	  panel_names: ["theme", "general"],
+      selected: 0,
     };
-  },
-  props: ["count"],
-  mounted(){
-    this.count_i = parseInt(this.count);
   },
   methods: {
     switch_to(i){
@@ -35,13 +32,13 @@ Vue.component('player', {
         <input v-model.number="width" type="number"> x
         <input v-model.number="height" type="number">
         <label>Presets</label>
-        <a v-on:click="set_dimensions(1920,1080)">Full HD 1080p</a>
-        <a v-on:click="set_dimensions(1280,720)">HD 720p</a>
-        <a v-on:click="set_dimensions(540,540);fps=10;duration=3">Square 540</a>
-        <a v-on:click="set_dimensions(3840,2160)">UHD</a>
-        <a v-on:click="set_dimensions(4096,2160)">Movie 4K</a>
-        <a v-on:click="set_dimensions(600,315)">Instagram Ad</a>
-        <a v-on:click="set_dimensions(864,1080)">Instagram Video</a>
+        <a class="preset" v-on:click="set_dimensions(1920,1080)">Full HD 1080p</a>
+        <a class="preset" v-on:click="set_dimensions(1280,720)">HD 720p</a>
+        <a class="preset" v-on:click="set_dimensions(540,540);fps=10;duration=3">Square 540</a>
+        <a class="preset" v-on:click="set_dimensions(3840,2160)">UHD</a>
+        <a class="preset" v-on:click="set_dimensions(4096,2160)">Movie 4K</a>
+        <a class="preset" v-on:click="set_dimensions(600,315)">Instagram Ad</a>
+        <a class="preset" v-on:click="set_dimensions(864,1080)">Instagram Video</a>
         <label>Duration (seconds)</label>
         <input v-model.number="duration" type="number">
         <label>FPS (frames per seconds)</label>

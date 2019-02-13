@@ -11,11 +11,11 @@ Vue.component('ui', {
            src="icons/feather/pause.svg"/>
     </div>
     <a class="ui-button button-3" v-on:click="themes">
-      <img class="feather-button" src="icons/feather-dark/image.svg"/>
+      <img class="feather-button" src="icons/feather/image.svg"/>
       Themes
     </a>
     <a class="ui-button button-2" v-on:click="gif">
-      <img class="feather-button" src="icons/feather-dark/camera.svg"/>
+      <img class="feather-button" src="icons/feather/camera.svg"/>
       Export Gif
     </a>
     <a class="ui-button buy-button button-1" v-on:click="buy">
