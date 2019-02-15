@@ -116,7 +116,7 @@ input{
 
 /* THEME SETTINGS --------------- */
 
-.theme-settings{
+.settings-panel{
 	background: #111;
 	color:#eee;
 	border-radius:3px;
@@ -130,7 +130,7 @@ input{
 	padding-left:15px;
 }
 
-.theme-settings a.preset{
+.settings-panel a.preset{
 	cursor:pointer;
 	font-size:10px;
 	background:transparent;
@@ -141,25 +141,25 @@ input{
 	line-height: 22px;
 }
 
-.theme-settings h3, .theme-settings h4{
+.settings-panel h3, .settings-panel h4{
 	color:#fff;
 	margin:0;
 	padding:10px 0;
 	background:transparent;
 }
 
-.theme-settings h4{
+.settings-panel h4{
 	font-style: italic;
 	font-weight: 300;
 	margin-top: -15px;
 }
 
-.theme-settings input[type=number]{
+.settings-panel input[type=number]{
 	height:20px;
 	width:100px;
 }
 
-.theme-settings input{
+.settings-panel input{
 	height:10px;
 	margin-top:5px;
 	background:#222;
@@ -167,19 +167,19 @@ input{
 	border:1px solid #000;
 }
 
-.theme-settings input:focus{
+.settings-panel input:focus{
 	color:#fff;
 	box-shadow:0 0 8px rgba(255,255,255,0.3);	
 	border:1px solid #fff;
 }
 
-.theme-settings label{
+.settings-panel label{
 	display:block;
 	font-size:10px;
 	margin-top:5px;
 }
 
-/* END THEME SETTINGS --------------- */
+/* END SETTINGS PANEL --------------- */
 
 /* PANEL-SELECTOR --------------- */
 

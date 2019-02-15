@@ -9,7 +9,7 @@ Vue.component('panel-selector', {
   </div>`,
   data(){
     return {
-	  panel_names: ["background", "vid. settings", "theme settings", "post-processing"],
+	  panel_names: ["background", "vid. settings", "text settings", "post-processing"],
       selected: 0,
     };
   },
@@ -24,7 +24,7 @@ Vue.component('panel-selector', {
 Vue.component('player', {
   template: 
   `<div class="player">
-    <div class="theme-settings">
+    <div class="settings-panel">
       <div class="switchable-panel">
         <h3>Background</h3>
       </div>
