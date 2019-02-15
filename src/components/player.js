@@ -21,12 +21,39 @@ Vue.component('panel-selector', {
   }
 });
 
+Vue.component('settings-background', function (resolve, reject) {
+  setTimeout(function () {
+    // Pass the component definition to the resolve callback
+    resolve({
+	  template: '<div>I am async!</div>'
+    })
+  }, 1000)
+
+});
+
+Vue.component('settings-2d', function (resolve, reject) {
+  let themeName = theme_name;
+  // Pass the component definition to the resolve callback
+  utils.load_script("plugins/2d/" + themeName + "/settings.js", function(){
+    resolve(utils.plugins[themeName + "-settings2D"]);
+  });
+});
+
+Vue.component('settings-pp', function (resolve, reject) {
+  let themeName = theme_name;
+  // Pass the component definition to the resolve callback
+  utils.load_script("plugins/pp/" + themeName + "/settings.js", function(){
+    resolve(utils.plugins[themeName + "-settingsPP"]);
+  });
+});
+
 Vue.component('player', {
   template: 
   `<div class="player">
     <div class="settings-panel">
       <div class="switchable-panel">
         <h3>Background</h3>
+        <settings-background/>
       </div>
       <div class="switchable-panel">
         <h3>Video Settings</h3>
@@ -46,9 +73,13 @@ Vue.component('player', {
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
       </div>
-      <theme-settings class="switchable-panel" v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings" v-on:texture-ready="loadTextCanvas"/>
+      <div class="switchable-panel">
+        <h3>Text Settings</h3>
+        <settings-2d v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings" v-on:texture-ready="loadTextCanvas"/>
+      </div>
       <div class="switchable-panel">
         <h3>Post Processing</h3>
+        <settings-pp/>
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
@@ -75,7 +106,7 @@ Vue.component('player', {
   mounted: function(){
 	let app = this;
     this.switch_panel(0);
-        
+
     window.addEventListener("resize", app.on_resize);
 
     function on_shaders_ready(vertex, fragment){
@@ -99,8 +130,8 @@ Vue.component('player', {
     }
     
     Promise.all([
-      fetch("themes/"+theme_name+"/vertex.glsl"),
-      fetch("themes/"+theme_name+"/fragment.glsl")
+      fetch("plugins/pp/"+theme_name+"/vertex.glsl"),
+      fetch("plugins/pp/"+theme_name+"/fragment.glsl")
     ]).then((values) => {
       Promise.all([
         values[0].text(),
@@ -428,7 +459,6 @@ Vue.component('player', {
 	  if(this.playerAlreadyHasTexture){
         this.player.delete_texture(0);
       }
-	  
       this.player.add_texture(this.textCanvas.toDataURL());
       this.playerAlreadyHasTexture = true;
 	}

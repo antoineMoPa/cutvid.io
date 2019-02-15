@@ -36,8 +36,8 @@
 	  <script type="text/javascript">
 		let available_themes = ["default", "retrowave"];
 		var theme_name = new URL(window.location.href).searchParams.get("theme") || "default";
-		if(available_themes.find((el) => {return el == theme_name})){
-		  document.write("\<script src='themes/"+theme_name+"/theme.js'\>\</script\>");
+		if(!available_themes.find((el) => {return el == theme_name})){
+		  theme_name = "default";
 		}
 	  </script>
 	  

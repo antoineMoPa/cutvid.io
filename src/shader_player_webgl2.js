@@ -168,7 +168,6 @@ class ShaderPlayerWebGL2 {
 
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
-
     // Because images have to be download over the internet
     // they might take a moment until they are ready.
     // Until then put a single pixel in the texture so we can
@@ -187,13 +186,14 @@ class ShaderPlayerWebGL2 {
       width, height, border, srcFormat, srcType,
       pixel);
 
-    const image = new Image();
-    image.onload = function () {
-      gl.bindTexture(gl.TEXTURE_2D, texture);
+    var image = new Image();
+	
+    image.addEventListener("load", function () {
+	  gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
-
+	  
       // WebGL1 has different requirements for power of 2 images
       // vs non power of 2 images so check if the image is a
       // power of 2 in both dimensions.
@@ -207,7 +207,8 @@ class ShaderPlayerWebGL2 {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       }
-    };
+    });
+	
     image.src = url;
 
     this.textures.push(texture);
@@ -215,6 +216,12 @@ class ShaderPlayerWebGL2 {
 
   delete_texture(index) {
     const gl = this.gl;
+	
+	if(this.textures[index] == undefined){
+	  console.error("attempt to delete texture which does not exist");
+	  return;
+	}
+	
     gl.deleteTexture(this.textures[index]);
     this.textures.splice(index, 1);
   }
@@ -383,9 +390,10 @@ class ShaderPlayerWebGL2 {
     gl.useProgram(gl.program);
 
     const positionAttribute = gl.getAttribLocation(gl.program, 'position');
-
-    gl.enableVertexAttribArray(positionAttribute);
+	
+	gl.enableVertexAttribArray(positionAttribute);
     gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
+	
     this.compiled = true;
   }
 

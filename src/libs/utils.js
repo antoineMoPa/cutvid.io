@@ -18,10 +18,30 @@ utils.load_gfont = function(name_in, callback){
   // Add attributes
   l.setAttribute("rel", "stylesheet");
   l.setAttribute("href", url);
-  l.onload = callback;
+  
+  if("fonts" in document){
+	document.fonts.load("200px '" + name_in + "'").then(() => {
+	  console.log("loaded")
+	  callback();
+	});
+  } else {
+	l.onload = callback;
+  }
+  
   // Add element to page
   document.head.appendChild(l);
   
   // Set as loaded
   utils.loaded_gfonts[name_in] = "loaded";
 }
+
+utils.load_script = function(url, callback){
+  let script = document.createElement("script");
+  script.onload = function(){
+	callback();
+  };
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+utils.plugins = {};
