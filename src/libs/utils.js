@@ -20,10 +20,7 @@ utils.load_gfont = function(name_in, callback){
   l.setAttribute("href", url);
   
   if("fonts" in document){
-	document.fonts.load("200px '" + name_in + "'").then(() => {
-	  console.log("loaded")
-	  callback();
-	});
+	document.fonts.onloadingdone = callback;
   } else {
 	l.onload = callback;
   }
