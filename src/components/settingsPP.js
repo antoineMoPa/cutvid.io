@@ -1,10 +1,12 @@
+var uniquePPComponentCounter = 0; // Mostly a hack
+
 Vue.component('settings-pp', {
   template: `
   <div class="settings-pp">
     <transition-group name="fade">
-      <div class="effect" v-bind:key="effectNumber" v-for="(effectNumber, effectIndex) in effectsIndex">
+      <div class="effect" v-bind:key="effects[effectNumber].id" v-for="(effectNumber, effectIndex) in effectsIndex">
         <div class="pp-effect-header">
-          {{ effects[effectNumber].name }}
+          {{ effects[effectNumber].name + effects[effectNumber].id }}
           <div class="pp-effect-icons">
           
             <img class="effect-icon"
@@ -29,7 +31,7 @@ Vue.component('settings-pp', {
         </div>
       </div>
     </transition-group>
-    <button v-on:click="addEffect">
+    <button v-on:click="addEffect('default')">
       <img src="icons/feather-dark/plus.svg" width="20"/>
       Add effect
     </button>
@@ -41,17 +43,18 @@ Vue.component('settings-pp', {
     };
   },
   methods: {
-    addEffect(){
-	  let themeName = "default";
+    addEffect(themeName){
 	  let app = this;
 	  utils.load_script("plugins/pp/" + themeName + "/settings.js", function(){
+        // Keeping unique components makes sure the components aren't reset
 		let settings = utils.plugins[themeName + "-settingsPP"];
-		let componentName = themeName + "-settingsPP";
+		let componentName = themeName + "-settingsPP" + uniquePPComponentCounter;
 		Vue.component(componentName, settings.ui);
 		settings.component = componentName;
-		
-		app.effects.push(settings);
-		app.effectsIndex.push(app.effects.length - 1);
+		settings.id = uniquePPComponentCounter;
+        uniquePPComponentCounter++;
+		app.effects.splice(app.effects.length, 0, settings);
+		app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
 		app.applyEffectsChange();
 	  });
     },
@@ -92,5 +95,9 @@ Vue.component('settings-pp', {
     applyEffectsChange(){
       this.$emit("effectsChanged", this.$data);
     }
+  },
+  mounted(){
+    this.addEffect('default');
+    this.addEffect('retrowave');
   }
 });

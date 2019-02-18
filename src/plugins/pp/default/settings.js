@@ -7,15 +7,17 @@
 	  template: `
 <div>
   <h4>Epic Sunset</h4>
-  
-  palsdpsalda
-asdasdaskdmasldma
-daskldasmlkd
-asddmkasd
-
+  <input type="number" min="0.0" max="1.0" step="0.05" v-model="uniforms.strength.value">
 </div>`,
 	  data: function(){
 		return {
+		  uniforms: {
+			strength: {
+			  type: "f",
+			  len: 1, /* float, not a vector: len = 1*/
+			  value: 0.5,
+			}
+		  }
 		};
 	  },
 	  props: ["player"],
@@ -43,7 +45,7 @@ asddmkasd
 	  methods: {
 	  },
 	  watch: {
-	  }
+	  },
 	}
   };
   
