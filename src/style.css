@@ -179,6 +179,53 @@ input{
 	margin-top:5px;
 }
 
+.settings-panel button{
+    background:#bbb;
+    border:none;
+    padding:5px;
+    border-radius:4px;
+    cursor:pointer;
+}
+
+.settings-panel img{
+    margin:0;
+    margin-bottom: -4px;
+}
+
+.pp-effect-header{
+    position:relative;
+    height:30px;
+    border-top: 1px solid #335;
+    line-height: 27px;
+    border-bottom: 1px solid #335;
+}
+
+.pp-effect-icons{
+    position:absolute;
+    top:0;
+    right:8px;
+}
+
+.pp-effect-icons .effect-icon{
+    cursor: pointer;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+
+.settings-pp .effect{
+    margin-bottom: 10px;
+}
+
+.settings-pp .component-container{
+    margin-top:18px;
+}
+
 /* END SETTINGS PANEL --------------- */
 
 /* PANEL-SELECTOR --------------- */

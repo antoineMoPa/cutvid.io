@@ -3,18 +3,21 @@
   let name = "retrowave";
   
   let settingsPP = {
-	template: `
+	name: name,
+	ui: {
+	  template: `
 <div>
   <h4>Retrowave</h4>
 </div>`,
-	data: function(){
-      return {
-      };
-	},
-	props: ["player"],
-	methods: {
-	},
-	watch: {
+	  data: function(){
+		return {
+		};
+	  },
+	  props: ["player"],
+	  methods: {
+	  },
+	  watch: {
+	  }
 	}
   };
   

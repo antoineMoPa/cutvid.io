@@ -9,7 +9,7 @@ Vue.component('panel-selector', {
   </div>`,
   data(){
     return {
-	  panel_names: ["background", "vid. settings", "text settings", "post-processing"],
+	  panel_names: ["vid. settings", "text settings", "post-processing"],
       selected: 0,
     };
   },
@@ -21,16 +21,6 @@ Vue.component('panel-selector', {
   }
 });
 
-Vue.component('settings-background', function (resolve, reject) {
-  setTimeout(function () {
-    // Pass the component definition to the resolve callback
-    resolve({
-	  template: '<div>I am async!</div>'
-    })
-  }, 1000)
-
-});
-
 Vue.component('settings-2d', function (resolve, reject) {
   let themeName = theme_name;
   // Pass the component definition to the resolve callback
@@ -39,22 +29,20 @@ Vue.component('settings-2d', function (resolve, reject) {
   });
 });
 
+/*
 Vue.component('settings-pp', function (resolve, reject) {
   let themeName = theme_name;
   // Pass the component definition to the resolve callback
   utils.load_script("plugins/pp/" + themeName + "/settings.js", function(){
     resolve(utils.plugins[themeName + "-settingsPP"]);
   });
-});
+});*/
+
 
 Vue.component('player', {
   template: 
   `<div class="player">
     <div class="settings-panel">
-      <div class="switchable-panel">
-        <h3>Background</h3>
-        <settings-background/>
-      </div>
       <div class="switchable-panel">
         <h3>Video Settings</h3>
         <label>width x height (pixels):</label>
@@ -79,7 +67,7 @@ Vue.component('player', {
       </div>
       <div class="switchable-panel">
         <h3>Post Processing</h3>
-        <settings-pp/>
+        <settings-pp v-on:effectsChanged="effectsChanged"/>
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
@@ -202,6 +190,9 @@ Vue.component('player', {
       let panel = this.$el.querySelectorAll(".switchable-panel");
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
+    },
+    effectsChanged(){
+      
     },
     render(options) {
       if (typeof (options) === 'undefined') {
