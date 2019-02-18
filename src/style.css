@@ -119,6 +119,16 @@ input{
     overflow-y: hidden;
     scrollbar-color: #888 #222;
     scrollbar-width: thin;
+    position:relative;
+}
+
+.scene-selector .scene-selector-title{
+    position:absolute;
+    top:0;
+    left:10px;
+    line-height:20px;
+    color:#666;
+    font-size:10px;
 }
 
 .scene-selector .scene{
