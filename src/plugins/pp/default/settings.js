@@ -6,7 +6,6 @@
 	ui: {
 	  template: `
 <div>
-  <h4>Epic Sunset</h4>
   <input type="number" min="0.0" max="1.0" step="0.05" v-model="uniforms.strength.value">
 </div>`,
 	  data: function(){

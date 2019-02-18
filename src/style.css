@@ -195,9 +195,12 @@ input{
 .pp-effect-header{
     position:relative;
     height:30px;
-    border-top: 1px solid #335;
-    line-height: 27px;
-    border-bottom: 1px solid #335;
+    border: 1px solid #000;
+    width: calc(100% - 25px);
+    background: #222;
+    padding-left: 7px;
+    font-size: 13px;
+    line-height: 29px;
 }
 
 .pp-effect-icons{

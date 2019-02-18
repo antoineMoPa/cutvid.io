@@ -7,7 +7,6 @@
 	ui: {
 	  template: `
 <div>
-  <h4>Retrowave</h4>
 </div>`,
 	  data: function(){
 		return {

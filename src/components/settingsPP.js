@@ -6,7 +6,7 @@ Vue.component('settings-pp', {
     <transition-group name="fade">
       <div class="effect" v-bind:key="effects[effectNumber].id" v-for="(effectNumber, effectIndex) in effectsIndex">
         <div class="pp-effect-header">
-          {{ effects[effectNumber].name + effects[effectNumber].id }}
+          {{ effects[effectNumber].name }}
           <div class="pp-effect-icons">
           
             <img class="effect-icon"
