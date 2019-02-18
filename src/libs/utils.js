@@ -32,10 +32,29 @@ utils.load_gfont = function(name_in, callback){
   utils.loaded_gfonts[name_in] = "loaded";
 }
 
+// Tool for dynamic script loading
+
+utils.scripts = [];
+
 utils.load_script = function(url, callback){
+  // Already loaded?
+  if(url in utils.scripts){
+    if(utils.scripts.ready){
+      callback();
+    } else {
+      utils.scripts.callbacks.push(callback);
+    }
+    return;
+  }
+  
+  utils.scripts[url] = {ready: false, callbacks: []};
+  
   let script = document.createElement("script");
   script.onload = function(){
-	callback();
+    utils.scripts[url].callbacks.push(callback)
+    utils.scripts[url].ready = true;
+    let cbs = utils.scripts[url].callbacks;
+	cbs.map((cb) => {cb()});
   };
   script.src = url;
   document.body.appendChild(script);
