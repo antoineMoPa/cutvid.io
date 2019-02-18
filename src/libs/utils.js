@@ -61,3 +61,16 @@ utils.load_script = function(url, callback){
 }
 
 utils.plugins = {};
+
+
+utils.unique_counters = {};
+
+// TODO: Set default value when loading back scenes
+
+utils.increment_unique_counter = function(id_str){
+  if(!(id_str in utils.unique_counters)) {
+    utils.unique_counters[id_str] = 1;
+    return 0;
+  }
+  return utils.unique_counters[id_str]++;
+};

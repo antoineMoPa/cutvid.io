@@ -29,16 +29,6 @@ Vue.component('settings-2d', function (resolve, reject) {
   });
 });
 
-/*
-Vue.component('settings-pp', function (resolve, reject) {
-  let themeName = theme_name;
-  // Pass the component definition to the resolve callback
-  utils.load_script("plugins/pp/" + themeName + "/settings.js", function(){
-    resolve(utils.plugins[themeName + "-settingsPP"]);
-  });
-});*/
-
-
 Vue.component('player', {
   template: 
   `<div class="player">
@@ -72,6 +62,8 @@ Vue.component('player', {
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
     <div id="main-player">
+      <div class="canvas-container"/>
+      <scene-selector/>
     </div>
     <ui ref="ui"
         v-on:play="play" 
@@ -105,7 +97,7 @@ Vue.component('player', {
       
       app.player = new ShaderPlayerWebGL2();
       
-      let container = document.querySelectorAll("#main-player")[0];
+      let container = document.querySelectorAll("#main-player .canvas-container")[0];
       app.player.set_container(container);
       app.player.set_vertex_shader(vertex);
       app.player.set_code(fragment);
@@ -156,7 +148,7 @@ Vue.component('player', {
       let app = this;
       let left_panel_width = 315;
       let x_spacing = 60 + left_panel_width; // 315: left theme settings panel
-      let y_spacing = 100; // 100: bottom ui
+      let y_spacing = 100 + 100 + 10; // 100: bottom ui, 100: scene-selector, margin
       
       let x_available_space = window.innerWidth;
       let y_available_space = window.innerHeight;
@@ -172,13 +164,16 @@ Vue.component('player', {
       
       let displayed_w = available_size;
       let displayed_h = available_size * app.aspect;
+      let main_player = document.querySelectorAll("#main-player")[0];
+      let scene_selector = document.querySelectorAll("#main-player .scene-selector")[0];
       
-      app.player.canvas.style.maxWidth = displayed_w + "px";
+	  scene_selector.style.maxWidth = displayed_w + "px";
+	  app.player.canvas.style.maxWidth = displayed_w + "px";
       app.player.canvas.style.maxHeight = displayed_h + "px";
-      app.player.canvas.style.position = "absolute";
-      app.player.canvas.style.top = 0 + "px";
+      main_player.style.position = "absolute";
+      main_player.style.top = 0 + "px";
       let x_align_center = parseInt((x_available_space - x_spacing - available_size) / 2);
-      app.player.canvas.style.left = x_spacing - 20 + x_align_center + "px";
+      main_player.style.left = x_spacing - 20 + x_align_center + "px";
       
     },
     switch_panel(i){

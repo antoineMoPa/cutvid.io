@@ -110,6 +110,65 @@ input{
 	margin-left:0;
 }
 
+.scene-selector{
+    height:105px;
+    background:#111;
+    overflow-x: auto;
+    white-space: nowrap;
+    overflow-y: hidden;
+    scrollbar-color: #888 #222;
+    scrollbar-width: thin;
+}
+
+.scene-selector .scene{
+    display: inline-block;
+    background:#000;
+    width: 100px;
+    height: 80px;
+    position:relative;
+    vertical-align: top;
+    margin-top:10px;
+    margin-right:5px;
+    border-radius:3px;
+    cursor:pointer;
+}
+
+.scene-selector .selected-scene{
+    box-shadow: 0 0 5px rgba(100,100,255,0.2);
+}
+
+.scene-selector .scene .copy-scene,
+.scene-selector .scene .remove-scene{
+    position:absolute;
+    top:3px;
+    right:3px;
+    padding:5px;
+    background:#111;
+    border-radius:3px;
+}
+
+.scene-selector .scene .remove-scene{
+    right:35px;
+}
+
+.scene-selector .adder-container{
+    height:80px;
+    display:inline-block;
+}
+
+.scene-selector button{
+    border:none;
+    border-radius:20px;
+    width:40px;
+    height:40px;
+    background:#000;
+    cursor:pointer;
+    margin-top:30px;
+}
+
+.scene-selector button img{
+    margin-bottom:-2px;
+}
 
 /* END PLAYER --------------- */
 

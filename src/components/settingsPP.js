@@ -1,5 +1,3 @@
-var uniquePPComponentCounter = 0; // Mostly a hack
-
 Vue.component('settings-pp', {
   template: `
   <div class="settings-pp">
@@ -48,11 +46,11 @@ Vue.component('settings-pp', {
 	  utils.load_script("plugins/pp/" + themeName + "/settings.js", function(){
         // Keeping unique components makes sure the components aren't reset
 		let settings = utils.plugins[themeName + "-settingsPP"];
-		let componentName = themeName + "-settingsPP" + uniquePPComponentCounter;
+		let uniquePPComponentID = utils.increment_unique_counter("ppcomponent");
+		let componentName = themeName + "-settingsPP" + uniquePPComponentID;
 		Vue.component(componentName, settings.ui);
 		settings.component = componentName;
-		settings.id = uniquePPComponentCounter;
-        uniquePPComponentCounter++;
+		settings.id = uniquePPComponentID;
 		app.effects.splice(app.effects.length, 0, settings);
 		app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
 		app.applyEffectsChange();
