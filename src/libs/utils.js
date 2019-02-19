@@ -39,7 +39,7 @@ utils.scripts = [];
 utils.load_script = function(url, callback){
   // Already loaded?
   if(url in utils.scripts){
-    if(utils.scripts.ready){
+    if(utils.scripts[url].ready){
       callback();
     } else {
       utils.scripts[url].callbacks.push(callback);
@@ -54,7 +54,7 @@ utils.load_script = function(url, callback){
     utils.scripts[url].callbacks.push(callback)
     utils.scripts[url].ready = true;
     let cbs = utils.scripts[url].callbacks;
-	cbs.map((cb) => {cb()});
+	cbs.forEach((cb) => {cb()});
   };
   script.src = url;
   document.body.appendChild(script);

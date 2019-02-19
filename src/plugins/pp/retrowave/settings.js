@@ -2,20 +2,22 @@
   
   let name = "retrowave";
   
-  let settingsPP = {
-	name: name,
-	ui: {
-	  template: `
+  let settingsPP = function(){
+	return {
+	  name: name,
+	  ui: {
+		template: `
 <div>
 </div>`,
-	  data: function(){
-		return {
-		};
-	  },
-	  props: ["player"],
-	  methods: {
-	  },
-	  watch: {
+		data: function(){
+		  return {
+		  };
+		},
+		props: ["player"],
+		methods: {
+		},
+		watch: {
+		}
 	  }
 	}
   };

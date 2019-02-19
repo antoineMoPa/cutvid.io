@@ -45,7 +45,7 @@ Vue.component('settings-pp', {
 	  let app = this;
 	  utils.load_script("plugins/pp/" + themeName + "/settings.js", function(){
         // Keeping unique components makes sure the components aren't reset
-		let settings = utils.plugins[themeName + "-settingsPP"];
+		let settings = utils.plugins[themeName + "-settingsPP"]();
 		let uniquePPComponentID = utils.increment_unique_counter("ppcomponent");
 		let componentName = themeName + "-settingsPP" + uniquePPComponentID;
 		Vue.component(componentName, settings.ui);
