@@ -53,14 +53,12 @@ Vue.component('scene-selector', {
 	setCurrentPreview(canvas){
 	  let id = this.scenes[this.selected].id;
 	  let preview = document.querySelectorAll(".scene-preview-" + id)[0];
-	  console.log(canvas);
 	  let tempCanvas = document.createElement("canvas");
 	  let ctx = tempCanvas.getContext("2d");
 	  tempCanvas.width = 100;
 	  tempCanvas.height = 100;
 	  
 	  ctx.drawImage(canvas, 0, 0, 100, 100);
-
 	  preview.src = tempCanvas.toDataURL();
 	},
 	addScene(themeName){
