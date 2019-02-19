@@ -42,7 +42,7 @@ utils.load_script = function(url, callback){
     if(utils.scripts.ready){
       callback();
     } else {
-      utils.scripts.callbacks.push(callback);
+      utils.scripts[url].callbacks.push(callback);
     }
     return;
   }
