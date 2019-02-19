@@ -51,6 +51,10 @@ Vue.component('scene-selector', {
 	},
 	setCurrentPreview(){
 	  let canvas = document.querySelectorAll("#main-player .canvas-container  canvas")[0];
+	  if(canvas == undefined){
+		return;
+	  }
+	  
 	  let id = this.scenes[this.selected].id;
 	  let preview = document.querySelectorAll(".scene-preview-" + id)[0];
 	  let tempCanvas = document.createElement("canvas");
