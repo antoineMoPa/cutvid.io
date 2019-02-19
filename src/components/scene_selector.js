@@ -41,23 +41,22 @@ Vue.component('scene-selector', {
     switch_to(i){
       this.selected = i;
       this.$emit("switch", i);
-	  let canvas = document.querySelectorAll("#main-player .canvas-container  canvas")[0];
-	  this.setCurrentPreview(canvas);
+	  this.$nextTick(function(){
+		this.setCurrentPreview();
+	  });
     },
 	copyScene(i){
 	  let uniqueSceneID = utils.increment_unique_counter("scene");
-	  this.scenes.push({
-		id: uniqueSceneID
-	  });
+	  // todo
 	},
-	setCurrentPreview(canvas){
+	setCurrentPreview(){
+	  let canvas = document.querySelectorAll("#main-player .canvas-container  canvas")[0];
 	  let id = this.scenes[this.selected].id;
 	  let preview = document.querySelectorAll(".scene-preview-" + id)[0];
 	  let tempCanvas = document.createElement("canvas");
 	  let ctx = tempCanvas.getContext("2d");
 	  tempCanvas.width = 100;
 	  tempCanvas.height = 100;
-	  
 	  ctx.drawImage(canvas, 0, 0, 100, 100);
 	  preview.src = tempCanvas.toDataURL();
 	},
@@ -69,6 +68,10 @@ Vue.component('scene-selector', {
 	  };
 	  app.scenes.splice(app.scenes.length, 0, settings);
 	  app.scenesIndex.splice(app.scenesIndex.length, 0, app.scenes.length - 1);
+	  this.switch_to(this.scenesIndex.length - 1);
+	  this.$nextTick(function(){
+		app.setCurrentPreview();
+	  });
     },
     right(sceneIndex){
       if(sceneIndex > this.scenesIndex.length - 1){

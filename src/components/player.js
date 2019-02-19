@@ -9,7 +9,7 @@ Vue.component('panel-selector', {
   </div>`,
   data(){
     return {
-	  panel_names: ["vid. settings", "text settings", "post-processing"],
+	  panel_names: ["Video", "Scene", "Text", "Post-Processing"],
       selected: 0,
     };
   },
@@ -50,6 +50,9 @@ Vue.component('player', {
         <input v-model.number="duration" type="number">
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
+      </div>
+      <div class="switchable-panel">
+        <h3>Scene</h3>
       </div>
       <div class="switchable-panel">
         <h3>Text Settings</h3>
