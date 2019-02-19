@@ -45,7 +45,7 @@ class ShaderPlayerWebGL2 {
 
     {
       // Init canvas
-      var gl = this.canvas.getContext('webgl2');
+      var gl = this.canvas.getContext('webgl2', {preserveDrawingBuffer: true});
 
       // Detect webgl2 native problems
       // (read: my old laptop's graphics card is too old)
