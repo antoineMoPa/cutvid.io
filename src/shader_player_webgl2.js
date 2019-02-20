@@ -95,8 +95,6 @@ class ShaderPlayerWebGL2 {
     this.fps = 10;
     this.canvas = canvas || document.createElement('canvas');
     this.gl = null;
-    this.fragment_shader = '';
-    this.vertex_shader = '';
     this.rttTexture = [];
     this.framebuffer = [];
     this.renderbuffer = [];
@@ -114,7 +112,6 @@ class ShaderPlayerWebGL2 {
     // TODO: synchronize with vue
     this.width = 540;
     this.height = 540;
-    this.passes = 1;
     this.frames = 10;
     this.rendering_gif = false;
     this.mouse = [0, 0];
@@ -183,11 +180,6 @@ class ShaderPlayerWebGL2 {
     div.appendChild(this.canvas);
   }
 
-  set_code(code) {
-    this.fragment_shader = code;
-    this.update();
-  }
-
   set_width(w) {
     this.width = w;
     this.update();
@@ -221,20 +213,7 @@ class ShaderPlayerWebGL2 {
     }
   }
 
-  /* Shader player specific functions */
-
-  set_vertex_shader(code) {
-    this.vertex_shader = code;
-    this.update();
-  }
-
   update() {
-    if (this.fragment_shader == '' || this.vertex_shader == '') {
-      return;
-    }
-
-    this.manage_passes();
-
     // Needed when changing passes number
     // (renderbuffer & stuff)
     if (this.gl == null) {
@@ -242,8 +221,6 @@ class ShaderPlayerWebGL2 {
       this.init_gl();
     }
 
-    // TODO: rename this update_program
-    this.init_program();
     this.animate();
   }
 
@@ -413,84 +390,17 @@ class ShaderPlayerWebGL2 {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   }
   
-  init_program() {
-    const player = this;
-
-    if (this.gl == null) {
-      return;
-    }
-	const gl = this.gl;
-
-    if (this.shaderProgram == null) {
-	  this.shaderProgram = new ShaderProgram(gl);
-	}
-	this.shaderProgram.compile(this.vertex_shader, this.fragment_shader);
-  }
-
-  // TODO: TEST SOUND
-  play_sound() {
-    const gl = this.gl;
-    this.draw_gl(0);
-    gl.readPixels(0, 0, this.width, this.height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels);
-
-    // Get an AudioBufferSourceNode.
-    // This is the AudioNode to use when we want to play an AudioBuffer
-    const source = this.audioCtx.createBufferSource();
-    const frameCount = this.audioCtx.sampleRate * 1.0;
-    const audioArrayBuffer = this.audioCtx.createBuffer(1, 48000, 48000);
-    const nowBuffering = audioArrayBuffer.getChannelData(0);
-
-    this.currentSource = source;
-
-    let i = 0;
-    let j = 0;
-
-    while (j < 48000) {
-      // Copy and skip alpha
-      nowBuffering[j + 0] = (this.pixels[i + 0] / 255) - 0.5;
-      nowBuffering[j + 1] = (this.pixels[i + 1] / 255) - 0.5;
-      nowBuffering[j + 2] = (this.pixels[i + 2] / 255) - 0.5;
-      i += 4;
-      j += 3;
-    }
-
-    // set the buffer in the AudioBufferSourceNode
-    source.buffer = audioArrayBuffer;
-
-    // connect the AudioBufferSourceNode to the
-    // destination so we can hear the sound
-    source.connect(this.audioCtx.destination);
-
-    if (this.lastChunk == 0) {
-      // start the source playing
-      source.start(0);
-      this.lastChunk = this.audioCtx.currentTime + 1;
-    } else {
-      source.start(this.lastChunk);
-      this.lastChunk += 1;
-    }
-
-    // Find some resonable time for next computation
-    const deltat = (this.lastChunk - this.audioCtx.currentTime) * 1000 - 500;
-    this.timeout = window.setTimeout(this.play_sound.bind(this), deltat);
-  }
-
   draw_gl(time) {
     const gl = this.gl;
 	
-    if (gl == null || this.shaderProgram == null) {
+    if (gl == null) {
       return;
     }
 	
-	let program = this.shaderProgram.program;
-	
-	if (program == null) {
-	  return;
-	}
-	
-	this.shaderProgram.use();
-	
-    for (let pass = 0; pass < this.passes; pass++) {
+    for (let pass = 0; pass < this.passes.length; pass++) {
+	  this.passes[pass].use();
+	  let program = this.passes[pass].program;
+	  
       if (pass < this.passes - 1) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[pass]);
       } else {
@@ -609,78 +519,5 @@ class ShaderPlayerWebGL2 {
     }
 
     window.requestAnimationFrame(_animate.bind(this));
-  }
-
-  manage_passes() {
-    const c = this.fragment_shader;
-    // Verify if passes is set there
-    var re = /\/\/PASSES=([0-6])/;
-    var result = re.exec(c);
-
-    if (result == null) {
-      this.passes_defined_in_code = false;
-    } else {
-      this.passes_defined_in_code = true;
-      this.passes = parseInt(result[1]);
-    }
-
-    // Verify if frames is set in code
-    var re = /\/\/FRAMES=([0-9]*)/;
-    var result = re.exec(c);
-
-    if (result == null) {
-      this.frames_defined_in_code = false;
-    } else {
-      const qty = parseInt(result[1]);
-      if (isNaN(qty) || qty < 1) {
-        this.frames_defined_in_code = false;
-      } else {
-        this.frames_defined_in_code = true;
-        this.frames = qty;
-      }
-    }
-  }
-
-  getStandaloneHTML() {
-    let content = '';
-
-    content += '<!DOCTYPE html>';
-    content += '<html>';
-    content += '<head>';
-    content += '<meta charset="utf-8">';
-    content += '<style>';
-    content += '*{margin:0;padding:0;overflow:hidden;}';
-    content += '</style>';
-    content += '</head>';
-    content += '<body>';
-    content += '<script type="text/javascript" src="ShaderPlayerWebGL2.js"></script>\n';
-    content += '<script type="text/javascript">\n';
-    content += 'player = new ShaderPlayerWebGL2();\n';
-    content += 'player.set_container(document.body);\n';
-    content += 'fetch("vertex_shader.glsl").then((response) => \n';
-    content += '{response.text().then((text) => {\n';
-    content += '    player.set_vertex_shader(text);\n';
-    content += '})});\n';
-    content += 'fetch("sketch.glsl").then((response) => \n';
-    content += '{response.text().then((text) => {\n';
-    content += '    player.set_code(text);\n';
-    content += '})});\n';
-    content += '</script>';
-    content += '</body>';
-    content += '</html>';
-
-    return content;
-  }
-
-  standalone_files() {
-    const index = this.getStandaloneHTML();
-    const sketch = this.fragment_shader;
-
-    return {
-      'index.html': index,
-      'sketch.glsl': sketch,
-      'vertex_shader.glsl': this.vertex_shader,
-      'ShaderPlayerWebGL2.js': ShaderPlayerWebGL2.toSource()
-    };
   }
 }

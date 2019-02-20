@@ -102,9 +102,11 @@ Vue.component('player', {
       
       let container = document.querySelectorAll("#main-player .canvas-container")[0];
       app.player.set_container(container);
-      app.player.set_vertex_shader(vertex);
-      app.player.set_code(fragment);
       
+	  let pass = new ShaderProgram(app.player.gl);
+	  pass.compile(vertex, fragment);
+      app.player.passes.push(pass);
+	  
       app.textCanvas.width = app.width;
       app.textCanvas.height = app.height;
       app.player.set_width(app.width);
