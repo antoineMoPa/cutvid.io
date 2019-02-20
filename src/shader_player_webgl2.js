@@ -236,7 +236,7 @@ class ShaderPlayerWebGL2 {
 
     const gl = this.gl;
 
-    const texture = gl.createTexture();
+    var texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     // Because images have to be download over the internet
     // they might take a moment until they are ready.
@@ -250,7 +250,7 @@ class ShaderPlayerWebGL2 {
     const border = 0;
     const srcFormat = gl.RGBA;
     const srcType = gl.UNSIGNED_BYTE;
-    const pixel = new Uint8Array([0, 0, 255, 255]); // opaque blue
+    var pixel = new Uint8Array([0, 0, 255, 255]); // opaque blue
     gl.texImage2D(
       gl.TEXTURE_2D, level, internalFormat,
       width, height, border, srcFormat, srcType,

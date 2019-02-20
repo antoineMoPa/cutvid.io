@@ -175,6 +175,7 @@ Vue.component('player', {
 	  let app = this;
 	  app.player.passes.splice(0);
 	  app.player.passes[0] = effects[0];
+	  this.$refs.themeSettings.updateTexts();
     },
     render(options) {
       if (typeof (options) === 'undefined') {
