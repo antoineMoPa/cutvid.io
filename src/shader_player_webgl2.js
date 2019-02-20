@@ -398,10 +398,10 @@ class ShaderPlayerWebGL2 {
     }
 	
     for (let pass = 0; pass < this.passes.length; pass++) {
-	  this.passes[pass].use();
-	  let program = this.passes[pass].program;
+	  this.passes[pass].shaderProgram.use();
+	  let program = this.passes[pass].shaderProgram.program;
 	  
-      if (pass < this.passes - 1) {
+      if (pass < this.passes.length - 1) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[pass]);
       } else {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);

@@ -60,7 +60,7 @@ Vue.component('player', {
       </div>
       <div class="switchable-panel">
         <h3>Post Processing</h3>
-        <settings-pp v-on:effectsChanged="effectsChanged"/>
+        <settings-pp v-on:effectsChanged="effectsChanged" v-bind:player="player"/>
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
@@ -92,41 +92,21 @@ Vue.component('player', {
 
     window.addEventListener("resize", app.on_resize);
 
-    function on_shaders_ready(vertex, fragment){
-      var textCanvas = document.createElement("canvas");
-      app.textCanvas = textCanvas;    
-      let ctx = textCanvas.getContext("2d");
-      ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
-      
-      app.player = new ShaderPlayerWebGL2();
-      
-      let container = document.querySelectorAll("#main-player .canvas-container")[0];
-      app.player.set_container(container);
-      
-	  let pass = new ShaderProgram(app.player.gl);
-	  pass.compile(vertex, fragment);
-      app.player.passes.push(pass);
-	  
-      app.textCanvas.width = app.width;
-      app.textCanvas.height = app.height;
-      app.player.set_width(app.width);
-      app.player.set_height(app.height);
-      app.on_resize();
-    }
     
-    Promise.all([
-      fetch("plugins/pp/"+theme_name+"/vertex.glsl"),
-      fetch("plugins/pp/"+theme_name+"/fragment.glsl")
-    ]).then((values) => {
-      Promise.all([
-        values[0].text(),
-        values[1].text()
-      ]).then((values) => {
-        let vertex = values[0];
-        let fragment = values[1];
-        on_shaders_ready(vertex, fragment);
-      });
-    });
+	var textCanvas = document.createElement("canvas");
+	app.textCanvas = textCanvas;    
+	let ctx = textCanvas.getContext("2d");
+	ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
+    app.textCanvas.width = app.width;
+	app.textCanvas.height = app.height;
+	
+	app.player = new ShaderPlayerWebGL2();
+	app.player.set_width(app.width);
+	app.player.set_height(app.height);
+	app.on_resize();
+	let container = document.querySelectorAll("#main-player .canvas-container")[0];
+	app.player.set_container(container);
+	
   },
   methods: {
     set_dimensions(w, h){
@@ -191,8 +171,10 @@ Vue.component('player', {
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
     },
-    effectsChanged(){
-      
+    effectsChanged(effects){
+	  let app = this;
+	  app.player.passes.splice(0);
+	  app.player.passes[0] = effects[0];
     },
     render(options) {
       if (typeof (options) === 'undefined') {

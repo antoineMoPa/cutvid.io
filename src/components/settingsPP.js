@@ -40,7 +40,34 @@ Vue.component('settings-pp', {
       effectsIndex: []
     };
   },
+  props: ["player"],
   methods: {
+    loadProgram(name, onProgramReady) {
+      let app = this;
+      function onShadersReady(vertex, fragment){
+	    let pass = new ShaderProgram(app.player.gl);
+        
+	    pass.compile(vertex, fragment);
+	    
+        onProgramReady(pass);
+      }
+      
+      Promise.all([
+	    fetch("plugins/pp/" + name + "/vertex.glsl"),
+	    fetch("plugins/pp/" + name + "/fragment.glsl")
+      ]).then((values) => {
+	    Promise.all([
+	      values[0].text(),
+	      values[1].text()
+	    ]).then((values) => {
+	      let vertex = values[0];
+	      let fragment = values[1];
+	      this.vertex = vertex;
+	      this.fragment = fragment;
+	      onShadersReady(vertex, fragment);
+	    });
+      });
+    },
     addEffect(themeName){
 	  let app = this;
 	  utils.load_script("plugins/pp/" + themeName + "/settings.js", function(){
@@ -48,12 +75,21 @@ Vue.component('settings-pp', {
 		let settings = utils.plugins[themeName + "-settingsPP"]();
 		let uniquePPComponentID = utils.increment_unique_counter("ppcomponent");
 		let componentName = themeName + "-settingsPP" + uniquePPComponentID;
-		Vue.component(componentName, settings.ui);
+		let comp = Vue.component(componentName, settings.ui);
 		settings.component = componentName;
 		settings.id = uniquePPComponentID;
-		app.effects.splice(app.effects.length, 0, settings);
-		app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
-		app.applyEffectsChange();
+
+        app.loadProgram(themeName, function(program){
+          settings.shaderProgram = program;
+
+          settings.uniforms = {};
+          
+          // Insert effect in array
+          app.effects.splice(app.effects.length, 0, settings);
+          // Add its index
+		  app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
+          app.applyEffectsChange();
+        });
 	  });
     },
     down(effectIndex){
@@ -91,7 +127,14 @@ Vue.component('settings-pp', {
       this.applyEffectsChange();
     },
     applyEffectsChange(){
-      this.$emit("effectsChanged", this.$data);
+      let app = this;
+      let orderedEffects = [];
+      
+      this.effectsIndex.forEach(function(i){
+        orderedEffects.push(app.effects[i]);
+      });
+      
+      this.$emit("effectsChanged", orderedEffects);
     }
   },
   mounted(){
