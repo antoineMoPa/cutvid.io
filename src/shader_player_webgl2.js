@@ -1,7 +1,98 @@
+class ShaderProgram {
+  constructor(gl){
+	this.gl = gl;
+	this.fragment_shader_object = null;
+	this.vertex_shader_object = null;
+  }
+  
+  compile(vertex_shader_code, fragment_shader_code) {
+	let compiled = false;
+	let program = null;
+    const player = this;
+	
+    if (this.gl == null) {
+      return;
+    }
+
+    const gl = this.gl;
+	
+	this.deleteProgram();
+	
+    program = gl.createProgram();
+
+    const vertex_shader = add_shader(gl.VERTEX_SHADER, vertex_shader_code);
+
+    const fragment_shader = add_shader(gl.FRAGMENT_SHADER, fragment_shader_code);
+
+    this.fragment_shader_object = fragment_shader;
+    this.vertex_shader_object = vertex_shader;
+
+    function add_shader(type, content) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, content);
+      gl.compileShader(shader);
+
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        const err = gl.getShaderInfoLog(shader);
+
+        player.on_error_listener(err);
+      } else {
+        //
+      }
+
+      gl.attachShader(program, shader);
+
+      return shader;
+    }
+
+    if (vertex_shader == -1 || fragment_shader == -1) {
+	  console.error("Shader compilation error.");
+      return;
+    }
+
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.log(gl.getProgramInfoLog(program));
+    }
+
+    gl.useProgram(program);
+
+    const positionAttribute = gl.getAttribLocation(program, 'position');
+	
+	gl.enableVertexAttribArray(positionAttribute);
+    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
+	
+    compiled = true;
+	
+	this.program = program;
+  }
+  
+  use() {
+	this.gl.useProgram(this.program);
+  }
+  
+  deleteProgram() {
+	const gl = this.gl;
+	// Delete previous program
+	if (this.program != undefined) {
+      gl.useProgram(this.program);
+      if (this.fragment_shader_object > -1) {
+        gl.detachShader(this.program, this.fragment_shader_object);
+		gl.deleteShader(this.fragment_shader);
+      }
+      if (this.vertex_shader_object > -1) {
+        gl.detachShader(this.program, this.vertex_shader_object);
+		gl.deleteShader(this.vertex_shader);
+      }
+      gl.deleteProgram(this.program);
+    }
+  }
+}
+
 class ShaderPlayerWebGL2 {
   constructor(canvas) {
     this.fps = 10;
-    this.compiled = false;
     this.canvas = canvas || document.createElement('canvas');
     this.gl = null;
     this.fragment_shader = '';
@@ -18,6 +109,7 @@ class ShaderPlayerWebGL2 {
     this.anim_timeout = null;
 	this.paused = false;
 	this.passes = [];
+	this.shaderProgram = null;
 
     // TODO: synchronize with vue
     this.width = 540;
@@ -259,12 +351,10 @@ class ShaderPlayerWebGL2 {
   }
 
   init_gl() {
-    this.compiled = false;
-
     if (this.gl == null) {
       return;
     }
-
+	
     const gl = this.gl;
     let ww = 2;
     let hh = 2;
@@ -321,143 +411,20 @@ class ShaderPlayerWebGL2 {
     const tri = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tri);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    this.compiled = true;
   }
-
-  create_program(vertex_shader, fragment_shader) {
-	let compiled = false;
-	let program = null;
-    const player = this;
-
-    if (this.gl == null) {
-      return;
-    }
-
-    const gl = this.gl;
-
-    program = gl.createProgram();
-
-    const vertex_shader = add_shader(gl.VERTEX_SHADER, vertex_shader);
-
-    const fragment_shader = add_shader(gl.FRAGMENT_SHADER, fragment_shader);
-
-    this.fragment_shader_object = fragment_shader;
-    this.vertex_shader_object = vertex_shader;
-
-    function add_shader(type, content) {
-      const shader = gl.createShader(type);
-      gl.shaderSource(shader, content);
-      gl.compileShader(shader);
-
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        const err = gl.getShaderInfoLog(shader);
-
-        player.on_error_listener(err);
-      } else {
-        //
-      }
-
-      gl.attachShader(program, shader);
-
-      return shader;
-    }
-
-    if (vertex_shader == -1 || fragment_shader == -1) {
-	  console.error("Shader compilation error.");
-      return;
-    }
-
-    gl.linkProgram(program);
-
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.log(gl.getProgramInfoLog(program));
-    }
-
-    gl.useProgram(program);
-
-    const positionAttribute = gl.getAttribLocation(program, 'position');
-	
-	gl.enableVertexAttribArray(positionAttribute);
-    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
-	
-    compiled = true;
-
-	return program;
-  }
-
   
   init_program() {
-    this.compiled = false;
     const player = this;
 
     if (this.gl == null) {
       return;
     }
+	const gl = this.gl;
 
-    const gl = this.gl;
-
-    // Delete previous program
-    if (typeof gl.program !== 'undefined') {
-      gl.useProgram(gl.program);
-      if (this.fragment_shader_object > -1) {
-        gl.detachShader(gl.program, this.fragment_shader_object);
-		gl.deleteShader(gl.fragment_shader);
-      }
-      if (this.vertex_shader_object > -1) {
-        gl.detachShader(gl.program, this.vertex_shader_object);
-		gl.deleteShader(gl.vertex_shader);
-      }
-      gl.deleteProgram(gl.program);
-    }
-
-    gl.program = gl.createProgram();
-
-    const vertex_shader = add_shader(gl.VERTEX_SHADER, this.vertex_shader);
-
-    const fragment_shader = add_shader(gl.FRAGMENT_SHADER, this.fragment_shader);
-
-    this.fragment_shader_object = fragment_shader;
-    this.vertex_shader_object = vertex_shader;
-
-    function add_shader(type, content) {
-      const shader = gl.createShader(type);
-      gl.shaderSource(shader, content);
-      gl.compileShader(shader);
-
-      // TODO: Find out right error pre
-
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        const err = gl.getShaderInfoLog(shader);
-
-        player.on_error_listener(err);
-      } else {
-        //
-      }
-
-      gl.attachShader(gl.program, shader);
-
-      return shader;
-    }
-
-    if (vertex_shader == -1 || fragment_shader == -1) {
-	  console.error("Shader compilation error.");
-      return;
-    }
-
-    gl.linkProgram(gl.program);
-
-    if (!gl.getProgramParameter(gl.program, gl.LINK_STATUS)) {
-      console.log(gl.getProgramInfoLog(gl.program));
-    }
-
-    gl.useProgram(gl.program);
-
-    const positionAttribute = gl.getAttribLocation(gl.program, 'position');
-	
-	gl.enableVertexAttribArray(positionAttribute);
-    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
-	
-    this.compiled = true;
+    if (this.shaderProgram == null) {
+	  this.shaderProgram = new ShaderProgram(gl);
+	}
+	this.shaderProgram.compile(this.vertex_shader, this.fragment_shader);
   }
 
   // TODO: TEST SOUND
@@ -509,16 +476,20 @@ class ShaderPlayerWebGL2 {
   }
 
   draw_gl(time) {
-    if (!this.compiled) {
-      return;
-    }
-
     const gl = this.gl;
-
-    if (gl == null || gl.program == null || typeof gl.program === 'undefined') {
+	
+    if (gl == null || this.shaderProgram == null) {
       return;
     }
-
+	
+	let program = this.shaderProgram.program;
+	
+	if (program == null) {
+	  return;
+	}
+	
+	this.shaderProgram.use();
+	
     for (let pass = 0; pass < this.passes; pass++) {
       if (pass < this.passes - 1) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[pass]);
@@ -530,7 +501,7 @@ class ShaderPlayerWebGL2 {
       if (pass > 0) {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass - 1]);
-        gl.uniform1i(gl.getUniformLocation(gl.program, 'lastPass'), pass - 1);
+        gl.uniform1i(gl.getUniformLocation(program, 'lastPass'), pass - 1);
       }
 
       let i = 0;
@@ -543,20 +514,20 @@ class ShaderPlayerWebGL2 {
           gl.bindTexture(gl.TEXTURE_2D, null);
           continue;
         }
-        var att = gl.getUniformLocation(gl.program, `pass${i}`);
+        var att = gl.getUniformLocation(program, `pass${i}`);
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[i]);
         gl.uniform1i(att, i);
       }
 
       for (let j = 0; j < this.textures.length; j++, i++) {
         gl.activeTexture(gl.TEXTURE0 + i);
-        var att = gl.getUniformLocation(gl.program, `texture${j}`);
+        var att = gl.getUniformLocation(program, `texture${j}`);
         gl.bindTexture(gl.TEXTURE_2D, this.textures[j]);
         gl.uniform1i(att, i);
       }
 
       gl.uniform2fv(
-        gl.getUniformLocation(gl.program, 'renderBufferRatio'),
+        gl.getUniformLocation(program, 'renderBufferRatio'),
         [
           this.renderBufferDim[0] / this.width,
           this.renderBufferDim[1] / this.height
@@ -564,24 +535,24 @@ class ShaderPlayerWebGL2 {
       );
 
       gl.uniform2fv(
-        gl.getUniformLocation(gl.program, 'mouse'),
+        gl.getUniformLocation(program, 'mouse'),
         [this.mouse[0], this.mouse[1]]
       );
 
-      const passAttribute = gl.getUniformLocation(gl.program, 'pass');
+      const passAttribute = gl.getUniformLocation(program, 'pass');
       gl.uniform1i(passAttribute, pass + 1);
 
-      const soundTimeAttribute = gl.getUniformLocation(gl.program, 'soundTime');
+      const soundTimeAttribute = gl.getUniformLocation(program, 'soundTime');
 
       gl.uniform1f(soundTimeAttribute, this.lastChunk);
 
       // Set time attribute
       const tot_time = this.frames * this.anim_timeout;
 
-      const timeAttribute = gl.getUniformLocation(gl.program, 'time');
+      const timeAttribute = gl.getUniformLocation(program, 'time');
       gl.uniform1f(timeAttribute, time);
 
-      const iGlobalTimeAttribute = gl.getUniformLocation(gl.program, 'iGlobalTime');
+      const iGlobalTimeAttribute = gl.getUniformLocation(program, 'iGlobalTime');
       const date = new Date();
       let gtime = (date.getTime()) / 1000.0 % (3600 * 24);
       // Add seconds
@@ -589,7 +560,7 @@ class ShaderPlayerWebGL2 {
       gl.uniform1f(iGlobalTimeAttribute, gtime);
 
 
-      const iResolutionAttribute = gl.getUniformLocation(gl.program, 'iResolution');
+      const iResolutionAttribute = gl.getUniformLocation(program, 'iResolution');
 
       gl.uniform3fv(
         iResolutionAttribute,
@@ -604,7 +575,7 @@ class ShaderPlayerWebGL2 {
       // Screen ratio
       const ratio = this.width / this.height;
 
-      const ratioAttribute = gl.getUniformLocation(gl.program, 'ratio');
+      const ratioAttribute = gl.getUniformLocation(program, 'ratio');
       gl.uniform1f(ratioAttribute, ratio);
 
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
