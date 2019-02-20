@@ -17,6 +17,7 @@ class ShaderPlayerWebGL2 {
     this.window_focused = true;
     this.anim_timeout = null;
 	this.paused = false;
+	this.passes = [];
 
     // TODO: synchronize with vue
     this.width = 540;
@@ -323,6 +324,68 @@ class ShaderPlayerWebGL2 {
     this.compiled = true;
   }
 
+  create_program(vertex_shader, fragment_shader) {
+	let compiled = false;
+	let program = null;
+    const player = this;
+
+    if (this.gl == null) {
+      return;
+    }
+
+    const gl = this.gl;
+
+    program = gl.createProgram();
+
+    const vertex_shader = add_shader(gl.VERTEX_SHADER, vertex_shader);
+
+    const fragment_shader = add_shader(gl.FRAGMENT_SHADER, fragment_shader);
+
+    this.fragment_shader_object = fragment_shader;
+    this.vertex_shader_object = vertex_shader;
+
+    function add_shader(type, content) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, content);
+      gl.compileShader(shader);
+
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        const err = gl.getShaderInfoLog(shader);
+
+        player.on_error_listener(err);
+      } else {
+        //
+      }
+
+      gl.attachShader(program, shader);
+
+      return shader;
+    }
+
+    if (vertex_shader == -1 || fragment_shader == -1) {
+	  console.error("Shader compilation error.");
+      return;
+    }
+
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.log(gl.getProgramInfoLog(program));
+    }
+
+    gl.useProgram(program);
+
+    const positionAttribute = gl.getAttribLocation(program, 'position');
+	
+	gl.enableVertexAttribArray(positionAttribute);
+    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
+	
+    compiled = true;
+
+	return program;
+  }
+
+  
   init_program() {
     this.compiled = false;
     const player = this;
