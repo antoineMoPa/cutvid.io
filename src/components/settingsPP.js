@@ -38,7 +38,8 @@ Vue.component('settings-pp', {
   data(){
     return {
 	  effects: [],
-      effectsIndex: []
+      effectsIndex: [],
+	  moving: false
     };
   },
   props: ["player"],
@@ -98,29 +99,31 @@ Vue.component('settings-pp', {
 	  });
     },
     down(effectIndex){
-      if(effectIndex > this.effectsIndex.length - 1){
+      if(this.moving || effectIndex > this.effectsIndex.length - 1){
         return;
       }
-      
+      this.moving = true;
       let old = this.effectsIndex[effectIndex];
       this.effectsIndex.splice(effectIndex, 1);
       
       setTimeout(function(){
         this.effectsIndex.splice(effectIndex + 1, 0, old);
         this.applyEffectsChange();
+		this.moving = false;
       }.bind(this), 300);
     },
     up(effectIndex){
-      if(effectIndex < 1){
+      if(this.moving || effectIndex < 1){
         return;
       }
-
+	  this.moving = true;
       let old = this.effectsIndex[effectIndex];
       this.effectsIndex.splice(effectIndex, 1);
       
       setTimeout(function(){
         this.effectsIndex.splice(effectIndex - 1, 0, old);
         this.applyEffectsChange();
+		this.moving = false;
       }.bind(this), 300);
     },
     remove(effectIndex){
