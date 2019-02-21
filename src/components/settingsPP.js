@@ -29,10 +29,11 @@ Vue.component('settings-pp', {
         </div>
       </div>
     </transition-group>
-    <button v-on:click="addEffect('default')">
+    <button v-on:click="effects_selector">
       <img src="icons/feather-dark/plus.svg" width="20"/>
       Add effect
     </button>
+    <effects-selector v-on:chooseEffect="addEffect"/>
   </div>`,
   data(){
     return {
@@ -145,7 +146,15 @@ Vue.component('settings-pp', {
       });
 
       this.$emit("effectsChanged", orderedEffects);
-    }
+    },
+	effects_selector(){
+	  let effects_selector = document.querySelectorAll(".effects-selector")[0];
+	  effects_selector.classList.toggle("hidden");
+	  let close_button = effects_selector.querySelectorAll(".close-button")[0];
+	  close_button.addEventListener("click", function(){
+		effects_selector.classList.add("hidden");
+	  });
+	}
   },
   mounted(){
     this.addEffect('textLayer');
