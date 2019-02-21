@@ -431,11 +431,20 @@ Vue.component('player', {
       alert("Sorry, you cannot buy videos yet.");
     },
 	loadTextCanvas(){
-	  if(this.playerAlreadyHasTexture){
+	  // "Mutex" bool
+	  if(this.loadingTexture != undefined && this.loadingTexture == true){
+		setTimeout(this.loadTextCanvas, 1000 * Math.random());
+		return;
+	  }
+	  this.loadingTexture = true;
+	  let app = this;
+	  while(this.player.textures.length > 0){
         this.player.delete_texture(0);
-      }
-      this.player.add_texture(this.textCanvas.toDataURL());
-      this.playerAlreadyHasTexture = true;
+	  }
+	  
+	  this.player.add_texture(this.textCanvas.toDataURL(), function(){
+		app.loadingTexture = false;
+	  });
 	}
   },
   watch: {

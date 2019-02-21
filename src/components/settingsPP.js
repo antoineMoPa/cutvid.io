@@ -142,7 +142,7 @@ Vue.component('settings-pp', {
     }
   },
   mounted(){
-    this.addEffect('default');
+    //this.addEffect('default');
     this.addEffect('vignette');
   }
 });

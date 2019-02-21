@@ -97,8 +97,6 @@ class ShaderPlayerWebGL2 {
     this.renderbuffer = [];
     this.renderBufferDim = [];
     this.textures = [];
-    this.passes_defined_in_code = false;
-    this.frames_defined_in_code = false;
     this.native_webgl2_supported = false;
     this.window_focused = true;
     this.anim_timeout = null;
@@ -222,37 +220,33 @@ class ShaderPlayerWebGL2 {
   // Initialize a texture and load an image.
   // When the image finished loading copy it into the texture.
   //
-  add_texture(url) {
+  add_texture(url, ready) {
+	let app = this;
+
     function isPowerOf2(value) {
       return (value & (value - 1)) == 0;
     }
+	
+	
+    var gl = this.gl;
 
-    const gl = this.gl;
-
-    var texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    // Because images have to be download over the internet
-    // they might take a moment until they are ready.
-    // Until then put a single pixel in the texture so we can
-    // use it immediately. When the image has finished downloading
-    // we'll update the texture with the contents of the image.
-    const level = 0;
-    const internalFormat = gl.RGBA;
-    const width = 1;
-    const height = 1;
-    const border = 0;
-    const srcFormat = gl.RGBA;
-    const srcType = gl.UNSIGNED_BYTE;
-    var pixel = new Uint8Array([0, 0, 255, 255]); // opaque blue
-    gl.texImage2D(
-      gl.TEXTURE_2D, level, internalFormat,
-      width, height, border, srcFormat, srcType,
-      pixel);
+    var level = 0;
+    var internalFormat = gl.RGBA;
+    var width = 1;
+    var height = 1;
+    var border = 0;
+    var srcFormat = gl.RGBA;
+    var srcType = gl.UNSIGNED_BYTE;
+    var pixel = new Uint8Array([0, 0, 0, 0]);
+    
 
     var image = new Image();
 	
     image.addEventListener("load", function () {
+	  var texture = gl.createTexture();
 	  gl.bindTexture(gl.TEXTURE_2D, texture);
+	  app.textures.push(texture);
+
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
@@ -270,11 +264,10 @@ class ShaderPlayerWebGL2 {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       }
+	  ready();
     });
 	
     image.src = url;
-
-    this.textures.push(texture);
   }
 
   delete_texture(index) {
@@ -284,7 +277,7 @@ class ShaderPlayerWebGL2 {
 	  console.error("attempt to delete texture which does not exist");
 	  return;
 	}
-	
+
     gl.deleteTexture(this.textures[index]);
     this.textures.splice(index, 1);
   }
@@ -301,7 +294,11 @@ class ShaderPlayerWebGL2 {
     // Delete previous textures
     for (var i = 0; i < this.rttTexture.length; i++) {
       gl.deleteTexture(this.rttTexture[i]);
+	}
+	for (var i = 0; i < this.renderbuffer.length; i++) {
       gl.deleteRenderbuffer(this.renderbuffer[i]);
+	}
+    for (var i = 0; i < this.framebuffer.length; i++) {
       gl.deleteFramebuffer(this.framebuffer[i]);
     }
 
@@ -369,32 +366,22 @@ class ShaderPlayerWebGL2 {
       } else {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       }
-
+	  
+	  gl.activeTexture(gl.TEXTURE0);
       // Manage lastpass
       if (pass > 0) {
-        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-1]);
         gl.uniform1i(gl.getUniformLocation(program, 'tex_in'), 0);
-      }
+      } else {
+		gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
+	  }
 
       let i = 1;
-	  
-      // Warning: i is continued in other loop
-      for (; i < this.passes; i++) {
-        gl.activeTexture(gl.TEXTURE0 + i);
-        if (i - 1 == pass) {
-          // Unbind current to prevent feedback loop
-          gl.bindTexture(gl.TEXTURE_2D, null);
-          continue;
-        }
-        var att = gl.getUniformLocation(program, `pass${i}`);
-        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[i]);
-        gl.uniform1i(att, i);
-      }
 
       for (let j = 0; j < this.textures.length; j++, i++) {
         gl.activeTexture(gl.TEXTURE0 + i);
-        var att = gl.getUniformLocation(program, `texture${j}`);
+        var att = gl.getUniformLocation(program, 'texture' + j);
+		
         gl.bindTexture(gl.TEXTURE_2D, this.textures[j]);
         gl.uniform1i(att, i);
       }
@@ -469,7 +456,11 @@ class ShaderPlayerWebGL2 {
 	  let time = (new Date().getTime() % 2000) / 2000;
       // When rendering gif, draw is done elsewhere
       if (!player.rendering_gif && player.window_focused && !player.paused) {
-        player.draw_gl(time);
+		try{
+          player.draw_gl(time);
+		} catch (e) {
+		  console.error(e);
+		}
       }
 	  
       window.requestAnimationFrame(_animate.bind(this));
