@@ -88,19 +88,10 @@ void main(void){
         col *= 0.8;
     }
     
-    col *= 1.0 - length(p);
-    col *= 1.0 - pow(length(p), 2.0);
-    col *= 1.0 - pow(length(p), 4.0);
-    col *= 1.0 - pow(length(p), 8.0);
-    col *= 1.0 - pow(length(p), 16.0);
-    col *= 1.0 - pow(length(p), 32.0);
-    
     if(p_backup.y < 0.0){
         col.r += 0.7 * clamp(cos(p.x * 10.0 - p.x * pow(2.0 - p.y,2.0) * 10.0),0.4, 0.5) - 0.3;
         col.r += 0.7 * clamp(cos(pow(1.0 + p.y, 2.0) * 100.0 - time * 6.2832),0.4, 0.5) - 0.3;
     }
-    
-    col *= 1.0 + length(p) * 0.2 * pow(0.8, 1.0);
     
 	vec2 uv = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
 	

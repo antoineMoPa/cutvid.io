@@ -34,11 +34,8 @@ class ShaderProgram {
 
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         const err = gl.getShaderInfoLog(shader);
-
-        player.on_error_listener(err);
-      } else {
-        //
-      }
+        console.error(err);
+      } 
 
       gl.attachShader(program, shader);
 
@@ -116,11 +113,6 @@ class ShaderPlayerWebGL2 {
     this.rendering_gif = false;
     this.mouse = [0, 0];
 
-    // Better fit mobile screens
-    if (window.innerWidth < 540) {
-      this.width = window.innerWidth;
-    }
-
     // Audio stuff
     this.pixels = new Uint8Array(this.width * this.height * 4);
     this.audioCtx = new AudioContext();
@@ -146,7 +138,6 @@ class ShaderPlayerWebGL2 {
 
       this.canvas.width = this.width;
       this.canvas.height = this.height;
-      this.canvas.addEventListener('mousemove', this.canvas_mousemove.bind(this));
       this.gl = gl;
       this.init_gl();
     }
@@ -183,11 +174,13 @@ class ShaderPlayerWebGL2 {
   set_width(w) {
     this.width = w;
     this.update();
+	this.init_gl();
   }
 
   set_height(h) {
     this.height = h;
     this.update();
+	this.init_gl();
   }
 
   set_fps(fps) {
@@ -296,37 +289,6 @@ class ShaderPlayerWebGL2 {
     this.textures.splice(index, 1);
   }
 
-  // Recursive dom tool to find page offset
-  // of an element
-  offset_parent(element, offset) {
-    if (element.offsetParent != null) {
-      const p = this.offset_parent(element.offsetParent, offset);
-    } else {
-      offset[0] -= window.scrollX;
-      offset[1] -= window.scrollY;
-    }
-
-    if (element.offsetLeft) {
-      offset[0] += element.offsetLeft - element.scrollLeft;
-    }
-    if (element.offsetTop) {
-      offset[1] += element.offsetTop - element.scrollTop;
-    }
-
-    return offset;
-  }
-
-  canvas_mousemove(e) {
-    const c = e.target;
-    const offset = this.offset_parent(c, [0, 0]);
-
-    const ratio = c.width / c.height;
-    const x = ((e.clientX - offset[0]) / c.width - 0.5) * ratio;
-    const y = ((e.clientY - offset[1]) / c.width - 0.5 / ratio) * ratio;
-
-    this.mouse = [x, -y];
-  }
-
   init_gl() {
     if (this.gl == null) {
       return;
@@ -352,7 +314,8 @@ class ShaderPlayerWebGL2 {
     }
 
     this.renderBufferDim = [ww, hh];
-
+	
+	// The 10 here limits the pass number
     for (var i = 0; i < 10; i++) {
       this.rttTexture[i] = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[i]);
@@ -396,7 +359,7 @@ class ShaderPlayerWebGL2 {
     if (gl == null) {
       return;
     }
-	
+
     for (let pass = 0; pass < this.passes.length; pass++) {
 	  this.passes[pass].shaderProgram.use();
 	  let program = this.passes[pass].shaderProgram.program;
@@ -410,16 +373,16 @@ class ShaderPlayerWebGL2 {
       // Manage lastpass
       if (pass > 0) {
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass - 1]);
-        gl.uniform1i(gl.getUniformLocation(program, 'lastPass'), pass - 1);
+        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-1]);
+        gl.uniform1i(gl.getUniformLocation(program, 'tex_in'), 0);
       }
 
-      let i = 0;
-
+      let i = 1;
+	  
       // Warning: i is continued in other loop
       for (; i < this.passes; i++) {
         gl.activeTexture(gl.TEXTURE0 + i);
-        if (i == pass) {
+        if (i - 1 == pass) {
           // Unbind current to prevent feedback loop
           gl.bindTexture(gl.TEXTURE_2D, null);
           continue;
@@ -452,10 +415,6 @@ class ShaderPlayerWebGL2 {
       const passAttribute = gl.getUniformLocation(program, 'pass');
       gl.uniform1i(passAttribute, pass + 1);
 
-      const soundTimeAttribute = gl.getUniformLocation(program, 'soundTime');
-
-      gl.uniform1f(soundTimeAttribute, this.lastChunk);
-
       // Set time attribute
       const tot_time = this.frames * this.anim_timeout;
 
@@ -487,10 +446,8 @@ class ShaderPlayerWebGL2 {
 
       const ratioAttribute = gl.getUniformLocation(program, 'ratio');
       gl.uniform1f(ratioAttribute, ratio);
-
+	  gl.viewport(0, 0, this.width, this.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-      gl.viewport(0, 0, this.width, this.height);
     }
   }
 

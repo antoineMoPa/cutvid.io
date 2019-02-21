@@ -173,8 +173,9 @@ Vue.component('player', {
     },
     effectsChanged(effects){
 	  let app = this;
-	  app.player.passes.splice(0);
-	  app.player.passes[0] = effects[0];
+	  
+	  app.player.passes = effects;
+	  
 	  this.$refs.themeSettings.updateTexts();
     },
     render(options) {

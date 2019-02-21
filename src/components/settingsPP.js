@@ -44,11 +44,16 @@ Vue.component('settings-pp', {
   methods: {
     loadProgram(name, onProgramReady) {
       let app = this;
+        
       function onShadersReady(vertex, fragment){
 	    let pass = new ShaderProgram(app.player.gl);
         
-	    pass.compile(vertex, fragment);
-	    
+        try{
+	      pass.compile(vertex, fragment);
+        } catch (e) {
+          console.log(e);
+        }
+
         onProgramReady(pass);
       }
       
@@ -78,10 +83,9 @@ Vue.component('settings-pp', {
 		let comp = Vue.component(componentName, settings.ui);
 		settings.component = componentName;
 		settings.id = uniquePPComponentID;
-
         app.loadProgram(themeName, function(program){
           settings.shaderProgram = program;
-
+          
           settings.uniforms = {};
           
           // Insert effect in array
@@ -133,12 +137,12 @@ Vue.component('settings-pp', {
       this.effectsIndex.forEach(function(i){
         orderedEffects.push(app.effects[i]);
       });
-      
+
       this.$emit("effectsChanged", orderedEffects);
     }
   },
   mounted(){
     this.addEffect('default');
-    this.addEffect('retrowave');
+    this.addEffect('vignette');
   }
 });
