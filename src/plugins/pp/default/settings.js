@@ -3,10 +3,8 @@
   
   let settingsPP = function(){
 	return {
-	  loadProgram: function(gl, onProgramReady){
-		
-	  },
 	  name: name,
+	  human_name: "Default",
 	  ui: {
 		template: `
 <div>

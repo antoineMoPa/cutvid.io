@@ -1,23 +1,21 @@
 {
-  let name = "vignette";
+  let name = "textLayer";
   
   let settingsPP = function(){
 	return {
 	  name: name,
-	  human_name: "Vignette",
+	  human_name: "Text Layer",
 	  ui: {
 		template: `
 <div>
-  <input type="number" min="0.0" max="1.0" step="0.05" v-model="uniforms.strength.value">
-</div>`,
+  <p style="font-size:10px;">
+    This effects puts the text on the canvas, you probably want to keep it!
+  </p>
+</div>
+`,
 		data: function(){
 		  return {
 			uniforms: {
-			  strength: {
-				type: "f",
-				len: 1, /* float, not a vector: len = 1*/
-				value: 0.5,
-			  }
 			}
 		  };
 		},

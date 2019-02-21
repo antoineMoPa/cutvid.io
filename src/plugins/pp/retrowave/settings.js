@@ -1,10 +1,10 @@
 {
-  
   let name = "retrowave";
   
   let settingsPP = function(){
 	return {
 	  name: name,
+	  human_name: "Retrowave",
 	  ui: {
 		template: `
 <div>

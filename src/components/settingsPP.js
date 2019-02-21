@@ -4,7 +4,7 @@ Vue.component('settings-pp', {
     <transition-group name="fade">
       <div class="effect" v-bind:key="effects[effectNumber].id" v-for="(effectNumber, effectIndex) in effectsIndex">
         <div class="pp-effect-header">
-          {{ effects[effectNumber].name }}
+          {{ effects[effectNumber].human_name || effects[effectNumber].name }}
           <div class="pp-effect-icons">
           
             <img class="effect-icon"
@@ -25,7 +25,7 @@ Vue.component('settings-pp', {
           </div>
         </div>
         <div class="component-container">
-          <component v-bind:is="effects[effectNumber].component"></component>
+          <component v-bind:is="effects[effectNumber].component" v-on:uniforms="receiveUniforms.bind(effects[effectNumber])"></component>
         </div>
       </div>
     </transition-group>
@@ -130,19 +130,25 @@ Vue.component('settings-pp', {
       this.effects.splice(number, 1);
       this.applyEffectsChange();
     },
+    receiveUniforms(effectIndex, uniforms){
+      this.effects.uniforms = uniforms;
+    },
     applyEffectsChange(){
       let app = this;
       let orderedEffects = [];
       
       this.effectsIndex.forEach(function(i){
-        orderedEffects.push(app.effects[i]);
+        orderedEffects.push({
+          shaderProgram: app.effects[i].shaderProgram,
+          uniforms: app.effects[i].uniforms
+        });
       });
 
       this.$emit("effectsChanged", orderedEffects);
     }
   },
   mounted(){
-    //this.addEffect('default');
+    this.addEffect('textLayer');
     this.addEffect('vignette');
   }
 });

@@ -1,23 +1,23 @@
 class ShaderProgram {
   constructor(gl){
-	this.gl = gl;
-	this.fragment_shader_object = null;
-	this.vertex_shader_object = null;
+    this.gl = gl;
+    this.fragment_shader_object = null;
+    this.vertex_shader_object = null;
   }
   
   compile(vertex_shader_code, fragment_shader_code) {
-	let compiled = false;
-	let program = null;
+    let compiled = false;
+    let program = null;
     const player = this;
-	
+    
     if (this.gl == null) {
       return;
     }
 
     const gl = this.gl;
-	
-	this.deleteProgram();
-	
+    
+    this.deleteProgram();
+    
     program = gl.createProgram();
 
     const vertex_shader = add_shader(gl.VERTEX_SHADER, vertex_shader_code);
@@ -43,7 +43,7 @@ class ShaderProgram {
     }
 
     if (vertex_shader == -1 || fragment_shader == -1) {
-	  console.error("Shader compilation error.");
+      console.error("Shader compilation error.");
       return;
     }
 
@@ -56,31 +56,31 @@ class ShaderProgram {
     gl.useProgram(program);
 
     const positionAttribute = gl.getAttribLocation(program, 'position');
-	
-	gl.enableVertexAttribArray(positionAttribute);
+    
+    gl.enableVertexAttribArray(positionAttribute);
     gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
-	
+    
     compiled = true;
-	
-	this.program = program;
+    
+    this.program = program;
   }
   
   use() {
-	this.gl.useProgram(this.program);
+    this.gl.useProgram(this.program);
   }
   
   deleteProgram() {
-	const gl = this.gl;
-	// Delete previous program
-	if (this.program != undefined) {
+    const gl = this.gl;
+    // Delete previous program
+    if (this.program != undefined) {
       gl.useProgram(this.program);
       if (this.fragment_shader_object > -1) {
         gl.detachShader(this.program, this.fragment_shader_object);
-		gl.deleteShader(this.fragment_shader);
+        gl.deleteShader(this.fragment_shader);
       }
       if (this.vertex_shader_object > -1) {
         gl.detachShader(this.program, this.vertex_shader_object);
-		gl.deleteShader(this.vertex_shader);
+        gl.deleteShader(this.vertex_shader);
       }
       gl.deleteProgram(this.program);
     }
@@ -100,9 +100,9 @@ class ShaderPlayerWebGL2 {
     this.native_webgl2_supported = false;
     this.window_focused = true;
     this.anim_timeout = null;
-	this.paused = false;
-	this.passes = [];
-	this.shaderProgram = null;
+    this.paused = false;
+    this.passes = [];
+    this.shaderProgram = null;
 
     // TODO: synchronize with vue
     this.width = 540;
@@ -153,11 +153,11 @@ class ShaderPlayerWebGL2 {
   }
 
   play(){
-	this.paused = false;
+    this.paused = false;
   }
   
   pause(){
-	this.paused = true;
+    this.paused = true;
   }
   
   /*
@@ -172,13 +172,13 @@ class ShaderPlayerWebGL2 {
   set_width(w) {
     this.width = w;
     this.update();
-	this.init_gl();
+    this.init_gl();
   }
 
   set_height(h) {
     this.height = h;
     this.update();
-	this.init_gl();
+    this.init_gl();
   }
 
   set_fps(fps) {
@@ -221,13 +221,13 @@ class ShaderPlayerWebGL2 {
   // When the image finished loading copy it into the texture.
   //
   add_texture(url, ready) {
-	let app = this;
+    let app = this;
 
     function isPowerOf2(value) {
       return (value & (value - 1)) == 0;
     }
-	
-	
+    
+    
     var gl = this.gl;
 
     var level = 0;
@@ -241,16 +241,16 @@ class ShaderPlayerWebGL2 {
     
 
     var image = new Image();
-	
+    
     image.addEventListener("load", function () {
-	  var texture = gl.createTexture();
-	  gl.bindTexture(gl.TEXTURE_2D, texture);
-	  app.textures.push(texture);
+      var texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      app.textures.push(texture);
 
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
-	  
+      
       // WebGL1 has different requirements for power of 2 images
       // vs non power of 2 images so check if the image is a
       // power of 2 in both dimensions.
@@ -264,19 +264,19 @@ class ShaderPlayerWebGL2 {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       }
-	  ready();
+      ready();
     });
-	
+    
     image.src = url;
   }
 
   delete_texture(index) {
     const gl = this.gl;
-	
-	if(this.textures[index] == undefined){
-	  console.error("attempt to delete texture which does not exist");
-	  return;
-	}
+    
+    if(this.textures[index] == undefined){
+      console.error("attempt to delete texture which does not exist");
+      return;
+    }
 
     gl.deleteTexture(this.textures[index]);
     this.textures.splice(index, 1);
@@ -286,7 +286,7 @@ class ShaderPlayerWebGL2 {
     if (this.gl == null) {
       return;
     }
-	
+    
     const gl = this.gl;
     let ww = 2;
     let hh = 2;
@@ -294,10 +294,10 @@ class ShaderPlayerWebGL2 {
     // Delete previous textures
     for (var i = 0; i < this.rttTexture.length; i++) {
       gl.deleteTexture(this.rttTexture[i]);
-	}
-	for (var i = 0; i < this.renderbuffer.length; i++) {
+    }
+    for (var i = 0; i < this.renderbuffer.length; i++) {
       gl.deleteRenderbuffer(this.renderbuffer[i]);
-	}
+    }
     for (var i = 0; i < this.framebuffer.length; i++) {
       gl.deleteFramebuffer(this.framebuffer[i]);
     }
@@ -311,8 +311,8 @@ class ShaderPlayerWebGL2 {
     }
 
     this.renderBufferDim = [ww, hh];
-	
-	// The 10 here limits the pass number
+    
+    // The 10 here limits the pass number
     for (var i = 0; i < 10; i++) {
       this.rttTexture[i] = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[i]);
@@ -322,8 +322,8 @@ class ShaderPlayerWebGL2 {
 
       // Render to texture stuff
       this.framebuffer[i] = gl.createFramebuffer();
-	  gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[i]);
-	  
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[i]);
+      
       var renderbuffer = gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
 
@@ -352,36 +352,39 @@ class ShaderPlayerWebGL2 {
   
   draw_gl(time) {
     const gl = this.gl;
-	
+    
     if (gl == null) {
       return;
     }
 
     for (let pass = 0; pass < this.passes.length; pass++) {
-	  this.passes[pass].shaderProgram.use();
-	  let program = this.passes[pass].shaderProgram.program;
-	  
+      let passData = this.passes[pass];
+      let shaderProgram = passData.shaderProgram;
+      shaderProgram.use();
+      let program = this.passes[pass].shaderProgram.program;
+      
       if (pass < this.passes.length - 1) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[pass]);
       } else {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       }
-	  
-	  gl.activeTexture(gl.TEXTURE0);
+      
+      gl.activeTexture(gl.TEXTURE0);
+      
       // Manage lastpass
       if (pass > 0) {
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-1]);
         gl.uniform1i(gl.getUniformLocation(program, 'tex_in'), 0);
       } else {
-		gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
-	  }
+        gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
+      }
 
       let i = 1;
 
       for (let j = 0; j < this.textures.length; j++, i++) {
         gl.activeTexture(gl.TEXTURE0 + i);
         var att = gl.getUniformLocation(program, 'texture' + j);
-		
+        
         gl.bindTexture(gl.TEXTURE_2D, this.textures[j]);
         gl.uniform1i(att, i);
       }
@@ -433,7 +436,17 @@ class ShaderPlayerWebGL2 {
 
       const ratioAttribute = gl.getUniformLocation(program, 'ratio');
       gl.uniform1f(ratioAttribute, ratio);
-	  gl.viewport(0, 0, this.width, this.height);
+      
+      /*
+        if(Math.random() < 0.01){
+        console.log(passData.uniforms);
+        for(uniform in passData.uniforms){
+        console.log(passData.uniforms[uniform]);
+        }
+        }
+      */
+        
+      gl.viewport(0, 0, this.width, this.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
   }
@@ -453,16 +466,16 @@ class ShaderPlayerWebGL2 {
     this.anim_already_started = true;
 
     function _animate() {
-	  let time = (new Date().getTime() % 2000) / 2000;
+      let time = (new Date().getTime() % 2000) / 2000;
       // When rendering gif, draw is done elsewhere
       if (!player.rendering_gif && player.window_focused && !player.paused) {
-		try{
+        try{
           player.draw_gl(time);
-		} catch (e) {
-		  console.error(e);
-		}
+        } catch (e) {
+          console.error(e);
+        }
       }
-	  
+      
       window.requestAnimationFrame(_animate.bind(this));
     }
 
