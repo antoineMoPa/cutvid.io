@@ -1,10 +1,8 @@
-#version 300 es
-// Vertex Shader for WebGL2
- 
-layout(location = 0) in vec3 position;
-out vec2 UV;
-out vec2 lastUV;
-out vec3 v_position;
+attribute vec3 position;
+
+varying vec2 UV;
+varying vec2 lastUV;
+varying vec3 v_position;
 
 uniform float is_first;
 uniform vec2 renderBufferRatio;
