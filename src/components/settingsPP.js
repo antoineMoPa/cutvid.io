@@ -62,8 +62,8 @@ Vue.component('settings-pp', {
       }
       
       Promise.all([
-	    fetch("plugins/pp/" + name + "/vertex.glsl"),
-	    fetch("plugins/pp/" + name + "/fragment.glsl")
+	    fetch("plugins/" + name + "/vertex.glsl"),
+	    fetch("plugins/" + name + "/fragment.glsl")
       ]).then((values) => {
 	    Promise.all([
 	      values[0].text(),
@@ -79,7 +79,7 @@ Vue.component('settings-pp', {
     },
     addEffect(themeName){
 	  let app = this;
-	  utils.load_script("plugins/pp/" + themeName + "/settings.js", function(){
+	  utils.load_script("plugins/" + themeName + "/settings.js", function(){
         // Keeping unique components makes sure the components aren't reset
 		let settings = utils.plugins[themeName + "-settingsPP"]();
 		let uniquePPComponentID = utils.increment_unique_counter("ppcomponent");

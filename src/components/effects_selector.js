@@ -9,7 +9,7 @@ Vue.component('effects-selector', {
   Effects
 </h3>
   <a v-for="(content, effect) in effects" class="theme-box" v-on:click="chooseEffect(effect)">
-    <img v-bind:src='"plugins/pp/" + effect + "/preview.png"'/>
+    <img v-bind:src='"plugins/" + effect + "/preview.png"'/>
     <br>
     <p class="effect-description">
      {{ content.description }}

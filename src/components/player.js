@@ -9,7 +9,7 @@ Vue.component('panel-selector', {
   </div>`,
   data(){
     return {
-	  panel_names: ["Video", "Scene", "Text", "Post-Processing"],
+	  panel_names: ["Video", "Scene", "Text", "Effects"],
       selected: 0,
     };
   },
@@ -24,7 +24,10 @@ Vue.component('panel-selector', {
 Vue.component('settings-2d', function (resolve, reject) {
   let themeName = theme_name;
   // Pass the component definition to the resolve callback
-  utils.load_script("plugins/2d/" + themeName + "/settings.js", function(){
+  utils.load_script("plugins/" + themeName + "/settings.js", function(){
+	if(utils.plugins[themeName + "-settings2D"] == undefined){
+	  return;
+	}
     resolve(utils.plugins[themeName + "-settings2D"]);
   });
 });
@@ -59,7 +62,7 @@ Vue.component('player', {
         <settings-2d v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings" v-on:texture-ready="loadTextCanvas"/>
       </div>
       <div class="switchable-panel">
-        <h3>Post Processing</h3>
+        <h3>Effects</h3>
         <settings-pp v-on:effectsChanged="effectsChanged" v-bind:player="player"/>
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
