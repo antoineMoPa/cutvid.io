@@ -69,7 +69,8 @@ Vue.component('player', {
     </div>
     <div id="main-player">
       <div class="canvas-container"/>
-      <scene-selector v-on:launch-effect-selector="launchEffectSelector"/>
+      <scene-selector v-on:launch-effect-selector="launchEffectSelector"
+                      v-on:switch-to-scene="switchToScene"/>
     </div>
     <ui ref="ui"
         v-on:play="play" 
@@ -451,6 +452,9 @@ Vue.component('player', {
 	},
 	launchEffectSelector(callback){
 	  this.$refs['settingsPP'].launchEffectSelector(callback);
+	},
+	switchToScene(i){
+	  this.$refs['settingsPP'].switchToScene(i);
 	}
   },
   watch: {

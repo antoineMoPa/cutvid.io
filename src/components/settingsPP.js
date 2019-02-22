@@ -165,6 +165,9 @@ Vue.component('settings-pp', {
 		};
 	  }
 	  this.$refs['effectSelector'].open(callback);
+	},
+	switchToScene(i){
+	  console.log("i shall switch to " + i);
 	}
   },
   mounted(){

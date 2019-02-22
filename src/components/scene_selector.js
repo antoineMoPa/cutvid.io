@@ -43,7 +43,7 @@ Vue.component('scene-selector', {
   methods: {
     switch_to(i){
       this.selected = i;
-      this.$emit("switch", i);
+      this.$emit("switch-to-scene", i);
 	  this.$nextTick(function(){
 		this.setCurrentPreview();
 	  });
