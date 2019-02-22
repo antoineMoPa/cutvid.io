@@ -77,17 +77,17 @@ Vue.component('settings-pp', {
 	    });
       });
     },
-    addEffect(themeName){
+    addEffect(effectName){
 	  let app = this;
-	  utils.load_script("plugins/" + themeName + "/settings.js", function(){
+	  utils.load_script("plugins/" + effectName + "/settings.js", function(){
         // Keeping unique components makes sure the components aren't reset
-		let settings = utils.plugins[themeName + "-settingsPP"]();
+		let settings = utils.plugins[effectName + "-settingsPP"]();
 		let uniquePPComponentID = utils.increment_unique_counter("ppcomponent");
-		let componentName = themeName + "-settingsPP" + uniquePPComponentID;
+		let componentName = effectName + "-settingsPP" + uniquePPComponentID;
 		let comp = Vue.component(componentName, settings.ui);
 		settings.component = componentName;
 		settings.id = uniquePPComponentID;
-        app.loadProgram(themeName, function(program){
+        app.loadProgram(effectName, function(program){
           settings.shaderProgram = program;
           
           settings.uniforms = {};
@@ -167,7 +167,7 @@ Vue.component('settings-pp', {
 	}
   },
   mounted(){
-    this.addEffect('textLayer');
+    this.addEffect(theme_name);
     this.addEffect('vignette');
   }
 });
