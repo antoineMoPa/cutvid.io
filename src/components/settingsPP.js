@@ -2,7 +2,9 @@ Vue.component('settings-pp', {
   template: `
   <div class="settings-pp">
     <transition-group name="fade">
-      <div class="effect" v-bind:key="effects[effectNumber].id" v-for="(effectNumber, effectIndex) in effectsIndex">
+      <div class="effect" 
+           v-bind:key="effects[effectNumber].id" 
+           v-for="(effectNumber, effectIndex) in effectsIndex">
         <div class="pp-effect-header">
           {{ effects[effectNumber].human_name || effects[effectNumber].name }}
           <div class="pp-effect-icons">
@@ -127,6 +129,11 @@ Vue.component('settings-pp', {
       }.bind(this), 300);
     },
     remove(effectIndex){
+	  // Fix bug when double removing
+	  if(this.effectsIndex[effectIndex] == undefined){
+		return;
+	  }
+	  
       let number = this.effectsIndex[effectIndex];
       // Decrement all elements after current index
       this.effectsIndex = this.effectsIndex.map((i) => { return i <= effectIndex? i: i - 1; });
