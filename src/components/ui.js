@@ -10,10 +10,6 @@ Vue.component('ui', {
            class="pause-icon" 
            src="icons/feather/pause.svg"/>
     </div>
-    <a class="ui-button button-3" v-on:click="themes">
-      <img class="feather-button" src="icons/feather/image.svg"/>
-      Themes
-    </a>
     <a class="ui-button button-2" v-on:click="gif">
       <img class="feather-button" src="icons/feather/camera.svg"/>
       Export Gif
@@ -46,14 +42,6 @@ Vue.component('ui', {
 	},
 	set_progress(progress_ratio){
 	  this.progress_width = progress_ratio * window.innerWidth;
-	},
-	themes(){
-	  let theme_selector = document.querySelectorAll(".theme-selector")[0];
-	  theme_selector.classList.toggle("hidden");
-	  let close_button = theme_selector.querySelectorAll(".close-button")[0];
-	  close_button.addEventListener("click", function(){
-		theme_selector.classList.add("hidden");
-	  });
 	}
   }
 })

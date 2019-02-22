@@ -8,11 +8,14 @@ Vue.component('scene-selector', {
       <div v-bind:key="scenes[sceneNumber].id" 
            v-for="(sceneNumber, sceneIndex) in scenesIndex"
            v-bind:class="'scene' + ' ' + (selected == sceneIndex? 'selected-scene': '')">
+        <!--
+        Copy: todo
         <img src="icons/feather/copy.svg" 
              title="copy scene"
              v-on:click="copyScene(sceneIndex)"
              width="20"
              class="copy-scene"/>
+        -->
         <img src="icons/feather/trash.svg" 
              title="remove scene"
              v-on:click="remove(sceneIndex)"
@@ -25,7 +28,7 @@ Vue.component('scene-selector', {
       </div>
     </transition-group>
     <div class="adder-container">
-      <button v-on:click="addScene">
+      <button v-on:click="addSceneButton">
         <img src="icons/feather/plus.svg" title="new scene" width="20"/>
       </button>
     </div>
@@ -63,6 +66,12 @@ Vue.component('scene-selector', {
 	  tempCanvas.height = 100;
 	  ctx.drawImage(canvas, 0, 0, 100, 100);
 	  preview.src = tempCanvas.toDataURL();
+	},
+	addSceneButton(){
+	  let app = this;
+	  this.$emit("launch-effect-selector", function(effectName){
+		app.addScene(effectName);
+	  });
 	},
 	addScene(themeName){
 	  let app = this;
@@ -126,7 +135,7 @@ Vue.component('scene-selector', {
     },
   },
   mounted(){
-	this.addScene();
-	this.addScene();
+	this.addScene("default");
+	this.addScene("retrowave");
   }
 });

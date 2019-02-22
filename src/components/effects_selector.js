@@ -36,13 +36,24 @@ Vue.component('effects-selector', {
   },
   methods: {
 	chooseEffect(effect){
-	  let effects_selector = document.querySelectorAll(".effects-selector")[0];
+	  let effects_selector = this.$el;
 	  effects_selector.classList.add("hidden");
-	  this.$emit("chooseEffect", effect);
+	  if(this.callback != null){
+		this.callback(effect);
+	  }
+	},
+	open(callback) {
+	  this.callback = callback;
+	  this.$el.classList.toggle("hidden");
 	}
   },
   mounted(){
+	this.callback = null;
 	document.body.append(this.$el);
+	let close_button = this.$el.querySelectorAll(".close-button")[0];
+	close_button.addEventListener("click", function(){
+	  effects_selector.classList.add("hidden");
+	});
   }
 });
 

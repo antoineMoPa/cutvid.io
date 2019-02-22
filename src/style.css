@@ -170,14 +170,14 @@ input{
 .scene-selector .scene .remove-scene{
     position:absolute;
     top:3px;
-    right:3px;
+    right:35px;
     padding:5px;
     background:#111;
     border-radius:3px;
 }
 
 .scene-selector .scene .remove-scene{
-    right:35px;
+    right:3px;
 }
 
 .scene-selector .adder-container{

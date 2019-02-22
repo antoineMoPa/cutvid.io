@@ -63,13 +63,13 @@ Vue.component('player', {
       </div>
       <div class="switchable-panel">
         <h3>Effects</h3>
-        <settings-pp v-on:effectsChanged="effectsChanged" v-bind:player="player"/>
+        <settings-pp ref="settingsPP" v-on:effectsChanged="effectsChanged" v-bind:player="player"/>
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
     <div id="main-player">
       <div class="canvas-container"/>
-      <scene-selector/>
+      <scene-selector v-on:launch-effect-selector="launchEffectSelector"/>
     </div>
     <ui ref="ui"
         v-on:play="play" 
@@ -448,6 +448,9 @@ Vue.component('player', {
 	  this.player.add_texture(this.textCanvas.toDataURL(), function(){
 		app.loadingTexture = false;
 	  });
+	},
+	launchEffectSelector(callback){
+	  this.$refs['settingsPP'].launchEffectSelector(callback);
 	}
   },
   watch: {
