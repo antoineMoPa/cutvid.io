@@ -15,9 +15,9 @@ void main(void){
 	
 	vec2 texUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
 	vec4 col = texture2D(texture0, texUV);
+	vec4 last = texture2D(in_tex, lastUV);
 	
-	vec4 background = vec4(1.0, 1.0, 1.0, 1.0);
-	col = (1.0 - col.a) * background + col.a * col;
+	col = (1.0 - col.a) * last + col.a * col;
 	
 	gl_FragColor = col;
 }
