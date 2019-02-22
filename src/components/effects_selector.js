@@ -39,7 +39,6 @@ Vue.component('effects-selector', {
 	  let effects_selector = this.$el;
 	  effects_selector.classList.add("hidden");
 	  if(this.callback != null){
-		console.log(this.callback);
 		this.callback(effect);
 	  }
 	},
