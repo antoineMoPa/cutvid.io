@@ -1,7 +1,7 @@
 {
   let name = "retrowave";
   
-  let settingsPP = function(){
+  let effectSettings = function(){
 	return {
 	  name: name,
 	  human_name: "Retrowave",
@@ -22,7 +22,7 @@
 	}
   };
   
-  utils.plugins[name + "-settingsPP"] = settingsPP;
+  utils.plugins[name + "-effectSettings"] = effectSettings;
   
   let settings2D = {
 	template: `

@@ -39,6 +39,7 @@ Vue.component('effects-selector', {
 	  let effects_selector = this.$el;
 	  effects_selector.classList.add("hidden");
 	  if(this.callback != null){
+		console.log(this.callback);
 		this.callback(effect);
 	  }
 	},
@@ -51,8 +52,9 @@ Vue.component('effects-selector', {
 	this.callback = null;
 	document.body.append(this.$el);
 	let close_button = this.$el.querySelectorAll(".close-button")[0];
+	let el = this.$el;
 	close_button.addEventListener("click", function(){
-	  effects_selector.classList.add("hidden");
+	  el.classList.add("hidden");
 	});
   }
 });

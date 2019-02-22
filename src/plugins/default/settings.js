@@ -1,7 +1,7 @@
 {
   let name = "default";
   
-  let settingsPP = function(){
+  let effectSettings = function(){
 	return {
 	  name: name,
 	  human_name: "Default",
@@ -30,7 +30,7 @@
 	}
   };
   
-  utils.plugins[name + "-settingsPP"] = settingsPP;
+  utils.plugins[name + "-effectSettings"] = effectSettings;
   
   let settings2D = {
 	template: `

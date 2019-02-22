@@ -63,7 +63,7 @@ Vue.component('player', {
       </div>
       <div class="switchable-panel">
         <h3>Effects</h3>
-        <settings-pp ref="settingsPP" v-on:effectsChanged="effectsChanged" v-bind:player="player"/>
+        <effects-settings ref="effects-settings" v-on:effectsChanged="effectsChanged" v-bind:player="player"/>
       </div>
       <panel-selector v-on:switch="switch_panel" count=2 />
     </div>
@@ -177,6 +177,11 @@ Vue.component('player', {
     },
     effectsChanged(effects){
 	  let app = this;
+
+	  if(app.player == undefined){
+		// Player not yet started
+		return;
+	  }
 	  
 	  app.player.passes = effects;
 	  
@@ -451,10 +456,10 @@ Vue.component('player', {
 	  });
 	},
 	launchEffectSelector(callback){
-	  this.$refs['settingsPP'].launchEffectSelector(callback);
+	  this.$refs['effects-settings'].launchEffectSelector(callback);
 	},
 	switchToScene(i){
-	  this.$refs['settingsPP'].switchToScene(i);
+	  this.$refs['effects-settings'].switchToScene(i);
 	}
   },
   watch: {

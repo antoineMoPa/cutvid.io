@@ -1,7 +1,7 @@
 {
   let name = "textLayer";
   
-  let settingsPP = function(){
+  let effectSettings = function(){
 	return {
 	  name: name,
 	  human_name: "Text Layer",
@@ -39,5 +39,5 @@
   
   
   
-  utils.plugins[name + "-settingsPP"] = settingsPP;
+  utils.plugins[name + "-effectSettings"] = effectSettings;
 }

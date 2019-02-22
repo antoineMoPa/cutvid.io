@@ -1,6 +1,6 @@
-Vue.component('settings-pp', {
+Vue.component('effects-settings', {
   template: `
-  <div class="settings-pp">
+  <div class="effects-settings">
     <transition-group name="fade">
       <div class="effect" 
            v-bind:key="effects[effectNumber].id" 
@@ -31,7 +31,7 @@ Vue.component('settings-pp', {
         </div>
       </div>
     </transition-group>
-    <button v-on:click="launchEffectSelector">
+    <button v-on:click="onAddEffect">
       <img src="icons/feather-dark/plus.svg" width="20"/>
       Add effect
     </button>
@@ -81,9 +81,9 @@ Vue.component('settings-pp', {
 	  let app = this;
 	  utils.load_script("plugins/" + effectName + "/settings.js", function(){
         // Keeping unique components makes sure the components aren't reset
-		let settings = utils.plugins[effectName + "-settingsPP"]();
+		let settings = utils.plugins[effectName + "-effectSettings"]();
 		let uniquePPComponentID = utils.increment_unique_counter("ppcomponent");
-		let componentName = effectName + "-settingsPP" + uniquePPComponentID;
+		let componentName = effectName + "-effect-settings" + uniquePPComponentID;
 		let comp = Vue.component(componentName, settings.ui);
 		settings.component = componentName;
 		settings.id = uniquePPComponentID;
@@ -147,7 +147,7 @@ Vue.component('settings-pp', {
     applyEffectsChange(){
       let app = this;
       let orderedEffects = [];
-      
+	  
       this.effectsIndex.forEach(function(i){
         orderedEffects.push({
           shaderProgram: app.effects[i].shaderProgram,
@@ -157,17 +157,18 @@ Vue.component('settings-pp', {
 
       this.$emit("effectsChanged", orderedEffects);
     },
-	launchEffectSelector(callback){
+	onAddEffect(){
 	  let app = this;
-	  if(callback == undefined){
-		callback = function(effectName){
-		  app.addEffect(effectName);
-		};
-	  }
+	  this.$refs['effectSelector'].open(function(effectName){
+		app.addEffect(effectName);
+	  });
+	},
+	launchEffectSelector(callback){
 	  this.$refs['effectSelector'].open(callback);
 	},
 	switchToScene(i){
-	  console.log("i shall switch to " + i);
+	  
+	  this.applyEffectsChange();
 	}
   },
   mounted(){

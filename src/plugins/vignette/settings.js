@@ -1,7 +1,7 @@
 {
   let name = "vignette";
   
-  let settingsPP = function(){
+  let effectSettings = function(){
 	return {
 	  name: name,
 	  human_name: "Vignette",
@@ -41,5 +41,5 @@
   
   
   
-  utils.plugins[name + "-settingsPP"] = settingsPP;
+  utils.plugins[name + "-effectSettings"] = effectSettings;
 }

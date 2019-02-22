@@ -309,11 +309,11 @@ input{
     opacity: 0;
 }
 
-.settings-pp .effect{
+.effects-settings .effect{
     margin-bottom: 10px;
 }
 
-.settings-pp .component-container{
+.effects-settings .component-container{
     margin-top:18px;
 }
 
