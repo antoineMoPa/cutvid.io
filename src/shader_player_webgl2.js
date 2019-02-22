@@ -3,6 +3,7 @@ class ShaderProgram {
     this.gl = gl;
     this.fragment_shader_object = null;
     this.vertex_shader_object = null;
+	this.textures = {};
   }
   
   compile(vertex_shader_code, fragment_shader_code) {
@@ -67,6 +68,78 @@ class ShaderProgram {
   
   use() {
     this.gl.useProgram(this.program);
+  }
+
+  // Took from MDN:
+  // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
+  // Initialize a texture and load an image.
+  // When the image finished loading copy it into the texture.
+  //
+  set_texture(name, url, ready) {
+    let app = this;
+
+	// Cleanup before setting again
+	if(this.textures[name] != undefined){
+	  this.delete_texture(name);
+	}
+	
+    function isPowerOf2(value) {
+      return (value & (value - 1)) == 0;
+    }
+
+    var gl = this.gl;
+
+    var level = 0;
+    var internalFormat = gl.RGBA;
+    var width = 1;
+    var height = 1;
+    var border = 0;
+    var srcFormat = gl.RGBA;
+    var srcType = gl.UNSIGNED_BYTE;
+    var pixel = new Uint8Array([0, 0, 0, 0]);
+    
+
+    var image = new Image();
+    
+    image.addEventListener("load", function () {
+      var texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+
+	  app.textures[name] = texture;
+	  
+      gl.texImage2D(
+        gl.TEXTURE_2D, level, internalFormat,
+        srcFormat, srcType, image);
+      
+      // WebGL1 has different requirements for power of 2 images
+      // vs non power of 2 images so check if the image is a
+      // power of 2 in both dimensions.
+      if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+        // Yes, it's a power of 2. Generate mips.
+        gl.generateMipmap(gl.TEXTURE_2D);
+      } else {
+        // No, it's not a power of 2. Turn of mips and set
+        // wrapping to clamp to edge
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
+      ready();
+    });
+    
+    image.src = url;
+  }
+
+  delete_texture(name) {
+    const gl = this.gl;
+    
+    if(this.textures[name] == undefined){
+      console.error("attempt to delete texture which does not exist");
+      return;
+    }
+
+    gl.deleteTexture(this.textures[name]);
+    delete this.textures[name];
   }
   
   deleteProgram() {
@@ -215,73 +288,6 @@ class ShaderPlayerWebGL2 {
     this.animate();
   }
 
-  // Took from MDN:
-  // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
-  // Initialize a texture and load an image.
-  // When the image finished loading copy it into the texture.
-  //
-  add_texture(url, ready) {
-    let app = this;
-
-    function isPowerOf2(value) {
-      return (value & (value - 1)) == 0;
-    }
-    
-    
-    var gl = this.gl;
-
-    var level = 0;
-    var internalFormat = gl.RGBA;
-    var width = 1;
-    var height = 1;
-    var border = 0;
-    var srcFormat = gl.RGBA;
-    var srcType = gl.UNSIGNED_BYTE;
-    var pixel = new Uint8Array([0, 0, 0, 0]);
-    
-
-    var image = new Image();
-    
-    image.addEventListener("load", function () {
-      var texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      app.textures.push(texture);
-
-      gl.texImage2D(
-        gl.TEXTURE_2D, level, internalFormat,
-        srcFormat, srcType, image);
-      
-      // WebGL1 has different requirements for power of 2 images
-      // vs non power of 2 images so check if the image is a
-      // power of 2 in both dimensions.
-      if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
-        // Yes, it's a power of 2. Generate mips.
-        gl.generateMipmap(gl.TEXTURE_2D);
-      } else {
-        // No, it's not a power of 2. Turn of mips and set
-        // wrapping to clamp to edge
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      }
-      ready();
-    });
-    
-    image.src = url;
-  }
-
-  delete_texture(index) {
-    const gl = this.gl;
-    
-    if(this.textures[index] == undefined){
-      console.error("attempt to delete texture which does not exist");
-      return;
-    }
-
-    gl.deleteTexture(this.textures[index]);
-    this.textures.splice(index, 1);
-  }
-
   init_gl() {
     if (this.gl == null) {
       return;
@@ -381,12 +387,12 @@ class ShaderPlayerWebGL2 {
 
       let i = 1;
 
-      for (let j = 0; j < this.textures.length; j++, i++) {
+      for(let name in shaderProgram.textures){
         gl.activeTexture(gl.TEXTURE0 + i);
-        var att = gl.getUniformLocation(program, 'texture' + j);
-        
-        gl.bindTexture(gl.TEXTURE_2D, this.textures[j]);
+        var att = gl.getUniformLocation(program, name);
+        gl.bindTexture(gl.TEXTURE_2D, shaderProgram.textures[name]);
         gl.uniform1i(att, i);
+		i++;
       }
 
       gl.uniform2fv(

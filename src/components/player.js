@@ -21,17 +21,6 @@ Vue.component('panel-selector', {
   }
 });
 
-Vue.component('settings-2d', function (resolve, reject) {
-  let themeName = theme_name;
-  // Pass the component definition to the resolve callback
-  utils.load_script("plugins/" + themeName + "/settings.js", function(){
-	if(utils.plugins[themeName + "-settings2D"] == undefined){
-	  return;
-	}
-    resolve(utils.plugins[themeName + "-settings2D"]);
-  });
-});
-
 Vue.component('player', {
   template: 
   `<div class="player">
@@ -58,8 +47,6 @@ Vue.component('player', {
         <h3>Scene</h3>
       </div>
       <div class="switchable-panel">
-        <h3>Text Settings</h3>
-        <settings-2d v-bind:player="player" v-bind:textCanvas="textCanvas" ref="themeSettings" v-on:texture-ready="loadTextCanvas"/>
       </div>
       <div class="switchable-panel">
         <h3>Effects</h3>
@@ -80,7 +67,6 @@ Vue.component('player', {
   </div>`,
   data(){
     return {
-      textCanvas: null,
       player: null,
       width: 1920,
       height: 1080,
@@ -95,14 +81,6 @@ Vue.component('player', {
     this.switch_panel(0);
 
     window.addEventListener("resize", app.on_resize);
-
-    
-	var textCanvas = document.createElement("canvas");
-	app.textCanvas = textCanvas;    
-	let ctx = textCanvas.getContext("2d");
-	ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
-    app.textCanvas.width = app.width;
-	app.textCanvas.height = app.height;
 	
 	app.player = new ShaderPlayerWebGL2();
 	app.player.set_width(app.width);
@@ -125,12 +103,10 @@ Vue.component('player', {
       this.player.pause();
     },
     update_dimensions(){
-      this.textCanvas.width = this.width;
-      this.textCanvas.height = this.height;
       this.player.set_width(this.width);
       this.player.set_height(this.height);
       this.aspect = parseFloat(this.width) / parseFloat(this.height);
-      this.$refs.themeSettings.updateTexts();
+      this.updateTexts();
       this.on_resize();
     },
     on_resize(){
@@ -185,7 +161,7 @@ Vue.component('player', {
 	  
 	  app.player.passes = effects;
 	  
-	  this.$refs.themeSettings.updateTexts();
+	  this.updateTexts();
     },
     render(options) {
       if (typeof (options) === 'undefined') {
@@ -436,25 +412,12 @@ Vue.component('player', {
         gif: true
       });
     },
+	updateTexts(){
+	  this.$refs['effects-settings'].updateTexts();
+	},
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");
     },
-	loadTextCanvas(){
-	  // "Mutex" bool
-	  if(this.loadingTexture != undefined && this.loadingTexture == true){
-		setTimeout(this.loadTextCanvas, 1000 * Math.random());
-		return;
-	  }
-	  this.loadingTexture = true;
-	  let app = this;
-	  while(this.player.textures.length > 0){
-        this.player.delete_texture(0);
-	  }
-	  
-	  this.player.add_texture(this.textCanvas.toDataURL(), function(){
-		app.loadingTexture = false;
-	  });
-	},
 	launchEffectSelector(callback){
 	  this.$refs['effects-settings'].launchEffectSelector(callback);
 	},

@@ -27,7 +27,11 @@ Vue.component('effects-settings', {
           </div>
         </div>
         <div class="component-container">
-          <component v-bind:is="effects[effectNumber].component" v-on:uniforms="receiveUniforms.bind(effects[effectNumber])"></component>
+          <component v-bind:is="effects[effectNumber].component"  
+                     v-bind:ref="effects[effectNumber].component"
+                     v-bind:shaderProgram="effects[effectNumber].shaderProgram"
+                     v-bind:player="player"
+                     ></component>
         </div>
       </div>
     </transition-group>
@@ -84,14 +88,15 @@ Vue.component('effects-settings', {
 		let settings = utils.plugins[effectName + "-effectSettings"]();
 		let uniquePPComponentID = utils.increment_unique_counter("ppcomponent");
 		let componentName = effectName + "-effect-settings" + uniquePPComponentID;
-		let comp = Vue.component(componentName, settings.ui);
+		Vue.component(componentName, settings.ui);
+		
 		settings.component = componentName;
 		settings.id = uniquePPComponentID;
-        app.loadProgram(effectName, function(program){
-          settings.shaderProgram = program;
-          
+		
+        app.loadProgram(effectName, function(_shaderProgram){
+          settings.shaderProgram = _shaderProgram;
           settings.uniforms = {};
-          
+		  
           // Insert effect in array
           app.effects.splice(app.effects.length, 0, settings);
           // Add its index
@@ -141,9 +146,6 @@ Vue.component('effects-settings', {
       this.effects.splice(number, 1);
       this.applyEffectsChange();
     },
-    receiveUniforms(effectIndex, uniforms){
-      this.effects.uniforms = uniforms;
-    },
     applyEffectsChange(){
       let app = this;
       let orderedEffects = [];
@@ -169,6 +171,15 @@ Vue.component('effects-settings', {
 	switchToScene(i){
 	  
 	  this.applyEffectsChange();
+	},
+	updateTexts(){
+	  for(let effect in this.effects){
+		let comp = this.$refs[this.effects[effect].component];
+		if(comp == undefined || comp.updateTexts == undefined){
+		  continue;
+		}
+		comp.updateTexts();
+	  }
 	}
   },
   mounted(){
