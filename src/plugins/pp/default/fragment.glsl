@@ -1,9 +1,7 @@
-#version 300 es
 precision highp float;
 
-in vec2 UV;
+varying vec2 UV;
 uniform vec2 mouse;
-out vec4 out_color;
 uniform float ratio, time;
 uniform sampler2D texture0;
 
@@ -104,11 +102,11 @@ void main(void){
 	
 	uv += 0.5;
 	
-    vec4 tex = texture(texture0,  uv);
-	vec4 tex1 = texture(texture0,  uv + vec2( 0.000, 0.004));
-	vec4 tex2 = texture(texture0,  uv + vec2( 0.004, 0.000));
-	vec4 tex3 = texture(texture0,  uv + vec2( 0.000,-0.004));
-	vec4 tex4 = texture(texture0,  uv + vec2(-0.004, 0.000));
+    vec4 tex = texture2D(texture0,  uv);
+	vec4 tex1 = texture2D(texture0,  uv + vec2( 0.000, 0.004));
+	vec4 tex2 = texture2D(texture0,  uv + vec2( 0.004, 0.000));
+	vec4 tex3 = texture2D(texture0,  uv + vec2( 0.000,-0.004));
+	vec4 tex4 = texture2D(texture0,  uv + vec2(-0.004, 0.000));
 
 	tex += tex1 * 0.2;
 	tex += tex2 * 0.2;
@@ -123,6 +121,6 @@ void main(void){
 	col = tex.a * tex + (1.0 - tex.a) * col;
     
     col.a = 1.0;
-    out_color = col;
+	gl_FragColor = col;
 }
 

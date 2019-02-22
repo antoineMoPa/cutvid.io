@@ -1,11 +1,9 @@
-#version 300 es
 precision highp float;
 
-in vec2 UV;
-in  vec2 lastUV;
+varying vec2 UV;
+varying  vec2 lastUV;
 uniform sampler2D in_tex;
 uniform vec2 mouse;
-out vec4 out_color;
 uniform float ratio, time;
 uniform float strength;
 uniform sampler2D texture0;
@@ -16,11 +14,11 @@ void main(void){
 	vec2 p = vec2(x,y) - vec2(0.5 * ratio, 0.5);
 	
 	vec2 texUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
-	vec4 col = texture(texture0, texUV);
+	vec4 col = texture2D(texture0, texUV);
 	
 	vec4 background = vec4(1.0, 1.0, 1.0, 1.0);
 	col = (1.0 - col.a) * background + col.a * col;
 	
-    out_color = col;
+	gl_FragColor = col;
 }
 
