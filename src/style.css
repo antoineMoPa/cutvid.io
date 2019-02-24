@@ -280,24 +280,25 @@ input{
     margin-bottom: -4px;
 }
 
-.pp-effect-header{
+.effect-header{
     position:relative;
     height:30px;
     border: 1px solid #000;
-    width: calc(100% - 25px);
+    width: calc(100% - 10px);
+    margin-left:-3px;
     background: #222;
     padding-left: 7px;
     font-size: 13px;
     line-height: 29px;
 }
 
-.pp-effect-icons{
+.effect-icons{
     position:absolute;
     top:0;
     right:8px;
 }
 
-.pp-effect-icons .effect-icon{
+.effect-icons .effect-icon{
     cursor: pointer;
 }
 

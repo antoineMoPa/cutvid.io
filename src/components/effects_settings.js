@@ -5,9 +5,9 @@ Vue.component('effects-settings', {
       <div class="effect" 
            v-bind:key="effects[effectNumber].id" 
            v-for="(effectNumber, effectIndex) in effectsIndex">
-        <div class="pp-effect-header">
+        <div class="effect-header">
           {{ effects[effectNumber].human_name || effects[effectNumber].name }}
-          <div class="pp-effect-icons">
+          <div class="effect-icons">
           
             <img class="effect-icon"
                  title="move effect down"
@@ -86,12 +86,12 @@ Vue.component('effects-settings', {
 	  utils.load_script("plugins/" + effectName + "/settings.js", function(){
         // Keeping unique components makes sure the components aren't reset
 		let settings = utils.plugins[effectName + "-effectSettings"]();
-		let uniquePPComponentID = utils.increment_unique_counter("ppcomponent");
-		let componentName = effectName + "-effect-settings" + uniquePPComponentID;
+		let uniqueEffectComponentID = utils.increment_unique_counter("effectComponent");
+		let componentName = effectName + "-effect-settings" + uniqueEffectComponentID;
 		Vue.component(componentName, settings.ui);
 		
 		settings.component = componentName;
-		settings.id = uniquePPComponentID;
+		settings.id = uniqueEffectComponentID;
 		
         app.loadProgram(effectName, function(_shaderProgram){
           settings.shaderProgram = _shaderProgram;

@@ -9,7 +9,7 @@ Vue.component('panel-selector', {
   </div>`,
   data(){
     return {
-	  panel_names: ["Video", "Scene", "Text", "Effects"],
+	  panel_names: ["Video", "Scene", "Effects"],
       selected: 0,
     };
   },
@@ -45,8 +45,6 @@ Vue.component('player', {
       </div>
       <div class="switchable-panel">
         <h3>Scene</h3>
-      </div>
-      <div class="switchable-panel">
       </div>
       <div class="switchable-panel">
         <h3>Effects</h3>
