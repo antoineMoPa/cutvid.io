@@ -1,14 +1,13 @@
 {
-  let name = "default";
+  let name = "epicSunset";
   
   let effectSettings = function(){
 	return {
 	  name: name,
-	  human_name: "Default",
+	  human_name: "Epic Sunset",
 	  ui: {
 		template: `
 <div>
-  <h4>Epic Sunset</h4>
   <label>Text</label>
   <input v-model="text.text" type="text">
   <label>Font size</label>

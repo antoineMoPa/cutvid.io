@@ -135,7 +135,7 @@ Vue.component('scene-selector', {
     },
   },
   mounted(){
-	this.addScene("default");
+	this.addScene("epicSunset");
 	this.addScene("retrowave");
   }
 });

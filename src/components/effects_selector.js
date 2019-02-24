@@ -28,7 +28,7 @@ Vue.component('effects-selector', {
 		"retrowave": {
 		  "description": "Retro nostalgia poster effect."
 		},
-		"default": {
+		"epicSunset": {
 		  "description": "A retro sunset."
 		},
 	  },

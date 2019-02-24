@@ -14,10 +14,10 @@
 	  <script src="libs/gif.js"></script>
 	  
 	  <script type="text/javascript">
-		let available_themes = ["default", "retrowave"];
+		let available_themes = ["epicSunset", "retrowave"];
 		var theme_name = new URL(window.location.href).searchParams.get("theme") || "default";
 		if(!available_themes.find((el) => {return el == theme_name})){
-		  theme_name = "default";
+		  theme_name = "epicSunset";
 		}
 	  </script>
 	  
