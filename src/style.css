@@ -318,6 +318,10 @@ input{
     margin-top:18px;
 }
 
+.effects-settings-hidden{
+	display:none;
+}
+
 /* END SETTINGS PANEL --------------- */
 
 /* PANEL-SELECTOR --------------- */

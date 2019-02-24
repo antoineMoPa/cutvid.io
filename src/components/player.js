@@ -1,26 +1,3 @@
-Vue.component('panel-selector', {
-  template: `
-  <div class="panel-selector">
-    <div v-for="(name, i) in panel_names"
-         v-on:click="switch_to(i)"
-         v-bind:class="'panel-bullet' + ' ' + (selected == i? 'selected-bullet': '')">
-      {{ name }}
-    </div>
-  </div>`,
-  data(){
-    return {
-	  panel_names: ["Video", "Scene", "Effects"],
-      selected: 0,
-    };
-  },
-  methods: {
-    switch_to(i){
-      this.selected = i;
-      this.$emit("switch", i);
-    }
-  }
-});
-
 Vue.component('player', {
   template: 
   `<div class="player">
@@ -46,16 +23,17 @@ Vue.component('player', {
       <div class="switchable-panel">
         <h3>Scene</h3>
       </div>
-      <div class="switchable-panel">
+      <div class="switchable-panel all-effects-container">
         <h3>Effects</h3>
-        <effects-settings ref="effects-settings" v-on:effectsChanged="effectsChanged" v-bind:player="player"/>
       </div>
-      <panel-selector v-on:switch="switch_panel" count=2 />
+      <panel-selector ref="panel-selector" v-on:switch="switch_panel"/>
     </div>
     <div id="main-player">
       <div class="canvas-container"/>
-      <scene-selector v-on:launch-effect-selector="launchEffectSelector"
-                      v-on:switch-to-scene="switchToScene"/>
+      <scene-selector
+        ref="scene-selector"
+        v-on:effectsChanged="effectsChanged"
+        v-bind:player="player"/>
     </div>
     <ui ref="ui"
         v-on:play="play" 
@@ -76,8 +54,6 @@ Vue.component('player', {
   },
   mounted: function(){
 	let app = this;
-    this.switch_panel(0);
-
     window.addEventListener("resize", app.on_resize);
 	
 	app.player = new ShaderPlayerWebGL2();
@@ -86,7 +62,9 @@ Vue.component('player', {
 	app.on_resize();
 	let container = document.querySelectorAll("#main-player .canvas-container")[0];
 	app.player.set_container(container);
-	
+    
+	this.switch_panel(2);
+    this.$refs['panel-selector'].switch_to(2);
   },
   methods: {
     set_dimensions(w, h){
@@ -411,17 +389,11 @@ Vue.component('player', {
       });
     },
 	updateTexts(){
-	  this.$refs['effects-settings'].updateTexts();
+      this.$refs['scene-selector'].updateTexts();
 	},
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");
     },
-	launchEffectSelector(callback){
-	  this.$refs['effects-settings'].launchEffectSelector(callback);
-	},
-	switchToScene(i){
-	  this.$refs['effects-settings'].switchToScene(i);
-	}
   },
   watch: {
     width(){

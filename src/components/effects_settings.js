@@ -48,7 +48,7 @@ Vue.component('effects-settings', {
 	  moving: false
     };
   },
-  props: ["player"],
+  props: ["player","defaultEffect"],
   methods: {
     loadProgram(name, onProgramReady) {
       let app = this;
@@ -146,9 +146,9 @@ Vue.component('effects-settings', {
       this.effects.splice(number, 1);
       this.applyEffectsChange();
     },
-    applyEffectsChange(){
-      let app = this;
-      let orderedEffects = [];
+	getOrderedEffects(){
+	  let app = this;
+	  let orderedEffects = [];
 	  
       this.effectsIndex.forEach(function(i){
         orderedEffects.push({
@@ -156,6 +156,11 @@ Vue.component('effects-settings', {
           uniforms: app.effects[i].uniforms
         });
       });
+	  return orderedEffects;
+	},
+    applyEffectsChange(){
+      let app = this;
+      let orderedEffects = this.getOrderedEffects();
 
       this.$emit("effectsChanged", orderedEffects);
     },
@@ -168,10 +173,6 @@ Vue.component('effects-settings', {
 	launchEffectSelector(callback){
 	  this.$refs['effectSelector'].open(callback);
 	},
-	switchToScene(i){
-	  
-	  this.applyEffectsChange();
-	},
 	updateTexts(){
 	  for(let effect in this.effects){
 		let comp = this.$refs[this.effects[effect].component];
@@ -183,7 +184,6 @@ Vue.component('effects-settings', {
 	}
   },
   mounted(){
-    this.addEffect(theme_name);
-    this.addEffect('vignette');
+    this.addEffect(this.defaultEffect);
   }
 });

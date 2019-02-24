@@ -32,6 +32,19 @@ Vue.component('scene-selector', {
         <img src="icons/feather/plus.svg" title="new scene" width="20"/>
       </button>
     </div>
+    <!-- These effects are all added to the panel 
+         at the left manually in mounted() -->
+    <div class="all-effects">
+      <effects-settings
+        v-for="(sceneNumber, sceneIndex) in scenesIndex"
+        v-bind:class="(selected == sceneIndex)? '': 'effects-settings-hidden'"
+        v-bind:key="'effects-settings-' + scenes[sceneNumber].id" 
+        v-bind:ref="'effects-settings-' + scenes[sceneNumber].id" 
+        v-bind:defaultEffect="scenes[sceneNumber].defaultEffect"
+        v-on:effectsChanged="effectsChanged" 
+        v-bind:player="player"/>
+    </div>
+    <effects-selector ref="effects-selector"/>
   </div>`,
   data(){
     return {
@@ -40,10 +53,19 @@ Vue.component('scene-selector', {
       selected: 0,
     };
   },
+  props: ["player"],
   methods: {
     switch_to(i){
       this.selected = i;
       this.$emit("switch-to-scene", i);
+	  let component = this.$refs['effects-settings-' + i];
+	  if(component == undefined){
+		return;
+	  }
+	  // For some reason (probably v-for) this is a 1 element array
+	  component = component[0];
+	  this.$emit("effectsChanged", component.getOrderedEffects());
+	  
 	  this.$nextTick(function(){
 		this.setCurrentPreview();
 	  });
@@ -69,7 +91,7 @@ Vue.component('scene-selector', {
 	},
 	addSceneButton(){
 	  let app = this;
-	  this.$emit("launch-effect-selector", function(effectName){
+	  this.$refs['effects-selector'].open(function(effectName){
 		app.addScene(effectName);
 	  });
 	},
@@ -77,7 +99,8 @@ Vue.component('scene-selector', {
 	  let app = this;
 	  let uniqueSceneID = utils.increment_unique_counter("scene");
 	  let settings = {
-		id: uniqueSceneID
+		id: uniqueSceneID,
+		defaultEffect: themeName
 	  };
 	  app.scenes.splice(app.scenes.length, 0, settings);
 	  app.scenesIndex.splice(app.scenesIndex.length, 0, app.scenes.length - 1);
@@ -133,9 +156,18 @@ Vue.component('scene-selector', {
       this.scenesIndex.splice(sceneIndex, 1);
       this.scenes.splice(number, 1);
     },
+	effectsChanged(effects){
+	  this.$emit("effectsChanged", effects);
+	},
+	updateTexts(){
+	  this.$refs['effects-settings-' + this.selected][0].updateTexts();
+	}
   },
   mounted(){
 	this.addScene("epicSunset");
 	this.addScene("retrowave");
+	let allEffects = this.$el.querySelectorAll(".all-effects")[0];
+	let allEffectsContainer = document.querySelectorAll(".all-effects-container")[0];
+	allEffectsContainer.appendChild(allEffects);
   }
 });
