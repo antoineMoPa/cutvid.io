@@ -56,7 +56,7 @@ utils.load_script = function(url, callback){
     let cbs = utils.scripts[url].callbacks;
 	cbs.forEach((cb) => {cb()});
   };
-  script.src = url;
+  script.src = url + "?" + Math.random();
   document.body.appendChild(script);
 }
 

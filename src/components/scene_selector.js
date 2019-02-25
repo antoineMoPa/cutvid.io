@@ -202,6 +202,7 @@ Vue.component('scene-selector', {
   mounted(){
     this.addScene("epicSunset");
     this.addScene("retrowave");
+    this.addScene("textLayer");
     let allEffects = this.$el.querySelectorAll(".all-effects")[0];
     let allEffectsContainer = document.querySelectorAll(".all-effects-container")[0];
     allEffectsContainer.appendChild(allEffects);

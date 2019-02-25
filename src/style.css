@@ -237,14 +237,32 @@ input{
 }
 
 .settings-panel h4{
-	font-style: italic;
 	font-weight: 300;
+}
+
+.settings-panel h4:first-child{	
 	margin-top: -15px;
 }
 
 .settings-panel input[type=number]{
 	height:20px;
+}
+
+.settings-panel input:not([size]){
 	width:100px;
+}
+
+.settings-panel input[size="4"]{
+	width:40px;
+}
+
+.settings-panel input[type="color"]{
+	height: 33px;
+}
+
+.settings-panel input[type="checkbox"]{
+	margin-top:8px;
+	vertical-align: middle;
 }
 
 .settings-panel input{
@@ -278,6 +296,15 @@ input{
 .settings-panel img{
     margin:0;
     margin-bottom: -4px;
+}
+
+.settings-panel .span-table{
+	display:table;
+	width:100%;
+}
+
+.settings-panel .span-table span{
+	display:table-cell;
 }
 
 .effect-header{
