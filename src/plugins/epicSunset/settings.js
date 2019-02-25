@@ -79,9 +79,6 @@
 		  },
 		  player(){
 			this.updateTexts();
-		  },
-		  textCanvas(){
-			this.updateTexts();
 		  }
 		},
 		mounted(){

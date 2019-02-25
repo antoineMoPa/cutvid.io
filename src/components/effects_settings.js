@@ -101,7 +101,10 @@ Vue.component('effects-settings', {
           app.effects.splice(app.effects.length, 0, settings);
           // Add its index
 		  app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
-          app.applyEffectsChange();
+		  app.$nextTick(function(){
+			app.updateTexts();
+			app.applyEffectsChange();
+		  });
         });
 	  });
     },
@@ -176,10 +179,10 @@ Vue.component('effects-settings', {
 	updateTexts(){
 	  for(let effect in this.effects){
 		let comp = this.$refs[this.effects[effect].component];
-		if(comp == undefined || comp.updateTexts == undefined){
+		if(comp == undefined || comp[0].updateTexts == undefined){
 		  continue;
 		}
-		comp.updateTexts();
+		comp[0].updateTexts();
 	  }
 	}
   },

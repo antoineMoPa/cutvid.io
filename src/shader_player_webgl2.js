@@ -196,7 +196,7 @@ class ShaderPlayerWebGL2 {
       console.log('Shader compilation error');
     };
 
-    {
+    if(this.gl == null){
       // Init canvas
       var gl = this.canvas.getContext('webgl', {preserveDrawingBuffer: true});
     
@@ -362,8 +362,8 @@ class ShaderPlayerWebGL2 {
     if (gl == null) {
       return;
     }
-
-    for (let pass = 0; pass < this.passes.length; pass++) {
+    
+	for (let pass = 0; pass < this.passes.length; pass++) {
       let passData = this.passes[pass];
       let shaderProgram = passData.shaderProgram;
       shaderProgram.use();

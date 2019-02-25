@@ -32,7 +32,6 @@ Vue.component('player', {
       <div class="canvas-container"/>
       <scene-selector
         ref="scene-selector"
-        v-on:effectsChanged="effectsChanged"
         v-bind:player="player"/>
     </div>
     <ui ref="ui"
@@ -126,18 +125,6 @@ Vue.component('player', {
       let panel = this.$el.querySelectorAll(".switchable-panel");
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
-    },
-    effectsChanged(effects){
-	  let app = this;
-
-	  if(app.player == undefined){
-		// Player not yet started
-		return;
-	  }
-	  
-	  app.player.passes = effects;
-	  
-	  this.updateTexts();
     },
     render(options) {
       if (typeof (options) === 'undefined') {

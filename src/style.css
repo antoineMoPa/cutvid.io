@@ -140,9 +140,9 @@ input{
 .scene-selector .scene{
     display: inline-block;
     background:#000;
-    width: 100px;
+    width: 142px;
     height: 80px;
-    max-width: 100px;
+    max-width: 142px;
     max-height: 80px;
     overflow:hidden;
     position:relative;
