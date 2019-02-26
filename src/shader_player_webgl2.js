@@ -449,7 +449,6 @@ class ShaderPlayerWebGL2 {
 		
 		if(uni.type == "f"){
 		  gl.uniform1f(attribute, parseFloat(uni.value));
-		  console.log(name,uni.value);
 		}
       }
         

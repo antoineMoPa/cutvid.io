@@ -5,8 +5,7 @@ utils.loaded_gfonts = {};
 
 utils.load_gfont = function(name_in, callback){
   // Was font already loaded
-  if(typeof utils.loaded_gfonts[name_in] != "undefined"){
-    document.fonts.load("12px " + name_in, "a").then(callback);
+  if(utils.loaded_gfonts[name_in] != undefined && utils.loaded_gfonts[name_in] == "loaded"){
     return;
   }
   
@@ -22,14 +21,20 @@ utils.load_gfont = function(name_in, callback){
   l.setAttribute("href", url);
   document.head.appendChild(l);
   
-  let fakeDiv = document.createElement("div");
-  fakeDiv.innerHTML = "<span style='font-family:" + name_in + ";'>" + name_in + "</span>";
-  document.body.appendChild(fakeDiv);
-  
-  document.fonts.ready.then(callback);
-  
-  // Set as loaded
-  utils.loaded_gfonts[name_in] = "loaded";
+  if("fonts" in document){
+    let fakeDiv = document.createElement("div");
+    fakeDiv.innerHTML = "<span style='font-family:" + name_in + ";'>" + name_in + "</span>";
+    document.body.appendChild(fakeDiv);
+    
+    document.fonts.ready.then(callback);
+    document.fonts.ready.then(function(){
+      fakeDiv.parentNode.removeChild(fakeDiv);
+      utils.loaded_gfonts[name_in] = "loaded";
+    });
+  } else {
+    // Set as loaded
+    utils.loaded_gfonts[name_in] = "loaded";
+  }
 }
 
 // Tool for dynamic script loading
