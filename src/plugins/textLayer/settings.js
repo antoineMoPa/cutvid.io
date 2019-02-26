@@ -13,8 +13,8 @@
   <input v-model="text.text" type="text">
   <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span><span>Color</span></label>
   <input v-model.number="text.size" type="number">
-  <input v-model.number="text.offsetTop" type="number" size="4">
-  <input v-model.number="text.offsetLeft" type="number" size="4">
+  <input v-model.number="text.offsetTop" type="number" size="4" step="25">
+  <input v-model.number="text.offsetLeft" type="number" size="4" step="25">
   <input v-model="text.color" type="color">
   <h4>Background</h4>
   <label>Transparent background
