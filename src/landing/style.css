@@ -24,7 +24,23 @@ input{
 }
 
 .pricing-hero{
-	background:#aaa;
+	background:#ccc;
+}
+
+.pricing-hero h2{
+	color:#000;
+	font-size: 50px;
+	margin-bottom: 30px;
+}
+
+.pricing-hero .premium-effects{
+    font-size: 20px;
+    color: #000;
+    margin-top: 40px;
+}
+
+.pricing-hero .premium-effects .button{
+	margin-left:30px;
 }
 
 .pricing-card{
