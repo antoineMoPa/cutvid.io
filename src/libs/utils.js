@@ -2,9 +2,11 @@ var utils = {};
 
 // Tool to load google webfonts with title
 utils.loaded_gfonts = {};
+
 utils.load_gfont = function(name_in, callback){
   // Was font already loaded
   if(typeof utils.loaded_gfonts[name_in] != "undefined"){
+    document.fonts.load("12px " + name_in, "a").then(callback);
     return;
   }
   
@@ -18,15 +20,13 @@ utils.load_gfont = function(name_in, callback){
   // Add attributes
   l.setAttribute("rel", "stylesheet");
   l.setAttribute("href", url);
-  
-  if("fonts" in document){
-	document.fonts.onloadingdone = callback;
-  } else {
-	l.onload = callback;
-  }
-  
-  // Add element to page
   document.head.appendChild(l);
+  
+  let fakeDiv = document.createElement("div");
+  fakeDiv.innerHTML = "<span style='font-family:" + name_in + ";'>" + name_in + "</span>";
+  document.body.appendChild(fakeDiv);
+  
+  document.fonts.ready.then(callback);
   
   // Set as loaded
   utils.loaded_gfonts[name_in] = "loaded";
@@ -50,8 +50,9 @@ utils.load_script = function(url, callback){
   utils.scripts[url] = {ready: false, callbacks: []};
   
   let script = document.createElement("script");
+  
   script.onload = function(){
-    utils.scripts[url].callbacks.push(callback)
+    utils.scripts[url].callbacks.push(callback);
     utils.scripts[url].ready = true;
     let cbs = utils.scripts[url].callbacks;
 	cbs.forEach((cb) => {cb()});
