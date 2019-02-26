@@ -214,9 +214,6 @@ void main(void){
     
     col += 0.9 * grid_with_angle(vec2(x,y), time);
 
-    // Vignette
-    col *= pow(1.0 - distance(vec2(x, y), vec2(0.5 * ratio, 0.5)),2.0);
-
     col += 1.8 * triangles(vec2(x,y),time);
     col += text(vec2(x, y), time);
     

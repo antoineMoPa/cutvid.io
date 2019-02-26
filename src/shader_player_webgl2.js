@@ -442,15 +442,16 @@ class ShaderPlayerWebGL2 {
 
       const ratioAttribute = gl.getUniformLocation(program, 'ratio');
       gl.uniform1f(ratioAttribute, ratio);
-      
-      /*
-        if(Math.random() < 0.01){
-        console.log(passData.uniforms);
-        for(uniform in passData.uniforms){
-        console.log(passData.uniforms[uniform]);
-        }
-        }
-      */
+	  
+      for(let name in passData.uniforms){
+		let uni = passData.uniforms[name];
+		let attribute = gl.getUniformLocation(program, name);
+		
+		if(uni.type == "f"){
+		  gl.uniform1f(attribute, parseFloat(uni.value));
+		  console.log(name,uni.value);
+		}
+      }
         
       gl.viewport(0, 0, this.width, this.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

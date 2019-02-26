@@ -31,6 +31,7 @@ Vue.component('effects-settings', {
                      v-bind:ref="effects[effectNumber].component"
                      v-bind:shaderProgram="effects[effectNumber].shaderProgram"
                      v-bind:player="player"
+                     v-bind:effect="effects[effectNumber]"
                      ></component>
         </div>
       </div>

@@ -8,7 +8,7 @@
 	  ui: {
 		template: `
 <div>
-  <input type="number" min="0.0" max="1.0" step="0.05" v-model="uniforms.strength.value">
+  <input type="number" min="0.0" max="5.0" step="0.05" v-model="uniforms.strength.value">
 </div>`,
 		data: function(){
 		  return {
@@ -21,19 +21,18 @@
 			}
 		  };
 		},
-		props: ["player"],
+		props: ["player", "effect"],
 		methods: {
 		},
 		watch: {
 		  "uniforms": {
 			handler(){
-			  this.$emit("uniforms", this.uniforms);
 			},
 			deep: true
 		  }
 		},
 		mounted(){
-		  this.$emit("uniforms", this.uniforms);
+		  this.effect.uniforms = this.uniforms;
 		}
 	  }
 	}

@@ -14,7 +14,7 @@ void main(void){
 	vec2 p = vec2(x,y) - vec2(0.5 * ratio, 0.5);
 	
 	vec4 col = texture2D(tex_in, lastUV);
-	col *= 1.0 - 1.0 * pow(length(p), 2.0);
+	col *= 1.0 - strength * pow(length(p), 2.0);
 	col.a = 1.0;
 
 	gl_FragColor = col;
