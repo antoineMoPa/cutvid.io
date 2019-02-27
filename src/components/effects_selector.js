@@ -31,6 +31,12 @@ Vue.component('effects-selector', {
         "epicSunset": {
           "description": "A retro sunset."
         },
+        "edgeDetect": {
+          "description": "Edge detection effect."
+        },
+        "backgroundColor": {
+          "description": "Replaces transparent parts with a uniform color."
+        },
       },
     };
   },
