@@ -146,28 +146,33 @@ Vue.component('scene-selector', {
         return;
       }
       
-      if(sceneIndex == this.selected){
-        if(sceneIndex >= this.scenesIndex.length - 1){
-          this.switch_to(sceneIndex - 1);
-        } else {
-          this.switch_to(sceneIndex);
-        }
-      } else if (this.selected > sceneIndex) {
-        this.switch_to(this.selected - 1);
-      }
-      
       // Decrement all elements after current index
       this.scenesIndex = this.scenesIndex.map((i) => { return i <= sceneIndex? i: i - 1; });
       this.scenesIndex.splice(sceneIndex, 1);
       this.scenes.splice(number, 1);
+
+      this.$nextTick(function(){
+        if(sceneIndex == this.selected){
+          if(sceneIndex >= this.scenesIndex.length - 1){
+            this.switch_to(sceneIndex - 1);
+          } else {
+            this.switch_to(sceneIndex);
+          }
+        } else if (this.selected > sceneIndex) {
+          this.switch_to(this.selected - 1);
+        }
+      });
     },
     getSceneEffects(index){
-      let component = this.$refs['effects-settings-' + index];
+      let effect = this.scenes[this.scenesIndex[index]];
+      let component = this.$refs['effects-settings-' + effect.id];
       
-      if(component == undefined){
+      if(component == undefined || component[0] == undefined){
         return [];
       }
+
       component = component[0];
+      
       return component.getOrderedEffects();
     },
     effectsChanged(effects){
