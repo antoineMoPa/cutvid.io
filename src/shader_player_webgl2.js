@@ -174,7 +174,8 @@ class ShaderPlayerWebGL2 {
     this.window_focused = true;
     this.anim_timeout = null;
     this.paused = false;
-    this.passes = [];
+    this.scenes = [];
+	this.past_durations = 0;
     this.shaderProgram = null;
 
     // TODO: synchronize with vue
@@ -362,14 +363,27 @@ class ShaderPlayerWebGL2 {
     if (gl == null) {
       return;
     }
-    
-	for (let pass = 0; pass < this.passes.length; pass++) {
-      let passData = this.passes[pass];
+	
+	let duration = 0;
+	// TODO: cache
+	for(let i in this.scenes){
+	  duration += parseInt(this.scenes[i].duration * 1000);
+	}
+	
+	time = time % duration / 1000;
+
+	let current_scene = Math.floor(time);
+	let scene = this.scenes[current_scene];
+	
+  	let passes = scene.passes;
+	
+	for (let pass = 0; pass < passes.length; pass++) {
+      let passData = passes[pass];
       let shaderProgram = passData.shaderProgram;
       shaderProgram.use();
-      let program = this.passes[pass].shaderProgram.program;
+      let program = passes[pass].shaderProgram.program;
       
-      if (pass < this.passes.length - 1) {
+      if (pass < passes.length - 1) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[pass]);
       } else {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -472,7 +486,7 @@ class ShaderPlayerWebGL2 {
     this.anim_already_started = true;
 
     function _animate() {
-      let time = (new Date().getTime() % 2000) / 2000;
+      let time = new Date().getTime();
       // When rendering gif, draw is done elsewhere
       if (!player.rendering_gif && player.window_focused && !player.paused) {
         try{

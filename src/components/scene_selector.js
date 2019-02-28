@@ -76,7 +76,8 @@ Vue.component('scene-selector', {
       }
       
       let effects = this.getSceneEffects(index);
-      app.player.passes = effects;
+      this.player.scenes = [{duration: 1, passes: effects}];
+      
       app.player.render(0, function(canvas){
         app.$nextTick(function(){
           if(canvas == undefined){
@@ -112,6 +113,8 @@ Vue.component('scene-selector', {
       this.$nextTick(function(){
         this.switch_to(this.scenesIndex.length - 1);
         this.setPreview(this.scenesIndex.length - 1);
+        let component = this.$refs['effects-settings-' + settings.id][0];
+        settings.duration = 1.0; // TODO
       });
     },
     right(sceneIndex){
@@ -179,8 +182,21 @@ Vue.component('scene-selector', {
       if(this.player == undefined){
         return;
       }
-      this.player.passes = effects;
+	  this.player.scenes = [{duration: 1, passes: effects}];
       this.setPreview(this.selected);
+    },
+    playAll(){
+      let scenes = [];
+      for(let i in this.scenesIndex){
+        let scene = this.scenes[this.scenesIndex[i]];
+
+        scenes.push({
+          duration: scene.duration,
+          passes: this.getSceneEffects(i)
+        });
+      }
+      
+      this.player.scenes = scenes;
     },
     updateTexts(){
       let app = this;

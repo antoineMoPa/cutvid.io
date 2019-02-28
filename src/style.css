@@ -394,15 +394,18 @@ input{
 .gif-popup{
 	position:absolute;
 	top:20px;
-	left:20px;
+	left: calc(50% - 250px);
 	z-index:1000;
-	max-width:1000px;
-	left: 20px;
+	max-width:580px;
 	box-shadow: 0 0 10px rgba(0,0,0,0.8);
 	background:#fff;
 	border-radius:3px;
 	padding:20px;
 	padding-top:60px;
+}
+
+.gif-popup img{
+	max-width:540px;
 }
 
 /* THEME-SELECTOR --------------- */

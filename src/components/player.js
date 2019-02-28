@@ -35,7 +35,7 @@ Vue.component('player', {
         v-bind:player="player"/>
     </div>
     <ui ref="ui"
-        v-on:play="play" 
+        v-on:play="playAll" 
         v-on:pause="pause" 
         v-on:buy="make_buy" 
         v-on:gif="make_gif"/>
@@ -71,8 +71,9 @@ Vue.component('player', {
       this.height = h;
       this.update_dimensions();
     },
-    play(){
-      this.player.play();
+    playAll(){
+      this.$refs['scene-selector'].playAll();
+	  this.player.play();
     },
     pause(){
       this.player.pause();

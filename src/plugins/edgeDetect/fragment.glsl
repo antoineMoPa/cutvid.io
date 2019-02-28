@@ -20,7 +20,7 @@ void main(void){
     vec4 c = texture2D(tex_in, lastUV + vec2(0.0, offset));
     vec4 d = texture2D(tex_in, lastUV + vec2(0.0, -offset));
     
-    vec4 col = current - 0.25 * (a + b + c + d);
+    vec4 col = abs(current - 0.25 * (a + b + c + d));
 
     col = clamp(col, vec4(0.0), vec4(1.0));
 
