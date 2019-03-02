@@ -1,5 +1,5 @@
 Vue.component('player', {
-  template: 
+  template:
   `<div class="player">
     <div class="settings-panel">
       <div class="switchable-panel">
@@ -10,18 +10,19 @@ Vue.component('player', {
         <label>Presets</label>
         <a class="preset" v-on:click="set_dimensions(1920,1080)">Full HD 1080p</a>
         <a class="preset" v-on:click="set_dimensions(1280,720)">HD 720p</a>
-        <a class="preset" v-on:click="set_dimensions(540,540);fps=10;duration=3">Square 540</a>
+        <a class="preset" v-on:click="set_dimensions(540,540);fps=10;">Square 540</a>
         <a class="preset" v-on:click="set_dimensions(3840,2160)">UHD</a>
         <a class="preset" v-on:click="set_dimensions(4096,2160)">Movie 4K</a>
         <a class="preset" v-on:click="set_dimensions(600,315)">Instagram Ad</a>
         <a class="preset" v-on:click="set_dimensions(864,1080)">Instagram Video</a>
-        <label>Duration (seconds)</label>
-        <input v-model.number="duration" type="number">
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
       </div>
       <div class="switchable-panel">
         <h3>Scene</h3>
+        <label>Duration (seconds)</label>
+        <input v-model.number="duration" type="number">
+
       </div>
       <div class="switchable-panel all-effects-container">
         <h3>Effects</h3>
@@ -35,9 +36,9 @@ Vue.component('player', {
         v-bind:player="player"/>
     </div>
     <ui ref="ui"
-        v-on:play="playAll" 
-        v-on:pause="pause" 
-        v-on:buy="make_buy" 
+        v-on:play="playAll"
+        v-on:pause="pause"
+        v-on:buy="make_buy"
         v-on:gif="make_gif"/>
   </div>`,
   data(){
@@ -46,23 +47,22 @@ Vue.component('player', {
       width: 1920,
       height: 1080,
       aspect: 1920.0/1080,
-      duration: 3,
       fps: 50,
       watermark: ""
     };
   },
   mounted: function(){
-	let app = this;
+    let app = this;
     window.addEventListener("resize", app.on_resize);
-	
-	app.player = new ShaderPlayerWebGL2();
-	app.player.set_width(app.width);
-	app.player.set_height(app.height);
-	app.on_resize();
-	let container = document.querySelectorAll("#main-player .canvas-container")[0];
-	app.player.set_container(container);
-    
-	this.switch_panel(2);
+
+    app.player = new ShaderPlayerWebGL2();
+    app.player.set_width(app.width);
+    app.player.set_height(app.height);
+    app.on_resize();
+    let container = document.querySelectorAll("#main-player .canvas-container")[0];
+    app.player.set_container(container);
+
+    this.switch_panel(2);
     this.$refs['panel-selector'].switch_to(2);
   },
   methods: {
@@ -73,7 +73,7 @@ Vue.component('player', {
     },
     playAll(){
       this.$refs['scene-selector'].playAll();
-	  this.player.play();
+      this.player.play();
     },
     pause(){
       this.player.pause();
@@ -90,39 +90,39 @@ Vue.component('player', {
       let left_panel_width = 315;
       let x_spacing = 60 + left_panel_width; // 315: left theme settings panel
       let y_spacing = 100 + 100 + 10; // 100: bottom ui, 100: scene-selector, margin
-      
+
       let x_available_space = window.innerWidth;
       let y_available_space = window.innerHeight;
-      
+
       let available_size = Math.min(
-        x_available_space - x_spacing, 
+        x_available_space - x_spacing,
         (y_available_space - y_spacing) * app.aspect
       );
-      
+
       if(!app.player){
         return;
       }
-      
+
       let displayed_w = available_size;
       let displayed_h = available_size * app.aspect;
       let main_player = document.querySelectorAll("#main-player")[0];
       let scene_selector = document.querySelectorAll("#main-player .scene-selector")[0];
-      
-	  scene_selector.style.maxWidth = displayed_w + "px";
-	  app.player.canvas.style.maxWidth = displayed_w + "px";
+
+      scene_selector.style.maxWidth = displayed_w + "px";
+      app.player.canvas.style.maxWidth = displayed_w + "px";
       app.player.canvas.style.maxHeight = displayed_h + "px";
       main_player.style.position = "absolute";
       main_player.style.top = 0 + "px";
       let x_align_center = parseInt((x_available_space - x_spacing - available_size) / 2);
       main_player.style.left = x_spacing - 20 + x_align_center + "px";
-      
+
     },
     switch_panel(i){
       // Hide previously shown
       this.$el.querySelectorAll(".switchable-panel-shown").forEach((el) => {
         el.classList.remove("switchable-panel-shown");
       });
-      
+
       let panel = this.$el.querySelectorAll(".switchable-panel");
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
@@ -131,7 +131,6 @@ Vue.component('player', {
       if (typeof (options) === 'undefined') {
         options = {
           zip: false,
-          stack: true,
           gif: false
         };
       }
@@ -143,7 +142,7 @@ Vue.component('player', {
       if (app.player.pause_anim) {
         app.player.pause_anim();
       }
-      
+
       const to_export = {};
 
       if (options.gif) {
@@ -156,10 +155,6 @@ Vue.component('player', {
 
       canvas.width = app.width;
       canvas.height = app.height;
-
-      if (options.stack) {
-        canvas.height = app.player.canvas.height * app.player.frames;
-      }
 
       const ctx = canvas.getContext('2d');
 
@@ -186,13 +181,7 @@ Vue.component('player', {
           const temp_img = document.createElement('img');
 
           temp_img.onload = function () {
-            if (options.stack) {
-              const offset = curr * pl.canvas.height;
-              ctx.drawImage(temp_img, 0, offset);
-              ctx.fillStyle = color;
-              ctx.fillText(watermark, -offset_x, h - 10 + offset);
-              next();
-            } else if (options.gif) {
+            if (options.gif) {
               ctx.drawImage(temp_img, 0, 0);
               ctx.fillStyle = color;
               ctx.fillText(watermark, w - offset_x, h - 10);
@@ -278,7 +267,7 @@ Vue.component('player', {
           dither: 'FloydSteinberg',
           workerScript: '/libs/gif.worker.js'
         });
-        
+
         let data = to_export.data;
 
         const images = [];
@@ -288,7 +277,7 @@ Vue.component('player', {
           image.src = data[i];
           image.onload = imageLoaded;
           images.push(image);
-          
+
         }
 
         let number_loaded = 0;
@@ -303,13 +292,13 @@ Vue.component('player', {
           for (let i = 0; i < images.length; i++) {
             gif.addFrame(images[i], { delay: to_export.delay });
           }
-          
+
           gif.render();
-          
+
           gif.on('progress', (p) => {
-            app.$refs.ui.set_progress(0.5 + 0.5 * p);  
+            app.$refs.ui.set_progress(0.5 + 0.5 * p);
           });
-          
+
           gif.on('finished', (blob) => {
             // Create image
             const size = (blob.size / 1000).toFixed(2);
@@ -317,7 +306,7 @@ Vue.component('player', {
             // Create base64 version
             // PERF: TODO: generate image on submit only
             const reader = new window.FileReader();
-            
+
             reader.onloadend = function () {
               // reader.result = base64 data
               let div = document.createElement("div");
@@ -325,7 +314,7 @@ Vue.component('player', {
               let content = "<img src='" + URL.createObjectURL(blob) + "'/>";
               content += "<p>To save gif: Right-Click image + save-as!</p>";
               div.innerHTML = content;
-              
+
               let close_button = document.createElement("div");
               close_button.classList.add("close-button");
               close_button.innerHTML = '<img src="icons/feather-dark/x.svg" width="40"/>';
@@ -333,7 +322,7 @@ Vue.component('player', {
                 document.body.removeChild(div);
               });
               div.appendChild(close_button);
-              
+
               document.body.appendChild(div);
               app.$refs.ui.set_progress(0);
             };
@@ -344,41 +333,36 @@ Vue.component('player', {
     },
     make_gif(){
       let basic_error = false;
-      
+
       if(this.player.rendering_gif){
         return;
       }
-      
+
       // We'll show all relevant warnings.
-      
+
       if(this.width > 1000 || this.height > 1000){
         alert("Please set a lower resolution (less than 1000x1000) before exporting a gif.");
-        basic_error = true;
-      }
-      if(this.duration > 5){
-        alert("Please set a smaller duration (less than 5 seconds) before exporting a gif.");
         basic_error = true;
       }
       if(this.fps > 20){
         alert("Please set a smaller fps (less than 20) before exporting a gif.");
         basic_error = true;
       }
-      
+
       if(basic_error){
         return;
       }
-      
+
       this.$refs.ui.set_progress(0.0);
-      
+
       this.render({
         zip: false,
-        stack: false,
         gif: true
       });
     },
-	updateTexts(){
+    updateTexts(){
       this.$refs['scene-selector'].updateTexts();
-	},
+    },
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");
     },
@@ -390,11 +374,7 @@ Vue.component('player', {
     height(){
       this.update_dimensions();
     },
-    duration(){
-      this.player.frames = this.duration * this.fps;
-    },
     fps(){
-      this.player.frames = this.duration * this.fps;
     }
   }
 })

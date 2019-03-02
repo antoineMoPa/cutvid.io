@@ -3,22 +3,22 @@ class ShaderProgram {
     this.gl = gl;
     this.fragment_shader_object = null;
     this.vertex_shader_object = null;
-	this.textures = {};
+    this.textures = {};
   }
-  
+
   compile(vertex_shader_code, fragment_shader_code) {
     let compiled = false;
     let program = null;
     const player = this;
-    
+
     if (this.gl == null) {
       return;
     }
 
     const gl = this.gl;
-    
+
     this.deleteProgram();
-    
+
     program = gl.createProgram();
 
     const vertex_shader = add_shader(gl.VERTEX_SHADER, vertex_shader_code);
@@ -36,7 +36,7 @@ class ShaderProgram {
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         const err = gl.getShaderInfoLog(shader);
         console.error(err);
-      } 
+      }
 
       gl.attachShader(program, shader);
 
@@ -57,15 +57,15 @@ class ShaderProgram {
     gl.useProgram(program);
 
     const positionAttribute = gl.getAttribLocation(program, 'position');
-    
+
     gl.enableVertexAttribArray(positionAttribute);
     gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
-    
+
     compiled = true;
-    
+
     this.program = program;
   }
-  
+
   use() {
     this.gl.useProgram(this.program);
   }
@@ -78,11 +78,11 @@ class ShaderProgram {
   set_texture(name, url, ready) {
     let app = this;
 
-	// Cleanup before setting again
-	if(this.textures[name] != undefined){
-	  this.delete_texture(name);
-	}
-	
+    // Cleanup before setting again
+    if(this.textures[name] != undefined){
+      this.delete_texture(name);
+    }
+
     function isPowerOf2(value) {
       return (value & (value - 1)) == 0;
     }
@@ -97,20 +97,20 @@ class ShaderProgram {
     var srcFormat = gl.RGBA;
     var srcType = gl.UNSIGNED_BYTE;
     var pixel = new Uint8Array([0, 0, 0, 0]);
-    
+
 
     var image = new Image();
-    
+
     image.addEventListener("load", function () {
       var texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
 
-	  app.textures[name] = texture;
-	  
+      app.textures[name] = texture;
+
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
-      
+
       // WebGL1 has different requirements for power of 2 images
       // vs non power of 2 images so check if the image is a
       // power of 2 in both dimensions.
@@ -126,13 +126,13 @@ class ShaderProgram {
       }
       ready();
     });
-    
+
     image.src = url;
   }
 
   delete_texture(name) {
     const gl = this.gl;
-    
+
     if(this.textures[name] == undefined){
       console.error("attempt to delete texture which does not exist");
       return;
@@ -141,7 +141,7 @@ class ShaderProgram {
     gl.deleteTexture(this.textures[name]);
     delete this.textures[name];
   }
-  
+
   deleteProgram() {
     const gl = this.gl;
     // Delete previous program
@@ -175,13 +175,12 @@ class ShaderPlayerWebGL2 {
     this.anim_timeout = null;
     this.paused = false;
     this.scenes = [];
-	this.past_durations = 0;
+    this.past_durations = 0;
     this.shaderProgram = null;
 
     // TODO: synchronize with vue
     this.width = 540;
     this.height = 540;
-    this.frames = 10;
     this.rendering_gif = false;
     this.mouse = [0, 0];
 
@@ -200,7 +199,7 @@ class ShaderPlayerWebGL2 {
     if(this.gl == null){
       // Init canvas
       var gl = this.canvas.getContext('webgl', {preserveDrawingBuffer: true});
-    
+
       // Detect webgl2 native problems
       // (read: my old laptop's graphics card is too old)
       // We default to not working
@@ -229,11 +228,11 @@ class ShaderPlayerWebGL2 {
   play(){
     this.paused = false;
   }
-  
+
   pause(){
     this.paused = true;
   }
-  
+
   /*
      Generic player functions
      (That would be in an interface if Javascript had that)
@@ -293,7 +292,7 @@ class ShaderPlayerWebGL2 {
     if (this.gl == null) {
       return;
     }
-    
+
     const gl = this.gl;
     let ww = 2;
     let hh = 2;
@@ -318,7 +317,7 @@ class ShaderPlayerWebGL2 {
     }
 
     this.renderBufferDim = [ww, hh];
-    
+
     // The 10 here limits the pass number
     for (var i = 0; i < 10; i++) {
       this.rttTexture[i] = gl.createTexture();
@@ -330,7 +329,7 @@ class ShaderPlayerWebGL2 {
       // Render to texture stuff
       this.framebuffer[i] = gl.createFramebuffer();
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[i]);
-      
+
       var renderbuffer = gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
 
@@ -356,41 +355,55 @@ class ShaderPlayerWebGL2 {
     gl.bindBuffer(gl.ARRAY_BUFFER, tri);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   }
-  
+
   draw_gl(time) {
     const gl = this.gl;
-    
+
     if (gl == null) {
       return;
     }
-	
-	let duration = 0;
-	// TODO: cache
-	for(let i in this.scenes){
-	  duration += parseInt(this.scenes[i].duration * 1000);
-	}
-	
-	time = time % duration / 1000;
 
-	let current_scene = Math.floor(time);
-	let scene = this.scenes[current_scene];
-	
-  	let passes = scene.passes;
-	
-	for (let pass = 0; pass < passes.length; pass++) {
+    let duration = 0;
+    for(let scene = 0; scene < this.scenes.length; scene++){
+      duration += parseFloat(this.scenes[scene].duration);
+    }
+    duration *= 1000;
+    time = time % duration / 1000;
+
+    let current_scene = 0;
+
+    // Pseudotime is used to parse scenes
+    // and find current one
+    let scene_end_time = 0;
+
+    for(let scene = 0; scene < this.scenes.length; scene++){
+      // Last scene end time becomes current end time
+      let scene_begin_time = scene_end_time;
+      scene_end_time += parseFloat(this.scenes[scene].duration);
+      if(time < scene_begin_time){
+        break;
+      }
+      current_scene = scene;
+    }
+
+    let scene = this.scenes[current_scene];
+
+      let passes = scene.passes;
+
+    for (let pass = 0; pass < passes.length; pass++) {
       let passData = passes[pass];
       let shaderProgram = passData.shaderProgram;
       shaderProgram.use();
       let program = passes[pass].shaderProgram.program;
-      
+
       if (pass < passes.length - 1) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[pass]);
       } else {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       }
-      
+
       gl.activeTexture(gl.TEXTURE0);
-      
+
       // Manage lastpass
       if (pass > 0) {
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-1]);
@@ -406,7 +419,7 @@ class ShaderPlayerWebGL2 {
         var att = gl.getUniformLocation(program, name);
         gl.bindTexture(gl.TEXTURE_2D, shaderProgram.textures[name]);
         gl.uniform1i(att, i);
-		i++;
+        i++;
       }
 
       gl.uniform2fv(
@@ -424,9 +437,6 @@ class ShaderPlayerWebGL2 {
 
       const passAttribute = gl.getUniformLocation(program, 'pass');
       gl.uniform1i(passAttribute, pass + 1);
-
-      // Set time attribute
-      const tot_time = this.frames * this.anim_timeout;
 
       const timeAttribute = gl.getUniformLocation(program, 'time');
       gl.uniform1f(timeAttribute, time);
@@ -456,16 +466,16 @@ class ShaderPlayerWebGL2 {
 
       const ratioAttribute = gl.getUniformLocation(program, 'ratio');
       gl.uniform1f(ratioAttribute, ratio);
-	  
+
       for(let name in passData.uniforms){
-		let uni = passData.uniforms[name];
-		let attribute = gl.getUniformLocation(program, name);
-		
-		if(uni.type == "f"){
-		  gl.uniform1f(attribute, parseFloat(uni.value));
-		}
+        let uni = passData.uniforms[name];
+        let attribute = gl.getUniformLocation(program, name);
+
+        if(uni.type == "f"){
+          gl.uniform1f(attribute, parseFloat(uni.value));
+        }
       }
-        
+
       gl.viewport(0, 0, this.width, this.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
@@ -495,7 +505,7 @@ class ShaderPlayerWebGL2 {
           console.error(e);
         }
       }
-      
+
       window.requestAnimationFrame(_animate.bind(this));
     }
 
