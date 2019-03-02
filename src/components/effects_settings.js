@@ -31,6 +31,7 @@ Vue.component('effects-settings', {
                      v-bind:ref="effects[effectNumber].component"
                      v-bind:shaderProgram="effects[effectNumber].shaderProgram"
                      v-bind:player="player"
+                     v-bind:ready="ready"
                      v-bind:effect="effects[effectNumber]"
                      ></component>
         </div>
@@ -79,6 +80,8 @@ Vue.component('effects-settings', {
 	      this.vertex = vertex;
 	      this.fragment = fragment;
 	      onShadersReady(vertex, fragment);
+		  this.applyEffectsChange();
+		  this.$emit("ready");
 	    });
       });
     },
@@ -178,6 +181,7 @@ Vue.component('effects-settings', {
 	  this.$refs['effectSelector'].open(callback);
 	},
 	updateTexts(){
+	  let app = this;
 	  for(let effect in this.effects){
 		let comp = this.$refs[this.effects[effect].component];
 		if(comp == undefined || comp[0].updateTexts == undefined){
@@ -185,6 +189,9 @@ Vue.component('effects-settings', {
 		}
 		comp[0].updateTexts();
 	  }
+	},
+	ready(){
+	  this.$emit("ready");
 	}
   },
   mounted(){

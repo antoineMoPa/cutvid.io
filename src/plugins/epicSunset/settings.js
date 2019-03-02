@@ -41,6 +41,7 @@
 		props: ["player", "shaderProgram"],
 		methods: {
 		  updateTexts(){
+			let app = this;
 			let textCanvas = document.createElement("canvas");
 			let ctx = textCanvas.getContext("2d");
 			textCanvas.width = this.player.width;
@@ -66,6 +67,7 @@
 			  "texture0",
 			  textCanvas.toDataURL(),
 			  function(){
+				app.$emit("ready");
 			  }
 			);
 		  }

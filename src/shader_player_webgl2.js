@@ -387,11 +387,11 @@ class ShaderPlayerWebGL2 {
     }
 
     let scene = this.scenes[current_scene];
-	
+
 	if(scene == undefined){
 	  return;
 	}
-	
+
     let passes = scene.passes;
 
     for (let pass = 0; pass < passes.length; pass++) {
