@@ -365,7 +365,7 @@ class ShaderPlayerWebGL2 {
 
     let duration = 0;
     for(let scene = 0; scene < this.scenes.length; scene++){
-      duration += parseFloat(this.scenes[scene].duration);
+      duration += parseFloat(this.scenes[scene].scene.duration);
     }
     duration *= 1000;
     time = time % duration / 1000;
@@ -379,7 +379,7 @@ class ShaderPlayerWebGL2 {
     for(let scene = 0; scene < this.scenes.length; scene++){
       // Last scene end time becomes current end time
       let scene_begin_time = scene_end_time;
-      scene_end_time += parseFloat(this.scenes[scene].duration);
+      scene_end_time += parseFloat(this.scenes[scene].scene.duration);
       if(time < scene_begin_time){
         break;
       }
@@ -387,8 +387,12 @@ class ShaderPlayerWebGL2 {
     }
 
     let scene = this.scenes[current_scene];
-
-      let passes = scene.passes;
+	
+	if(scene == undefined){
+	  return;
+	}
+	
+    let passes = scene.passes;
 
     for (let pass = 0; pass < passes.length; pass++) {
       let passData = passes[pass];

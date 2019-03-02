@@ -54,6 +54,10 @@ input{
 	color:#fff;
 }
 
+.ui-button.ui-disabled{
+	opacity:0.4;
+}
+
 .ui-button.button-1{
 	right:20px;
 }
@@ -73,23 +77,9 @@ input{
 }
 
 .play-button{
-	display:inline-block;
-	width:40px;
-	height:40px;
-	background:#222;
-	border-radius:50%;
-	margin-top:10px;
+	left:calc(50% - 50px);
 	cursor:pointer;
-}
-
-.play-icon{
-	margin-top:8px;
-	margin-left:3px;
-}
-
-.pause-icon{
-	margin-top:8px;
-	margin-left:0px;
+	width:100px;
 }
 
 .close-button{

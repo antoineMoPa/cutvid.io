@@ -18,14 +18,13 @@ Vue.component('player', {
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
       </div>
-      <div class="switchable-panel">
+      <div class="switchable-panel all-scenes-container">
         <h3>Scene</h3>
-        <label>Duration (seconds)</label>
-        <input v-model.number="duration" type="number">
-
+        <!-- scene-selector puts stuff here -->
       </div>
       <div class="switchable-panel all-effects-container">
         <h3>Effects</h3>
+        <!-- scene-selector puts stuff here -->
       </div>
       <panel-selector ref="panel-selector" v-on:switch="switch_panel"/>
     </div>
@@ -33,11 +32,11 @@ Vue.component('player', {
       <div class="canvas-container"/>
       <scene-selector
         ref="scene-selector"
+        v-on:playLooping="playLooping"
         v-bind:player="player"/>
     </div>
     <ui ref="ui"
-        v-on:play="playAll"
-        v-on:pause="pause"
+        v-on:playAll="playAll"
         v-on:buy="make_buy"
         v-on:gif="make_gif"/>
   </div>`,
@@ -74,6 +73,9 @@ Vue.component('player', {
     playAll(){
       this.$refs['scene-selector'].playAll();
       this.player.play();
+    },
+	playLooping(){
+      this.$refs['ui'].playLooping();
     },
     pause(){
       this.player.pause();

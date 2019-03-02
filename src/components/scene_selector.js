@@ -41,8 +41,18 @@ Vue.component('scene-selector', {
         v-bind:key="'effects-settings-' + scenes[sceneNumber].id" 
         v-bind:ref="'effects-settings-' + scenes[sceneNumber].id" 
         v-bind:defaultEffect="scenes[sceneNumber].defaultEffect"
-        v-on:effectsChanged="effectsChanged" 
+        v-on:effectsChanged="effectsChanged(sceneIndex)" 
         v-bind:player="player"/>
+    </div>
+    <div class="all-scenes">
+      <div
+        v-for="(sceneNumber, sceneIndex) in scenesIndex"
+        v-if="selected == sceneIndex"
+        v-bind:key="'effects-settings-' + scenes[sceneNumber].id" 
+      >
+        <label>Duration (seconds)</label>
+        <input type="number" min="0" max="30" step="0.1" v-model="scenes[sceneNumber].duration">
+      </div>
     </div>
     <effects-selector ref="effects-selector"/>
   </div>`,
@@ -57,7 +67,7 @@ Vue.component('scene-selector', {
   methods: {
     switch_to(i){
       this.selected = i;
-      this.effectsChanged(i, this.getSceneEffects(i));
+      this.effectsChanged(this.selected);
     },
     copyScene(i){
       let uniqueSceneID = utils.increment_unique_counter("scene");
@@ -74,9 +84,6 @@ Vue.component('scene-selector', {
         this.postponePreview(index);
         return;
       }
-      
-      let effects = this.getSceneEffects(index);
-      this.player.scenes = [{duration: 1, passes: effects}];
       
       app.player.render(0, function(canvas){
         app.$nextTick(function(){
@@ -178,12 +185,19 @@ Vue.component('scene-selector', {
       
       return component.getOrderedEffects();
     },
-    effectsChanged(effects){
-      if(this.player == undefined){
+    effectsChanged(sceneIndex){
+      let app = this;
+      
+      if(app.player == undefined){
         return;
       }
-	  this.player.scenes = [{duration: 1, passes: effects}];
-      this.setPreview(this.selected);
+      let scene = app.scenes[this.scenesIndex[sceneIndex]];
+      app.player.scenes = [{
+        scene: scene, 
+        passes: this.getSceneEffects(sceneIndex)
+      }];
+      app.setPreview(app.selected);
+      this.$emit("playLooping");
     },
     playAll(){
       let scenes = [];
@@ -191,7 +205,7 @@ Vue.component('scene-selector', {
         let scene = this.scenes[this.scenesIndex[i]];
 
         scenes.push({
-          duration: scene.duration,
+          scene: scene,
           passes: this.getSceneEffects(i)
         });
       }
@@ -227,6 +241,11 @@ Vue.component('scene-selector', {
     let allEffects = this.$el.querySelectorAll(".all-effects")[0];
     let allEffectsContainer = document.querySelectorAll(".all-effects-container")[0];
     allEffectsContainer.appendChild(allEffects);
+      
+    let allScenes = this.$el.querySelectorAll(".all-scenes")[0];
+    let allScenesContainer = document.querySelectorAll(".all-scenes-container")[0];
+    allScenesContainer.appendChild(allScenes);
+    
     this.$nextTick(function(){
       this.updateAllPreviews();
     });
