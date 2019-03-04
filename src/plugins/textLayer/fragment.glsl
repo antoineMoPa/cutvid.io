@@ -18,7 +18,7 @@ void main(void){
 	vec4 last = texture2D(in_tex, lastUV);
 	
 	col = (1.0 - col.a) * last + col.a * col;
-	
+	col.a = clamp(col.a, 0.0, 1.0);
 	gl_FragColor = col;
 }
 

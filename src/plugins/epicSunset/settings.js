@@ -11,9 +11,9 @@
   <label>Text</label>
   <input v-model="text.text" type="text">
   <label>Font size</label>
-  <input v-model="text.size" type="number">
+  <input v-model="text.size" step="10" type="number">
   <label>Top (y) offset</label>
-  <input v-model.number="text.offsetTop" type="number">
+  <input v-model.number="text.offsetTop" step="10" type="number">
   <label>Glitch Factor</label>
   <input v-model.number="uniforms.glitchFactor.value" min="0.0" max="2.0" step="0.1" type="number">
   <label>Font</label>

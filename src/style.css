@@ -403,15 +403,23 @@ input{
 .effects-selector,
 .theme-selector{
 	width:100%;
-	width:calc(100% - 80px);
+	max-width: 1020px;
 	background:#fff;
 	position:absolute;
 	top:40px;
-	left:40px;
+	left:calc(50% - 510px);
 	z-index:1000;
-	box-shadow:0 0 8px rgba(0,0,0,0.8);
+	box-shadow:0 0 30px rgba(0,0,0,0.8);
 	border-radius:10px;
 	text-align:left;
+}
+
+@media (max-width: 1080px){
+	.effects-selector,
+	.theme-selector{
+		left: 20px;
+		width: calc(100% - 40px);
+	}
 }
 
 .effects-selector h3 img,

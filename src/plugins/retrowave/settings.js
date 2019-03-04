@@ -12,21 +12,21 @@
   <label>Top text</label>
   <input v-model="textTop.text" type="text">
   <label>Font size | offset</label>
-  <input v-model.number="textTop.size" type="number">
-  <input v-model.number="textTop.offsetTop" type="number">
+  <input v-model.number="textTop.size" step="10" type="number">
+  <input v-model.number="textTop.offsetTop" step="10" type="number">
 
 
   <label>Middle text</label>
   <input v-model="textMiddle.text" type="text">
   <label>Font size | offset</label>
-  <input v-model.number="textMiddle.size" type="number">
-  <input v-model.number="textMiddle.offsetTop" type="number">
+  <input v-model.number="textMiddle.size" step="10" type="number">
+  <input v-model.number="textMiddle.offsetTop"  step="10" type="number">
 
   <label>Bottom text</label>
   <input v-model="textBottom.text" type="text">
   <label>Font size | offset</label>
-  <input v-model.number="textBottom.size" type="number">
-  <input v-model.number="textBottom.offsetTop" type="number">
+  <input v-model.number="textBottom.size" step="10" type="number">
+  <input v-model.number="textBottom.offsetTop" step="10" type="number">
 
 </div>`,
 		data: function(){

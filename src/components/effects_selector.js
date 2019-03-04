@@ -37,6 +37,9 @@ Vue.component('effects-selector', {
         "backgroundColor": {
           "description": "Replaces transparent parts with a uniform color."
         },
+		"logoReveal": {
+          "description": "Makes your logo appear with nice effects."
+        },
       },
     };
   },

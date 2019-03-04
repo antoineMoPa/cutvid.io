@@ -121,6 +121,8 @@ void main(void){
 	
 	col = tex.a * tex + (1.0 - tex.a) * col;
     
+	col.rgb = clamp(col.rgb, 0.0, 1.0);
+	
     col.a = 1.0;
 	gl_FragColor = col;
 }
