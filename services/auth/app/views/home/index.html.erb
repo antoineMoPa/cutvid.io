@@ -8,7 +8,9 @@
     <%= link_to "Sign up", "users/sign_up", class: "button" %><br/><br/>
     <%= link_to "Forgot your password?", "/users/password/new", class: "button" %><br />
     <% else %>
-    <p>Hello!</p>
+    <p>You are signed in!</p>
+    <br>
+    <%= link_to "Log out", "users/sign_out", class: "button", method: "delete" %><br/><br/>
     <% end %>
   </div>
 </section>
