@@ -1,0 +1,14 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">
+      Authentication
+    </h1>
+    <% if !user_signed_in? %>
+    <%= link_to "Log in", "users/sign_in", class: "button" %><br/><br/>
+    <%= link_to "Sign up", "users/sign_up", class: "button" %><br/><br/>
+    <%= link_to "Forgot your password?", "/users/password/new", class: "button" %><br />
+    <% else %>
+    <p>Hello!</p>
+    <% end %>
+  </div>
+</section>
