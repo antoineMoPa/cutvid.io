@@ -9,7 +9,7 @@
 		template: `
 <div>
   <label>Edge detection offset</label>	   
-  <input type="number" min="0.0" max="0.1" step="0.0004" v-model="uniforms.offset.value">
+  <input type="number" min="0.0" max="0.1" step="0.0001" v-model="uniforms.offset.value">
   <label>Color boost</label>	   
   <input type="number" min="0.0" max="10.0" step="0.1" v-model="uniforms.boost.value">
 </div>`,
@@ -45,8 +45,6 @@
 	  }
 	}
   };
-  
-  
   
   utils.plugins[name + "-effectSettings"] = effectSettings;
 }

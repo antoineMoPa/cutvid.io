@@ -14,6 +14,9 @@
   <input v-model="text.size" type="number">
   <label>Top (y) offset</label>
   <input v-model.number="text.offsetTop" type="number">
+  <label>Glitch Factor</label>
+  <input v-model.number="uniforms.glitchFactor.value" min="0.0" max="2.0" step="0.1" type="number">
+  <label>Font</label>
   <select v-model="text.font">
     <option value="Lobster">Lobster</option>
     <option value="Plaster">Plaster</option>
@@ -30,15 +33,15 @@
 			  color: "#000000",
 			},
 			uniforms: {
-			  strength: {
+			  glitchFactor: {
 				type: "f",
-				len: 1, /* float, not a vector: len = 1*/
+				len: 1,
 				value: 0.5,
 			  }
 			}
 		  };
 		},
-		props: ["player", "shaderProgram"],
+		props: ["player", "effect", "shaderProgram"],
 		methods: {
 		  updateTexts(){
 			let app = this;
@@ -73,7 +76,13 @@
 		  }
 		},
 		watch: {
-		  "text": {
+		  text: {
+			handler: function () {
+			  this.updateTexts();
+			},
+			deep: true
+		  },
+          glitchFactor: {
 			handler: function () {
 			  this.updateTexts();
 			},
@@ -84,7 +93,8 @@
 		  }
 		},
 		mounted(){
-		  this.updateTexts()
+		  this.updateTexts();
+          this.effect.uniforms = this.uniforms;
 		}
 	  }
 	}

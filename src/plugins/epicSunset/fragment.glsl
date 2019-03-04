@@ -3,6 +3,7 @@ precision highp float;
 varying vec2 UV;
 uniform vec2 mouse;
 uniform float ratio, time;
+uniform float glitchFactor;
 uniform sampler2D texture0;
 
 void main(void){
@@ -98,7 +99,7 @@ void main(void){
 	
 	uv -= 0.5;
 	
-	uv *= 1.0 + 0.1 * cos(time * 6.2832 + 0.3 * tan(p.x * 2.0 + time * 6.2832) + p.y * 10.0);
+	uv *= 1.0 + glitchFactor * 0.1 * cos(time * 6.2832 + 0.3 * tan(p.x * 2.0 + time * 6.2832) + p.y * 10.0);
 	
 	uv += 0.5;
 	

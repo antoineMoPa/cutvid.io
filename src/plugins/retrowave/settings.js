@@ -48,7 +48,7 @@
 			}
 		  };
 		},
-		props: ["player", "shaderProgram"],
+		props: ["player", "effects", "shaderProgram"],
 		methods: {
 		  updateTexts(){
 			let app = this;
@@ -136,7 +136,7 @@
 		  }
 		},
 		mounted(){
-		  this.updateTexts()
+		  this.updateTexts();
 		}
 	  }
 	};
