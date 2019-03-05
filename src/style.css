@@ -271,8 +271,8 @@ input{
 	vertical-align: middle;
 }
 
-.settings-panel input{
-	height:10px;
+.settings-panel input:not([type=file]){
+	height:25px;
 	margin-top:5px;
 	background:#222;
 	color:#eee;
@@ -283,6 +283,17 @@ input{
     border-bottom:1px solid #2a2a2a;
     border-right:1px solid #2a2a2a;
     border-radius:4px;
+}
+
+.settings-panel input[type="file"] {
+    height: 40px;
+    width: calc(100% - 65px);
+    background: #000;
+    border: none;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 8px;
+    padding:20px;
 }
 
 .settings-panel input:focus{

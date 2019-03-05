@@ -77,6 +77,7 @@ class ShaderProgram {
   //
   set_texture(name, url, ready) {
     let app = this;
+	ready = ready || (() => {});
 
     // Cleanup before setting again
     if(this.textures[name] != undefined){
