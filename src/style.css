@@ -19,6 +19,14 @@ input{
 	background:#eee;
 }
 
+/* HELPERS -------------- */
+
+.text-right{
+	text-align:right;
+}
+
+/* END HELPERS --------------*/
+
 /* UI -------------- */
 
 .ui{
@@ -195,7 +203,7 @@ input{
 /* THEME SETTINGS --------------- */
 
 .settings-panel{
-	background: #111;
+	background: #222;
 	color:#eee;
 	border-radius:3px;
 	position:fixed;
@@ -224,6 +232,12 @@ input{
 	margin:0;
 	padding:10px 0;
 	background:transparent;
+}
+
+.settings-panel h3{
+	text-align:center;
+	font-weight:300;
+	line-height:40px;
 }
 
 .settings-panel h4{
@@ -276,16 +290,23 @@ input{
 }
 
 .settings-panel button{
-    background:#bbb;
+    background:#111;
     border:none;
     padding:5px;
     border-radius:4px;
     cursor:pointer;
+	color:#fff;
+	line-height: 31px;
+	margin-right: 20px;
+}
+
+.settings-panel button img{
+	margin-bottom:-4px;
 }
 
 .settings-panel img{
     margin:0;
-    margin-bottom: -4px;
+    margin-bottom: -2px;
 }
 
 .settings-panel .span-table{
@@ -299,14 +320,14 @@ input{
 
 .effect-header{
     position:relative;
-    height:30px;
-    border: 1px solid #000;
-    width: calc(100% - 10px);
-    margin-left:-3px;
-    background: #222;
+    height:35px;
+    width: calc(100% - 30px);
+	border-radius:10px;
+    background: #111;
     padding-left: 7px;
-    font-size: 13px;
-    line-height: 29px;
+    font-size: 15px;
+    line-height: 35px;
+	text-align:center;
 }
 
 .effect-icons{
@@ -337,6 +358,14 @@ input{
 
 .effects-settings-hidden{
 	display:none;
+}
+
+.effects-settings input[type=color]{
+    border:none;
+	padding: 0;
+	margin-right: 20px;
+	margin-left: auto;
+	display: block;
 }
 
 /* END SETTINGS PANEL --------------- */

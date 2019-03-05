@@ -229,9 +229,11 @@ Vue.component('scene-selector', {
   watch: {
   },
   mounted(){
-    this.addScene("epicSunset");
-    this.addScene("retrowave");
-    this.addScene("textLayer");
+    //this.addScene("epicSunset");
+    //this.addScene("retrowave");
+    //this.addScene("textLayer");
+	this.addScene("logoReveal");
+	
     let allEffects = this.$el.querySelectorAll(".all-effects")[0];
     let allEffectsContainer = document.querySelectorAll(".all-effects-container")[0];
     allEffectsContainer.appendChild(allEffects);

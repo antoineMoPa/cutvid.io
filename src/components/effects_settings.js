@@ -37,10 +37,12 @@ Vue.component('effects-settings', {
         </div>
       </div>
     </transition-group>
-    <button v-on:click="onAddEffect">
-      <img src="icons/feather-dark/plus.svg" width="20"/>
-      Add effect
-    </button>
+    <div class="text-right">
+      <button v-on:click="onAddEffect">
+        <img src="icons/feather/plus.svg" width="20"/>
+        Add effect
+      </button>
+    </div>
     <effects-selector ref="effectSelector" v-on:chooseEffect="addEffect"/>
   </div>`,
   data(){

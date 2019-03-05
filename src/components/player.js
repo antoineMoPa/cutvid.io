@@ -55,6 +55,7 @@ Vue.component('player', {
     window.addEventListener("resize", app.on_resize);
 
     app.player = new ShaderPlayerWebGL2();
+	app.player.on_progress = this.on_player_progress;
     app.player.set_width(app.width);
     app.player.set_height(app.height);
     app.on_resize();
@@ -119,6 +120,10 @@ Vue.component('player', {
       main_player.style.left = x_spacing - 20 + x_align_center + "px";
 
     },
+	on_player_progress(time, duration){
+	  // TODO: find less visually annoying solution
+	  // this.$refs.ui.set_progress(time/duration);
+	},
     switch_panel(i){
       // Hide previously shown
       this.$el.querySelectorAll(".switchable-panel-shown").forEach((el) => {

@@ -191,7 +191,8 @@ class ShaderPlayerWebGL2 {
     this.lastChunk = 0;
     this.time = 0.0;
     this.timeout = null;
-
+	this.on_progress = function(progress){};
+	
     this.on_error_listener = function () {
       console.log('Shader compilation error');
     };
@@ -369,13 +370,15 @@ class ShaderPlayerWebGL2 {
     }
     duration *= 1000;
     time = time % duration / 1000;
-
+	
     let current_scene = 0;
 
     // Pseudotime is used to parse scenes
     // and find current one
     let scene_end_time = 0;
-
+	
+	this.on_progress(time, duration/1000);
+	
     for(let scene = 0; scene < this.scenes.length; scene++){
       // Last scene end time becomes current end time
       let scene_begin_time = scene_end_time;
