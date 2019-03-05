@@ -31,6 +31,7 @@ input{
 
 .ui{
 	background:#111;
+	background: linear-gradient(#111,#151515);
 	position:fixed;
 	bottom:0;
 	left:0;
@@ -48,6 +49,7 @@ input{
 	bottom:12px;
 	right:200px;
 	background:#333;
+	background: linear-gradient(#353535,#333);
 	color:#eee;
 	cursor:pointer;
 }
@@ -274,7 +276,13 @@ input{
 	margin-top:5px;
 	background:#222;
 	color:#eee;
-	border:1px solid #000;
+    background:linear-gradient(#111, #151515);
+    margin-left:1px;
+    border-top:1px solid #000;
+    border-left:1px solid #000;
+    border-bottom:1px solid #2a2a2a;
+    border-right:1px solid #2a2a2a;
+    border-radius:4px;
 }
 
 .settings-panel input:focus{
@@ -321,7 +329,7 @@ input{
 .effect-header{
     position:relative;
     height:35px;
-    width: calc(100% - 30px);
+    width: calc(100% - 27px);
 	border-radius:10px;
     background: #111;
     padding-left: 7px;
@@ -437,6 +445,8 @@ input{
 	position:absolute;
 	top:40px;
 	left:calc(50% - 510px);
+	padding-left:20px;
+	padding-right:20px;
 	z-index:1000;
 	box-shadow:0 0 30px rgba(0,0,0,0.8);
 	border-radius:10px;
@@ -472,14 +482,21 @@ input{
 	text-decoration:none;
 	color:#000;
 	display:inline-block;
-	margin-left:30px;
-	margin-right:30px;
+	margin-left:10px;
+	margin-right:10px;
 	margin-bottom:30px;
 	text-align:center;
-	box-shadow:0 0 10px rgba(0,0,0,0.0);
+	box-shadow:0 0 30px rgba(0,0,0,0.0);
 	border-radius:10px;
-	transition:all 0.1s;
     vertical-align: top;
+	padding:20px;
+	transition:all 0.2s;
+	cursor:pointer;
+}
+
+.theme-box:hover{
+	box-shadow:0 0 30px rgba(0,0,0,0.3);
+	transform:scale(1.05);
 }
 
 .theme-box img{
@@ -488,7 +505,6 @@ input{
 	margin-bottom:15px;
     border-radius:3px;
     box-shadow:0 0 8px rgba(0,0,0,0.3);
-    cursor:pointer;
 }
 
 .effects-selector .theme-box img{
@@ -496,8 +512,5 @@ input{
 	height:108px;
 }
 
-.theme-box:hover img{
-	box-shadow:0 0 10px rgba(0,0,0,0.8);
-}
 
 /* END THEME-SELECTOR --------------- */

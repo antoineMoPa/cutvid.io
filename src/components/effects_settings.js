@@ -38,6 +38,7 @@ Vue.component('effects-settings', {
       </div>
     </transition-group>
     <div class="text-right">
+      <br><br> <!-- Keep some space -->
       <button v-on:click="onAddEffect">
         <img src="icons/feather/plus.svg" width="20"/>
         Add effect
