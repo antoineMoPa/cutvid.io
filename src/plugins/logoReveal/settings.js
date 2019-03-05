@@ -13,19 +13,10 @@
   <input type="file" accept=".png,.jpg" class="logo-file-input" v-on:change="onLogo()">
   <label>Logo Scale</label>
   <input type="number" v-model="uniforms.logoScale.value" min="0.01" max="2.0" step="0.05">
-  <h4>Background</h4>
-  <label>Transparent background
-    <input type="checkbox" v-model="transparentBackground">
-  </label>
-  <div v-if="!transparentBackground">
-    <label>Background color</label>
-    <input type="color" v-model="backgroundColor">
-  </div>
 </div>`,
 		data: function(){
 		  return {
             logo: null,
-			transparentBackground: false,
 			backgroundColor: "#000000",
             uniforms: {
 			  logoWidth: {
@@ -120,12 +111,6 @@
 		  textCanvas(){
 			this.updateTexts();
 		  },
-		  backgroundColor(){
-			this.updateTexts();
-		  },
-		  transparentBackground(){
-			this.updateTexts();
-		  }
 		},
 		mounted(){
 		  this.updateTexts();
