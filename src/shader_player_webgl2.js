@@ -366,6 +366,7 @@ class ShaderPlayerWebGL2 {
     }
 
     let duration = 0;
+
     for(let scene = 0; scene < this.scenes.length; scene++){
       duration += parseFloat(this.scenes[scene].scene.duration);
     }
@@ -379,10 +380,11 @@ class ShaderPlayerWebGL2 {
     let scene_end_time = 0;
 	
 	this.on_progress(time, duration/1000);
+	let scene_begin_time = 0
 	
     for(let scene = 0; scene < this.scenes.length; scene++){
       // Last scene end time becomes current end time
-      let scene_begin_time = scene_end_time;
+	  scene_begin_time = scene_end_time;
       scene_end_time += parseFloat(this.scenes[scene].scene.duration);
       if(time < scene_begin_time){
         break;
@@ -391,11 +393,12 @@ class ShaderPlayerWebGL2 {
     }
 
     let scene = this.scenes[current_scene];
-
+	
 	if(scene == undefined){
 	  return;
 	}
-
+	
+	let currentRelativeTime = (time - scene_begin_time) / parseFloat(scene.scene.duration);
     let passes = scene.passes;
 
     for (let pass = 0; pass < passes.length; pass++) {
@@ -417,7 +420,7 @@ class ShaderPlayerWebGL2 {
       // Manage lastpass
       if (pass > 0) {
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-1]);
-        gl.uniform1i(gl.getUniformLocation(program, 'tex_in'), i);
+        gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
       } else {
         gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
       }
@@ -428,7 +431,7 @@ class ShaderPlayerWebGL2 {
 	  if (pass > 1) {
 		gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-2]);
-        gl.uniform1i(gl.getUniformLocation(program, 'previous_tex_in'), i);
+        gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_pass'), i);
       }
 	  
 	  i++;
@@ -459,7 +462,10 @@ class ShaderPlayerWebGL2 {
 
       const timeAttribute = gl.getUniformLocation(program, 'time');
       gl.uniform1f(timeAttribute, time);
-
+	  
+	  const relativeTimeAttribute = gl.getUniformLocation(program, 'relativeTime');
+      gl.uniform1f(relativeTimeAttribute, currentRelativeTime);
+	  
       const iGlobalTimeAttribute = gl.getUniformLocation(program, 'iGlobalTime');
       const date = new Date();
       let gtime = (date.getTime()) / 1000.0 % (3600 * 24);
