@@ -232,7 +232,7 @@ Vue.component('scene-selector', {
     //this.addScene("epicSunset");
     //this.addScene("retrowave");
     //this.addScene("textLayer");
-	this.addScene("logoReveal");
+	this.addScene("logo");
 	
     let allEffects = this.$el.querySelectorAll(".all-effects")[0];
     let allEffectsContainer = document.querySelectorAll(".all-effects-container")[0];

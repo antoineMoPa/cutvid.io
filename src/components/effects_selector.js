@@ -37,8 +37,11 @@ Vue.component('effects-selector', {
         "backgroundColor": {
           "description": "Replaces transparent parts with a uniform color."
         },
-		"logoReveal": {
-          "description": "Makes your logo appear with nice effects."
+		"logo": {
+          "description": "Put your logo or any image on the canvas."
+        },
+		"fadeReveal": {
+          "description": "Fades in last layer over previous layers."
         },
       },
     };

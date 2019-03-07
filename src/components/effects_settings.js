@@ -198,6 +198,8 @@ Vue.component('effects-settings', {
 	}
   },
   mounted(){
+	this.addEffect("backgroundColor");
     this.addEffect(this.defaultEffect);
+	this.addEffect("fadeReveal");
   }
 });

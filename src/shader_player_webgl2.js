@@ -410,17 +410,28 @@ class ShaderPlayerWebGL2 {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       }
 
-      gl.activeTexture(gl.TEXTURE0);
+	  let i = 0;
+	  
+      gl.activeTexture(gl.TEXTURE0 + i);
 
       // Manage lastpass
       if (pass > 0) {
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-1]);
-        gl.uniform1i(gl.getUniformLocation(program, 'tex_in'), 0);
+        gl.uniform1i(gl.getUniformLocation(program, 'tex_in'), i);
       } else {
         gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
       }
+	  
+	  i++;
 
-      let i = 1;
+	  // Also add previous pass
+	  if (pass > 1) {
+		gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-2]);
+        gl.uniform1i(gl.getUniformLocation(program, 'previous_tex_in'), i);
+      }
+	  
+	  i++;
 
       for(let name in shaderProgram.textures){
         gl.activeTexture(gl.TEXTURE0 + i);
@@ -444,7 +455,7 @@ class ShaderPlayerWebGL2 {
       );
 
       const passAttribute = gl.getUniformLocation(program, 'pass');
-      gl.uniform1i(passAttribute, pass + 1);
+      gl.uniform1f(passAttribute, pass + 1);
 
       const timeAttribute = gl.getUniformLocation(program, 'time');
       gl.uniform1f(timeAttribute, time);

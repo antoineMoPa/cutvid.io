@@ -1,10 +1,10 @@
 {
-  let name = "logoReveal";
+  let name = "logo";
   
   let effectSettings = function(){
 	return {
 	  name: name,
-	  human_name: "Logo Reveal",
+	  human_name: "Logo",
 	  ui: {
 		template: `
 <div>
@@ -12,7 +12,7 @@
   <label>Your Logo</label>
   <input type="file" accept=".png,.jpg" class="logo-file-input" v-on:change="onLogo()">
   <label>Logo Scale</label>
-  <input type="number" v-model="uniforms.logoScale.value" min="0.01" max="2.0" step="0.05">
+  <input type="number" v-model="uniforms.logoScale.value" min="0.0" max="2.0" step="0.05">
 </div>`,
 		data: function(){
 		  return {
@@ -32,7 +32,7 @@
               logoScale: {
 				type: "f",
 				len: 1,
-				value: 0.5,
+				value: 0.25,
 			  },
 			}
 		  };

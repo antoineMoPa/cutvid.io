@@ -13,7 +13,6 @@ void main(void){
     float y = UV.y;
 	vec2 p = vec2(x,y) - vec2(0.5 * ratio, 0.5);
 	
-	vec4 last = texture2D(in_tex, lastUV);
 	vec2 logoUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
 	float logoRatio = logoHeight / logoWidth * ratio;
 	// Apply aspect ratio
@@ -34,7 +33,9 @@ void main(void){
 	logo *= step(0.0, logoUV.x);
 	logo *= step(0.0, logoUV.y);
 	
-	vec4 col = (1.0 - logo.a) * last + logo.a * logo;
+	vec4 last = texture2D(in_tex, lastUV);
+	//vec4 col = (1.0 - logo.a) * last + logo.a * logo;
+	vec4 col = logo + (1.0 - logo.a) * last;
 	
 	gl_FragColor = col;
 }
