@@ -38,6 +38,7 @@ Vue.component('player', {
     <ui ref="ui"
         v-on:playAll="playAll"
         v-on:buy="make_buy"
+        v-bind:player="player"
         v-on:gif="make_gif"/>
   </div>`,
   data(){

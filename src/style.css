@@ -31,7 +31,7 @@ input{
 
 .ui{
 	background:#111;
-	background: linear-gradient(#111,#151515);
+    background: linear-gradient(#222,#333);
 	position:fixed;
 	bottom:0;
 	left:0;
@@ -49,9 +49,9 @@ input{
 	bottom:12px;
 	right:200px;
 	background:#333;
-	background: linear-gradient(#353535,#333);
 	color:#eee;
 	cursor:pointer;
+    background: linear-gradient(#333, #222);
 }
 
 .ui .feather-button{
@@ -86,10 +86,33 @@ input{
 	background:#3af;
 }
 
-.play-button{
-	left:calc(50% - 50px);
+.play-all-button{
+	left:10px;
 	cursor:pointer;
 	width:100px;
+}
+
+.looping-info{
+    position:absolute;
+    left:140px;
+    top:0;
+    color:#fff;
+    line-height:60px;
+    font-size:10px;
+}
+
+.play-button, .pause-button{
+	left:calc(50% + 25px);
+	cursor:pointer;
+	width:25px;
+    height:25px;
+    top:9px;
+    border-radius:25px;
+}
+
+.play-button img{
+    position:relative;
+    left:2px;
 }
 
 .close-button{
