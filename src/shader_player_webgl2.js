@@ -380,16 +380,18 @@ class ShaderPlayerWebGL2 {
     let scene_end_time = 0;
 	
 	this.on_progress(time, duration/1000);
-	let scene_begin_time = 0
 	
+    let scene_begin_time = 0
     for(let scene = 0; scene < this.scenes.length; scene++){
       // Last scene end time becomes current end time
 	  scene_begin_time = scene_end_time;
-      scene_end_time += parseFloat(this.scenes[scene].scene.duration);
-      if(time < scene_begin_time){
+      scene_end_time = parseFloat(this.scenes[scene].scene.duration);
+      current_scene = scene;
+      
+      if(time < scene_end_time){
+        // Found current scene
         break;
       }
-      current_scene = scene;
     }
 
     let scene = this.scenes[current_scene];
@@ -399,6 +401,7 @@ class ShaderPlayerWebGL2 {
 	}
 	
 	let currentRelativeTime = (time - scene_begin_time) / parseFloat(scene.scene.duration);
+    
     let passes = scene.passes;
 
     for (let pass = 0; pass < passes.length; pass++) {
@@ -435,7 +438,7 @@ class ShaderPlayerWebGL2 {
       }
 	  
 	  i++;
-
+      
       for(let name in shaderProgram.textures){
         gl.activeTexture(gl.TEXTURE0 + i);
         var att = gl.getUniformLocation(program, name);
