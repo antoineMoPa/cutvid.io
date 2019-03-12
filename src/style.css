@@ -526,6 +526,7 @@ input{
 	padding:20px;
 	transition:all 0.2s;
 	cursor:pointer;
+	max-width: 188px;
 }
 
 .theme-box:hover{
