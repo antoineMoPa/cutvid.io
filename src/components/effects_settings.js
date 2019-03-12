@@ -90,30 +90,36 @@ Vue.component('effects-settings', {
     },
     addEffect(effectName){
 	  let app = this;
-	  utils.load_script("plugins/" + effectName + "/settings.js", function(){
-        // Keeping unique components makes sure the components aren't reset
-		let settings = utils.plugins[effectName + "-effectSettings"]();
-		let uniqueEffectComponentID = utils.increment_unique_counter("effectComponent");
-		let componentName = effectName + "-effect-settings" + uniqueEffectComponentID;
-		Vue.component(componentName, settings.ui);
-		
-		settings.component = componentName;
-		settings.id = uniqueEffectComponentID;
-		
-        app.loadProgram(effectName, function(_shaderProgram){
-          settings.shaderProgram = _shaderProgram;
-          settings.uniforms = {};
+	  
+	  var endPromise = new Promise(function(resolve, reject){
+		utils.load_script("plugins/" + effectName + "/settings.js", function(){
+          // Keeping unique components makes sure the components aren't reset
+		  let settings = utils.plugins[effectName + "-effectSettings"]();
+		  let uniqueEffectComponentID = utils.increment_unique_counter("effectComponent");
+		  let componentName = effectName + "-effect-settings" + uniqueEffectComponentID;
+		  Vue.component(componentName, settings.ui);
 		  
-          // Insert effect in array
-          app.effects.splice(app.effects.length, 0, settings);
-          // Add its index
-		  app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
-		  app.$nextTick(function(){
-			app.updateTexts();
-			app.applyEffectsChange();
-		  });
-        });
+		  settings.component = componentName;
+		  settings.id = uniqueEffectComponentID;
+		  
+          app.loadProgram(effectName, function(_shaderProgram){
+			settings.shaderProgram = _shaderProgram;
+			settings.uniforms = {};
+			
+			// Insert effect in array
+			app.effects.splice(app.effects.length, 0, settings);
+			// Add its index
+			app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
+			app.$nextTick(function(){
+			  app.updateTexts();
+			  app.applyEffectsChange();
+			  resolve();
+			});
+          });
+		});
 	  });
+	  
+	  return endPromise;
     },
     down(effectIndex){
       if(this.moving || effectIndex > this.effectsIndex.length - 1){
@@ -198,8 +204,9 @@ Vue.component('effects-settings', {
 	}
   },
   mounted(){
-	this.addEffect("backgroundColor");
-    this.addEffect(this.defaultEffect);
-	this.addEffect("fadeReveal");
+	let app = this;
+	app.addEffect("backgroundColor")
+	  .then(function(){ app.addEffect(app.defaultEffect); })
+	  .then(function(){ app.addEffect("fadeReveal"); });
   }
 });
