@@ -29,6 +29,7 @@ Vue.component('effects-settings', {
         <div class="component-container">
           <component v-bind:is="effects[effectNumber].component"  
                      v-bind:ref="effects[effectNumber].component"
+                     v-bind:key="effects[effectNumber].component"
                      v-bind:shaderProgram="effects[effectNumber].shaderProgram"
                      v-bind:player="player"
                      v-bind:ready="ready"
@@ -121,17 +122,32 @@ Vue.component('effects-settings', {
 	  
 	  return endPromise;
     },
+	serialize(effectsIndex){
+	  let component = this.$refs[this.effects[effectsIndex].component][0];
+	  let data = utils.serialize_vue(component.$data);
+	  return JSON.stringify(data);
+	},
+	unserialize(effectIndex, data){
+	  let index = this.effectsIndex[effectIndex];
+	  let component = this.$refs[this.effects[index].component][0];
+	  utils.unserialize_vue(component.$data, JSON.parse(data));
+	  // Update uniforms
+	  this.applyEffectsChange();
+	},
     down(effectIndex){
       if(this.moving || effectIndex > this.effectsIndex.length - 1){
         return;
       }
       this.moving = true;
       let old = this.effectsIndex[effectIndex];
-      this.effectsIndex.splice(effectIndex, 1);
-      
+	  let data = this.serialize(old);
+	  this.effectsIndex.splice(effectIndex, 1);
+	  
       setTimeout(function(){
         this.effectsIndex.splice(effectIndex + 1, 0, old);
-        this.applyEffectsChange();
+		this.$nextTick(function(){
+		  this.unserialize(effectIndex + 1, data);
+		});
 		this.moving = false;
       }.bind(this), 300);
     },
@@ -141,11 +157,14 @@ Vue.component('effects-settings', {
       }
 	  this.moving = true;
       let old = this.effectsIndex[effectIndex];
+	  let data = this.serialize(old);
       this.effectsIndex.splice(effectIndex, 1);
       
       setTimeout(function(){
         this.effectsIndex.splice(effectIndex - 1, 0, old);
-        this.applyEffectsChange();
+		this.$nextTick(function(){
+		  this.unserialize(effectIndex - 1, data);
+		});
 		this.moving = false;
       }.bind(this), 300);
     },

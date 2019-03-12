@@ -29,12 +29,6 @@
 		  }
 		},
 		watch: {
-		  player(){
-			this.updateTexts();
-		  },
-		  textCanvas(){
-			this.updateTexts();
-		  },
 		},
 		mounted(){
 		  this.updateTexts();

@@ -70,22 +70,26 @@
 			  function(){}
 			);
 		  },
+		  findLogoDim(){
+			let app = this;
+			// Create headless image to find out width and height
+            let img = document.createElement("img");
+            img.src = app.logo;
+            img.addEventListener("load", function(){
+              app.uniforms.logoWidth.value = img.width;
+              app.uniforms.logoHeight.value = img.height;
+			  console.log("found logo dim: "+img.width+"x"+img.height);
+            });
+		  },
 		  onLogo() {
             const app = this;
             const input = this.$el.querySelectorAll('.logo-file-input')[0];
             
             function watch_reader(reader, name) {
               reader.addEventListener('load', () => {
-                this.logo = reader.result;
+                app.logo = reader.result;
                 app.shaderProgram.set_texture('logo', reader.result);
-                
-                // Create headless image to find out width and height
-                let img = document.createElement("img");
-                img.src = reader.result;
-                img.addEventListener("load", function(){
-                  app.uniforms.logoWidth.value = img.width;
-                  app.uniforms.logoHeight.value = img.height;
-                });
+				app.findLogoDim();
               }, false);
             }
             
@@ -111,10 +115,14 @@
 		  textCanvas(){
 			this.updateTexts();
 		  },
+		  logo(){
+			this.findLogoDim();
+		  }
 		},
 		mounted(){
 		  this.updateTexts();
           this.effect.uniforms = this.uniforms;
+		  this.findLogoDim();
 		}
 	  }
 	};

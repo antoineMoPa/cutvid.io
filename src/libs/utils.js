@@ -80,3 +80,29 @@ utils.increment_unique_counter = function(id_str){
   }
   return utils.unique_counters[id_str]++;
 };
+
+utils.serialize_vue = function(data){
+  let out = {};
+  
+  for(let prop in data){
+	if(typeof(data[prop]) == "object"){
+	  out[prop] = utils.serialize_vue(data[prop]);
+	} else {
+	  out[prop] = data[prop];
+	}
+  }
+  
+  return out;
+};
+
+utils.unserialize_vue = function(data, json){
+  let inData = json;
+  
+  for(let prop in inData){
+	if(typeof(inData[prop]) == "object"){
+	  utils.unserialize_vue(data[prop], inData[prop]);
+	} else {
+	  data[prop] = inData[prop];
+	}
+  }
+};
