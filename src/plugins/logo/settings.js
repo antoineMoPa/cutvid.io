@@ -81,6 +81,9 @@
 			  console.log("found logo dim: "+img.width+"x"+img.height);
             });
 		  },
+		  loadLogo(data){
+			this.shaderProgram.set_texture('logo', data);
+		  },
 		  onLogo() {
             const app = this;
             const input = this.$el.querySelectorAll('.logo-file-input')[0];
@@ -88,7 +91,7 @@
             function watch_reader(reader, name) {
               reader.addEventListener('load', () => {
                 app.logo = reader.result;
-                app.shaderProgram.set_texture('logo', reader.result);
+                app.loadLogo(app.logo);
 				app.findLogoDim();
               }, false);
             }
@@ -117,6 +120,7 @@
 		  },
 		  logo(){
 			this.findLogoDim();
+			this.loadLogo(this.logo);
 		  }
 		},
 		mounted(){

@@ -89,7 +89,22 @@ Vue.component('effects-settings', {
 	    });
       });
     },
-    addEffect(effectName){
+    serialize(){
+      let data = [];
+      for(let effectIndex in this.effectsIndex){
+        let effectData = this.serializeEffect(effectIndex);
+	    data.push(effectData);
+      }
+      return data;
+    },
+    unserialize(data){
+      for(let effectIndex in data){
+        let effectData = data[effectIndex];
+        let effectName = effectData.effectName;
+        this.addEffect(effectName, effectData);
+      }
+    },
+    addEffect(effectName, initialData){
 	  let app = this;
 	  
 	  var endPromise = new Promise(function(resolve, reject){
@@ -100,6 +115,7 @@ Vue.component('effects-settings', {
 		  let componentName = effectName + "-effect-settings" + uniqueEffectComponentID;
 		  Vue.component(componentName, settings.ui);
 		  
+          settings.effectName = effectName;
 		  settings.component = componentName;
 		  settings.id = uniqueEffectComponentID;
 		  
@@ -114,6 +130,12 @@ Vue.component('effects-settings', {
 			app.$nextTick(function(){
 			  app.updateTexts();
 			  app.applyEffectsChange();
+              
+              // Load initial data if it is given in argument
+              if(initialData != undefined){
+                app.unserializeEffect(app.effectsIndex.length - 1, initialData);
+              }
+              
 			  resolve();
 			});
           });
@@ -122,15 +144,18 @@ Vue.component('effects-settings', {
 	  
 	  return endPromise;
     },
-	serialize(effectsIndex){
-	  let component = this.$refs[this.effects[effectsIndex].component][0];
+	serializeEffect(effectsIndex){
+      let effect = this.effects[effectsIndex];
+	  let component = this.$refs[effect.component][0];
 	  let data = utils.serialize_vue(component.$data);
-	  return JSON.stringify(data);
+      data.effectName = effect.name;
+	  return data;
 	},
-	unserialize(effectIndex, data){
+	unserializeEffect(effectIndex, data){
 	  let index = this.effectsIndex[effectIndex];
 	  let component = this.$refs[this.effects[index].component][0];
-	  utils.unserialize_vue(component.$data, JSON.parse(data));
+      // Put data in component data
+	  utils.unserialize_vue(component.$data, data);
 	  // Update uniforms
 	  this.applyEffectsChange();
 	},
@@ -140,13 +165,13 @@ Vue.component('effects-settings', {
       }
       this.moving = true;
       let old = this.effectsIndex[effectIndex];
-	  let data = this.serialize(old);
+	  let data = this.serializeEffect(old);
 	  this.effectsIndex.splice(effectIndex, 1);
 	  
       setTimeout(function(){
         this.effectsIndex.splice(effectIndex + 1, 0, old);
 		this.$nextTick(function(){
-		  this.unserialize(effectIndex + 1, data);
+		  this.unserializeEffect(effectIndex + 1, data);
 		});
 		this.moving = false;
       }.bind(this), 300);
@@ -157,13 +182,13 @@ Vue.component('effects-settings', {
       }
 	  this.moving = true;
       let old = this.effectsIndex[effectIndex];
-	  let data = this.serialize(old);
+	  let data = this.serializeEffect(old);
       this.effectsIndex.splice(effectIndex, 1);
       
       setTimeout(function(){
         this.effectsIndex.splice(effectIndex - 1, 0, old);
 		this.$nextTick(function(){
-		  this.unserialize(effectIndex - 1, data);
+		  this.unserializeEffect(effectIndex - 1, data);
 		});
 		this.moving = false;
       }.bind(this), 300);
@@ -223,9 +248,5 @@ Vue.component('effects-settings', {
 	}
   },
   mounted(){
-	let app = this;
-	app.addEffect("backgroundColor")
-	  .then(function(){ app.addEffect(app.defaultEffect); })
-	  .then(function(){ app.addEffect("fadeReveal"); });
   }
 });
