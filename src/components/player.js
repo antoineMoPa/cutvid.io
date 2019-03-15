@@ -120,7 +120,11 @@ Vue.component('player', {
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
     },
+	getTotalDuration(){
+	},
     render(options) {
+	  let totalFrames = this.fps * this.player.get_total_duration();
+	  
       if (typeof (options) === 'undefined') {
         options = {
           zip: false,
@@ -162,7 +166,7 @@ Vue.component('player', {
       */
       function next() {
         const pl = app.player;
-        if (i < pl.frames) {
+        if (i < totalFrames) {
           const curr = i;
 
           const w = pl.width;
@@ -206,10 +210,10 @@ Vue.component('player', {
               });
             }
           };
-          app.$refs.ui.set_progress((curr + 1) / pl.frames * 0.5);
+          app.$refs.ui.set_progress((curr + 1) / totalFrames * 0.5);
           // Render
-          app.player.render((curr + 1) / pl.frames, (canvas) => {
-            let image_data = '';
+          app.player.render((curr + 1) / app.fps, (canvas) => {
+			let image_data = '';
             /*
               Shader player return a canvas,
               but iframed players (javascript)
@@ -257,7 +261,6 @@ Vue.component('player', {
         const gif = new GIF({
           workers: 2,
           quality: 10,
-          dither: 'FloydSteinberg',
           workerScript: '/libs/gif.worker.js'
         });
 
@@ -326,11 +329,15 @@ Vue.component('player', {
     },
     make_gif(){
       let basic_error = false;
-
+	  
+	  this.playAll();
+	  
       if(this.player.rendering_gif){
         return;
       }
-
+	  
+	  this.player.rendering_gif = true;
+	  
       // We'll show all relevant warnings.
 
       if(this.width > 1000 || this.height > 1000){

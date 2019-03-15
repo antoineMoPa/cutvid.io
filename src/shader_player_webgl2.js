@@ -357,22 +357,32 @@ class ShaderPlayerWebGL2 {
     gl.bindBuffer(gl.ARRAY_BUFFER, tri);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   }
+  
+  get_total_duration() {
+	let duration = 0;
 
+    for(let scene = 0; scene < this.scenes.length; scene++){
+      duration += parseFloat(this.scenes[scene].scene.duration);
+    }
+	
+	return duration;
+  }
+  
   draw_gl(time) {
     const gl = this.gl;
 
     if (gl == null) {
       return;
     }
-
+		
     let duration = 0;
-
-    for(let scene = 0; scene < this.scenes.length; scene++){
+	
+    for (let scene = 0; scene < this.scenes.length; scene++) {
       duration += parseFloat(this.scenes[scene].scene.duration);
     }
-    duration *= 1000;
-    time = time % duration / 1000;
 	
+    time = time % duration;
+
     let current_scene = 0;
 
     // Pseudotime is used to parse scenes
@@ -382,7 +392,7 @@ class ShaderPlayerWebGL2 {
 	this.on_progress(time, duration/1000);
 	
     let scene_begin_time = 0
-    for(let scene = 0; scene < this.scenes.length; scene++){
+    for (let scene = 0; scene < this.scenes.length; scene++) {
       // Last scene end time becomes current end time
 	  scene_begin_time = scene_end_time;
       scene_end_time = parseFloat(this.scenes[scene].scene.duration);
@@ -396,7 +406,7 @@ class ShaderPlayerWebGL2 {
 
     let scene = this.scenes[current_scene];
 	
-	if(scene == undefined){
+	if (scene == undefined) {
 	  return;
 	}
 	
@@ -528,7 +538,7 @@ class ShaderPlayerWebGL2 {
       // When rendering gif, draw is done elsewhere
       if (!player.rendering_gif && player.window_focused && !player.paused) {
         try{
-          player.draw_gl(time);
+          player.draw_gl(time/1000);
         } catch (e) {
           console.error(e);
         }
