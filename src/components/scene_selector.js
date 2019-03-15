@@ -41,7 +41,6 @@ Vue.component('scene-selector', {
         v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
         v-bind:ref="'effects-settings-' + scenes[sceneNumber].id"
         v-on:ready="effectsSettingsReady(sceneIndex)"
-        v-bind:defaultEffect="scenes[sceneNumber].defaultEffect"
         v-on:effectsChanged="effectsChanged(sceneIndex)"
         v-bind:player="player"/>
     </div>
@@ -110,23 +109,40 @@ Vue.component('scene-selector', {
         app.player.scenes = oldScenes;
       });
     },
+	serialize(){
+      let data = [];
+      for(let sceneIndex in this.scenesIndex){
+		let scene = this.scenes[this.scenesIndex[sceneIndex]];
+		let component = this.$refs['effects-settings-' + scene.id][0];
+	    data.push(component.serialize());
+      }
+      return data;
+    },
+    unserialize(data){
+      for(let sceneIndex in data){
+        let sceneData = data[sceneIndex];
+        this.addScene(null, sceneData);
+      }
+    },
     addSceneButton(){
       let app = this;
       this.$refs['effects-selector'].open(function(effectName){
         app.addScene(effectName);
       });
     },
-    addScene(themeName){
+    addScene(themeName, initialData){
       let uniqueSceneID = utils.increment_unique_counter("scene");
       let settings = {
         id: uniqueSceneID,
-        defaultEffect: themeName,
         duration: 1.0,
       };
       this.scenes.splice(this.scenes.length, 0, settings);
       this.scenesIndex.splice(this.scenesIndex.length, 0, this.scenes.length - 1);
       this.$nextTick(function(){
         let component = this.$refs['effects-settings-' + settings.id][0];
+		if(initialData != undefined){
+		  component.unserialize(initialData);
+		}
         this.setPreview(this.scenesIndex.length - 1);
       });
     },
@@ -229,11 +245,6 @@ Vue.component('scene-selector', {
   watch: {
   },
   mounted(){
-    //this.addScene("epicSunset");
-    //this.addScene("retrowave");
-    //this.addScene("textLayer");
-	this.addScene("logo");
-	
     let allEffects = this.$el.querySelectorAll(".all-effects")[0];
     let allEffectsContainer = document.querySelectorAll(".all-effects-container")[0];
     allEffectsContainer.appendChild(allEffects);

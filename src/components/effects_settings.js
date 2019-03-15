@@ -2,32 +2,32 @@ Vue.component('effects-settings', {
   template: `
   <div class="effects-settings">
     <transition-group name="fade">
-      <div class="effect" 
-           v-bind:key="effects[effectNumber].id" 
+      <div class="effect"
+           v-bind:key="effects[effectNumber].id"
            v-for="(effectNumber, effectIndex) in effectsIndex">
         <div class="effect-header">
           {{ effects[effectNumber].human_name || effects[effectNumber].name }}
           <div class="effect-icons">
-          
+
             <img class="effect-icon"
                  title="move effect down"
                  v-if="effectIndex < effectsIndex.length - 1"
-                 v-on:click="down(effectIndex)" 
+                 v-on:click="down(effectIndex)"
                  src="icons/feather/arrow-down.svg" width="15"/>
             <img class="effect-icon"
                  v-if="effectIndex > 0"
                  title="move effect up"
-                 v-on:click="up(effectIndex)" 
+                 v-on:click="up(effectIndex)"
                  src="icons/feather/arrow-up.svg" width="15"/>
-            <img class="effect-icon" 
-                 v-on:click="remove(effectIndex)" 
+            <img class="effect-icon"
+                 v-on:click="remove(effectIndex)"
                  title="remove effect"
                  src="icons/feather/x.svg" width="15"/>
-          
+
           </div>
         </div>
         <div class="component-container">
-          <component v-bind:is="effects[effectNumber].component"  
+          <component v-bind:is="effects[effectNumber].component"
                      v-bind:ref="effects[effectNumber].component"
                      v-bind:key="effects[effectNumber].component"
                      v-bind:shaderProgram="effects[effectNumber].shaderProgram"
@@ -54,14 +54,14 @@ Vue.component('effects-settings', {
 	  moving: false
     };
   },
-  props: ["player","defaultEffect"],
+  props: ["player"],
   methods: {
     loadProgram(name, onProgramReady) {
       let app = this;
-        
+
       function onShadersReady(vertex, fragment){
 	    let pass = new ShaderProgram(app.player.gl);
-        
+
         try{
 	      pass.compile(vertex, fragment);
         } catch (e) {
@@ -70,7 +70,7 @@ Vue.component('effects-settings', {
 
         onProgramReady(pass);
       }
-      
+
       Promise.all([
 	    fetch("plugins/" + name + "/vertex.glsl"),
 	    fetch("plugins/" + name + "/fragment.glsl")
@@ -98,15 +98,23 @@ Vue.component('effects-settings', {
       return data;
     },
     unserialize(data){
+      let promise = null;
       for(let effectIndex in data){
         let effectData = data[effectIndex];
         let effectName = effectData.effectName;
-        this.addEffect(effectName, effectData);
+
+        if(promise == null){
+          promise = this.addEffect(effectName, effectData);
+        } else {
+          promise = promise.then(function(){
+            this.addEffect(effectName, effectData)
+          }.bind(this));
+        }
       }
     },
     addEffect(effectName, initialData){
 	  let app = this;
-	  
+
 	  var endPromise = new Promise(function(resolve, reject){
 		utils.load_script("plugins/" + effectName + "/settings.js", function(){
           // Keeping unique components makes sure the components aren't reset
@@ -114,15 +122,15 @@ Vue.component('effects-settings', {
 		  let uniqueEffectComponentID = utils.increment_unique_counter("effectComponent");
 		  let componentName = effectName + "-effect-settings" + uniqueEffectComponentID;
 		  Vue.component(componentName, settings.ui);
-		  
+
           settings.effectName = effectName;
 		  settings.component = componentName;
 		  settings.id = uniqueEffectComponentID;
-		  
+
           app.loadProgram(effectName, function(_shaderProgram){
 			settings.shaderProgram = _shaderProgram;
 			settings.uniforms = {};
-			
+
 			// Insert effect in array
 			app.effects.splice(app.effects.length, 0, settings);
 			// Add its index
@@ -130,18 +138,18 @@ Vue.component('effects-settings', {
 			app.$nextTick(function(){
 			  app.updateTexts();
 			  app.applyEffectsChange();
-              
+
               // Load initial data if it is given in argument
               if(initialData != undefined){
                 app.unserializeEffect(app.effectsIndex.length - 1, initialData);
               }
-              
+
 			  resolve();
 			});
           });
 		});
 	  });
-	  
+
 	  return endPromise;
     },
 	serializeEffect(effectsIndex){
@@ -167,7 +175,7 @@ Vue.component('effects-settings', {
       let old = this.effectsIndex[effectIndex];
 	  let data = this.serializeEffect(old);
 	  this.effectsIndex.splice(effectIndex, 1);
-	  
+
       setTimeout(function(){
         this.effectsIndex.splice(effectIndex + 1, 0, old);
 		this.$nextTick(function(){
@@ -184,7 +192,7 @@ Vue.component('effects-settings', {
       let old = this.effectsIndex[effectIndex];
 	  let data = this.serializeEffect(old);
       this.effectsIndex.splice(effectIndex, 1);
-      
+
       setTimeout(function(){
         this.effectsIndex.splice(effectIndex - 1, 0, old);
 		this.$nextTick(function(){
@@ -198,7 +206,7 @@ Vue.component('effects-settings', {
 	  if(this.effectsIndex[effectIndex] == undefined){
 		return;
 	  }
-	  
+
       let number = this.effectsIndex[effectIndex];
       // Decrement all elements after current index
       this.effectsIndex = this.effectsIndex.map((i) => { return i <= effectIndex? i: i - 1; });
@@ -209,7 +217,7 @@ Vue.component('effects-settings', {
 	getOrderedEffects(){
 	  let app = this;
 	  let orderedEffects = [];
-	  
+
       this.effectsIndex.forEach(function(i){
         orderedEffects.push({
           shaderProgram: app.effects[i].shaderProgram,

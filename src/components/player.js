@@ -51,21 +51,6 @@ Vue.component('player', {
       watermark: ""
     };
   },
-  mounted: function(){
-    let app = this;
-    window.addEventListener("resize", app.on_resize);
-
-    app.player = new ShaderPlayerWebGL2();
-	app.player.on_progress = this.on_player_progress;
-    app.player.set_width(app.width);
-    app.player.set_height(app.height);
-    app.on_resize();
-    let container = document.querySelectorAll("#main-player .canvas-container")[0];
-    app.player.set_container(container);
-
-    this.switch_panel(2);
-    this.$refs['panel-selector'].switch_to(2);
-  },
   methods: {
     set_dimensions(w, h){
       this.width = w;
@@ -374,6 +359,21 @@ Vue.component('player', {
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");
     },
+	serialize(){
+	  let data = {};
+	  data.width = this.width;
+	  data.height = this.height;
+	  data.fps = this.fps;
+	  data.scenes = this.$refs['scene-selector'].serialize();
+
+	  return data;
+	},
+	unserialize(data){
+	  this.width = data.width;
+	  this.height = data.height;
+	  this.fps = data.fps;
+	  this.$refs['scene-selector'].unserialize(data.scenes);
+	}
   },
   watch: {
     width(){
@@ -384,5 +384,23 @@ Vue.component('player', {
     },
     fps(){
     }
-  }
+  },
+  mounted: function(){
+    let app = this;
+	window.player = this;
+    window.addEventListener("resize", app.on_resize);
+
+    app.player = new ShaderPlayerWebGL2();
+	app.player.on_progress = this.on_player_progress;
+    app.player.set_width(app.width);
+    app.player.set_height(app.height);
+    app.on_resize();
+    let container = document.querySelectorAll("#main-player .canvas-container")[0];
+    app.player.set_container(container);
+
+    this.switch_panel(2);
+    this.$refs['panel-selector'].switch_to(2);
+
+	this.$refs['scene-selector'].unserialize();
+  },
 })
