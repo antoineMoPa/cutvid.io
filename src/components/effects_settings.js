@@ -95,7 +95,7 @@ Vue.component('effects-settings', {
     serialize(){
       let data = [];
       for(let effectIndex in this.effectsIndex){
-        let effectData = this.serializeEffect(effectIndex);
+        let effectData = this.serializeEffect(this.effectsIndex[effectIndex]);
 	    data.push(effectData);
       }
       return data;
@@ -158,8 +158,8 @@ Vue.component('effects-settings', {
 
 	  return endPromise;
     },
-	serializeEffect(effectsIndex){
-      let effect = this.effects[effectsIndex];
+	serializeEffect(effectIndex){
+      let effect = this.effects[effectIndex];
 	  let component = this.$refs[effect.component][0];
 	  let data = utils.serialize_vue(component.$data);
       data.effectName = effect.name;

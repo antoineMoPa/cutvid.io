@@ -41,7 +41,10 @@ Vue.component('effects-selector', {
           "description": "Put your logo or any image on the canvas."
         },
 		"fadeReveal": {
-          "description": "Fades in last layer over previous layers."
+          "description": "Fades in last effect over previous ones."
+        },
+		"angularReveal": {
+          "description": "Fades in last effect with a variety of twisting motions."
         },
       },
     };
