@@ -13,22 +13,22 @@
 </div>`,
 		data: function(){
 		  return {
-			color: "#ffffff",
+			color: "#000000",
 			uniforms: {
 			  r: {
 				type: "f",
 				len: 1,
-				value: 1.0,
+				value: 0.0,
 			  },
 			  g: {
 				type: "f",
 				len: 1,
-				value: 1.0,
+				value: 0.0,
 			  },
 			  b: {
 				type: "f",
 				len: 1,
-				value: 1.0,
+				value: 0.0,
 			  },
 			}
 		  };

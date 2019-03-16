@@ -1,6 +1,9 @@
 Vue.component('effects-settings', {
   template: `
   <div class="effects-settings">
+    <p v-if="effectsIndex.length == 0">
+      Start by adding an effect!
+    </p>
     <transition-group name="fade">
       <div class="effect"
            v-bind:key="effects[effectNumber].id"
@@ -98,6 +101,9 @@ Vue.component('effects-settings', {
       return data;
     },
     unserialize(data){
+      this.effects = [];
+      this.effectsIndex = [];
+
       let promise = null;
       for(let effectIndex in data){
         let effectData = data[effectIndex];

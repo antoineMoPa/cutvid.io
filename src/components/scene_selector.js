@@ -119,18 +119,18 @@ Vue.component('scene-selector', {
       return data;
     },
     unserialize(data){
+      this.scenes.splice(0);
+      this.scenesIndex.splice(0);
       for(let sceneIndex in data){
         let sceneData = data[sceneIndex];
-        this.addScene(null, sceneData);
+        this.addScene(sceneData);
       }
     },
     addSceneButton(){
       let app = this;
-      this.$refs['effects-selector'].open(function(effectName){
-        app.addScene(effectName);
-      });
+      app.addScene();
     },
-    addScene(themeName, initialData){
+    addScene(initialData){
       let uniqueSceneID = utils.increment_unique_counter("scene");
       let settings = {
         id: uniqueSceneID,
@@ -139,7 +139,11 @@ Vue.component('scene-selector', {
       this.scenes.splice(this.scenes.length, 0, settings);
       this.scenesIndex.splice(this.scenesIndex.length, 0, this.scenes.length - 1);
       this.$nextTick(function(){
-        let component = this.$refs['effects-settings-' + settings.id][0];
+        let component = this.$refs['effects-settings-' + settings.id];
+        if(component == undefined){
+          return;
+        }
+        component = component[0];
 		if(initialData != undefined){
 		  component.unserialize(initialData);
 		}
@@ -234,12 +238,6 @@ Vue.component('scene-selector', {
         });
       }
       this.player.scenes = scenes;
-    },
-    updateTexts(){
-      let app = this;
-      this.$nextTick(function(){
-        app.$refs['effects-settings-' + this.selected][0].updateTexts();
-      });
     }
   },
   watch: {
@@ -252,5 +250,10 @@ Vue.component('scene-selector', {
     let allScenes = this.$el.querySelectorAll(".all-scenes")[0];
     let allScenesContainer = document.querySelectorAll(".all-scenes-container")[0];
     allScenesContainer.appendChild(allScenes);
+
+    this.$nextTick(function(){
+      // Add at least one empty scene
+      this.addScene();
+    });
   }
 });

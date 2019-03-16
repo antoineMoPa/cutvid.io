@@ -71,7 +71,6 @@ Vue.component('player', {
       this.player.set_width(this.width);
       this.player.set_height(this.height);
       this.aspect = parseFloat(this.width) / parseFloat(this.height);
-      this.updateTexts();
       this.on_resize();
     },
     on_resize(){
@@ -359,9 +358,6 @@ Vue.component('player', {
         zip: false,
         gif: true
       });
-    },
-    updateTexts(){
-      this.$refs['scene-selector'].updateTexts();
     },
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");

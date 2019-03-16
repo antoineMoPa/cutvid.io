@@ -25,6 +25,11 @@ input{
 	text-align:right;
 }
 
+.text-center{
+	text-align:center;
+}
+
+
 /* END HELPERS --------------*/
 
 /* UI -------------- */
@@ -358,6 +363,10 @@ input{
 
 .settings-panel .span-table span{
 	display:table-cell;
+}
+
+.settings-panel p{
+	font-size:12px;
 }
 
 .effect-header{
