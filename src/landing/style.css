@@ -7,7 +7,7 @@ body{
 }
 
 html{
-	background:#fff;
+	background:#000;
 }
 
 h3{
@@ -24,11 +24,15 @@ input{
 }
 
 .pricing-hero{
-	background:#ccc;
+	background:#000;
+}
+
+.pricing-hero .title{
+	color:#fff;
 }
 
 .pricing-hero h2{
-	color:#000;
+	color:#fff;
 	font-size: 50px;
 	margin-bottom: 30px;
 }
@@ -91,4 +95,41 @@ input{
 
 .price .per-what{
 	font-size:10px;
+}
+
+.hero.is-primary{
+	background:#111;
+}
+
+.button.is-primary {
+    background-color: #2255ff;
+}
+
+.button.is-primary:hover {
+    background-color: #0033ff;
+}
+
+.navbar {
+    background-color: #1e1e1e;
+}
+
+@media all and (min-width:768px) {
+	.hero.is-primary{
+		height:700px;
+	}
+	
+	.hero.is-primary .hero-body{
+		margin-top:200px;
+	}
+	
+	.hero .subtitle{
+		line-height:40px;
+		font-size:150%;
+		margin-top:40px !important;
+		margin-bottom:40px !important;
+	}
+	
+	.navbar-end{
+		margin-right:10px;
+	}
 }
