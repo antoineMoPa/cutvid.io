@@ -51,7 +51,7 @@ Vue.component('scene-selector', {
         v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
       >
         <label>Duration (seconds)</label>
-        <input type="number" min="0" max="30" step="0.1" v-model="scenes[sceneNumber].duration">
+        <input type="number" min="0" max="300" step="0.1" v-model="scenes[sceneNumber].duration">
       </div>
     </div>
     <effects-selector ref="effects-selector"/>
@@ -114,7 +114,10 @@ Vue.component('scene-selector', {
       for(let sceneIndex in this.scenesIndex){
 		let scene = this.scenes[this.scenesIndex[sceneIndex]];
 		let component = this.$refs['effects-settings-' + scene.id][0];
-	    data.push(component.serialize());
+	    data.push({
+          effects: component.serialize(),
+          duration:  scene.duration
+        });
       }
       return data;
     },
@@ -144,8 +147,11 @@ Vue.component('scene-selector', {
           return;
         }
         component = component[0];
+        
+        // Unserialize if needed
 		if(initialData != undefined){
-		  component.unserialize(initialData);
+		  component.unserialize(initialData.effects);
+          settings.duration = initialData.duration;
 		}
         this.setPreview(this.scenesIndex.length - 1);
       });
