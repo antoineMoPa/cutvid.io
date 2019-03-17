@@ -43,7 +43,7 @@ Vue.component('effects-selector', {
 		"fadeReveal": {
           "description": "Fades in last effect over previous ones."
         },
-		"angularReveal": {
+		"clockReveal": {
           "description": "Fades in last effect with a variety of twisting motions."
         },
       },
