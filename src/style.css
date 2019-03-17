@@ -527,12 +527,13 @@ input{
 	display:inline-block;
 	margin-left:10px;
 	margin-right:10px;
-	margin-bottom:30px;
+	margin-bottom:0px;
 	text-align:center;
 	box-shadow:0 0 30px rgba(0,0,0,0.0);
 	border-radius:10px;
     vertical-align: top;
 	padding:20px;
+	padding-bottom:0;
 	transition:all 0.2s;
 	cursor:pointer;
 	max-width: 188px;
@@ -546,7 +547,6 @@ input{
 .theme-box img{
 	width:200px;
 	height:200px;
-	margin-bottom:15px;
     border-radius:3px;
     box-shadow:0 0 8px rgba(0,0,0,0.3);
 }

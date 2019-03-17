@@ -10,43 +10,15 @@ Vue.component('effects-selector', {
 </h3>
   <a v-for="(content, effect) in effects" class="theme-box" v-on:click="chooseEffect(effect)">
     <img v-bind:src='"plugins/" + effect + "/preview.png"'/>
-    <br>
     <p class="effect-description">
      {{ content.description }}
     </p>
   </a>
+  <br><br>
 </div>`,
   data(){
     return {
-      effects: {
-        "textLayer": {
-          "description": "Adds the text to the canvas."
-        },
-        "vignette": {
-          "description": "Creates darker corners at the edges of the canvas."
-        },
-        "retrowave": {
-          "description": "Retro nostalgia poster effect."
-        },
-        "epicSunset": {
-          "description": "A retro sunset."
-        },
-        "edgeDetect": {
-          "description": "Edge detection effect."
-        },
-        "backgroundColor": {
-          "description": "Replaces transparent parts with a uniform color."
-        },
-		"logo": {
-          "description": "Put your logo or any image on the canvas."
-        },
-		"fadeReveal": {
-          "description": "Fades in last effect over previous ones."
-        },
-		"clockReveal": {
-          "description": "Fades in last effect with a variety of twisting motions."
-        },
-      },
+      effects: {},
     };
   },
   methods: {
@@ -63,6 +35,8 @@ Vue.component('effects-selector', {
     }
   },
   mounted(){
+	let app = this;
+	
     this.callback = null;
     document.body.append(this.$el);
     let close_button = this.$el.querySelectorAll(".close-button")[0];
@@ -70,6 +44,14 @@ Vue.component('effects-selector', {
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
     });
+	
+	
+	fetch("plugins_list.json").then(function(resp){
+	  resp.json()
+		.then(function(data){
+		  app.effects = data;
+		});
+	});
   }
 });
 
