@@ -395,7 +395,7 @@ class ShaderPlayerWebGL2 {
     for (let scene = 0; scene < this.scenes.length; scene++) {
       // Last scene end time becomes current end time
 	  scene_begin_time = scene_end_time;
-      scene_end_time = parseFloat(this.scenes[scene].scene.duration);
+      scene_end_time += parseFloat(this.scenes[scene].scene.duration);
       current_scene = scene;
       
       if(time < scene_end_time){
