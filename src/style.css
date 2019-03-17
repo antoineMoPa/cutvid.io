@@ -194,18 +194,45 @@ input{
     border:1px solid #333;
 }
 
-.scene-selector .scene .copy-scene,
-.scene-selector .scene .remove-scene{
+.scene-selector .scene .scene-selector-icon{
     position:absolute;
     top:3px;
     right:35px;
     padding:5px;
     background:#111;
     border-radius:3px;
+	opacity:0;
+	transition:all 0.1s;
+}
+
+/* 
+   Show scene icons only when mouse is hover scene-selector
+   for cleaner UI.
+*/
+.scene-selector:hover .scene .scene-selector-icon{
+	opacity:0.5;
+}
+
+/* Make icon entirely opaque on hover */
+.scene-selector .scene .scene-selector-icon:hover{
+	opacity:1.0;
 }
 
 .scene-selector .scene .remove-scene{
     right:3px;
+}
+
+.scene-selector .scene .move-scene-right{
+	top:auto;
+	right:4px;
+	bottom:5px;
+}
+
+.scene-selector .scene .move-scene-left{
+	top:auto;
+	left:4px;
+	right:auto;
+	bottom:5px;
 }
 
 .scene-selector .adder-container{

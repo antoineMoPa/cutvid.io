@@ -14,14 +14,24 @@ Vue.component('scene-selector', {
              title="copy scene"
              v-on:click="copyScene(sceneIndex)"
              width="20"
-             class="copy-scene"/>
+             class="copy-scene scene-selector-icon"/>
         -->
+        <img src="icons/feather/arrow-left.svg"
+             title="Move scene earlier in video"
+             v-on:click="left(sceneIndex)"
+             width="20"
+             class="move-scene-left scene-selector-icon"/>
+        <img src="icons/feather/arrow-right.svg"
+             title="Move scene later in video"
+             v-on:click="right(sceneIndex)"
+             width="20"
+             class="move-scene-right scene-selector-icon"/>
         <img src="icons/feather/trash.svg"
              title="remove scene"
              v-on:click="remove(sceneIndex)"
              v-if="scenesIndex.length > 1"
              width="20"
-             class="remove-scene"/>
+             class="remove-scene scene-selector-icon"/>
         <img v-on:click="switch_to(sceneIndex)"
              src=""
              v-bind:class="'scene-preview scene-preview-' + scenes[sceneNumber].id"/>
@@ -162,10 +172,19 @@ Vue.component('scene-selector', {
       }
 
       let old = this.scenesIndex[sceneIndex];
-      this.scenesIndex.splice(sceneIndex, 1);
+	  let oldScene = this.scenes[old];
+	  let component = this.$refs['effects-settings-' + oldScene.id][0];
+	  let oldData = component.serialize();
 
+      this.scenesIndex.splice(sceneIndex, 1);
+	  
       setTimeout(function(){
         this.scenesIndex.splice(sceneIndex + 1, 0, old);
+		this.$nextTick(function(){
+		  let index = this.scenesIndex[sceneIndex + 1];
+		  let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
+		  component.unserialize(oldData);
+		});
       }.bind(this), 300);
     },
     left(sceneIndex){
@@ -174,10 +193,20 @@ Vue.component('scene-selector', {
       }
 
       let old = this.scenesIndex[sceneIndex];
+	  let oldScene = this.scenes[old];
+	  let component = this.$refs['effects-settings-' + oldScene.id][0];
+	  let oldData = component.serialize();
+	  
       this.scenesIndex.splice(sceneIndex, 1);
 
       setTimeout(function(){
         this.scenesIndex.splice(sceneIndex - 1, 0, old);
+		
+		this.$nextTick(function(){
+		  let index = this.scenesIndex[sceneIndex - 1];
+		  let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
+		  component.unserialize(oldData);
+		});
       }.bind(this), 300);
     },
     remove(sceneIndex){
