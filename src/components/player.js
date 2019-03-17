@@ -76,8 +76,8 @@ Vue.component('player', {
     on_resize(){
       let app = this;
       let left_panel_width = 315;
-      let x_spacing = 60 + left_panel_width; // 315: left theme settings panel
-      let y_spacing = 100 + 100 + 10; // 100: bottom ui, 100: scene-selector, margin
+      let x_spacing = 60 + left_panel_width + 40; // left theme settings panel and margin
+      let y_spacing = 100 + 100 + 20; // 100: bottom ui, 100: scene-selector, margin
 
       let x_available_space = window.innerWidth;
       let y_available_space = window.innerHeight;
@@ -93,16 +93,18 @@ Vue.component('player', {
 
       let displayed_w = available_size;
       let displayed_h = available_size * app.aspect;
-      let main_player = document.querySelectorAll("#main-player")[0];
+      let canvas_container = document.querySelectorAll("#main-player .canvas-container")[0];
       let scene_selector = document.querySelectorAll("#main-player .scene-selector")[0];
 
-      scene_selector.style.maxWidth = displayed_w + "px";
+      scene_selector.style.width = (x_available_space - x_spacing) + "px";
+	  scene_selector.style.top = (y_available_space - y_spacing + 35) + "px";
+	  scene_selector.style.left = (x_spacing - 20) + "px";
       app.player.canvas.style.maxWidth = displayed_w + "px";
       app.player.canvas.style.maxHeight = displayed_h + "px";
-      main_player.style.position = "absolute";
-      main_player.style.top = 0 + "px";
+      canvas_container.style.position = "absolute";
+      canvas_container.style.top = 0 + "px";
       let x_align_center = parseInt((x_available_space - x_spacing - available_size) / 2);
-      main_player.style.left = x_spacing - 20 + x_align_center + "px";
+      canvas_container.style.left = x_spacing - 20 + x_align_center + "px";
 
     },
 	on_player_progress(time, duration){
