@@ -40,6 +40,7 @@ Vue.component('ui', {
   methods: {
 	playAll(){
 	  this.looping = false;
+	  this.player.setZeroTime();
 	  this.$emit('playAll');
 	},
 	play(){

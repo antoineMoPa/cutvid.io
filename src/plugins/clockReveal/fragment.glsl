@@ -3,7 +3,7 @@ precision highp float;
 varying vec2 UV;
 varying  vec2 lastUV;
 uniform sampler2D previous_pass;
-uniform sampler2D previous_previous_pass;
+uniform sampler2D previous_scene;
 uniform vec2 mouse;
 uniform float ratio, time, relativeTime;
 uniform sampler2D logo;
@@ -22,7 +22,7 @@ void main(void){
   
   float blendFac = clamp((revealedAngle - a)/0.1, 0.0, 1.0) * tex.a;
   
-  vec4 col = texture2D(previous_previous_pass, lastUV);
+  vec4 col = texture2D(previous_scene, lastUV);
   col = blendFac * tex + (1.0 - blendFac) * col;
   
   gl_FragColor = col;

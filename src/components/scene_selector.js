@@ -13,24 +13,24 @@ Vue.component('scene-selector', {
         <img src="icons/feather/copy.svg"
              title="copy scene"
              v-on:click="copyScene(sceneIndex)"
-             width="20"
+             width="15"
              class="copy-scene scene-selector-icon"/>
         -->
         <img src="icons/feather/arrow-left.svg"
              title="Move scene earlier in video"
              v-on:click="left(sceneIndex)"
-             width="20"
+             width="15"
              class="move-scene-left scene-selector-icon"/>
         <img src="icons/feather/arrow-right.svg"
              title="Move scene later in video"
              v-on:click="right(sceneIndex)"
-             width="20"
+             width="15"
              class="move-scene-right scene-selector-icon"/>
         <img src="icons/feather/trash.svg"
              title="remove scene"
              v-on:click="remove(sceneIndex)"
              v-if="scenesIndex.length > 1"
-             width="20"
+             width="15"
              class="remove-scene scene-selector-icon"/>
         <img v-on:click="switch_to(sceneIndex)"
              src=""
@@ -111,10 +111,11 @@ Vue.component('scene-selector', {
         let preview = document.querySelectorAll(".scene-preview-" + id)[0];
         let tempCanvas = document.createElement("canvas");
         let ctx = tempCanvas.getContext("2d");
+        let ratio = canvas.width/canvas.height;
 
-        tempCanvas.width = 100;
+        tempCanvas.width = 100*ratio;
         tempCanvas.height = 100;
-        ctx.drawImage(canvas, 0, 0, 100, 100);
+        ctx.drawImage(canvas, 0, 0, 100*ratio, 100);
         preview.src = tempCanvas.toDataURL();
         app.player.scenes = oldScenes;
       });
@@ -157,7 +158,7 @@ Vue.component('scene-selector', {
           return;
         }
         component = component[0];
-        
+
         // Unserialize if needed
 		if(initialData != undefined){
 		  component.unserialize(initialData.effects);
@@ -177,7 +178,7 @@ Vue.component('scene-selector', {
 	  let oldData = component.serialize();
 
       this.scenesIndex.splice(sceneIndex, 1);
-	  
+
       setTimeout(function(){
         this.scenesIndex.splice(sceneIndex + 1, 0, old);
 		this.$nextTick(function(){
@@ -196,12 +197,12 @@ Vue.component('scene-selector', {
 	  let oldScene = this.scenes[old];
 	  let component = this.$refs['effects-settings-' + oldScene.id][0];
 	  let oldData = component.serialize();
-	  
+
       this.scenesIndex.splice(sceneIndex, 1);
 
       setTimeout(function(){
         this.scenesIndex.splice(sceneIndex - 1, 0, old);
-		
+
 		this.$nextTick(function(){
 		  let index = this.scenesIndex[sceneIndex - 1];
 		  let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
@@ -249,15 +250,14 @@ Vue.component('scene-selector', {
     effectsChanged(sceneIndex){
       let app = this;
 
-      if(app.player == undefined){
+      if(this.player == undefined){
         return;
       }
-      let scene = app.scenes[this.scenesIndex[sceneIndex]];
-      app.player.scenes = [{
-        scene: scene,
-        passes: this.getSceneEffects(sceneIndex)
-      }];
-      app.setPreview(app.selected);
+      let scene = this.scenes[this.scenesIndex[sceneIndex]];
+
+      this.playAll();
+      this.player.animate_force_scene = sceneIndex;
+      this.setPreview(this.selected);
       this.$emit("playLooping");
     },
     effectsSettingsReady(index){

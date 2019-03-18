@@ -1,6 +1,6 @@
 {
   let name = "clockReveal";
-  
+
   let effectSettings = function(){
 	return {
 	  name: name,
@@ -25,7 +25,10 @@
 		props: ["player", "effect", "shaderProgram"],
 		methods: {
 		  updateTexts(){
-		  
+
+		  },
+		  beforeRender(player, time, currentScene){
+			player.renderPreviousScene(time, currentScene);
 		  }
 		},
 		watch: {
@@ -33,10 +36,11 @@
 		mounted(){
 		  this.updateTexts();
           this.effect.uniforms = this.uniforms;
+		  this.effect.beforeRender = this.beforeRender;
 		}
 	  }
 	};
   };
-	
+
   utils.plugins[name + "-effectSettings"] = effectSettings;
 }

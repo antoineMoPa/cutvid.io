@@ -178,6 +178,12 @@ class ShaderPlayerWebGL2 {
     this.scenes = [];
     this.past_durations = 0;
     this.shaderProgram = null;
+    this.begin_time = 0;
+    this.animate_force_scene = null;
+
+    // TODO: name all other (previous pass, previous_previous_pass)
+    this.PREVIOUS_SCENE_BUFFER = 6;
+    this.PREVIOUS_SCENE_RTT_TEXTURE = 6;
 
     // TODO: synchronize with vue
     this.width = 540;
@@ -193,7 +199,7 @@ class ShaderPlayerWebGL2 {
     this.time = 0.0;
     this.timeout = null;
 	this.on_progress = function(progress){};
-	
+
     this.on_error_listener = function () {
       console.log('Shader compilation error');
     };
@@ -357,30 +363,42 @@ class ShaderPlayerWebGL2 {
     gl.bindBuffer(gl.ARRAY_BUFFER, tri);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   }
-  
+
   get_total_duration() {
 	let duration = 0;
 
     for(let scene = 0; scene < this.scenes.length; scene++){
       duration += parseFloat(this.scenes[scene].scene.duration);
     }
-	
+
 	return duration;
   }
-  
-  draw_gl(time) {
+
+  /* Renders previous scene to previous scene buffer */
+  renderPreviousScene(time, currentScene){
+    if(currentScene == 0){
+      return;
+    }
+
+    this.draw_gl(time, currentScene - 1, this.PREVIOUS_SCENE_BUFFER);
+  }
+
+  draw_gl(time, force_scene, force_buffer) {
+    force_scene = force_scene != undefined? force_scene : null;
+    force_buffer = force_buffer != undefined? force_buffer : null;
+
     const gl = this.gl;
 
     if (gl == null) {
       return;
     }
-		
+
     let duration = 0;
-	
+
     for (let scene = 0; scene < this.scenes.length; scene++) {
       duration += parseFloat(this.scenes[scene].scene.duration);
     }
-	
+
     time = time % duration;
 
     let current_scene = 0;
@@ -388,46 +406,68 @@ class ShaderPlayerWebGL2 {
     // Pseudotime is used to parse scenes
     // and find current one
     let scene_end_time = 0;
-	
+
 	this.on_progress(time, duration/1000);
-	
+
     let scene_begin_time = 0
     for (let scene = 0; scene < this.scenes.length; scene++) {
       // Last scene end time becomes current end time
 	  scene_begin_time = scene_end_time;
       scene_end_time += parseFloat(this.scenes[scene].scene.duration);
       current_scene = scene;
-      
-      if(time < scene_end_time){
+
+      if( time < scene_end_time ||
+          scene == force_scene ||
+          scene == this.animate_force_scene) {
         // Found current scene
         break;
       }
     }
 
+    if(force_scene != null) {
+      current_scene = force_scene;
+    } else if (this.animate_force_scene != null) {
+      current_scene = this.animate_force_scene;
+    }
+
     let scene = this.scenes[current_scene];
-	
+
 	if (scene == undefined) {
 	  return;
 	}
-	
+
+    // force_scene overrides animate_force_scene
+    if (this.animate_force_scene != null && !force_scene) {
+      time = (time % scene.scene.duration) + scene_begin_time;
+    }
+
 	let currentRelativeTime = (time - scene_begin_time) / parseFloat(scene.scene.duration);
-    
+
     let passes = scene.passes;
 
     for (let pass = 0; pass < passes.length; pass++) {
       let passData = passes[pass];
+
+      if(passData.beforeRender != undefined && passData.beforeRender != null && force_buffer == null){
+        passData.beforeRender(this, time, current_scene);
+      }
+
       let shaderProgram = passData.shaderProgram;
       shaderProgram.use();
       let program = passes[pass].shaderProgram.program;
 
       if (pass < passes.length - 1) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[pass]);
+      } else if (force_buffer != null){
+        // Bind to forced buffer
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[force_buffer]);
       } else {
+        // null = screen
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       }
 
 	  let i = 0;
-	  
+
       gl.activeTexture(gl.TEXTURE0 + i);
 
       // Manage lastpass
@@ -437,18 +477,30 @@ class ShaderPlayerWebGL2 {
       } else {
         gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
       }
-	  
+
+      i++
+
+      gl.activeTexture(gl.TEXTURE0 + i);
+
+      // Bind last scene
+      if(force_buffer != this.PREVIOUS_SCENE_BUFFER){
+        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[this.PREVIOUS_SCENE_RTT_TEXTURE]);
+        gl.uniform1i(gl.getUniformLocation(program, 'previous_scene'), i);
+      } else {
+        gl.bindTexture(gl.TEXTURE_2D, null);
+      }
+
 	  i++;
 
 	  // Also add previous pass
 	  if (pass > 1) {
-		gl.activeTexture(gl.TEXTURE1);
+		gl.activeTexture(gl.TEXTURE0 + i);
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-2]);
         gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_pass'), i);
       }
-	  
+
 	  i++;
-      
+
       for(let name in shaderProgram.textures){
         gl.activeTexture(gl.TEXTURE0 + i);
         var att = gl.getUniformLocation(program, name);
@@ -475,10 +527,10 @@ class ShaderPlayerWebGL2 {
 
       const timeAttribute = gl.getUniformLocation(program, 'time');
       gl.uniform1f(timeAttribute, time);
-	  
+
 	  const relativeTimeAttribute = gl.getUniformLocation(program, 'relativeTime');
       gl.uniform1f(relativeTimeAttribute, currentRelativeTime);
-	  
+
       const iGlobalTimeAttribute = gl.getUniformLocation(program, 'iGlobalTime');
       const date = new Date();
       let gtime = (date.getTime()) / 1000.0 % (3600 * 24);
@@ -519,6 +571,10 @@ class ShaderPlayerWebGL2 {
     }
   }
 
+  setZeroTime() {
+    this.begin_time = new Date().getTime();
+  }
+
   animate() {
     const player = this;
     let frame = 0;
@@ -535,6 +591,8 @@ class ShaderPlayerWebGL2 {
 
     function _animate() {
       let time = new Date().getTime();
+      time -= this.begin_time;
+
       // When rendering gif, draw is done elsewhere
       if (!player.rendering_gif && player.window_focused && !player.paused) {
         try{

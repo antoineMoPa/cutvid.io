@@ -59,6 +59,7 @@ Vue.component('player', {
     },
     playAll(){
       this.$refs['scene-selector'].playAll();
+	  this.player.animate_force_scene = null;
       this.player.play();
     },
 	playLooping(){

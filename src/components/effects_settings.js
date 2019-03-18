@@ -75,8 +75,10 @@ Vue.component('effects-settings', {
       }
 
       Promise.all([
-	    fetch("plugins/" + name + "/vertex.glsl"),
-	    fetch("plugins/" + name + "/fragment.glsl")
+        // Random makes sure cache is not using an old version
+        // (Ok I maybe once every 200 years this will not work...)
+	    fetch("plugins/" + name + "/vertex.glsl?" + Math.random()),
+	    fetch("plugins/" + name + "/fragment.glsl?" + Math.random())
       ]).then((values) => {
 	    Promise.all([
 	      values[0].text(),
@@ -227,7 +229,8 @@ Vue.component('effects-settings', {
       this.effectsIndex.forEach(function(i){
         orderedEffects.push({
           shaderProgram: app.effects[i].shaderProgram,
-          uniforms: app.effects[i].uniforms
+          uniforms: app.effects[i].uniforms,
+          beforeRender: app.effects[i].beforeRender || null
         });
       });
 	  return orderedEffects;
