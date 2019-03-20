@@ -9,7 +9,6 @@ Vue.component('scene-selector', {
            v-on:click="switch_to(sceneIndex)"
            v-bind:key="'scene-'+scenes[sceneNumber].id"
            v-bind:class="'scene' + ' ' + (selected == sceneIndex? 'selected-scene': '')">
-        <span style="color:#fff;font-size:10px;">Number: {{sceneNumber}} - Index: {{sceneIndex}}</span>
         <!--
         Copy: todo
         <img src="icons/feather/copy.svg"
