@@ -5,9 +5,11 @@ Vue.component('scene-selector', {
       scenes
     </div>
     <transition-group name="fade">
-      <div v-bind:key="scenes[sceneNumber].id"
-           v-for="(sceneNumber, sceneIndex) in scenesIndex"
+      <div v-for="(sceneNumber, sceneIndex) in scenesIndex"
+           v-on:click="switch_to(sceneIndex)"
+           v-bind:key="'scene-'+scenes[sceneNumber].id"
            v-bind:class="'scene' + ' ' + (selected == sceneIndex? 'selected-scene': '')">
+        <span style="color:#fff;font-size:10px;">Number: {{sceneNumber}} - Index: {{sceneIndex}}</span>
         <!--
         Copy: todo
         <img src="icons/feather/copy.svg"
@@ -18,22 +20,21 @@ Vue.component('scene-selector', {
         -->
         <img src="icons/feather/arrow-left.svg"
              title="Move scene earlier in video"
-             v-on:click="left(sceneIndex)"
+             v-on:click.stop="left(sceneIndex)"
              width="15"
              class="move-scene-left scene-selector-icon"/>
         <img src="icons/feather/arrow-right.svg"
              title="Move scene later in video"
-             v-on:click="right(sceneIndex)"
+             v-on:click.stop="right(sceneIndex)"
              width="15"
              class="move-scene-right scene-selector-icon"/>
         <img src="icons/feather/trash.svg"
              title="remove scene"
-             v-on:click="remove(sceneIndex)"
+             v-on:click.stop="remove(sceneNumber, sceneIndex)"
              v-if="scenesIndex.length > 1"
              width="15"
              class="remove-scene scene-selector-icon"/>
-        <img v-on:click="switch_to(sceneIndex)"
-             src=""
+        <img src=""
              v-bind:class="'scene-preview scene-preview-' + scenes[sceneNumber].id"/>
       </div>
     </transition-group>
@@ -75,8 +76,11 @@ Vue.component('scene-selector', {
   },
   props: ["player"],
   methods: {
-    switch_to(i){
-      this.selected = i;
+    switch_to(index){
+      if(index > this.scenes.length || index < 0){
+        return;
+      }
+      this.selected = index;
       this.effectsChanged(this.selected);
     },
     copyScene(i){
@@ -120,12 +124,12 @@ Vue.component('scene-selector', {
         app.player.scenes = oldScenes;
       });
     },
-	serialize(){
+    serialize(){
       let data = [];
       for(let sceneIndex in this.scenesIndex){
-		let scene = this.scenes[this.scenesIndex[sceneIndex]];
-		let component = this.$refs['effects-settings-' + scene.id][0];
-	    data.push({
+        let scene = this.scenes[this.scenesIndex[sceneIndex]];
+        let component = this.$refs['effects-settings-' + scene.id][0];
+        data.push({
           effects: component.serialize(),
           duration:  scene.duration
         });
@@ -160,10 +164,10 @@ Vue.component('scene-selector', {
         component = component[0];
 
         // Unserialize if needed
-		if(initialData != undefined){
-		  component.unserialize(initialData.effects);
+        if(initialData != undefined){
+          component.unserialize(initialData.effects);
           settings.duration = initialData.duration;
-		}
+        }
         this.setPreview(this.scenesIndex.length - 1);
       });
     },
@@ -173,19 +177,19 @@ Vue.component('scene-selector', {
       }
 
       let old = this.scenesIndex[sceneIndex];
-	  let oldScene = this.scenes[old];
-	  let component = this.$refs['effects-settings-' + oldScene.id][0];
-	  let oldData = component.serialize();
+      let oldScene = this.scenes[old];
+      let component = this.$refs['effects-settings-' + oldScene.id][0];
+      let oldData = component.serialize();
 
       this.scenesIndex.splice(sceneIndex, 1);
 
       setTimeout(function(){
         this.scenesIndex.splice(sceneIndex + 1, 0, old);
-		this.$nextTick(function(){
-		  let index = this.scenesIndex[sceneIndex + 1];
-		  let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
-		  component.unserialize(oldData);
-		});
+        this.$nextTick(function(){
+          let index = this.scenesIndex[sceneIndex + 1];
+          let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
+          component.unserialize(oldData);
+        });
       }.bind(this), 300);
     },
     left(sceneIndex){
@@ -194,39 +198,38 @@ Vue.component('scene-selector', {
       }
 
       let old = this.scenesIndex[sceneIndex];
-	  let oldScene = this.scenes[old];
-	  let component = this.$refs['effects-settings-' + oldScene.id][0];
-	  let oldData = component.serialize();
+      let oldScene = this.scenes[old];
+      let component = this.$refs['effects-settings-' + oldScene.id][0];
+      let oldData = component.serialize();
 
       this.scenesIndex.splice(sceneIndex, 1);
 
       setTimeout(function(){
         this.scenesIndex.splice(sceneIndex - 1, 0, old);
 
-		this.$nextTick(function(){
-		  let index = this.scenesIndex[sceneIndex - 1];
-		  let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
-		  component.unserialize(oldData);
-		});
+        this.$nextTick(function(){
+          let index = this.scenesIndex[sceneIndex - 1];
+          let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
+          component.unserialize(oldData);
+        });
       }.bind(this), 300);
     },
-    remove(sceneIndex){
-      let number = this.scenesIndex[sceneIndex];
-
+    remove(sceneNumber, sceneIndex){
       // Don't delete last scene
       if(this.scenesIndex.length < 1){
         return;
       }
 
       // Decrement all elements after current index
-      this.scenesIndex = this.scenesIndex.map((i) => { return i <= sceneIndex? i: i - 1; });
+      this.scenesIndex = this.scenesIndex.map((i) => {return i < sceneIndex + 1? i: i - 1; });
+
       this.scenesIndex.splice(sceneIndex, 1);
-      this.scenes.splice(number, 1);
+      this.scenes.splice(sceneNumber, 1);
 
       this.$nextTick(function(){
         if(sceneIndex == this.selected){
           if(sceneIndex >= this.scenesIndex.length - 1){
-            this.switch_to(sceneIndex - 1);
+            this.switch_to(sceneIndex-1);
           } else {
             this.switch_to(sceneIndex);
           }
