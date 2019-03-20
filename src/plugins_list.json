@@ -24,6 +24,6 @@
 	"description": "Fades in last effect over previous ones."
   },
   "clockReveal": {
-	"description": "Fades in last effect with a variety of twisting motions."
+	"description": "Fades in last effect with a clock motion."
   }
 }
