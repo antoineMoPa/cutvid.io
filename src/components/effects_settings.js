@@ -218,21 +218,27 @@ Vue.component('effects-settings', {
     },
     remove(effectNumber, effectIndex){
       // Fix bug when double removing
-      if(this.effectsIndex[effectNumber] == undefined){
+      if(this.effectsIndex[effectIndex] == undefined){
         return;
       }
 
       // Decrement all elements after current index
-      this.effectsIndex = this.effectsIndex.map((i) => { return i < effectIndex + 1? i: i - 1; });
+      this.effectsIndex = this.effectsIndex.map((number) => { return number > effectNumber? number-1: number; });
       this.effectsIndex.splice(effectIndex, 1);
       this.effects.splice(effectNumber, 1);
-      this.applyEffectsChange();
+
+      this.$nextTick(function(){
+        this.applyEffectsChange();
+      });
     },
     getOrderedEffects(){
       let app = this;
       let orderedEffects = [];
 
       this.effectsIndex.forEach(function(i){
+        if(app.effects[i] == undefined){
+          return;
+        }
         orderedEffects.push({
           shaderProgram: app.effects[i].shaderProgram,
           uniforms: app.effects[i].uniforms,

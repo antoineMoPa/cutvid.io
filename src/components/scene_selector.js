@@ -220,7 +220,7 @@ Vue.component('scene-selector', {
       }
 
       // Decrement all elements after current index
-      this.scenesIndex = this.scenesIndex.map((i) => {return i < sceneIndex + 1? i: i - 1; });
+      this.scenesIndex = this.scenesIndex.map((number) => {return number > sceneNumber? number - 1: number; });
 
       this.scenesIndex.splice(sceneIndex, 1);
       this.scenes.splice(sceneNumber, 1);
