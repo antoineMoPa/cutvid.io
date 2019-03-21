@@ -98,7 +98,6 @@ Vue.component('scene-selector', {
       // todo
     },
     onPreview(number, canvas){
-      console.log("onPreview", number);
       let id = this.scenes[number].id;
       let preview = document.querySelectorAll(".scene-preview-" + id)[0];
       let tempCanvas = document.createElement("canvas");
