@@ -25,5 +25,8 @@
   },
   "clockReveal": {
 	"description": "Fades in last effect with a clock motion."
+  },
+  "glitch": {
+	"description": "Old school glitch effect."
   }
 }
