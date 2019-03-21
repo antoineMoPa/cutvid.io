@@ -63,11 +63,7 @@
 			}
 			
 			let size = this.player.width;
-			
-			utils.load_gfont("Kaushan Script", this.updateTexts);
-			utils.load_gfont("Monoton", this.updateTexts);
-			utils.load_gfont("Contrail One", this.updateTexts);
-			
+
 			ctx.textAlign = "center";
 			
 			// TOP TEXT
@@ -136,7 +132,10 @@
 		  }
 		},
 		mounted(){
-		  this.updateTexts();
+		  utils.load_gfont("Kaushan Script");
+		  utils.load_gfont("Monoton");
+		  utils.load_gfont("Contrail One");
+		  document.fonts.ready.then(this.updateTexts);
 		}
 	  }
 	};

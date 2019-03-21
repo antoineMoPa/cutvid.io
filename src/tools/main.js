@@ -1,8 +1,8 @@
 var zip = new JSZip();
-  
+
 function load(){
   let index = 0;
-  
+
   for(let font in gfonts){
     let canvas = document.createElement("canvas");
     let ctx = canvas.getContext("2d");
@@ -11,13 +11,15 @@ function load(){
     let curr = index;
     let x = canvas.width/2;
     let y = canvas.height/2;
-    
+
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    
+
     ctx.fillStyle = "#000000";
-    
-    utils.load_gfont(font,function(){
+
+    utils.load_gfont(font);
+
+	document.fonts.ready.then(function(){
       ctx.font = 20 + "px " + font;
       console.log(font);
       ctx.fillText(font, canvas.width/2, canvas.height/2);
@@ -30,7 +32,7 @@ function load(){
       });
     });
   }
-  
+
   index++;
 }
 

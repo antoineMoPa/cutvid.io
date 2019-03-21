@@ -50,11 +50,6 @@
 			textCanvas.width = this.player.width;
 			textCanvas.height = this.player.height;
 			ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
-			
-			utils.load_gfont("Lobster", this.updateTexts);
-			utils.load_gfont("Plaster", this.updateTexts);
-			utils.load_gfont("Monoton", this.updateTexts);
-			
 			ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
 			ctx.font = this.text.size + "px " + this.text.font;
 			
@@ -93,8 +88,11 @@
 		  }
 		},
 		mounted(){
-		  this.updateTexts();
           this.effect.uniforms = this.uniforms;
+		  utils.load_gfont("Lobster");
+		  utils.load_gfont("Plaster");
+		  utils.load_gfont("Monoton");
+		  document.fonts.ready.then(this.updateTexts);
 		}
 	  }
 	}
