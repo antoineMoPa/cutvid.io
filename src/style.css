@@ -185,6 +185,7 @@ input{
     background:#111;
     height:100%;
     border-radius:3px;
+	min-width:100px;
 }
 
 .scene-selector .selected-scene{
@@ -203,7 +204,7 @@ input{
 	transition:all 0.1s;
 }
 
-/* 
+/*
    Show scene icons only when mouse is hover scene-selector
    for cleaner UI.
 */
@@ -299,7 +300,7 @@ input{
 	font-weight: 300;
 }
 
-.settings-panel h4:first-child{	
+.settings-panel h4:first-child{
 	margin-top: -15px;
 }
 
@@ -351,7 +352,7 @@ input{
 
 .settings-panel input:focus{
 	color:#fff;
-	box-shadow:0 0 8px rgba(255,255,255,0.3);	
+	box-shadow:0 0 8px rgba(255,255,255,0.3);
 	border:1px solid #fff;
 }
 

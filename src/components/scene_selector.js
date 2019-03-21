@@ -87,7 +87,7 @@ Vue.component('scene-selector', {
       // todo
     },
     postponePreview(index){
-      setTimeout(this.setPreview.bind(this, index), 100 + Math.random() * 100);
+      setTimeout(this.setPreview.bind(this, index), 500 + Math.random() * 100);
     },
     setPreview(index){
       let app = this;

@@ -21,7 +21,7 @@
 	"description": "Put your logo or any image on the canvas."
   },
   "fadeReveal": {
-	"description": "Fades in last effect over previous ones."
+	"description": "Fades in scene over last one."
   },
   "clockReveal": {
 	"description": "Fades in last effect with a clock motion."

@@ -17,6 +17,17 @@ Vue.component('player', {
         <a class="preset" v-on:click="set_dimensions(864,1080)">Instagram Video</a>
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
+        <h3>Experts only</h3>
+        <label>
+          Export JSON (for experts only)<br>
+          <button v-on:click="onExportJSON">
+            Export
+          </button>
+        </label>
+        <label>
+          Import JSON (for experts only)<br>
+          <input type="file" v-on:change="onImportJSON"/>
+        </label>
       </div>
       <div class="switchable-panel all-scenes-container">
         <h3>Scene</h3>
@@ -365,6 +376,25 @@ Vue.component('player', {
     make_buy(){
       alert("Sorry, you cannot buy videos yet.");
     },
+	onExportJSON(){
+	  let data = JSON.stringify(this.serialize());
+	  let a = document.createElement("a");
+	  var blob = new Blob([data], {type : 'text/json'});
+	  var url = URL.createObjectURL(blob);
+	  a.href = url;
+	  a.download = "videodata.json";
+	  document.body.appendChild(a);
+	  a.click();
+	},
+	onImportJSON(e){
+	  let app = this;
+	  let file = e.target.files[0];
+	  var reader = new FileReader();
+	  reader.addEventListener("loadend", function() {
+		app.unserialize(JSON.parse(reader.result));
+	  });
+	  reader.readAsText(file);
+	},
 	serialize(){
 	  let data = {};
 	  data.width = this.width;
