@@ -191,14 +191,9 @@ class ShaderPlayerWebGL2 {
     this.rendering_gif = false;
     this.mouse = [0, 0];
 
-    // Audio stuff
-    this.pixels = new Uint8Array(this.width * this.height * 4);
-    this.audioCtx = new AudioContext();
-    this.currentSource = null;
-    this.lastChunk = 0;
     this.time = 0.0;
-    this.timeout = null;
 	this.on_progress = function(progress){};
+	this.on_preview = function(current_scene, canvas){};
 
     this.on_error_listener = function () {
       console.log('Shader compilation error');
@@ -365,13 +360,13 @@ class ShaderPlayerWebGL2 {
   }
 
   get_total_duration() {
-	let duration = 0;
+    let duration = 0;
 
     for(let scene = 0; scene < this.scenes.length; scene++){
       duration += parseFloat(this.scenes[scene].scene.duration);
     }
 
-	return duration;
+    return duration;
   }
 
   /* Renders previous scene to previous scene buffer */
@@ -407,12 +402,12 @@ class ShaderPlayerWebGL2 {
     // and find current one
     let scene_end_time = 0;
 
-	this.on_progress(time, duration/1000);
+    this.on_progress(time, duration/1000);
 
     let scene_begin_time = 0
     for (let scene = 0; scene < this.scenes.length; scene++) {
       // Last scene end time becomes current end time
-	  scene_begin_time = scene_end_time;
+      scene_begin_time = scene_end_time;
       scene_end_time += parseFloat(this.scenes[scene].scene.duration);
       current_scene = scene;
 
@@ -432,16 +427,16 @@ class ShaderPlayerWebGL2 {
 
     let scene = this.scenes[current_scene];
 
-	if (scene == undefined) {
-	  return;
-	}
+    if (scene == undefined) {
+      return;
+    }
 
     // force_scene overrides animate_force_scene
     if (this.animate_force_scene != null && !force_scene) {
       time = (time % scene.scene.duration) + scene_begin_time;
     }
 
-	let currentRelativeTime = (time - scene_begin_time) / parseFloat(scene.scene.duration);
+    let currentRelativeTime = (time - scene_begin_time) / parseFloat(scene.scene.duration);
 
     let passes = scene.passes;
 
@@ -466,7 +461,7 @@ class ShaderPlayerWebGL2 {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       }
 
-	  let i = 0;
+      let i = 0;
 
       gl.activeTexture(gl.TEXTURE0 + i);
 
@@ -490,16 +485,16 @@ class ShaderPlayerWebGL2 {
         gl.bindTexture(gl.TEXTURE_2D, null);
       }
 
-	  i++;
+      i++;
 
-	  // Also add previous pass
-	  if (pass > 1) {
-		gl.activeTexture(gl.TEXTURE0 + i);
+      // Also add previous pass
+      if (pass > 1) {
+        gl.activeTexture(gl.TEXTURE0 + i);
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-2]);
         gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_pass'), i);
       }
 
-	  i++;
+      i++;
 
       for(let name in shaderProgram.textures){
         gl.activeTexture(gl.TEXTURE0 + i);
@@ -528,7 +523,7 @@ class ShaderPlayerWebGL2 {
       const timeAttribute = gl.getUniformLocation(program, 'time');
       gl.uniform1f(timeAttribute, time);
 
-	  const relativeTimeAttribute = gl.getUniformLocation(program, 'relativeTime');
+      const relativeTimeAttribute = gl.getUniformLocation(program, 'relativeTime');
       gl.uniform1f(relativeTimeAttribute, currentRelativeTime);
 
       const iGlobalTimeAttribute = gl.getUniformLocation(program, 'iGlobalTime');
@@ -568,6 +563,16 @@ class ShaderPlayerWebGL2 {
 
       gl.viewport(0, 0, this.width, this.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+      // Send preview sometimes
+      if( !this.rendering_gif &&        /* Don't interfere with render*/
+          force_scene == null &&        /* Don't send if rendering past scene */
+          currentRelativeTime < 0.6 &&  /* Aim the middle of scene */
+          currentRelativeTime > 0.4 &&
+          Math.random() < 0.3           /* Not all the time*/
+        ){
+        this.on_preview(current_scene, this.canvas);
+      }
     }
   }
 

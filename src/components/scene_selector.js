@@ -1,3 +1,14 @@
+/*
+  Convention for the index:
+
+  sceneNumber = this.scenesIndex[sceneIndex]
+  scene = this.scenes[sceneNumber]
+
+  The index allows moving scenes around without removing any data.
+
+  (However, it makes the code a bit tougher to read and work with)
+*/
+
 Vue.component('scene-selector', {
   template: `
   <div class="scene-selector">
@@ -86,42 +97,18 @@ Vue.component('scene-selector', {
       let uniqueSceneID = utils.increment_unique_counter("scene");
       // todo
     },
-    postponePreview(index){
-      setTimeout(this.setPreview.bind(this, index), 500 + Math.random() * 100);
-    },
-    setPreview(index){
-      let app = this;
+    onPreview(number, canvas){
+      console.log("onPreview", number);
+      let id = this.scenes[number].id;
+      let preview = document.querySelectorAll(".scene-preview-" + id)[0];
+      let tempCanvas = document.createElement("canvas");
+      let ctx = tempCanvas.getContext("2d");
+      let ratio = canvas.width/canvas.height;
 
-      // Sometimes, player is not yet ready at page load
-      if(app.player == undefined){
-        this.postponePreview(index);
-        return;
-      }
-
-      let oldScenes = this.player.scenes;
-
-      let scene = app.scenes[this.scenesIndex[index]];
-      app.player.scenes = [{
-        scene: scene,
-        passes: this.getSceneEffects(index)
-      }];
-
-      app.player.render(0, function(canvas){
-        if(canvas == undefined){
-          this.postponePreview(index);
-        }
-        let id = app.scenes[app.scenesIndex[index]].id;
-        let preview = document.querySelectorAll(".scene-preview-" + id)[0];
-        let tempCanvas = document.createElement("canvas");
-        let ctx = tempCanvas.getContext("2d");
-        let ratio = canvas.width/canvas.height;
-
-        tempCanvas.width = 100*ratio;
-        tempCanvas.height = 100;
-        ctx.drawImage(canvas, 0, 0, 100*ratio, 100);
-        preview.src = tempCanvas.toDataURL();
-        app.player.scenes = oldScenes;
-      });
+      tempCanvas.width = 100*ratio;
+      tempCanvas.height = 100;
+      ctx.drawImage(canvas, 0, 0, 100*ratio, 100);
+      preview.src = tempCanvas.toDataURL();
     },
     serialize(){
       let data = [];
@@ -144,8 +131,7 @@ Vue.component('scene-selector', {
       }
     },
     addSceneButton(){
-      let app = this;
-      app.addScene();
+      this.addScene();
     },
     addScene(initialData){
       let uniqueSceneID = utils.increment_unique_counter("scene");
@@ -167,7 +153,6 @@ Vue.component('scene-selector', {
           component.unserialize(initialData.effects);
           settings.duration = initialData.duration;
         }
-        this.setPreview(this.scenesIndex.length - 1);
       });
     },
     right(sceneIndex){
@@ -259,11 +244,9 @@ Vue.component('scene-selector', {
 
       this.playAll();
       this.player.animate_force_scene = sceneIndex;
-      this.setPreview(this.selected);
       this.$emit("playLooping");
     },
     effectsSettingsReady(index){
-      this.setPreview(index);
     },
     playAll(){
       let scenes = [];
@@ -278,6 +261,9 @@ Vue.component('scene-selector', {
     }
   },
   watch: {
+    player(){
+      this.player.on_preview = this.onPreview;
+    }
   },
   mounted(){
     let allEffects = this.$el.querySelectorAll(".all-effects")[0];

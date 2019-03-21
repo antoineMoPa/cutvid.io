@@ -1,3 +1,17 @@
+/*
+  Convention for the index:
+
+  effectIndex is the index in effectsIndex and returns the scene
+  position is the real data array
+
+  effectNumber = this.effectsIndex[effectIndex]
+  effect = this.effects[effectNumber]
+
+  The index allows moving effects around without removing any data.
+
+  (However, it makes the code a bit tougher to read and work with)
+*/
+
 Vue.component('effects-settings', {
   template: `
   <div class="effects-settings">
