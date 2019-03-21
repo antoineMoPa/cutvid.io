@@ -44,8 +44,7 @@ Vue.component('scene-selector', {
              v-if="scenesIndex.length > 1"
              width="15"
              class="remove-scene scene-selector-icon"/>
-        <img src=""
-             v-bind:class="'scene-preview scene-preview-' + scenes[sceneNumber].id"/>
+        <img v-bind:class="'scene-preview scene-preview-' + scenes[sceneNumber].id"/>
       </div>
     </transition-group>
     <div class="adder-container">
@@ -163,6 +162,8 @@ Vue.component('scene-selector', {
       let oldScene = this.scenes[old];
       let component = this.$refs['effects-settings-' + oldScene.id][0];
       let oldData = component.serialize();
+      let preview = document.querySelectorAll(".scene-preview-" + oldScene.id)[0];
+      let oldImg = preview.src;
 
       this.scenesIndex.splice(sceneIndex, 1);
 
@@ -170,7 +171,10 @@ Vue.component('scene-selector', {
         this.scenesIndex.splice(sceneIndex + 1, 0, old);
         this.$nextTick(function(){
           let index = this.scenesIndex[sceneIndex + 1];
-          let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
+          let id = this.scenes[index].id;
+          let component = this.$refs['effects-settings-' + id][0];
+          let preview = document.querySelectorAll(".scene-preview-" + id)[0];
+          preview.src = oldImg;
           component.unserialize(oldData);
         });
       }.bind(this), 300);
@@ -184,6 +188,8 @@ Vue.component('scene-selector', {
       let oldScene = this.scenes[old];
       let component = this.$refs['effects-settings-' + oldScene.id][0];
       let oldData = component.serialize();
+      let preview = document.querySelectorAll(".scene-preview-" + oldScene.id)[0];
+      let oldImg = preview.src;
 
       this.scenesIndex.splice(sceneIndex, 1);
 
@@ -192,7 +198,10 @@ Vue.component('scene-selector', {
 
         this.$nextTick(function(){
           let index = this.scenesIndex[sceneIndex - 1];
-          let component = this.$refs['effects-settings-' + this.scenes[index].id][0];
+          let id = this.scenes[index].id;
+          let component = this.$refs['effects-settings-' + id][0];
+          let preview = document.querySelectorAll(".scene-preview-" + id)[0];
+          preview.src = oldImg;
           component.unserialize(oldData);
         });
       }.bind(this), 300);
