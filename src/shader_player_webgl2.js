@@ -3,10 +3,14 @@ class ShaderProgram {
     this.gl = gl;
     this.fragment_shader_object = null;
     this.vertex_shader_object = null;
+	this.fragment_shader_code = null;
     this.textures = {};
   }
 
   compile(vertex_shader_code, fragment_shader_code) {
+	// For external use
+	this.fragment_shader_code= fragment_shader_code;
+	this.vertex_shader_code = vertex_shader_code;
     let compiled = false;
     let program = null;
     const player = this;

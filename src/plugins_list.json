@@ -12,12 +12,15 @@
       "description": "Fades in scene over last one."
     },
     "clockReveal": {
-      "description": "Fades in last effect with a clock motion."
+      "description": "Fades in last scene with a clock motion."
     }
   },
   "Glitch": {
     "glitch": {
       "description": "Old school glitch effect."
+    },
+    "glitchLines": {
+      "description": "Huge vertical glitch lines (use with care)."
     }
   },
   "Retro": {
@@ -40,6 +43,11 @@
     },
     "colorAlphaReplace": {
       "description": "Replaces transparent parts with a uniform color."
+    }
+  },
+  "Experts Only": {
+    "blankEffect": {
+      "description": "Know how to code GLSL? Create your own effect!"
     }
   }
 }
