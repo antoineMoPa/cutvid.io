@@ -111,11 +111,9 @@ void main(void){
     float y = UV.y;
 
     // Background
-     vec4 col = vec4(0.02);
+    vec4 col = vec4(0.02);
     
     col += 0.9 * grid_with_angle(vec2(x,y), time);
-    
-	col.a = 1.0;
-    
+        
     gl_FragColor = col;
 }
