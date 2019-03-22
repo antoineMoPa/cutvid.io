@@ -1,32 +1,42 @@
 {
-  "textLayer": {
-	"description": "Adds the text to the canvas."
+  "Text": {
+    "textLayer": {
+      "description": "Adds the text to the canvas."
+    },
+    "logo": {
+      "description": "Put your logo or any image on the canvas."
+    }
   },
-  "vignette": {
-	"description": "Creates darker corners at the edges of the canvas."
+  "Transitions": {
+    "fadeReveal": {
+      "description": "Fades in scene over last one."
+    },
+    "clockReveal": {
+      "description": "Fades in last effect with a clock motion."
+    }
   },
-  "retrowave": {
-	"description": "Retro nostalgia poster effect."
+  "Glitch": {
+    "glitch": {
+      "description": "Old school glitch effect."
+    }
   },
-  "epicSunset": {
-	"description": "A retro sunset."
+  "Retro": {
+    "retrowave": {
+      "description": "Retro nostalgia poster effect."
+    },
+    "epicSunset": {
+      "description": "A retro sunset."
+    }
   },
-  "edgeDetect": {
-	"description": "Edge detection effect."
-  },
-  "backgroundColor": {
-	"description": "Replaces transparent parts with a uniform color."
-  },
-  "logo": {
-	"description": "Put your logo or any image on the canvas."
-  },
-  "fadeReveal": {
-	"description": "Fades in scene over last one."
-  },
-  "clockReveal": {
-	"description": "Fades in last effect with a clock motion."
-  },
-  "glitch": {
-	"description": "Old school glitch effect."
+  "Post-Processing": {
+    "edgeDetect": {
+      "description": "Edge detection effect."
+    },
+    "vignette": {
+      "description": "Creates darker corners at the edges of the canvas."
+    },
+    "colorAlphaReplace": {
+      "description": "Replaces transparent parts with a uniform color."
+    }
   }
 }

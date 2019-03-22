@@ -5,20 +5,23 @@ Vue.component('effects-selector', {
     <img src="icons/feather-dark/x.svg" width="40"/>
   </div>
   <h3>
-  <img src="icons/feather-dark/image.svg" width="30"/>
-  Effects
-</h3>
-  <a v-for="(content, effect) in effects" class="theme-box" v-on:click="chooseEffect(effect)">
-    <img v-bind:src='"plugins/" + effect + "/preview.png"'/>
-    <p class="effect-description">
-     {{ content.description }}
-    </p>
-  </a>
-  <br><br>
+    <img src="icons/feather-dark/image.svg" width="30"/>
+    Effects
+  </h3>
+  <div v-for="(effects, categoryName) in categories">
+    <h4>{{ categoryName }}</h4>
+    <a v-for="(content, effect) in effects" class="theme-box" v-on:click="chooseEffect(effect)">
+      <img v-bind:src='"plugins/" + effect + "/preview.png"'/>
+      <p class="effect-description">
+       {{ content.description }}
+      </p>
+    </a>
+    <br><br>
+  </div>
 </div>`,
   data(){
     return {
-      effects: {},
+      categories: {},
     };
   },
   methods: {
@@ -45,11 +48,10 @@ Vue.component('effects-selector', {
       el.classList.add("hidden");
     });
 	
-	
 	fetch("plugins_list.json").then(function(resp){
 	  resp.json()
 		.then(function(data){
-		  app.effects = data;
+		  app.categories = data;
 		});
 	});
   }

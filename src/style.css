@@ -1,32 +1,32 @@
 body{
-	text-align:center;
-	background:#333;
-	font-family:sans-serif;
-	padding:0;
-	margin:0;
+    text-align:center;
+    background:#333;
+    font-family:sans-serif;
+    padding:0;
+    margin:0;
 }
 
 h3{
-	color:#333;
-	padding:30px;
-	margin:0;
+    color:#333;
+    padding:30px;
+    margin:0;
 }
 
 input{
-	border-radius:2px;
-	border: 1px solid #aaa;
-	padding:5px;
-	background:#eee;
+    border-radius:2px;
+    border: 1px solid #aaa;
+    padding:5px;
+    background:#eee;
 }
 
 /* HELPERS -------------- */
 
 .text-right{
-	text-align:right;
+    text-align:right;
 }
 
 .text-center{
-	text-align:center;
+    text-align:center;
 }
 
 
@@ -35,66 +35,66 @@ input{
 /* UI -------------- */
 
 .ui{
-	background:#111;
+    background:#111;
     background: linear-gradient(#222,#333);
-	position:fixed;
-	bottom:0;
-	left:0;
-	height:60px;
-	width:100%;
-	z-index:100;
-	text-align:center;
+    position:fixed;
+    bottom:0;
+    left:0;
+    height:60px;
+    width:100%;
+    z-index:100;
+    text-align:center;
 }
 
 .ui-button{
-	padding:8px;
-	box-shadow:0 0 3px rgba(0,0,0,0.5);
-	border-radius:3px;
-	position:absolute;
-	bottom:12px;
-	right:200px;
-	background:#333;
-	color:#eee;
-	cursor:pointer;
+    padding:8px;
+    box-shadow:0 0 3px rgba(0,0,0,0.5);
+    border-radius:3px;
+    position:absolute;
+    bottom:12px;
+    right:200px;
+    background:#333;
+    color:#eee;
+    cursor:pointer;
     background: linear-gradient(#333, #222);
 }
 
 .ui .feather-button{
-	margin-bottom:-5px;
-	margin-right:4px;
+    margin-bottom:-5px;
+    margin-right:4px;
 }
 
 .ui-button.buy-button{
-	background:#3af;
-	color:#fff;
+    background:#3af;
+    color:#fff;
 }
 
 .ui-button.ui-disabled{
-	opacity:0.4;
+    opacity:0.4;
 }
 
 .ui-button.button-1{
-	right:20px;
+    right:20px;
 }
 .ui-button.button-2{
-	right:180px;
+    right:180px;
 }
 .ui-button.button-3{
-	right:340px;
+    right:340px;
 }
 
 .ui-progress{
-	position:absolute;
-	top:-10px;
-	left:0;
-	height:8px;
-	background:#3af;
+    position:absolute;
+    top:-10px;
+    left:0;
+    height:8px;
+    background:#3af;
 }
 
 .play-all-button{
-	left:10px;
-	cursor:pointer;
-	width:100px;
+    left:10px;
+    cursor:pointer;
+    width:100px;
 }
 
 .looping-info{
@@ -107,9 +107,9 @@ input{
 }
 
 .play-button, .pause-button{
-	left:calc(50% + 25px);
-	cursor:pointer;
-	width:25px;
+    left:calc(50% + 25px);
+    cursor:pointer;
+    width:25px;
     height:25px;
     top:9px;
     border-radius:25px;
@@ -121,10 +121,10 @@ input{
 }
 
 .close-button{
-	position:absolute;
-	top:10px;
-	right:10px;
-	cursor:pointer;
+    position:absolute;
+    top:10px;
+    right:10px;
+    cursor:pointer;
 }
 
 
@@ -133,9 +133,9 @@ input{
 /* PLAYER --------------- */
 
 #main-player canvas{
-	width:100%;
-	margin-top:20px;
-	margin-left:0;
+    width:100%;
+    margin-top:20px;
+    margin-left:0;
 }
 
 .scene-selector{
@@ -185,7 +185,7 @@ input{
     background:#111;
     height:100%;
     border-radius:3px;
-	min-width:100px;
+    min-width:100px;
 }
 
 .scene-selector .selected-scene{
@@ -200,8 +200,8 @@ input{
     padding:5px;
     background:#111;
     border-radius:3px;
-	opacity:0;
-	transition:all 0.1s;
+    opacity:0;
+    transition:all 0.1s;
 }
 
 /*
@@ -209,12 +209,12 @@ input{
    for cleaner UI.
 */
 .scene-selector:hover .scene .scene-selector-icon{
-	opacity:0.5;
+    opacity:0.5;
 }
 
 /* Make icon entirely opaque on hover */
 .scene-selector .scene .scene-selector-icon:hover{
-	opacity:1.0;
+    opacity:1.0;
 }
 
 .scene-selector .scene .remove-scene{
@@ -222,16 +222,16 @@ input{
 }
 
 .scene-selector .scene .move-scene-right{
-	top:auto;
-	right:4px;
-	bottom:5px;
+    top:auto;
+    right:4px;
+    bottom:5px;
 }
 
 .scene-selector .scene .move-scene-left{
-	top:auto;
-	left:4px;
-	right:auto;
-	bottom:5px;
+    top:auto;
+    left:4px;
+    right:auto;
+    bottom:5px;
 }
 
 .scene-selector .adder-container{
@@ -259,77 +259,77 @@ input{
 /* THEME SETTINGS --------------- */
 
 .settings-panel{
-	background: #222;
-	color:#eee;
-	border-radius:3px;
-	position:fixed;
-	top:20px;
-	left:20px;
-	width:340px;
-	height:100%;
-	height:calc(100% - 100px);
-	text-align:left;
-	padding-left:15px;
+    background: #222;
+    color:#eee;
+    border-radius:3px;
+    position:fixed;
+    top:20px;
+    left:20px;
+    width:340px;
+    height:100%;
+    height:calc(100% - 100px);
+    text-align:left;
+    padding-left:15px;
 }
 
 .settings-panel a.preset{
-	cursor:pointer;
-	font-size:10px;
-	background:transparent;
-	border:1px solid #aaa;
-	padding:3px;
-	border-radius:3px;
-	margin-bottom:4px;
-	line-height: 22px;
+    cursor:pointer;
+    font-size:10px;
+    background:transparent;
+    border:1px solid #aaa;
+    padding:3px;
+    border-radius:3px;
+    margin-bottom:4px;
+    line-height: 22px;
 }
 
 .settings-panel h3, .settings-panel h4{
-	color:#fff;
-	margin:0;
-	padding:10px 0;
-	background:transparent;
+    color:#fff;
+    margin:0;
+    padding:10px 0;
+    background:transparent;
 }
 
 .settings-panel h3{
-	text-align:center;
-	font-weight:300;
-	line-height:40px;
+    text-align:center;
+    font-weight:300;
+    line-height:40px;
 }
 
 .settings-panel h4{
-	font-weight: 300;
+    font-weight: 300;
 }
 
 .settings-panel h4:first-child{
-	margin-top: -15px;
+    margin-top: -15px;
 }
 
 .settings-panel input[type=number]{
-	height:20px;
+    height:20px;
 }
 
 .settings-panel input:not([size]){
-	width:100px;
+    width:100px;
 }
 
 .settings-panel input[size="4"]{
-	width:40px;
+    width:40px;
 }
 
 .settings-panel input[type="color"]{
-	height: 33px;
+    height: 33px;
 }
 
 .settings-panel input[type="checkbox"]{
-	margin-top:8px;
-	vertical-align: middle;
+    margin-top:8px;
+    vertical-align: middle;
 }
 
 .settings-panel input:not([type=file]){
-	height:25px;
-	margin-top:5px;
-	background:#222;
-	color:#eee;
+    height:25px;
+    margin-top:5px;
+    background:#222;
+    color:#eee;
     background:linear-gradient(#111, #151515);
     margin-left:1px;
     border-top:1px solid #000;
@@ -351,15 +351,15 @@ input{
 }
 
 .settings-panel input:focus{
-	color:#fff;
-	box-shadow:0 0 8px rgba(255,255,255,0.3);
-	border:1px solid #fff;
+    color:#fff;
+    box-shadow:0 0 8px rgba(255,255,255,0.3);
+    border:1px solid #fff;
 }
 
 .settings-panel label{
-	display:block;
-	font-size:10px;
-	margin-top:5px;
+    display:block;
+    font-size:10px;
+    margin-top:5px;
 }
 
 .settings-panel button{
@@ -368,13 +368,13 @@ input{
     padding:5px;
     border-radius:4px;
     cursor:pointer;
-	color:#fff;
-	line-height: 31px;
-	margin-right: 20px;
+    color:#fff;
+    line-height: 31px;
+    margin-right: 20px;
 }
 
 .settings-panel button img{
-	margin-bottom:-4px;
+    margin-bottom:-4px;
 }
 
 .settings-panel img{
@@ -383,28 +383,28 @@ input{
 }
 
 .settings-panel .span-table{
-	display:table;
-	width:100%;
+    display:table;
+    width:100%;
 }
 
 .settings-panel .span-table span{
-	display:table-cell;
+    display:table-cell;
 }
 
 .settings-panel p{
-	font-size:12px;
+    font-size:12px;
 }
 
 .effect-header{
     position:relative;
     height:35px;
     width: calc(100% - 27px);
-	border-radius:10px;
+    border-radius:10px;
     background: #111;
     padding-left: 7px;
     font-size: 15px;
     line-height: 35px;
-	text-align:center;
+    text-align:center;
 }
 
 .effect-icons{
@@ -434,15 +434,15 @@ input{
 }
 
 .effects-settings-hidden{
-	display:none;
+    display:none;
 }
 
 .effects-settings input[type=color]{
     border:none;
-	padding: 0;
-	margin-right: 20px;
-	margin-left: auto;
-	display: block;
+    padding: 0;
+    margin-right: 20px;
+    margin-left: auto;
+    display: block;
 }
 
 /* END SETTINGS PANEL --------------- */
@@ -450,94 +450,94 @@ input{
 /* PANEL-SELECTOR --------------- */
 
 .panel-selector{
-	text-align: center;
-	position:absolute;
-	bottom:10px;
-	width:100%;
-	margin-left:-10px;
+    text-align: center;
+    position:absolute;
+    bottom:10px;
+    width:100%;
+    margin-left:-10px;
 }
 
 .panel-bullet{
-	display:inline-block;
-	background:#666;
-	border-radius:3px;
-	margin-right:3px;
-	margin-bottom:4px;
-	padding:3px;
-	cursor:pointer;
-	color:#fff;
-	font-size:10px;
+    display:inline-block;
+    background:#666;
+    border-radius:3px;
+    margin-right:3px;
+    margin-bottom:4px;
+    padding:3px;
+    cursor:pointer;
+    color:#fff;
+    font-size:10px;
 }
 
 .panel-bullet.selected-bullet{
-	background:#3af;
+    background:#3af;
 }
 
 .switchable-panel{
-	display:none;
-	overflow-y: auto;
-	max-height: calc(100% - 50px);
-	scrollbar-color: #888 #222;
+    display:none;
+    overflow-y: auto;
+    max-height: calc(100% - 50px);
+    scrollbar-color: #888 #222;
     scrollbar-width: thin;
 }
 
 .switchable-panel-shown{
-	display:block;
+    display:block;
 }
 
 /* END PANEL-SELECTOR --------------- */
 
 .gif-popup{
-	position:absolute;
-	top:20px;
-	left: calc(50% - 250px);
-	z-index:1000;
-	max-width:580px;
-	box-shadow: 0 0 10px rgba(0,0,0,0.8);
-	background:#fff;
-	border-radius:3px;
-	padding:20px;
-	padding-top:60px;
+    position:absolute;
+    top:20px;
+    left: calc(50% - 250px);
+    z-index:1000;
+    max-width:580px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    background:#fff;
+    border-radius:3px;
+    padding:20px;
+    padding-top:60px;
 }
 
 .gif-popup img{
-	max-width:540px;
+    max-width:540px;
 }
 
 /* THEME-SELECTOR --------------- */
 
 .effects-selector,
 .theme-selector{
-	width:100%;
-	max-width: 1020px;
-	background:#fff;
-	position:absolute;
-	top:40px;
-	left:calc(50% - 510px);
-	padding-left:20px;
-	padding-right:20px;
-	z-index:1000;
-	box-shadow:0 0 30px rgba(0,0,0,0.8);
-	border-radius:10px;
-	text-align:left;
+    width:100%;
+    max-width: 1020px;
+    background:#fff;
+    position:absolute;
+    top:40px;
+    left:calc(50% - 510px);
+    padding-left:20px;
+    padding-right:20px;
+    z-index:1000;
+    box-shadow:0 0 30px rgba(0,0,0,0.8);
+    border-radius:10px;
+    text-align:left;
 }
 
 @media (max-width: 1080px){
-	.effects-selector,
-	.theme-selector{
-		left: 20px;
-		width: calc(100% - 40px);
-	}
+    .effects-selector,
+    .theme-selector{
+        left: 20px;
+        width: calc(100% - 40px);
+    }
 }
 
 .effects-selector h3 img,
 .theme-selector h3 img{
-	margin-bottom:-7px;
+    margin-bottom:-7px;
 }
 
 .effects-selector.hidden,
 .theme-selector.hidden{
-	display:none;
+    display:none;
 }
 
 .effects-selector .effect-description{
@@ -547,40 +547,49 @@ input{
 }
 
 .theme-box{
-	font-size:20px;
-	text-decoration:none;
-	color:#000;
-	display:inline-block;
-	margin-left:10px;
-	margin-right:10px;
-	margin-bottom:0px;
-	text-align:center;
-	box-shadow:0 0 30px rgba(0,0,0,0.0);
-	border-radius:10px;
+    font-size:20px;
+    text-decoration:none;
+    color:#000;
+    display:inline-block;
+    margin-left:10px;
+    margin-right:10px;
+    margin-bottom:0px;
+    text-align:center;
+    box-shadow:0 0 30px rgba(0,0,0,0.0);
+    border-radius:10px;
     vertical-align: top;
-	padding:20px;
-	padding-bottom:0;
-	transition:all 0.2s;
-	cursor:pointer;
-	max-width: 188px;
+    padding:20px;
+    padding-bottom:0;
+    transition:all 0.2s;
+    cursor:pointer;
+    max-width: 188px;
 }
 
 .theme-box:hover{
-	box-shadow:0 0 30px rgba(0,0,0,0.3);
-	transform:scale(1.05);
+    box-shadow:0 0 30px rgba(0,0,0,0.3);
+    transform:scale(1.05);
 }
 
 .theme-box img{
-	width:200px;
-	height:200px;
+    width:200px;
+    height:200px;
     border-radius:3px;
     box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
 .effects-selector .theme-box img{
     width:192px;
-	height:108px;
+    height:108px;
 }
 
+.effects-selector h4{
+    margin-left: 31px;
+    font-size: 18px;
+    padding: 0;
+    margin-bottom: 0;
+    margin-top: -7px;
+    font-weight: 600;
+    color: #444;
+}
 
 /* END THEME-SELECTOR --------------- */

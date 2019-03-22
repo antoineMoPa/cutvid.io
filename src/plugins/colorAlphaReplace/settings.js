@@ -1,10 +1,10 @@
 {
-  let name = "backgroundColor";
+  let name = "colorAlphaReplace";
   
   let effectSettings = function(){
 	return {
 	  name: name,
-	  human_name: "Background color",
+	  human_name: "Color Alpha Replace",
 	  ui: {
 		template: `
 <div>
