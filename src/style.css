@@ -325,7 +325,7 @@ input{
     vertical-align: middle;
 }
 
-.settings-panel input:not([type=file]){
+.settings-panel input:not([type=file]):not([type=checkbox]){
     height:25px;
     margin-top:5px;
     background:#222;

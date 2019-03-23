@@ -26,6 +26,9 @@
         },
         props: ["player", "effect", "shaderProgram"],
         methods: {
+		  beforeRender(player, time, currentScene){
+            player.renderPreviousScene(time, currentScene);
+          }
         },
         watch: {
           fragment(){
@@ -37,6 +40,7 @@
         mounted(){
           this.effect.uniforms = this.uniforms;
           this.fragment = this.effect.shaderProgram.fragment_shader_code;
+		  this.effect.beforeRender = this.beforeRender;
         }
       }
     };

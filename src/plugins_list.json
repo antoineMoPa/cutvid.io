@@ -13,6 +13,9 @@
     },
     "clockReveal": {
       "description": "Fades in last scene with a clock motion."
+    },
+    "slideReveal": {
+      "description": "Reveals scene from left to right."
     }
   },
   "Glitch": {

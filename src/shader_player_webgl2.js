@@ -1,16 +1,18 @@
+/* Note: I actually downgraded to webgl1 to support more devices */
+
 class ShaderProgram {
   constructor(gl){
     this.gl = gl;
     this.fragment_shader_object = null;
     this.vertex_shader_object = null;
-	this.fragment_shader_code = null;
+    this.fragment_shader_code = null;
     this.textures = {};
   }
 
   compile(vertex_shader_code, fragment_shader_code) {
-	// For external use
-	this.fragment_shader_code= fragment_shader_code;
-	this.vertex_shader_code = vertex_shader_code;
+    // For external use
+    this.fragment_shader_code= fragment_shader_code;
+    this.vertex_shader_code = vertex_shader_code;
     let compiled = false;
     let program = null;
     const player = this;
@@ -81,7 +83,7 @@ class ShaderProgram {
   //
   set_texture(name, url, ready) {
     let app = this;
-	ready = ready || (() => {});
+    ready = ready || (() => {});
 
     // Cleanup before setting again
     if(this.textures[name] != undefined){
@@ -196,8 +198,8 @@ class ShaderPlayerWebGL2 {
     this.mouse = [0, 0];
 
     this.time = 0.0;
-	this.on_progress = function(progress){};
-	this.on_preview = function(current_scene, canvas){};
+    this.on_progress = function(progress){};
+    this.on_preview = function(current_scene, canvas){};
 
     this.on_error_listener = function () {
       console.log('Shader compilation error');
@@ -398,7 +400,11 @@ class ShaderPlayerWebGL2 {
       duration += parseFloat(this.scenes[scene].scene.duration);
     }
 
-    time = time % duration;
+    if(!this.animate_force_scene){
+      // Wrapped in the if because we do the modulo later
+      // when forcing a scene
+      time = time % duration;
+    }
 
     let current_scene = 0;
 
@@ -436,7 +442,7 @@ class ShaderPlayerWebGL2 {
     }
 
     // force_scene overrides animate_force_scene
-    if (this.animate_force_scene != null && !force_scene) {
+    if (this.animate_force_scene != null && force_scene == null) {
       time = (time % scene.scene.duration) + scene_begin_time;
     }
 
