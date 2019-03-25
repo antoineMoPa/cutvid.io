@@ -1,7 +1,10 @@
 {
   "Text": {
     "textLayer": {
-      "description": "Adds the text to the canvas."
+      "description": "Adds simple text to the canvas."
+    },
+    "gfontTextLayer": {
+      "description": "Choose from 800+ Google WebFonts."
     },
     "logo": {
       "description": "Put your logo or any image on the canvas."
