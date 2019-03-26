@@ -29,13 +29,15 @@
       "description": "Huge vertical glitch lines (use with care)."
     }
   },
-  "Retro": {
+  "Animated Backgrounds": {
     "retrowave": {
       "description": "Retro nostalgia poster effect."
     },
     "epicSunset": {
       "description": "A retro sunset."
-    },
+    }
+  },
+  "Retro elements": {
     "retroGrid": {
       "description": "A retro computer grid as you have seen in classic posters."
     }

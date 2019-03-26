@@ -3,8 +3,7 @@ precision highp float;
 varying vec2 UV;
 uniform vec2 mouse;
 uniform float ratio, time;
-uniform float glitchFactor;
-uniform sampler2D texture0;
+uniform sampler2D previous_pass;
 
 void main(void){
     float x = UV.x * ratio;
@@ -92,35 +91,9 @@ void main(void){
         col.r += 0.7 * clamp(cos(pow(1.0 + p.y, 2.0) * 100.0 - time * 6.2832),0.4, 0.5) - 0.3;
     }
     
-	vec2 uv = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
-	
-
-	uv.y -= 0.04;
-	
-	uv -= 0.5;
-	
-	uv *= 1.0 + glitchFactor * 0.1 * cos(time * 6.2832 + 0.3 * tan(p.x * 2.0 + time * 6.2832) + p.y * 10.0);
-	
-	uv += 0.5;
-	
-    vec4 tex = texture2D(texture0,  uv);
-	vec4 tex1 = texture2D(texture0,  uv + vec2( 0.000, 0.004));
-	vec4 tex2 = texture2D(texture0,  uv + vec2( 0.004, 0.000));
-	vec4 tex3 = texture2D(texture0,  uv + vec2( 0.000,-0.004));
-	vec4 tex4 = texture2D(texture0,  uv + vec2(-0.004, 0.000));
-
-	tex += tex1 * 0.2;
-	tex += tex2 * 0.2;
-	tex += tex3 * 0.2;
-	tex += tex4 * 0.2;
-	
 	float highlight = clamp(pow(cos(time * 6.2832 - p.x * 10.0), 20.0), 0.0, 1.0);
 	highlight *= cos(p.y * 100.0 + p.x * 20.0);
 	
-	tex.rgb += 0.5 * highlight * tex.a;
-	
-	col = tex.a * tex + (1.0 - tex.a) * col;
-    
 	col.rgb = clamp(col.rgb, 0.0, 1.0);
 	
     col.a = 1.0;
