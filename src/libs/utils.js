@@ -98,7 +98,7 @@ utils.unserialize_vue = function(data, json){
   let inData = json;
 
   for(let prop in inData){
-	if(typeof(inData[prop]) == "object"){
+	if(typeof(inData[prop]) == "object" && data[prop] != undefined){
 	  utils.unserialize_vue(data[prop], inData[prop]);
 	} else {
 	  data[prop] = inData[prop];

@@ -191,8 +191,12 @@ Vue.component('effects-settings', {
     unserializeEffect(effectIndex, data){
       let index = this.effectsIndex[effectIndex];
       let component = this.$refs[this.effects[index].component][0];
-      // Put data in component data
-      utils.unserialize_vue(component.$data, data);
+
+      if(data != undefined){
+        // Put data in component data
+        utils.unserialize_vue(component.$data, data);
+      }
+
       // Update uniforms
       this.applyEffectsChange();
     },

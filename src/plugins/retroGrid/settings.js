@@ -1,6 +1,6 @@
 {
   let name = "retroGrid";
-  
+
   let effectSettings = function(){
     return {
       name: name,
@@ -10,6 +10,10 @@
 <div>
   <label>Color<br><br>
     <input v-model="color" type="color">
+  </label>
+  <label>Top offset<br><br>
+    <input v-model="uniforms.offsetY.value"
+           min="-0.5" max="5" step="0.05" type="number">
   </label>
 </div>`,
         data: function(){
@@ -30,6 +34,11 @@
                 type: "f",
                 len: 1,
                 value: 247.0/255.0,
+              },
+              offsetY: {
+                type: "f",
+                len: 1,
+                value: 0.0,
               },
             }
           };
@@ -53,6 +62,6 @@
       }
     };
   };
-  
+
   utils.plugins[name + "-effectSettings"] = effectSettings;
 }
