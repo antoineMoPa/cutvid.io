@@ -11,11 +11,14 @@
   <h4>Text</h4>
   <label>Your text</label>
   <input v-model="text.text" type="text">
-  <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span><span>Color</span></label>
+  <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
   <input v-model.number="text.size" step="10" type="number">
   <input v-model.number="text.offsetTop" type="number" size="4" step="25">
   <input v-model.number="text.offsetLeft" type="number" size="4" step="25">
+  <br>
+  <label><span>Color</span></label>
   <input v-model="text.color" type="color">
+  <h4>Font selection</h4>
   <div class="gfont-scrollbox">
     <div v-for="info in fonts">
       <span class="raw-fontname">{{info.font}}</span>
@@ -39,9 +42,9 @@
             fonts: [],
             font: "Open Sans",
             text:{
-              text: "Hello!",
+              text: "Your text!",
               color: "#ffffff",
-              size:70,
+              size: 200,
               offsetTop: 0,
               offsetLeft: 0,
             },
