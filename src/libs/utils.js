@@ -3,37 +3,44 @@ var utils = {};
 // Tool to load google webfonts with title
 utils.loaded_gfonts = {};
 
-utils.load_gfont = function(name_in){
+utils.load_gfont = function(name_in, size, text){
   // Was font already loaded
   if(utils.loaded_gfonts[name_in] != undefined){
-	return;
+    return utils.loaded_gfonts[name_in];
   }
 
-  utils.loaded_gfonts[name_in] = "loading";
+  return new Promise(function(resolve, reject) {
 
-  // Format name
-  var name = name_in.replace(" ","+");
-  var url = "https://fonts.googleapis.com/css?family="+name;
-  var l = document.createElement("link");
+    utils.loaded_gfonts[name_in] = this;
 
-  // Add attributes
-  l.setAttribute("rel", "stylesheet");
-  l.setAttribute("href", url);
-  document.head.appendChild(l);
+    // Format name
+    var name = name_in.replace(" ","+");
+    var url = "https://fonts.googleapis.com/css?family="+name;
 
-  if("fonts" in document){
+    var l = document.createElement("link");
+
+    // Add attributes
+    l.setAttribute("rel", "stylesheet");
+    l.setAttribute("href", url);
+    document.head.appendChild(l);
+
     let fakeDiv = document.createElement("div");
     fakeDiv.innerHTML = "<span style='font-family:" + name_in + ";'>" + name_in + "</span>";
-    document.body.appendChild(fakeDiv);
-    document.fonts.ready.then(function(){
-      fakeDiv.parentNode.removeChild(fakeDiv);
-      utils.loaded_gfonts[name_in] = "loaded";
-    });
 
-  } else {
-    // Set as loaded
-    utils.loaded_gfonts[name_in] = "loaded";
-  }
+    document.body.appendChild(fakeDiv);
+
+    l.onload = function(){
+      if("fonts" in document){
+        document.fonts.load(size + "px " + name_in, text).then(function(){
+          fakeDiv.parentNode.removeChild(fakeDiv);
+          resolve();
+        });
+      } else {
+        // Set as loaded
+        fakeDiv.parentNode.removeChild(fakeDiv);
+      }
+    };
+  });
 }
 
 // Tool for dynamic script loading
@@ -59,7 +66,7 @@ utils.load_script = function(url, callback){
     utils.scripts[url].callbacks.push(callback);
     utils.scripts[url].ready = true;
     let cbs = utils.scripts[url].callbacks;
-	cbs.forEach((cb) => {cb()});
+    cbs.forEach((cb) => {cb()});
   };
   script.src = url + "?" + Math.random();
   document.body.appendChild(script);
@@ -84,11 +91,11 @@ utils.serialize_vue = function(data){
   let out = {};
 
   for(let prop in data){
-	if(typeof(data[prop]) == "object"){
-	  out[prop] = utils.serialize_vue(data[prop]);
-	} else {
-	  out[prop] = data[prop];
-	}
+    if(typeof(data[prop]) == "object"){
+      out[prop] = utils.serialize_vue(data[prop]);
+    } else {
+      out[prop] = data[prop];
+    }
   }
 
   return out;
@@ -98,10 +105,10 @@ utils.unserialize_vue = function(data, json){
   let inData = json;
 
   for(let prop in inData){
-	if(typeof(inData[prop]) == "object" && data[prop] != undefined){
-	  utils.unserialize_vue(data[prop], inData[prop]);
-	} else {
-	  data[prop] = inData[prop];
-	}
+    if(typeof(inData[prop]) == "object" && data[prop] != undefined){
+      utils.unserialize_vue(data[prop], inData[prop]);
+    } else {
+      data[prop] = inData[prop];
+    }
   }
 };

@@ -90,7 +90,6 @@
             ctx.translate(this.player.width/2, this.player.height/2);
             ctx.fillText(this.text.text, this.text.offsetLeft, this.text.offsetTop);
             ctx.restore();
-
             this.shaderProgram.set_texture(
               "texture0",
               textCanvas.toDataURL(),
@@ -120,8 +119,12 @@
         },
         watch: {
           font(){
-            utils.load_gfont(this.font);
-            document.fonts.ready.then(this.updateTexts);
+            let promise = utils.load_gfont(this.font, this.text.size, this.text.text);
+            let app = this;
+
+            promise.then(function(msg){
+              app.updateTexts();
+            });
           },
           text: {
             handler: function () {
@@ -147,12 +150,19 @@
           this.updateTexts();
 
           let img = document.createElement("img");
-          img.onload = function(){};
-          img.src = "./plugins/gfontTextLayer/fonts.png";
+          let imgload = new Promise(function(resolve, reject) {
+            img.onload = function(){
+              resolve(null);
+            };
+          });
           this.img = img;
+          img.src = "./plugins/gfontTextLayer/fonts.png";
 
-          fetch("./plugins/gfontTextLayer/fonts.json").then(function(resp){
-            resp.json()
+          Promise.all([
+            imgload,
+            fetch("./plugins/gfontTextLayer/fonts.json")
+          ]).then(function(values){
+            values[1].json()
               .then(function(data){
                 app.fonts = data;
                 app.$nextTick(function(){
