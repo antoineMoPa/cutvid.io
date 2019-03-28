@@ -39,10 +39,13 @@
   },
   "Animated Backgrounds": {
     "retrowave": {
-      "description": "Retro nostalgia poster effect."
+      "description": "Retro nostalgia poster effect with text."
     },
     "epicSunset": {
-      "description": "A retro sunset."
+      "description": "A retro sunset background."
+    },
+	"uniformColor": {
+      "description": "Fill screen with a color (not animated)."
     }
   },
   "Retro elements": {
