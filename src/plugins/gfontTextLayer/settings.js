@@ -28,14 +28,6 @@
       </button><br>
     </div>
   </div>
-  <h4>Background</h4>
-  <label>Transparent background
-    <input type="checkbox" v-model="transparentBackground">
-  </label>
-  <div v-if="!transparentBackground">
-    <label>Background color</label>
-    <input type="color" v-model="backgroundColor">
-  </div>
 </div>`,
         data: function(){
           return {
@@ -48,8 +40,6 @@
               offsetTop: 0,
               offsetLeft: 0,
             },
-            transparentBackground: true,
-            backgroundColor: "#000000"
           };
         },
         props: ["player", "shaderProgram"],
@@ -64,11 +54,6 @@
             textCanvas.width = this.player.width;
             textCanvas.height = this.player.height;
             ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
-
-            if(!this.transparentBackground){
-              ctx.fillStyle = this.backgroundColor;
-              ctx.fillRect(0,0,textCanvas.width, textCanvas.height);
-            }
 
             if(textCanvas == null || this.player == null){
               return;
@@ -144,9 +129,6 @@
           backgroundColor(){
             this.updateTexts();
           },
-          transparentBackground(){
-            this.updateTexts();
-          }
         },
         mounted(){
           let app = this;

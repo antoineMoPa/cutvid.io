@@ -11,11 +11,11 @@
     }
   },
   "Layer Reveals": {
-	"leftRightReveal": {
+    "leftRightReveal": {
       "description": "Reveals a text or any layer from left to right."
     },
-	"scribusReveal": {
-      "description": "Intelligent text drawing animation."
+    "walkReveal": {
+      "description": "Reveals left to right and by small parts."
     }
   },
   "Transitions": {

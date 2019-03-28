@@ -44,6 +44,8 @@ input{
     width:100%;
     z-index:100;
     text-align:center;
+    user-select:none;
+    -moz-user-select:none;
 }
 
 .ui-button{
