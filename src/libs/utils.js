@@ -89,6 +89,12 @@ utils.serialize_vue = function(data){
 
   for(let prop in data){
     if(typeof(data[prop]) == "object"){
+	  // Exclude specified variables
+	  if(data.serializeExclude != undefined){
+		if(data.serializeExclude.indexOf(prop) != -1){
+		  continue;
+		}
+	  }
       out[prop] = utils.serialize_vue(data[prop]);
     } else {
       out[prop] = data[prop];
