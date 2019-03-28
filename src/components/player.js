@@ -382,6 +382,7 @@ Vue.component('player', {
       }
 
       if(basic_error){
+        this.player.rendering_gif = false;
         return;
       }
 
