@@ -29,14 +29,6 @@
       "description": "Reveals scene from left to right."
     }
   },
-  "Glitch": {
-    "glitch": {
-      "description": "Old school glitch effect."
-    },
-    "glitchLines": {
-      "description": "Huge vertical glitch lines (use with care)."
-    }
-  },
   "Animated Backgrounds": {
     "retrowave": {
       "description": "Retro nostalgia poster effect with text."
@@ -44,7 +36,7 @@
     "epicSunset": {
       "description": "A retro sunset background."
     },
-	"uniformColor": {
+    "uniformColor": {
       "description": "Fill screen with a color (not animated)."
     }
   },
@@ -62,6 +54,14 @@
     },
     "colorAlphaReplace": {
       "description": "Replaces transparent parts with a uniform color."
+    }
+  },
+  "Glitch": {
+    "glitch": {
+      "description": "Old school color glitching effect."
+    },
+    "glitchLines": {
+      "description": "Huge vertical glitch lines (use with care)."
     }
   },
   "Experts Only": {
