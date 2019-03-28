@@ -120,27 +120,30 @@ Vue.component('effects-settings', {
       return data;
     },
     unserialize(data){
+      let app = this;
       this.effects = [];
       this.effectsIndex = [];
 
       let promise = null;
+
       for(let effectIndex in data){
         let effectData = data[effectIndex];
         let effectName = effectData.effectName;
+        let currentPromiseGetter = function(){
+          return app.addEffect(effectName, effectData);
+        };
 
         if(promise == null){
-          promise = this.addEffect(effectName, effectData);
+          promise = currentPromiseGetter();
         } else {
-          promise = promise.then(function(){
-            this.addEffect(effectName, effectData)
-          }.bind(this));
+          promise = promise.then(currentPromiseGetter);
         }
       }
     },
     addEffect(effectName, initialData){
       let app = this;
 
-      var endPromise = new Promise(function(resolve, reject){
+      return new Promise(function(resolve, reject){
         utils.load_script("plugins/" + effectName + "/settings.js", function(){
           // Keeping unique components makes sure the components aren't reset
           let settings = utils.plugins[effectName + "-effectSettings"]();
@@ -174,8 +177,6 @@ Vue.component('effects-settings', {
           });
         });
       });
-
-      return endPromise;
     },
     serializeEffect(effectIndex){
       let effect = this.effects[effectIndex];

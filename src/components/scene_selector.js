@@ -122,11 +122,22 @@ Vue.component('scene-selector', {
       return data;
     },
     unserialize(data){
+      let app = this;
       this.scenes.splice(0);
       this.scenesIndex.splice(0);
+
+      let promise = null;
       for(let sceneIndex in data){
         let sceneData = data[sceneIndex];
-        this.addScene(sceneData);
+        let currentPromiseGetter = function(){
+          return app.addScene(sceneData)
+        };
+
+        if(promise == null){
+          promise = currentPromiseGetter();
+        } else {
+          promise = promise.then(currentPromiseGetter);
+        }
       }
     },
     addSceneButton(){
@@ -138,21 +149,26 @@ Vue.component('scene-selector', {
         id: uniqueSceneID,
         duration: 1.0,
       };
-      this.scenes.splice(this.scenes.length, 0, settings);
-      this.scenesIndex.splice(this.scenesIndex.length, 0, this.scenes.length - 1);
-      this.$nextTick(function(){
-        let component = this.$refs['effects-settings-' + settings.id];
-        if(component == undefined){
-          return;
-        }
-        component = component[0];
 
-        // Unserialize if needed
-        if(initialData != undefined){
-          component.unserialize(initialData.effects);
-          settings.duration = initialData.duration;
-        }
-      });
+      return new Promise(function(resolve, reject){
+        this.scenes.splice(this.scenes.length, 0, settings);
+        this.scenesIndex.splice(this.scenesIndex.length, 0, this.scenes.length - 1);
+
+        this.$nextTick(function(){
+          let component = this.$refs['effects-settings-' + settings.id];
+          if(component == undefined){
+            return;
+          }
+          component = component[0];
+
+          // Unserialize if needed
+          if(initialData != undefined){
+            component.unserialize(initialData.effects);
+            settings.duration = initialData.duration;
+          }
+          resolve();
+        });
+      }.bind(this));
     },
     right(sceneIndex){
       if(sceneIndex > this.scenesIndex.length - 1){
