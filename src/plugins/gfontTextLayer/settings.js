@@ -22,7 +22,7 @@
   <div class="gfont-scrollbox">
     <div v-for="info in fonts">
       <span class="raw-fontname">{{info.font}}</span>
-      <button class="gfont-button"
+      <button v-bind:class="(info.font == font ? 'current-font':'') + ' gfont-button'"
               v-on:click="changeFont(info.font)">
         <img v-bind:data-fontName="info.font" v-bind:alt="info.font"/>
       </button><br>
