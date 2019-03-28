@@ -70,10 +70,10 @@ Vue.component('player', {
     },
     playAll(){
       this.$refs['scene-selector'].playAll();
-	  this.player.animate_force_scene = null;
+      this.player.animate_force_scene = null;
       this.player.play();
     },
-	playLooping(){
+    playLooping(){
       this.$refs['ui'].playLooping();
     },
     pause(){
@@ -109,8 +109,8 @@ Vue.component('player', {
       let scene_selector = document.querySelectorAll("#main-player .scene-selector")[0];
 
       scene_selector.style.width = (x_available_space - x_spacing) + "px";
-	  scene_selector.style.top = (y_available_space - y_spacing + 35) + "px";
-	  scene_selector.style.left = (x_spacing - 20) + "px";
+      scene_selector.style.top = (y_available_space - y_spacing + 35) + "px";
+      scene_selector.style.left = (x_spacing - 20) + "px";
       app.player.canvas.style.maxWidth = displayed_w + "px";
       app.player.canvas.style.maxHeight = displayed_h + "px";
       canvas_container.style.position = "absolute";
@@ -119,10 +119,10 @@ Vue.component('player', {
       canvas_container.style.left = x_spacing - 20 + x_align_center + "px";
 
     },
-	on_player_progress(time, duration){
-	  // TODO: find less visually annoying solution
-	  // this.$refs.ui.set_progress(time/duration);
-	},
+    on_player_progress(time, duration){
+      // TODO: find less visually annoying solution
+      // this.$refs.ui.set_progress(time/duration);
+    },
     switch_panel(i){
       // Hide previously shown
       this.$el.querySelectorAll(".switchable-panel-shown").forEach((el) => {
@@ -133,18 +133,16 @@ Vue.component('player', {
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
     },
-	getTotalDuration(){
-	},
     render(options) {
-	  let totalFrames = this.fps * this.player.get_total_duration();
-	  
+      let totalFrames = this.fps * this.player.get_total_duration();
+
       if (typeof (options) === 'undefined') {
         options = {
           zip: false,
-          gif: false
+          gif: false,
+          blob: false
         };
       }
-
       // Renders all the frames to a png
       const app = this;
 
@@ -157,6 +155,10 @@ Vue.component('player', {
 
       if (options.gif) {
         to_export.delay = Math.floor(1000 / app.fps);
+        to_export.data = [];
+      }
+      if (options.blob) {
+        to_export.fps = app.fps;
         to_export.data = [];
       }
 
@@ -197,12 +199,19 @@ Vue.component('player', {
               ctx.fillText(watermark, w - offset_x, h - 10);
               to_export.data.push(canvas.toDataURL());
               next();
-            } else if (options.zip) {
-              const zip = window.shadergif_zip;
+            } else if (options.blob) {
               ctx.drawImage(temp_img, 0, 0);
               ctx.fillStyle = color;
               ctx.fillText(watermark, w - offset_x, h - 10);
-
+              canvas.toBlob(function(blob){
+                to_export.data.push(blob);
+                next();
+              });
+            } else if (options.zip) {
+              const zip = window.current_zip;
+              ctx.drawImage(temp_img, 0, 0);
+              ctx.fillStyle = color;
+              ctx.fillText(watermark, w - offset_x, h - 10);
               // 4-Zero pad number
               let filename = 'image-';
               const numzeros = 4;
@@ -226,7 +235,7 @@ Vue.component('player', {
           app.$refs.ui.set_progress((curr + 1) / totalFrames * 0.5);
           // Render
           app.player.render((curr + 1) / app.fps, (canvas) => {
-			let image_data = '';
+            let image_data = '';
             /*
               Shader player return a canvas,
               but iframed players (javascript)
@@ -248,16 +257,26 @@ Vue.component('player', {
             if (app.player.resume_anim) {
               app.player.resume_anim();
             }
+          } else if (options.blob) {
+            console.log(to_export);
+            // TODO
           } else if (options.zip) {
-            const zip = window.shadergif_zip;
+            const zip = window.current_zip;
             app.player.rendering_gif = false;
             if (app.player.resume_anim) {
               app.player.resume_anim();
             }
+            app.$refs.ui.set_progress(1.0);
+
             zip.generateAsync({ type: 'blob' })
-              .then((content) => {
-                app.has_zip = true;
-                app.zip_url = URL.createObjectURL(content);
+              .then((blob) => {
+                let a = document.createElement("a");
+                var url = URL.createObjectURL(blob);
+                a.href = url;
+                a.download = "videopictures.zip";
+                document.body.appendChild(a);
+                a.click();
+
               });
           }
         }
@@ -342,15 +361,15 @@ Vue.component('player', {
     },
     make_gif(){
       let basic_error = false;
-	  
-	  this.playAll();
-	  
+
+      this.playAll();
+
       if(this.player.rendering_gif){
         return;
       }
-	  
-	  this.player.rendering_gif = true;
-	  
+
+      this.player.rendering_gif = true;
+
       // We'll show all relevant warnings.
 
       if(this.width > 1000 || this.height > 1000){
@@ -374,42 +393,55 @@ Vue.component('player', {
       });
     },
     make_buy(){
-      alert("Sorry, you cannot buy videos yet.");
-    },
-	onExportJSON(){
-	  let data = JSON.stringify(this.serialize());
-	  let a = document.createElement("a");
-	  var blob = new Blob([data], {type : 'text/json'});
-	  var url = URL.createObjectURL(blob);
-	  a.href = url;
-	  a.download = "videodata.json";
-	  document.body.appendChild(a);
-	  a.click();
-	},
-	onImportJSON(e){
-	  let app = this;
-	  let file = e.target.files[0];
-	  var reader = new FileReader();
-	  reader.addEventListener("loadend", function() {
-		app.unserialize(JSON.parse(reader.result));
-	  });
-	  reader.readAsText(file);
-	},
-	serialize(){
-	  let data = {};
-	  data.width = this.width;
-	  data.height = this.height;
-	  data.fps = this.fps;
-	  data.scenes = this.$refs['scene-selector'].serialize();
+      this.playAll();
+      window.current_zip = new JSZip()
 
-	  return data;
-	},
-	unserialize(data){
-	  this.width = data.width;
-	  this.height = data.height;
-	  this.fps = data.fps;
-	  this.$refs['scene-selector'].unserialize(data.scenes);
-	}
+      if(this.player.rendering_gif){
+        return;
+      }
+
+      this.player.rendering_gif = true;
+
+      this.$refs.ui.set_progress(0.0);
+
+      this.render({
+        zip: true
+      });
+    },
+    onExportJSON(){
+      let data = JSON.stringify(this.serialize());
+      let a = document.createElement("a");
+      var blob = new Blob([data], {type : 'text/json'});
+      var url = URL.createObjectURL(blob);
+      a.href = url;
+      a.download = "videodata.json";
+      document.body.appendChild(a);
+      a.click();
+    },
+    onImportJSON(e){
+      let app = this;
+      let file = e.target.files[0];
+      var reader = new FileReader();
+      reader.addEventListener("loadend", function() {
+        app.unserialize(JSON.parse(reader.result));
+      });
+      reader.readAsText(file);
+    },
+    serialize(){
+      let data = {};
+      data.width = this.width;
+      data.height = this.height;
+      data.fps = this.fps;
+      data.scenes = this.$refs['scene-selector'].serialize();
+
+      return data;
+    },
+    unserialize(data){
+      this.width = data.width;
+      this.height = data.height;
+      this.fps = data.fps;
+      this.$refs['scene-selector'].unserialize(data.scenes);
+    }
   },
   watch: {
     width(){
@@ -423,11 +455,11 @@ Vue.component('player', {
   },
   mounted: function(){
     let app = this;
-	window.player = this;
+    window.player = this;
     window.addEventListener("resize", app.on_resize);
 
     app.player = new ShaderPlayerWebGL2();
-	app.player.on_progress = this.on_player_progress;
+    app.player.on_progress = this.on_player_progress;
     app.player.set_width(app.width);
     app.player.set_height(app.height);
     app.on_resize();
@@ -437,6 +469,6 @@ Vue.component('player', {
     this.switch_panel(2);
     this.$refs['panel-selector'].switch_to(2);
 
-	this.$refs['scene-selector'].unserialize();
+    this.$refs['scene-selector'].unserialize();
   },
 })
