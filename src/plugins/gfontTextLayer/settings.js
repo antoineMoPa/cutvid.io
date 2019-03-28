@@ -40,7 +40,7 @@
         data: function(){
           return {
             fonts: [],
-            font: "Open Sans",
+            font: "Allerta Stencil",
             text:{
               text: "Your text!",
               color: "#ffffff",
@@ -102,7 +102,7 @@
             canvas.width = 280;
             canvas.height = 48;
 
-            for(font in this.fonts){
+            for(let font in this.fonts){
               let fontInfo = this.fonts[font];
               let image = this.$el.querySelectorAll("[data-fontName='" + fontInfo.font + "']")[0];
               let img = this.img;
@@ -115,16 +115,19 @@
                 image.src = URL.createObjectURL(blob);
               });
             }
+          },
+          newFont(){
+            let promise = utils.load_gfont(this.font, this.text.size, this.text.text);
+            let app = this;
+
+            promise.then(function(){
+              app.updateTexts();
+            });
           }
         },
         watch: {
           font(){
-            let promise = utils.load_gfont(this.font, this.text.size, this.text.text);
-            let app = this;
-
-            promise.then(function(msg){
-              app.updateTexts();
-            });
+            this.newFont();
           },
           text: {
             handler: function () {
@@ -147,7 +150,6 @@
         },
         mounted(){
           let app = this;
-          this.updateTexts();
 
           let img = document.createElement("img");
           let imgload = new Promise(function(resolve, reject) {
@@ -167,6 +169,8 @@
                 app.fonts = data;
                 app.$nextTick(function(){
                   app.updateFontPreviews();
+                  // Load initial font
+                  app.newFont();
                 });
               });
           });
