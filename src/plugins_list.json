@@ -54,7 +54,10 @@
     },
     "colorAlphaReplace": {
       "description": "Replaces transparent parts with a uniform color."
-    }
+    },
+	"glow": {
+	  "description": "Makes things glow!"
+	}
   },
   "Glitch": {
     "glitch": {

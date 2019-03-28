@@ -9,10 +9,7 @@ utils.load_gfont = function(name_in, size, text){
     return utils.loaded_gfonts[name_in];
   }
 
-  return new Promise(function(resolve, reject) {
-
-    utils.loaded_gfonts[name_in] = this;
-
+  return utils.loaded_gfonts[name_in] = new Promise(function(resolve, reject) {
     // Format name
     var name = name_in.replace(" ","+");
     var url = "https://fonts.googleapis.com/css?family="+name;
