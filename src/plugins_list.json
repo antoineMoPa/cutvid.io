@@ -10,6 +10,14 @@
       "description": "Put your logo or any image on the canvas."
     }
   },
+  "Layer Reveals": {
+	"leftRightReveal": {
+      "description": "Reveals a text or any layer from left to right."
+    },
+	"scribusReveal": {
+      "description": "Intelligent text drawing animation."
+    }
+  },
   "Transitions": {
     "fadeReveal": {
       "description": "Fades in scene over last one."

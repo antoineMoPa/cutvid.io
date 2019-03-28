@@ -1,0 +1,30 @@
+precision highp float;
+
+varying vec2 UV;
+varying  vec2 lastUV;
+uniform sampler2D previous_pass;
+uniform sampler2D previous_previous_pass;
+uniform vec2 mouse;
+uniform float ratio, time, relativeTime;
+
+void main(void){
+  float x = UV.x * ratio;
+  float y = UV.y;
+  vec2 p = vec2(x,y) -
+           vec2(0.5 * ratio, 0.5);
+
+  vec4 last = texture2D(previous_pass, lastUV);
+  vec4 lastlast = texture2D(previous_previous_pass, lastUV);
+
+  float fac = 0.0;
+
+  fac += 1.0 - (p.x + 0.5 - 2.0 * relativeTime)/0.01;
+
+  fac = clamp(fac, 0.0, 1.0);
+
+  fac *= last.a;
+
+  vec4 col = fac * last + (1.0 - fac)  * lastlast;
+
+  gl_FragColor = col;
+}
