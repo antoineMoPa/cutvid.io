@@ -27,7 +27,7 @@ void main(void){
 
   p.x += a * 0.2;
 
-  fac += 1.0 - (p.x + 2.0 - 4.0 * relativeTime)/0.01;
+  fac += 1.0 - (p.x + 1.0 - 4.0 * relativeTime)/0.01;
 
   fac += a * 2.0;
   fac += p2.x;

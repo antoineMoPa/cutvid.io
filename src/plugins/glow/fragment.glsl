@@ -11,7 +11,7 @@ uniform float xModulation, yModulation;
 uniform float rMult, gMult, bMult;
 
 
-#define SIZE 4
+#define SIZE 3
 
 void main(void){
   float x = UV.x * ratio;
@@ -24,7 +24,7 @@ void main(void){
   vec4 sum = vec4(0.0);
   float offset = size;
 
-  for(int step = 0; step < 4; step++){
+  for(int step = 0; step < 3; step++){
     for(int i = -SIZE; i < SIZE; i++){
       for(int j = -SIZE; j < SIZE; j++){
         vec2 voffset = vec2(float(i) * offset, float(j) * offset);
@@ -36,7 +36,7 @@ void main(void){
   }
 
   float fac = intensity;
-  fac += modulation * cos(time * 6.2832 - p.x * xModulation - p.y * yModulation);
+  fac += modulation * cos(relativeTime * 6.2832 - p.x * xModulation - p.y * yModulation);
   col += fac * sum / float(SIZE * SIZE * 4) * vec4(rMult, gMult, bMult, 1.0);
 
   gl_FragColor = col;

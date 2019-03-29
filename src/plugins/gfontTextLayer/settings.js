@@ -20,21 +20,31 @@
   <label><span>Color</span></label>
   <input v-model="text.color" type="color">
   <h4>Font selection</h4>
-  <div class="gfont-scrollbox">
+  <div v-if="showFonts">
+    <button v-on:click="showFonts = false">Hide Fonts</button>
+  </div>
+  <div v-if="!showFonts">
+    <button v-on:click="showFonts = true">Show Fonts</button>
+  </div>
+  <div class="gfont-scrollbox" v-if="showFonts">
     <div v-for="info in fonts">
       <span class="raw-fontname">{{info.font}}</span>
       <button v-bind:class="(info.font == font ? 'current-font':'') + ' gfont-button'"
               v-on:click="changeFont(info.font)">
-        <img v-bind:data-fontName="info.font" v-bind:alt="info.font"/>
+        <img v-bind:data-fontName="info.font"
+             v-bind:src="info.previewSrc"
+             v-bind:datahack="getFontPreview(info.font)"
+             v-bind:alt="info.font"/>
       </button><br>
     </div>
   </div>
 </div>`,
         data: function(){
           return {
-			serializeExclude: ["fonts"],
+            serializeExclude: ["fonts"],
             fonts: [],
             font: "Allerta Stencil",
+            showFonts: false,
             text:{
               text: "Your text!",
               color: "#ffffff",
@@ -83,25 +93,34 @@
               function(){}
             );
           },
-          updateFontPreviews(){
-            canvas = document.createElement("canvas");
+          getFontPreview(fontName){
+            let canvas = document.createElement("canvas");
+            let app = this;
             ctx = canvas.getContext("2d");
             canvas.width = 280;
             canvas.height = 48;
 
-            for(let font in this.fonts){
-              let fontInfo = this.fonts[font];
-              let image = this.$el.querySelectorAll("[data-fontName='" + fontInfo.font + "']")[0];
-              let img = this.img;
+            let index = null;
+            let fontInfo = this.fonts.map( (el, i) => {
+              if (el.font == fontName) {
+                index = i;
+              }
+            })[0];
 
-              ctx.fillStyle = "#ffffff";
-              ctx.fillRect(0,0,canvas.width,canvas.height);
+            fontInfo = this.fonts[index];
 
-              ctx.drawImage(img, fontInfo.x1, fontInfo.y1, 192, 48, 0.5*(280-192), 0, 192, 48);
-              canvas.toBlob(function(blob){
-                image.src = URL.createObjectURL(blob);
-              });
+            if(fontInfo == undefined){
+              return;
             }
+
+            let img = this.img;
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.drawImage(img, fontInfo.x1, fontInfo.y1, 192, 48, 0.5*(280-192), 0, 192, 48);
+            canvas.toBlob(function(blob){
+              app.fonts[index].previewSrc = URL.createObjectURL(blob);
+            });
           },
           newFont(){
             let promise = utils.load_gfont(this.font, this.text.size, this.text.text);
@@ -152,7 +171,6 @@
               .then(function(data){
                 app.fonts = data;
                 app.$nextTick(function(){
-                  app.updateFontPreviews();
                   // Load initial font
                   app.newFont();
                 });

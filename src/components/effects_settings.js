@@ -130,7 +130,7 @@ Vue.component('effects-settings', {
         let effectData = data[effectIndex];
         let effectName = effectData.effectName;
         let currentPromiseGetter = function(){
-          return app.addEffect(effectName, effectData);
+          return app.addEffect(effectName, effectData, false);
         };
 
         if(promise == null){
@@ -139,9 +139,14 @@ Vue.component('effects-settings', {
           promise = promise.then(currentPromiseGetter);
         }
       }
+
+      promise.then(this.applyEffectsChange);
     },
-    addEffect(effectName, initialData){
+    addEffect(effectName, initialData, autoApply){
       let app = this;
+      if(autoApply == undefined){
+        autoApply = true;
+      }
 
       return new Promise(function(resolve, reject){
         utils.load_script("plugins/" + effectName + "/settings.js", function(){
@@ -165,11 +170,14 @@ Vue.component('effects-settings', {
             app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
             app.$nextTick(function(){
               app.updateTexts();
-              app.applyEffectsChange();
 
               // Load initial data if it is given in argument
               if(initialData != undefined){
                 app.unserializeEffect(app.effectsIndex.length - 1, initialData);
+              }
+
+              if(autoApply){
+                app.applyEffectsChange();
               }
 
               resolve();
