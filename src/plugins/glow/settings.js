@@ -6,6 +6,7 @@
     return {
       name: name,
       human_name: "Glow",
+      pass_count: 2,
       ui: {
         template: `
 <div>

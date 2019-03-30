@@ -47,7 +47,7 @@ Vue.component('effects-settings', {
           <component v-bind:is="effects[effectNumber].component"
                      v-bind:ref="effects[effectNumber].component"
                      v-bind:key="'effect-setting-'+effects[effectNumber].component"
-                     v-bind:shaderProgram="effects[effectNumber].shaderProgram"
+                     v-bind:shaderProgram="effects[effectNumber].shaderPrograms[0]"
                      v-bind:player="player"
                      v-bind:ready="ready"
                      v-bind:effect="effects[effectNumber]"
@@ -73,10 +73,10 @@ Vue.component('effects-settings', {
   },
   props: ["player"],
   methods: {
-    loadProgram(name, onProgramReady) {
+    loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
 
-      function onShadersReady(vertex, fragment){
+      function compileProgram(vertex, fragment){
         let pass = new ShaderProgram(app.player.gl);
 
         try{
@@ -85,27 +85,48 @@ Vue.component('effects-settings', {
           console.log(e);
         }
 
-        onProgramReady(pass);
+        return pass;
       }
 
-      Promise.all([
-        // Random makes sure cache is not using an old version
-        // (Ok I maybe once every 200 years this will not work...)
-        fetch("plugins/" + name + "/vertex.glsl?" + Math.random()),
-        fetch("plugins/" + name + "/fragment.glsl?" + Math.random())
-      ]).then((values) => {
-        Promise.all([
-          values[0].text(),
-          values[1].text()
-        ]).then((values) => {
-          let vertex = values[0];
-          let fragment = values[1];
-          this.vertex = vertex;
-          this.fragment = fragment;
-          onShadersReady(vertex, fragment);
-          this.applyEffectsChange();
-          this.$emit("ready");
-        });
+      let fileLoadPromises = [];
+
+      // Random makes sure cache is not using an old version
+      // (Ok I maybe once every 200 years this will not work...)
+      let rand = Math.random();
+
+      if(pass_count == 1){
+        fileLoadPromises.push(fetch(
+          "plugins/" + name + "/vertex.glsl?" + rand
+        ));
+        fileLoadPromises.push(fetch(
+          "plugins/" + name + "/fragment.glsl?" + rand
+        ));
+      } else {
+        for(let i = 1; i <= pass_count; i++){
+          fileLoadPromises.push(fetch(
+            "plugins/" + name + "/vertex"+i+".glsl?" + rand
+          ));
+          fileLoadPromises.push(fetch(
+            "plugins/" + name + "/fragment"+i+".glsl?" + rand
+          ));
+        }
+      }
+
+
+      Promise.all(fileLoadPromises).then((values) => {
+        let textPromises = values.map((p) => {return p.text()});
+        Promise.all(textPromises)
+          .then((values) => {
+            let programs = [];
+            // Parse all shaders for all passes
+            for(let pass = 0; pass*2 < values.length; pass++){
+              let vertex = values[2*pass+0];
+              let fragment = values[2*pass+1];
+              let program = compileProgram(vertex, fragment);
+              programs.push(program);
+            }
+            onProgramReady(programs);
+          });
       });
     },
     serialize(){
@@ -156,12 +177,17 @@ Vue.component('effects-settings', {
           let componentName = effectName + "-effect-settings" + uniqueEffectComponentID;
           Vue.component(componentName, settings.ui);
 
+          let pass_count = 1;
+          if(settings.pass_count != undefined){
+            pass_count = settings.pass_count;
+          }
+
           settings.effectName = effectName;
           settings.component = componentName;
           settings.id = uniqueEffectComponentID;
 
-          app.loadProgram(effectName, function(_shaderProgram){
-            settings.shaderProgram = _shaderProgram;
+          app.loadPrograms(effectName, pass_count, function(_shaderPrograms){
+            settings.shaderPrograms = _shaderPrograms;
             settings.uniforms = {};
 
             // Insert effect in array
@@ -266,10 +292,18 @@ Vue.component('effects-settings', {
         if(app.effects[i] == undefined){
           return;
         }
-        orderedEffects.push({
-          shaderProgram: app.effects[i].shaderProgram,
-          uniforms: app.effects[i].uniforms,
-          beforeRender: app.effects[i].beforeRender || null
+        app.effects[i].shaderPrograms.forEach(function(program, index){
+          let beforeRender = null;
+          // Only call beforeRender once
+          if(index == 0){
+            beforeRender = app.effects[i].beforeRender || null
+          }
+
+          orderedEffects.push({
+            shaderProgram: program,
+            uniforms: app.effects[i].uniforms,
+            beforeRender
+          });
         });
       });
       return orderedEffects;

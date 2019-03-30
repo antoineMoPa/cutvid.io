@@ -12,6 +12,8 @@ uniform float rMult, gMult, bMult;
 
 
 #define SIZE 3
+#define high_freq_size 2
+
 
 void main(void){
   float x = UV.x * ratio;
@@ -19,25 +21,32 @@ void main(void){
   vec2 p = vec2(x,y) -
            vec2(0.5 * ratio, 0.5);
 
-  vec4 last = texture2D(previous_pass, lastUV);
-  vec4 col = last;
+  vec2 spacing = vec2(size);
+
   vec4 sum = vec4(0.0);
-  float offset = size;
 
-  for(int step = 0; step < 3; step++){
-    for(int i = -SIZE; i < SIZE; i++){
-      for(int j = -SIZE; j < SIZE; j++){
-        vec2 voffset = vec2(float(i) * offset, float(j) * offset);
+  int count = 0;
 
-        sum += 1.0/float(step+1) * texture2D(previous_pass, lastUV + voffset);
-      }
+  for(int i = -high_freq_size; i < high_freq_size; i++){
+    for(int j = -high_freq_size; j < high_freq_size; j++){
+      int ii = i + int(1.3 * cos(float(i) + p.x + p.y));// + ((i | j) ^ (j & i)) * 8;
+      int jj = j + int(1.3 * sin(float(j) + p.x + p.y));// + ((~j | i) ^ (j & i)) * 10;
+
+      vec2 offset = spacing * vec2(float(ii), float(jj));
+      // Equilibrate
+      offset.x += spacing.x * 3.0;
+      offset.y += spacing.y * 5.0;
+
+      sum += texture2D(previous_pass, lastUV + offset);
+      count++;
     }
-    offset = pow(offset, 1.04);
   }
 
   float fac = intensity;
   fac += modulation * cos(relativeTime * 6.2832 - p.x * xModulation - p.y * yModulation);
-  col += fac * sum / float(SIZE * SIZE * 4) * vec4(rMult, gMult, bMult, 1.0);
+  vec4 col = fac * sum / float(count) * vec4(rMult, gMult, bMult, 1.0);
+
+  col.r = 1.0;
 
   gl_FragColor = col;
 }
