@@ -42,9 +42,7 @@ void main(void){
     }
   }
 
-  float fac = intensity;
-  fac += modulation * cos(relativeTime * 6.2832 - p.x * xModulation - p.y * yModulation);
-  vec4 col = fac * sum / float(count) * vec4(rMult, gMult, bMult, 1.0);
+  vec4 col = sum / float(count);
 
   gl_FragColor = col;
 }

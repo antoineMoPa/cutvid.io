@@ -3,7 +3,7 @@ precision highp float;
 
 varying vec2 UV;
 varying  vec2 lastUV;
-uniform sampler2D previous_pass;
+uniform sampler2D previous_pass, previous_previous_pass;
 uniform vec2 mouse;
 uniform float ratio, time, relativeTime;
 uniform float intensity, size, modulation;
@@ -12,7 +12,7 @@ uniform float rMult, gMult, bMult;
 
 
 #define SIZE 3
-#define high_freq_size 2
+#define low_pass_size 3
 
 
 void main(void){
@@ -23,30 +23,26 @@ void main(void){
 
   vec2 spacing = vec2(size);
 
+  int count = 0;
   vec4 sum = vec4(0.0);
 
-  int count = 0;
-
-  for(int i = -high_freq_size; i < high_freq_size; i++){
-    for(int j = -high_freq_size; j < high_freq_size; j++){
-      int ii = i + int(1.3 * cos(float(i) + p.x + p.y));// + ((i | j) ^ (j & i)) * 8;
-      int jj = j + int(1.3 * sin(float(j) + p.x + p.y));// + ((~j | i) ^ (j & i)) * 10;
-
-      vec2 offset = spacing * vec2(float(ii), float(jj));
-      // Equilibrate
-      offset.x += spacing.x * 3.0;
-      offset.y += spacing.y * 5.0;
-
+  // Low Pass Filter
+  for(int i = -low_pass_size; i < low_pass_size; i++){
+    for(int j = -low_pass_size; j < low_pass_size; j++){
+      vec2 offset = spacing * vec2(float(i), float(j)) * 1.5;
       sum += texture2D(previous_pass, lastUV + offset);
       count++;
     }
   }
 
+  vec4 blur = 1.0/float(count) * sum;
+  vec4 original = texture2D(previous_previous_pass, lastUV);
   float fac = intensity;
   fac += modulation * cos(relativeTime * 6.2832 - p.x * xModulation - p.y * yModulation);
-  vec4 col = fac * sum / float(count) * vec4(rMult, gMult, bMult, 1.0);
+  blur = fac * sum / float(count) * vec4(rMult, gMult, bMult, 1.0);
 
-  col.r = 1.0;
+
+  vec4 col = original.a * original + (1.0 - original.a) * blur;
 
   gl_FragColor = col;
 }
