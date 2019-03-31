@@ -29,13 +29,13 @@ void main(void){
 
   for(int i = -high_freq_size; i < high_freq_size; i++){
     for(int j = -high_freq_size; j < high_freq_size; j++){
-      int ii = i + int(1.3 * cos(float(i) + p.x + p.y));// + ((i | j) ^ (j & i)) * 8;
-      int jj = j + int(1.3 * sin(float(j) + p.x + p.y));// + ((~j | i) ^ (j & i)) * 10;
+      int ii = i;// + ((i | j) ^ (j & i)) * 8;
+      int jj = j;// + ((~j | i) ^ (j & i)) * 10;
 
       vec2 offset = spacing * vec2(float(ii), float(jj));
       // Equilibrate
-      offset.x += spacing.x * 3.0;
-      offset.y += spacing.y * 5.0;
+      offset.x += spacing.x * 0.0;
+      offset.y += spacing.y * 0.0;
 
       sum += texture2D(previous_pass, lastUV + offset);
       count++;

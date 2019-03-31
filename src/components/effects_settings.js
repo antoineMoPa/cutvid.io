@@ -296,7 +296,7 @@ Vue.component('effects-settings', {
           let beforeRender = null;
           // Only call beforeRender once
           if(index == 0){
-            beforeRender = app.effects[i].beforeRender || null
+            beforeRender = app.effects[i].beforeRender || null;
           }
 
           orderedEffects.push({
@@ -306,6 +306,7 @@ Vue.component('effects-settings', {
           });
         });
       });
+
       return orderedEffects;
     },
     applyEffectsChange(){

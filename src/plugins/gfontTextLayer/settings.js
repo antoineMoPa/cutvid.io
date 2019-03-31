@@ -41,7 +41,7 @@
 </div>`,
         data: function(){
           return {
-            serializeExclude: ["fonts"],
+            serializeExclude: ["fonts", "showFonts"],
             fonts: [],
             font: "Allerta Stencil",
             showFonts: false,

@@ -27,7 +27,5 @@ void main(void){
 
     col = vec4(col1.r, col2.g, col3.b, col.a);
 
-    col.a = 1.0;
-
     gl_FragColor = col;
 }

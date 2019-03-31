@@ -41,7 +41,6 @@ void main(void){
   fac += modulation * cos(relativeTime * 6.2832 - p.x * xModulation - p.y * yModulation);
   blur = fac * sum / float(count) * vec4(rMult, gMult, bMult, 1.0);
 
-
   vec4 col = original.a * original + (1.0 - original.a) * blur;
 
   gl_FragColor = col;
