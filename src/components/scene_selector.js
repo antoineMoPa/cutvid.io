@@ -13,7 +13,7 @@ Vue.component('scene-selector', {
   template: `
   <div class="scene-selector">
     <div class="scene-selector-title">
-      scenes
+      Scene
     </div>
     <transition-group name="fade">
       <div v-for="(sceneNumber, sceneIndex) in scenesIndex"
@@ -48,11 +48,13 @@ Vue.component('scene-selector', {
       </div>
     </transition-group>
     <div class="adder-container">
-      <button v-on:click="addSceneButton" class="add-button copy-last-button">
+      <button v-on:click="addSceneButton"
+              class="add-button copy-last-button">
         <img src="icons/feather/plus.svg" title="new scene" width="20"/>
         Copy last
       </button>
-      <button v-on:click="addSceneButton" class="add-button from-template-button">
+      <button v-on:click="fromTemplateButton"
+              class="add-button from-template-button">
         <img src="icons/feather/plus.svg" title="new scene from template" width="20"/>
         From template
       </button>
@@ -79,7 +81,7 @@ Vue.component('scene-selector', {
         <input type="number" min="0" max="300" step="0.1" v-model="scenes[sceneNumber].duration">
       </div>
     </div>
-    <effects-selector ref="effects-selector"/>
+    <scene-template-selector ref="scene-template-selector"/>
   </div>`,
   data(){
     return {
@@ -159,6 +161,12 @@ Vue.component('scene-selector', {
       // Copy last scene
       let data = this.serialize(this.scenesIndex.length - 1);
       this.unserialize(data, false);
+    },
+    fromTemplateButton(){
+      let app = this;
+      this.$refs['scene-template-selector'].open(function(data){
+        app.unserialize(data, false);
+      });
     },
     addScene(initialData){
       let uniqueSceneID = utils.increment_unique_counter("scene");

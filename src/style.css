@@ -523,7 +523,7 @@ input{
 /* THEME-SELECTOR --------------- */
 
 .effects-selector,
-.theme-selector{
+.scene-template-selector{
   width:100%;
   max-width: 1020px;
   background:#fff;
@@ -540,23 +540,24 @@ input{
 
 @media (max-width: 1080px){
   .effects-selector,
-  .theme-selector{
+  .scene-template-selector{
     left: 20px;
     width: calc(100% - 40px);
   }
 }
 
 .effects-selector h3 img,
-.theme-selector h3 img{
+.scene-template-selector h3 img{
   margin-bottom:-7px;
 }
 
 .effects-selector.hidden,
-.theme-selector.hidden{
+.scene-template-selector.hidden{
   display:none;
 }
 
-.effects-selector .effect-description{
+.effects-selector .effect-description,
+.scene-template-selector .template-description{
   font-size:13px;
   max-width:200px;
   text-align:left;
@@ -593,12 +594,14 @@ input{
   box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
-.effects-selector .theme-box img{
+.effects-selector .theme-box img,
+.scene-template-selector .theme-box img{
   width:192px;
   height:108px;
 }
 
-.effects-selector h4{
+.effects-selector h4,
+.scene-template-selector h4{
   margin-left: 31px;
   font-size: 18px;
   padding: 0;
@@ -606,6 +609,17 @@ input{
   margin-top: -7px;
   font-weight: 600;
   color: #444;
+}
+
+.scene-template-selector .theme-box img{
+  width:300px;
+  height:200px;
+  border-radius:3px;
+  box-shadow:0 0 8px rgba(0,0,0,0.3);
+}
+
+.scene-template-selector .theme-box{
+  max-width:300px;
 }
 
 /* END THEME-SELECTOR --------------- */
