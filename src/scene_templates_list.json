@@ -5,6 +5,9 @@
     },
 	"BUG": {
       "description": "A glitchy theme with an 80's vibe."
+    },
+	"BigBlue": {
+      "description": "Big Blue text theme."
     }
   }
 }

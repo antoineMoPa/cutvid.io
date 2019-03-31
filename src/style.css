@@ -525,7 +525,7 @@ input{
 .effects-selector,
 .scene-template-selector{
   width:100%;
-  max-width: 1020px;
+  max-width: 1080px;
   background:#fff;
   position:absolute;
   top:40px;
@@ -612,14 +612,14 @@ input{
 }
 
 .scene-template-selector .theme-box img{
-  width:300px;
-  height:200px;
+  width:480px;
+  height:270px;
   border-radius:3px;
   box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
 .scene-template-selector .theme-box{
-  max-width:300px;
+  max-width:480px;
 }
 
 /* END THEME-SELECTOR --------------- */

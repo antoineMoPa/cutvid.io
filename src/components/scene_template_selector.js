@@ -38,11 +38,12 @@ Vue.component('scene-template-selector', {
       if(this.callback != null){
         let callback = this.callback;
 
-        fetch('scene_templates/'+template+'/scenes.json').then((data) => {
-          data.json().then((data) => {
-            callback(data.scenes);
+        fetch('scene_templates/'+template+'/scenes.json?' + Math.random())
+          .then((data) => {
+            data.json().then((data) => {
+              callback(data.scenes);
+            });
           });
-        });
       }
     },
     open(callback) {
