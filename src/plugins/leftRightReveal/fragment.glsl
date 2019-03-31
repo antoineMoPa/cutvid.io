@@ -7,6 +7,7 @@ uniform sampler2D previous_pass;
 uniform sampler2D previous_previous_pass;
 uniform vec2 mouse;
 uniform float ratio, time, relativeTime;
+uniform float beginAt, endAt;
 
 void main(void){
   float x = UV.x * ratio;
@@ -19,7 +20,10 @@ void main(void){
 
   float fac = 0.0;
 
-  fac += 1.0 - (p.x + 0.5 - 2.0 * relativeTime)/0.01;
+  float t = (relativeTime - beginAt) / (endAt - beginAt);
+  t = clamp(t, 0.0, 1.0);
+
+  fac += 1.0 - (p.x + 0.5 - 2.0 * t)/0.01;
 
   fac = clamp(fac, 0.0, 1.0);
 

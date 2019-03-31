@@ -10,13 +10,31 @@
         template: `
 <div>
   <label>
+    Begin time (0.0 = scene begin, 1.0 = end of scene)<br>
+    <input v-model="uniforms.beginAt.value"
+           type="number"
+           min="0.0" max="1.0" step="0.1">
+  </label>
+  <label>
+    End time (0.0 = scene begin, 1.0 = end of scene)<br>
+    <input v-model="uniforms.endAt.value"
+           type="number"
+           min="0.0" max="1.0" step="0.1">
   </label>
 </div>`,
         data: function(){
           return {
-            fragment: "",
             uniforms: {
-
+              beginAt: {
+                type: "f",
+                len: 1,
+                value: 0.0
+              },
+              endAt: {
+                type: "f",
+                len: 1,
+                value: 1.0
+              }
             }
           };
         },
@@ -27,7 +45,6 @@
         },
         mounted(){
           this.effect.uniforms = this.uniforms;
-          this.effect.beforeRender = this.beforeRender;
         }
       }
     };
