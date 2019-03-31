@@ -461,6 +461,10 @@ input{
   display:inline-block;
 }
 
+.effects-settings .info{
+  font-size:13px;
+}
+
 /* END SETTINGS PANEL --------------- */
 
 /* PANEL-SELECTOR --------------- */

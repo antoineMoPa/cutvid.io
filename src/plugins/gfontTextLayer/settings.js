@@ -23,6 +23,7 @@
   <div v-if="showFonts">
     <button v-on:click="showFonts = false">Hide Fonts</button>
   </div>
+  <span class="info">Current font: {{font}}</span><br><br>
   <div v-if="!showFonts">
     <button v-on:click="showFonts = true">Show Fonts</button>
   </div>
@@ -132,6 +133,7 @@
         watch: {
           font(){
             this.newFont();
+            this.showFonts = false;
           },
           text: {
             handler: function () {
