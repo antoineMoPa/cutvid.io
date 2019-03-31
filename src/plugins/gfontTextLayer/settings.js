@@ -11,7 +11,7 @@
 <div class="gfont-plugin">
   <h4>Text</h4>
   <label>Your text</label>
-  <input v-model="text.text" type="text">
+  <input v-model="text.text" type="text" style="width:calc(100% - 30px);">
   <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
   <input v-model.number="text.size" step="10" type="number">
   <input v-model.number="text.offsetTop" type="number" size="4" step="25">
@@ -20,12 +20,12 @@
   <label><span>Color</span></label>
   <input v-model="text.color" type="color">
   <h4>Font selection</h4>
+  <span class="info">Current font: {{font}}</span><br><br>
   <div v-if="showFonts">
     <button v-on:click="showFonts = false">Hide Fonts</button>
   </div>
-  <span class="info">Current font: {{font}}</span><br><br>
   <div v-if="!showFonts">
-    <button v-on:click="showFonts = true">Show Fonts</button>
+    <button v-on:click="showFonts = true">Browse Fonts</button>
   </div>
   <div class="gfont-scrollbox" v-if="showFonts">
     <div v-for="info in fonts">
