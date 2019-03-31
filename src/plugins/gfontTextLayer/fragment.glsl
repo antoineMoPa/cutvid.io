@@ -16,7 +16,7 @@ void main(void){
 
     vec2 texUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
     vec4 col = texture2D(texture0, texUV);
-    vec4 last = texture2D(previous_pass, lastUV) * is_first;
+    vec4 last = texture2D(previous_pass, lastUV) * (1.0 - is_first);
 
     col = (1.0 - col.a) * last + col.a * col;
     col.a = clamp(col.a, 0.0, 1.0);

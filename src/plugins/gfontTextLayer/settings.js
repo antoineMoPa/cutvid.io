@@ -32,8 +32,7 @@
       <button v-bind:class="(info.font == font ? 'current-font':'') + ' gfont-button'"
               v-on:click="changeFont(info.font)">
         <img v-bind:data-fontName="info.font"
-             v-bind:src="info.previewSrc"
-             v-bind:datahack="getFontPreview(info.font)"
+             v-bind:src="getFontPreview(info.font)"
              v-bind:alt="info.font"/>
       </button><br>
     </div>
@@ -96,6 +95,7 @@
           getFontPreview(fontName){
             let canvas = document.createElement("canvas");
             let app = this;
+
             ctx = canvas.getContext("2d");
             canvas.width = 280;
             canvas.height = 48;
@@ -118,9 +118,7 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.drawImage(img, fontInfo.x1, fontInfo.y1, 192, 48, 0.5*(280-192), 0, 192, 48);
-            canvas.toBlob(function(blob){
-              app.fonts[index].previewSrc = URL.createObjectURL(blob);
-            });
+            return canvas.toDataURL();
           },
           newFont(){
             let promise = utils.load_gfont(this.font, this.text.size, this.text.text);
