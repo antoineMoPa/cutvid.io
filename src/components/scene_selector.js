@@ -48,8 +48,13 @@ Vue.component('scene-selector', {
       </div>
     </transition-group>
     <div class="adder-container">
-      <button v-on:click="addSceneButton">
+      <button v-on:click="addSceneButton" class="add-button copy-last-button">
         <img src="icons/feather/plus.svg" title="new scene" width="20"/>
+        Copy last
+      </button>
+      <button v-on:click="addSceneButton" class="add-button from-template-button">
+        <img src="icons/feather/plus.svg" title="new scene from template" width="20"/>
+        From template
       </button>
     </div>
     <!-- These effects are all added to the panel
@@ -109,9 +114,15 @@ Vue.component('scene-selector', {
       ctx.drawImage(canvas, 0, 0, 100*ratio, 100);
       preview.src = tempCanvas.toDataURL();
     },
-    serialize(){
+    serialize(index){
+      // If index is given, we only export 1 scene
+
       let data = [];
       for(let sceneIndex in this.scenesIndex){
+        if(index != undefined && index != sceneIndex){
+          continue;
+        }
+
         let scene = this.scenes[this.scenesIndex[sceneIndex]];
         let component = this.$refs['effects-settings-' + scene.id][0];
         data.push({
@@ -121,10 +132,14 @@ Vue.component('scene-selector', {
       }
       return data;
     },
-    unserialize(data){
+    unserialize(data, deleteCurrent){
       let app = this;
-      this.scenes.splice(0);
-      this.scenesIndex.splice(0);
+
+      // We assume we delete if deleteCurrent is undefined
+      if(deleteCurrent == undefined || deleteCurrent){
+        this.scenes.splice(0);
+        this.scenesIndex.splice(0);
+      }
 
       let promise = null;
       for(let sceneIndex in data){
@@ -141,7 +156,9 @@ Vue.component('scene-selector', {
       }
     },
     addSceneButton(){
-      this.addScene();
+      // Copy last scene
+      let data = this.serialize(this.scenesIndex.length - 1);
+      this.unserialize(data, false);
     },
     addScene(initialData){
       let uniqueSceneID = utils.increment_unique_counter("scene");
