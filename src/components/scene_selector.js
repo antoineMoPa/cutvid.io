@@ -105,6 +105,12 @@ Vue.component('scene-selector', {
     },
     onPreview(sceneIndex, canvas){
       let number = this.scenesIndex[sceneIndex];
+
+      if(this.scenes[number] == undefined){
+        // This can happen when deleting scenes
+        return;
+      }
+
       let id = this.scenes[number].id;
       let preview = document.querySelectorAll(".scene-preview-" + id)[0];
       let tempCanvas = document.createElement("canvas");
@@ -261,15 +267,7 @@ Vue.component('scene-selector', {
       this.scenes.splice(sceneNumber, 1);
 
       this.$nextTick(function(){
-        if(sceneIndex == this.selected){
-          if(sceneIndex >= this.scenesIndex.length - 1){
-            this.switch_to(sceneIndex-1);
-          } else {
-            this.switch_to(sceneIndex);
-          }
-        } else if (this.selected > sceneIndex) {
-          this.switch_to(this.selected - 1);
-        }
+        this.switch_to(sceneIndex % this.scenesIndex.length);
       });
     },
     getSceneEffects(index){
