@@ -47,7 +47,7 @@ class ConverterHTTPRequestHandler(BaseHTTPRequestHandler):
 
         # The double % becomes a single %
         os.system("ffmpeg -nostdin -r %f -i tmp/%%07d.png -map 0 -c:v png tmp/result.avi" % fps)
-        os.system("mv tmp/result.avi %s/%s.avi" % (downloadables_folder, downloadableName))
+        os.system("mv tmp/result.avi %s/purchased-video-%s.avi" % (downloadables_folder, downloadableName))
         os.system("mv tmp/data.json %s/%s.json" % (downloadables_folder, downloadableName))
                 
         self.send_response(200)

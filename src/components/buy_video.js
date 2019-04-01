@@ -8,20 +8,38 @@ Vue.component('buy-video', {
     <img src="icons/feather-dark/download-cloud.svg" width="30"/>
     Buy video
   </h3>
-  <div v-if="settings != undefined">
-    {{ settings.downloadables_url + "/" +  videoID }}
+  <p v-if="videoID == null" class="loading-message">
+    Your video is processing on our server.<br><br>
+     <img src="icons/feather-dark/loader.svg" width="80" class="loading-icon"/>
+  </p>
+  <div v-else>
+    <div v-if="settings != undefined">
+      <h4>Your video is ready!</h4>
+      <br>
+      <p class="text-center">
+        <a class="ui-button large"
+           v-bind:href="settings.downloadables_url + '/purchased-video-' +  videoID + '.avi'"
+           v-bind:download="'purchased-video-' + videoID + '.avi'">
+          Download Video
+        </a>
+      </p>
+      <br><br><br>
+    </div>
   </div>
 </div>
 `,
-  props: ["videoID", "settings"],
+  props: ["settings"],
   data: function(){
 	return {
-	  
+	  videoID: null
 	};
   },
   methods: {
 	show(){
 	  this.$el.classList.remove("hidden");
+	},
+	setVideoID(_id){
+	  this.videoID = _id;
 	}
   },
   mounted(){
@@ -34,6 +52,7 @@ Vue.component('buy-video', {
 	
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
+	  app.videoID = null;
     });
   }
 });

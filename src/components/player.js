@@ -46,8 +46,7 @@ Vue.component('player', {
         v-on:playLooping="playLooping"
         v-bind:player="player"/>
     </div>
-    <buy-video v-bind:videoID="generatedVideoID" 
-               ref="buyVideo" 
+    <buy-video ref="buyVideo"
                v-bind:settings="settings"/>
     <ui ref="ui"
         v-on:playAll="playAll"
@@ -62,7 +61,6 @@ Vue.component('player', {
       height: 1080,
       aspect: 1920.0/1080,
       user_token: null,
-      generatedVideoID: "1Qq0mX",
       fps: 50,
       watermark: ""
     };
@@ -287,6 +285,8 @@ Vue.component('player', {
             form.append("user_token", app.user_token);
             form.append("data", JSON.stringify(app.serialize()));
 
+            app.$refs.buyVideo.show();
+
             fetch(app.settings.renderer, {
               method: "POST",
               body: form,
@@ -294,11 +294,9 @@ Vue.component('player', {
               credentials: "omit"
             }).then((resp) => {
               resp.text().then((data) => {
-                app.generatedVideoID = data;
+                // Now we have the video
+                app.$refs.buyVideo.setVideoID(data);
                 app.$refs.ui.set_progress(1.0);
-                
-                app.$refs.buyVideo.show();
-                
                 setTimeout(() => {
                   // Bring back to 0 after some time
                   app.$refs.ui.set_progress(0.0);

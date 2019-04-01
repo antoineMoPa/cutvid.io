@@ -29,7 +29,6 @@ input{
   text-align:center;
 }
 
-
 /* END HELPERS --------------*/
 
 /* UI -------------- */
@@ -48,17 +47,22 @@ input{
   -moz-user-select:none;
 }
 
+/* ui-button class is also used in buy popup */
 .ui-button{
   padding:8px;
   box-shadow:0 0 3px rgba(0,0,0,0.5);
   border-radius:3px;
-  position:absolute;
-  bottom:12px;
-  right:200px;
   background:#333;
   color:#eee;
   cursor:pointer;
   background: linear-gradient(#333, #222);
+  text-decoration:none;
+}
+
+.ui .ui-button{
+  position:absolute;
+  bottom:12px;
+  right:200px;
 }
 
 .ui .feather-button{
@@ -83,6 +87,11 @@ input{
 }
 .ui-button.button-3{
   right:340px;
+}
+
+.ui-button.large{
+  line-height: 60px;
+  padding: 20px;
 }
 
 .ui-progress{
@@ -558,6 +567,10 @@ input{
   display:none;
 }
 
+.popup p{
+  margin-left: 30px;
+}
+
 .theme-box{
   font-size:20px;
   text-decoration:none;
@@ -622,6 +635,27 @@ input{
   font-size:13px;
   max-width:200px;
   text-align:left;
+}
+
+.buy-video .loading-message{
+  font-weight: 600;
+  font-size: 20px;
+  text-align: center;
+}
+
+.buy-video .loading-icon{
+    animation: rotation 4s infinite linear;
+	margin-top: 100px;
+	margin-bottom: 100px;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }
 
 /* END COMPONENT SPECIFICS */
