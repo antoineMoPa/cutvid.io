@@ -4,12 +4,12 @@ var app = new Vue({
 	settings: null
   },
   template: `<div>
-                 <player></player>
+                 <player v-bind:settings="settings"></player>
              </div>`,
   mounted(){
 	fetch("settings.json").then((resp) => {
 	  resp.json().then((data) => {
-		window.settings = data;
+		this.settings = data;
 	  });
 	});
   }
