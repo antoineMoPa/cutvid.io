@@ -18,7 +18,7 @@ Vue.component('buy-video', {
       <br>
       <p class="text-center">
         <a class="ui-button large"
-           v-bind:href="settings.downloadables_url + '/purchased-video-' +  videoID + '.avi'"
+           v-bind:href="settings.downloadables_url + '/' + videoID + '/purchased-video-' +  videoID + '.avi'"
            v-bind:download="'purchased-video-' + videoID + '.avi'">
           Download Video
         </a>

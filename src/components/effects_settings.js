@@ -332,7 +332,7 @@ Vue.component('effects-settings', {
       let app = this;
       for(let effect in this.effects){
         let comp = this.$refs[this.effects[effect].component];
-        if(comp == undefined || comp[0].updateTexts == undefined){
+        if(comp == undefined || comp[0] == undefined || comp[0].updateTexts == undefined){
           continue;
         }
         comp[0].updateTexts();

@@ -166,12 +166,26 @@ Vue.component('scene-selector', {
     addSceneButton(){
       // Copy last scene
       let data = this.serialize(this.scenesIndex.length - 1);
+
       this.unserialize(data, false);
     },
     fromTemplateButton(){
       let app = this;
       this.$refs['scene-template-selector'].open(function(data){
-        app.unserialize(data, false);
+
+        let erase = false;
+
+        // If scene is empty and alone, clear it
+        if(app.scenes.length == 1){
+          let id = app.scenes[app.scenesIndex[0]].id;
+          let component = app.$refs['effects-settings-' + id][0];
+
+          if(component.effects.length == 0){
+            erase = true;
+          }
+        }
+
+        app.unserialize(data, erase);
       });
     },
     addScene(initialData){
@@ -202,7 +216,7 @@ Vue.component('scene-selector', {
       }.bind(this));
     },
     right(sceneIndex){
-      if(sceneIndex > this.scenesIndex.length - 1){
+      if(sceneIndex >= this.scenesIndex.length - 1){
         return;
       }
 
