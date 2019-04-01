@@ -1,6 +1,6 @@
 Vue.component('effects-selector', {
   template: `
-<div class="effects-selector hidden">
+<div class="popup effects-selector hidden">
   <div class="close-button">
     <img src="icons/feather-dark/x.svg" width="40"/>
   </div>

@@ -91,6 +91,7 @@ input{
   left:0;
   height:8px;
   background:#3af;
+  transition: all 0.3s;
 }
 
 .play-all-button{
@@ -524,10 +525,10 @@ input{
   max-width:540px;
 }
 
-/* THEME-SELECTOR --------------- */
+/* POPUP --------------- */
+/* (effect selector, theme template selector, buy gif) */
 
-.effects-selector,
-.scene-template-selector{
+.popup{
   width:100%;
   max-width: 1080px;
   background:#fff;
@@ -543,28 +544,18 @@ input{
 }
 
 @media (max-width: 1080px){
-  .effects-selector,
-  .scene-template-selector{
+  .popup{
     left: 20px;
     width: calc(100% - 40px);
   }
 }
 
-.effects-selector h3 img,
-.scene-template-selector h3 img{
+.popup h3 img{
   margin-bottom:-7px;
 }
 
-.effects-selector.hidden,
-.scene-template-selector.hidden{
+.popup.hidden{
   display:none;
-}
-
-.effects-selector .effect-description,
-.scene-template-selector .template-description{
-  font-size:13px;
-  max-width:200px;
-  text-align:left;
 }
 
 .theme-box{
@@ -598,14 +589,12 @@ input{
   box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
-.effects-selector .theme-box img,
-.scene-template-selector .theme-box img{
+.popup .theme-box img{
   width:192px;
   height:108px;
 }
 
-.effects-selector h4,
-.scene-template-selector h4{
+.popup h4{
   margin-left: 31px;
   font-size: 18px;
   padding: 0;
@@ -614,6 +603,8 @@ input{
   font-weight: 600;
   color: #444;
 }
+
+/* COMPONENT SPECIFICS */
 
 .scene-template-selector .theme-box img{
   width:480px;
@@ -626,7 +617,16 @@ input{
   max-width:480px;
 }
 
-/* END THEME-SELECTOR --------------- */
+.popup .effect-description,
+.popup .template-description{
+  font-size:13px;
+  max-width:200px;
+  text-align:left;
+}
+
+/* END COMPONENT SPECIFICS */
+
+/* END POPUP --------------- */
 
 /* GFONT PICKER SPECIFIC ------------ */
 

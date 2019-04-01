@@ -1,6 +1,6 @@
 Vue.component('scene-template-selector', {
   template: `
-<div class="scene-template-selector hidden">
+<div class="popup scene-template-selector hidden">
   <div class="close-button">
     <img src="icons/feather-dark/x.svg" width="40"/>
   </div>

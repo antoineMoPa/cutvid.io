@@ -46,6 +46,7 @@ Vue.component('player', {
         v-on:playLooping="playLooping"
         v-bind:player="player"/>
     </div>
+    <buy-video v-bind:videoID="generatedVideoID"/>
     <ui ref="ui"
         v-on:playAll="playAll"
         v-on:buy="make_buy"
@@ -58,6 +59,8 @@ Vue.component('player', {
       width: 1920,
       height: 1080,
       aspect: 1920.0/1080,
+      user_token: null,
+      generatedVideoID: "1Qq0mX",
       fps: 50,
       watermark: ""
     };
@@ -140,13 +143,14 @@ Vue.component('player', {
         options = {
           zip: false,
           gif: false,
+          sendToServer: false,
           blob: false
         };
       }
       // Renders all the frames to a png
       const app = this;
 
-      app.player.rendering_gif = true;
+      app.player.rendering = true;
       if (app.player.pause_anim) {
         app.player.pause_anim();
       }
@@ -157,7 +161,7 @@ Vue.component('player', {
         to_export.delay = Math.floor(1000 / app.fps);
         to_export.data = [];
       }
-      if (options.blob) {
+      if (options.sendToServer) {
         to_export.fps = app.fps;
         to_export.data = [];
       }
@@ -199,7 +203,7 @@ Vue.component('player', {
               ctx.fillText(watermark, w - offset_x, h - 10);
               to_export.data.push(canvas.toDataURL());
               next();
-            } else if (options.blob) {
+            } else if (options.sendToServer) {
               ctx.drawImage(temp_img, 0, 0);
               ctx.fillStyle = color;
               ctx.fillText(watermark, w - offset_x, h - 10);
@@ -233,6 +237,7 @@ Vue.component('player', {
             }
           };
           app.$refs.ui.set_progress((curr + 1) / totalFrames * 0.5);
+
           // Render
           app.player.render((curr + 1) / app.fps, (canvas) => {
             let image_data = '';
@@ -253,21 +258,56 @@ Vue.component('player', {
           // Final step
           if (options.gif) {
             app.export_gif(to_export);
-            app.player.rendering_gif = false;
+            app.player.rendering = false;
             if (app.player.resume_anim) {
               app.player.resume_anim();
             }
-          } else if (options.blob) {
-            console.log(to_export);
-            // TODO
+          } else if (options.sendToServer) {
+            // Build a form
+            // Thanks to
+            // shiya.io/using-fetch-to-upload-a-file/
+            // For the nice quick tutorial
+            let form = new FormData();
+            let images = to_export.data;
+            app.player.rendering = false;
+
+            let padNumber = (number) => {
+              return "00000000".substr(0, 8 - (number+' ').length) + number;
+            };
+
+            for(let i in images){
+              let image = images[i];
+              form.append(padNumber(i)+'.png', image);
+            }
+
+            form.append("fps", to_export.fps);
+            form.append("user_token", app.user_token);
+            form.append("data", JSON.stringify(app.serialize()));
+
+            fetch(window.settings.renderer, {
+              method: "POST",
+              body: form,
+              mode: "cors",
+              credentials: "omit"
+            }).then((resp) => {
+              resp.text().then((data) => {
+                app.generatedVideoID = data;
+                app.$refs.ui.set_progress(1.0);
+                setTimeout(() => {
+                  // Bring back to 0 after some time
+                  app.$refs.ui.set_progress(0.0);
+                }, 1000);
+              });
+            });
+            app.$refs.ui.set_progress(0.6);
+
           } else if (options.zip) {
             const zip = window.current_zip;
-            app.player.rendering_gif = false;
+            app.player.rendering = false;
             if (app.player.resume_anim) {
               app.player.resume_anim();
             }
             app.$refs.ui.set_progress(1.0);
-
             zip.generateAsync({ type: 'blob' })
               .then((blob) => {
                 let a = document.createElement("a");
@@ -276,7 +316,6 @@ Vue.component('player', {
                 a.download = "videopictures.zip";
                 document.body.appendChild(a);
                 a.click();
-
               });
           }
         }
@@ -364,11 +403,11 @@ Vue.component('player', {
 
       this.playAll();
 
-      if(this.player.rendering_gif){
+      if(this.player.rendering){
         return;
       }
 
-      this.player.rendering_gif = true;
+      this.player.rendering = true;
 
       // We'll show all relevant warnings.
 
@@ -382,7 +421,7 @@ Vue.component('player', {
       }
 
       if(basic_error){
-        this.player.rendering_gif = false;
+        this.player.rendering = false;
         return;
       }
 
@@ -397,16 +436,16 @@ Vue.component('player', {
       this.playAll();
       window.current_zip = new JSZip()
 
-      if(this.player.rendering_gif){
+      if(this.player.rendering){
         return;
       }
 
-      this.player.rendering_gif = true;
+      this.player.rendering = true;
 
       this.$refs.ui.set_progress(0.0);
 
       this.render({
-        zip: true
+        sendToServer: true
       });
     },
     onExportJSON(){

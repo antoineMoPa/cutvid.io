@@ -194,7 +194,7 @@ class ShaderPlayerWebGL2 {
     // TODO: synchronize with vue
     this.width = 540;
     this.height = 540;
-    this.rendering_gif = false;
+    this.rendering = false;
     this.mouse = [0, 0];
 
     this.time = 0.0;
@@ -575,7 +575,7 @@ class ShaderPlayerWebGL2 {
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
       // Send preview sometimes
-      if( !this.rendering_gif &&        /* Don't interfere with render*/
+      if( !this.rendering &&        /* Don't interfere with render*/
           force_scene == null &&        /* Don't send if rendering past scene */
           currentRelativeTime < 0.6 &&  /* Aim the middle of scene */
           currentRelativeTime > 0.4 &&
@@ -609,7 +609,7 @@ class ShaderPlayerWebGL2 {
       time -= this.begin_time;
 
       // When rendering gif, draw is done elsewhere
-      if (!player.rendering_gif && player.window_focused && !player.paused) {
+      if (!player.rendering && player.window_focused && !player.paused) {
         try{
           player.draw_gl(time/1000);
         } catch (e) {
