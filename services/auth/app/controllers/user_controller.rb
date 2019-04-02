@@ -17,6 +17,8 @@ class UserController < ApplicationController
       status = {
         status: "logged_in",
         email_summary: email_summary,
+        seconds_per_month: current_user.seconds_per_month,
+        seconds_left_this_month: current_user.seconds_left_this_month
       }
     end
 
