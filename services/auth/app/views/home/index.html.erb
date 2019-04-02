@@ -11,6 +11,9 @@
     <p>You are signed in!</p>
     <br>
     <%= link_to "Log out", "users/sign_out", class: "button", method: "delete" %><br/><br/>
+    <script type="text/javascript">
+      window.parent.postMessage("user-is-signed-in", "*");
+    </script>
     <% end %>
   </div>
 </section>

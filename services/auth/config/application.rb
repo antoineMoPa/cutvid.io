@@ -1,6 +1,7 @@
 require_relative 'boot'
 
 require 'rails/all'
+require 'json'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -15,5 +16,12 @@ module Auth
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+    settings_file = open '../../src/settings.json'
+    settings = JSON.parse(settings_file.read)
+
+    config.action_dispatch.default_headers = {
+      'Access-Control-Allow-Origin' => settings['app'],
+      'Access-Control-Request-Method' => 'GET POST'
+    }
   end
 end

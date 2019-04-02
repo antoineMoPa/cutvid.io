@@ -638,15 +638,22 @@ input{
 }
 
 .buy-video .loading-message{
-  font-weight: 600;
-  font-size: 20px;
+  font-size: 18px;
   text-align: center;
+  margin-left: 0;
+  margin-top: -60px;
 }
 
 .buy-video .loading-icon{
-    animation: rotation 4s infinite linear;
-	margin-top: 100px;
-	margin-bottom: 100px;
+  animation: rotation 4s infinite linear;
+  vertical-align: middle;
+  margin-left:10px;
+}
+
+.buy-video .auth-iframe{
+  border: none;
+  width: 560px;
+  height: 530px;
 }
 
 @keyframes rotation {
