@@ -641,7 +641,7 @@ input{
   font-size: 18px;
   text-align: center;
   margin-left: 0;
-  margin-top: -60px;
+  margin-top: -50px;
 }
 
 .buy-video .loading-icon{
@@ -654,6 +654,18 @@ input{
   border: none;
   width: 560px;
   height: 530px;
+}
+
+.buy-video .account-info,
+.buy-video .thank-you,
+.buy-video .how-to-download-info{
+  line-height: 33px;
+  font-size: 19px;
+  color: #333;
+}
+
+.buy-video .number{
+  color: #000;
 }
 
 @keyframes rotation {

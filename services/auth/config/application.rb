@@ -21,7 +21,7 @@ module Auth
 
     config.action_dispatch.default_headers = {
       'Access-Control-Allow-Origin' => settings['app'],
-      'Access-Control-Request-Method' => 'GET POST'
+      'Access-Control-Request-Method' => 'GET, POST'
     }
   end
 end

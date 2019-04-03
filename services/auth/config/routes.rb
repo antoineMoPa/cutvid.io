@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   root to: "home#index"
 
   get '/current_user', to: 'user#current_user_info'
+  get '/consume/:videoid', to: 'user#consume'
 end

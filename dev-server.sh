@@ -1,9 +1,5 @@
 #!/bin/bash
 
-cd src
-python -m SimpleHTTPServer &
-cd ..
-
 cd services
 
 cd converter
@@ -15,6 +11,6 @@ cd downloadables
 cd ..
 
 cd auth
-bundle exec rails s -p 8003 &
+bundle exec rails s -p 8000 &
 cd ..
 

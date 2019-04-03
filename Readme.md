@@ -7,3 +7,10 @@ All plugins and templates are licensed under the 'Creative Commons Attribution-N
 Third party libraries have their own license in their respective files and folders.
 
 Every other part of the code is licensed under GNU AGPL V3 which you can find here: https://www.gnu.org/licenses/agpl-3.0.en.html
+
+# Dependencies
+
+ruby
+python3
+avconv/ffmpeg
+mediainfo

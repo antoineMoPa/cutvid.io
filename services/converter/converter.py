@@ -45,12 +45,12 @@ class ConverterHTTPRequestHandler(BaseHTTPRequestHandler):
         # since we pass this variable to the command line
         fps = float(data['fps'][0])
 
-        downloadables_folder = settings['downloadables_folder']
+        candidates_folder = settings['candidates_folder']
 
         # The double % becomes a single %
         os.system("ffmpeg -nostdin -r %f -i tmp/%s/%%07d.png -map 0 -c:v png tmp/%s/result.avi" % (fps, downloadableName, downloadableName))
         os.system("mv tmp/%s/result.avi tmp/%s/purchased-video-%s.avi" % (downloadableName, downloadableName, downloadableName))
-        os.system("mv tmp/%s %s" % (downloadableName, downloadables_folder))
+        os.system("mv tmp/%s %s" % (downloadableName, candidates_folder))
 
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', settings['app'])

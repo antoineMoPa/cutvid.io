@@ -169,6 +169,7 @@ Vue.component('effects-settings', {
     },
     addEffect(effectName, initialData, autoApply){
       let app = this;
+
       if(autoApply == undefined){
         autoApply = true;
       }

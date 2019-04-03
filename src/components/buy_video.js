@@ -20,16 +20,28 @@ Vue.component('buy-video', {
   <p v-else class="loading-message">
     Your video is ready!
   </p>
+  <p v-if="videoID != null && !loggedIn" class="how-to-download-info">
+    Log in to use your seconds or purchase the video to download.
+  </p>
   <div v-if="settings != undefined">
     <iframe v-bind:src="settings.auth + '/users/sign_in'"
+            v-if="!loggedIn"
             class="auth-iframe">
     </iframe>
+    <p v-if="canDownload" class="thank-you">
+      Thank you for your purchase!
+    </p>
+    <p v-if="stats != null" class="account-info">
+      For this video, <span class="number">{{stats.seconds_consumed}}</span> seconds were taken from your account.<br>
+      You have <span class="number">{{stats.seconds_left}}</span> seconds left until the end of your billing cycle.<br><br>
+    </p>
     <p class="text-center" v-if="canDownload">
       <a class="ui-button large"
          v-bind:href="settings.downloadables_url + '/' + videoID + '/purchased-video-' +  videoID + '.avi'"
          v-bind:download="'purchased-video-' + videoID + '.avi'">
         Download Video
       </a>
+      <br><br>
     </p>
   </div>
 </div>
@@ -38,7 +50,9 @@ Vue.component('buy-video', {
   data: function(){
     return {
       videoID: null,
-      canDownload: false
+      canDownload: false,
+      loggedIn: false,
+      stats: null
     };
   },
   methods: {
@@ -47,18 +61,46 @@ Vue.component('buy-video', {
     },
     setVideoID(_id){
       this.videoID = _id;
+      this.loggedIn = false;
+      this.canDownload = false;
     },
     onWindowMessage(message){
+      let app = this;
       if(this.settings == null){
         return;
       }
 
-      //if(message.origin == this.settings.auth){
-        console.log(message.data);
+      if(message.origin == this.settings.auth){
         if(message.data == "user-is-signed-in"){
-          this.canDownload = true;
+          app.loggedIn = true;
+          this.consume();
         }
-      //}
+      }
+    },
+    consume(){
+      let app = this;
+
+      if(this.videoID == null || this.loggedIn == false){
+        // Wait for logging or video id
+        return;
+      }
+
+      fetch(app.settings.auth + "/consume/" + this.videoID, {
+        mode: 'cors',
+        credentials: 'include',
+      }).then((resp) => {
+        resp.json().then((data) => {
+          if(data.success != undefined && data.success == "video-purchased"){
+            app.canDownload = true;
+            app.stats = data;
+          }
+        });
+      });
+    }
+  },
+  watch: {
+    videoID(){
+      this.consume();
     }
   },
   mounted(){
