@@ -1,0 +1,2 @@
+class PurchasedVideo < ApplicationRecord
+end

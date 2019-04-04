@@ -4,4 +4,7 @@ Rails.application.routes.draw do
 
   get '/current_user', to: 'user#current_user_info'
   get '/consume/:videoid', to: 'user#consume'
+
+  get '/purchased_videos', to: 'purchased_videos#index'
+
 end
