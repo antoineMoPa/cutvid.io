@@ -29,11 +29,11 @@
   </div>
   <div class="gfont-scrollbox" v-if="showFonts">
     <div v-for="info in fonts">
-      <span class="raw-fontname">{{info.font}}</span>
+      <span class="raw-fontname">{{info.font}}</span><br>
       <button v-bind:class="(info.font == font ? 'current-font':'') + ' gfont-button'"
               v-on:click="changeFont(info.font)">
         <img v-bind:data-fontName="info.font"
-             v-bind:src="getFontPreview(info.font)"
+             v-bind:src="'/plugins/gfontTextLayer/font_previews/'+info.font+'.png'"
              v-bind:alt="info.font"/>
       </button><br>
     </div>
@@ -93,34 +93,6 @@
               function(){}
             );
           },
-          getFontPreview(fontName){
-            let canvas = document.createElement("canvas");
-            let app = this;
-
-            ctx = canvas.getContext("2d");
-            canvas.width = 280;
-            canvas.height = 48;
-
-            let index = null;
-            let fontInfo = this.fonts.map( (el, i) => {
-              if (el.font == fontName) {
-                index = i;
-              }
-            })[0];
-
-            fontInfo = this.fonts[index];
-
-            if(fontInfo == undefined){
-              return;
-            }
-
-            let img = this.img;
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.drawImage(img, fontInfo.x1, fontInfo.y1, 192, 48, 0.5*(280-192), 0, 192, 48);
-            return canvas.toDataURL();
-          },
           newFont(){
             let promise = utils.load_gfont(this.font, this.text.size, this.text.text);
             let app = this;
@@ -133,7 +105,6 @@
         watch: {
           font(){
             this.newFont();
-            this.showFonts = false;
           },
           text: {
             handler: function () {
