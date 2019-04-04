@@ -1,4 +1,62 @@
 class UserController < ApplicationController
+  
+  def make_first_admin
+    if current_user.nil?
+      return redirect_to "/"
+    end
+
+    if current_user.id == 1
+      current_user.is_admin = true
+      current_user.save!
+      return redirect_to "/"
+    end
+
+    return redirect_to "/"
+  end
+
+  # User list
+  def index
+    if current_user.nil?
+      return redirect_to "/"
+    end
+    
+    if not current_user.is_admin
+      return redirect_to "/"
+    end
+
+    @users = User.all()
+  end
+
+  def edit
+    if current_user.nil?
+      return redirect_to "/"
+    end
+    
+    if not current_user.is_admin
+      return redirect_to "/"
+    end
+
+    @user = User.find(params[:userid])
+  end
+
+  def save
+    if current_user.nil?
+      return redirect_to "/"
+    end
+    
+    if not current_user.is_admin
+      return redirect_to "/"
+    end
+
+    @user = User.find(params[:userid])
+    @user.seconds_per_month = params[:seconds_per_month]
+    @user.seconds_left_this_month = params[:seconds_left_this_month]
+    @user.save!
+
+    render 'edit'
+  end
+
+  
   def current_user_info
     status = nil
 

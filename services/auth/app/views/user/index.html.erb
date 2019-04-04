@@ -1,0 +1,13 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">User list</h1>
+    <% for user in @users %>
+      <div class="user-in-admin">
+        <%= user.id %> - <%= user.email %> -
+		Seconds per months <%= user.seconds_per_month %> -
+		Seconds left this month<%= user.seconds_left_this_month %>
+        <a href="/users/<%= user.id %>/edit">EDIT</a>
+      </div>
+    <% end %>
+  </div>
+</section>
