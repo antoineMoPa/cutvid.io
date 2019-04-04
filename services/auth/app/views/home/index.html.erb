@@ -9,6 +9,11 @@
     <%= link_to "Forgot your password?", "/users/password/new", class: "button" %><br />
     <% else %>
     <p>You are signed in!</p>
+	<br>
+    <a class="button" href="/app">
+	  Start App
+	</a>
+	<br>
     <br>
     <%= link_to "Log out", "users/sign_out", class: "button", method: "delete" %><br/><br/>
     <script type="text/javascript">
