@@ -142,7 +142,7 @@ Vue.component('scene-selector', {
     },
     unserialize(data, deleteCurrent){
       let app = this;
-
+	  	  
       // We assume we delete if deleteCurrent is undefined
       if(deleteCurrent == undefined || deleteCurrent){
         this.scenes.splice(0);
@@ -150,6 +150,7 @@ Vue.component('scene-selector', {
       }
 
       let promise = null;
+
       for(let sceneIndex in data){
         let sceneData = data[sceneIndex];
         let currentPromiseGetter = function(){
@@ -189,16 +190,21 @@ Vue.component('scene-selector', {
       });
     },
     addScene(initialData){
+      let app = this;
       let uniqueSceneID = utils.increment_unique_counter("scene");
       let settings = {
         id: uniqueSceneID,
         duration: 1.0,
       };
-
+	  
+      if(this.player != null){
+        this.player.pause();
+	  }
+	  
       return new Promise(function(resolve, reject){
         this.scenes.splice(this.scenes.length, 0, settings);
         this.scenesIndex.splice(this.scenesIndex.length, 0, this.scenes.length - 1);
-
+		
         this.$nextTick(function(){
           let component = this.$refs['effects-settings-' + settings.id];
           if(component == undefined){
@@ -208,9 +214,14 @@ Vue.component('scene-selector', {
 
           // Unserialize if needed
           if(initialData != undefined){
-            component.unserialize(initialData.effects);
+            component.unserialize(initialData.effects, true).then(function(){
+              if(app.player != null){
+		        app.player.play();
+		      }
+            });
             settings.duration = initialData.duration;
           }
+          
           resolve();
         });
       }.bind(this));

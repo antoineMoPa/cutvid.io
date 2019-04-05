@@ -481,9 +481,12 @@ Vue.component('player', {
       return data;
     },
     unserialize(data){
+	  let app = this;
+	  
       this.width = data.width;
       this.height = data.height;
       this.fps = data.fps;
+	  
       this.$refs['scene-selector'].unserialize(data.scenes);
     }
   },

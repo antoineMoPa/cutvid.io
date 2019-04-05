@@ -140,7 +140,7 @@ Vue.component('effects-settings', {
       }
       return data;
     },
-    unserialize(data){
+    unserialize(data, noApply){
       let app = this;
       this.effects = [];
       this.effectsIndex = [];
@@ -164,8 +164,12 @@ Vue.component('effects-settings', {
       if(promise == null){
         return;
       }
-
-      promise.then(this.applyEffectsChange);
+	  
+	  if(noApply){
+		return promise;
+	  } else {
+		return promise.then(this.applyEffectsChange);
+	  }
     },
     addEffect(effectName, initialData, autoApply){
       let app = this;
