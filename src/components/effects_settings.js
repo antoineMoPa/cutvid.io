@@ -164,12 +164,12 @@ Vue.component('effects-settings', {
       if(promise == null){
         return;
       }
-	  
-	  if(noApply){
-		return promise;
-	  } else {
-		return promise.then(this.applyEffectsChange);
-	  }
+
+      if(noApply){
+        return promise;
+      } else {
+        return promise.then(this.applyEffectsChange);
+      }
     },
     addEffect(effectName, initialData, autoApply){
       let app = this;
