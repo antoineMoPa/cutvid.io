@@ -30,4 +30,7 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# I'm sure someone will be able to decrypt this one day so:
+/config/credentials.yml.enc
+
 vendor/**
