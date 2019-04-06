@@ -33,7 +33,7 @@
       <button v-bind:class="(info.font == font ? 'current-font':'') + ' gfont-button'"
               v-on:click="changeFont(info.font)">
         <img v-bind:data-fontName="info.font"
-             v-bind:src="'/plugins/gfontTextLayer/font_previews/'+info.font+'.png'"
+             v-bind:src="'/app/plugins/gfontTextLayer/font_previews/'+info.font+'.png'"
              v-bind:alt="info.font"/>
       </button><br>
     </div>
@@ -132,11 +132,11 @@
             };
           });
           this.img = img;
-          img.src = "./plugins/gfontTextLayer/fonts.png";
+          img.src = "/app/plugins/gfontTextLayer/fonts.png";
 
           Promise.all([
             imgload,
-            fetch("./plugins/gfontTextLayer/fonts.json")
+            fetch("/app/plugins/gfontTextLayer/fonts.json")
           ]).then(function(values){
             values[1].json()
               .then(function(data){
