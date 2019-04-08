@@ -87,6 +87,7 @@ Vue.component('buy-video', {
 
       fetch(app.settings.auth + "/consume/" + this.videoID, {
         mode: 'cors',
+        method: 'POST',
         credentials: 'include',
       }).then((resp) => {
         resp.json().then((data) => {
