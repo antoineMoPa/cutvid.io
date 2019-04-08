@@ -11,78 +11,79 @@
 
 Vue.component('scene-selector', {
   template: `
-  <div class="scene-selector">
-    <div class="scene-selector-title">
-      Scene
-    </div>
-    <transition-group name="fade">
-      <div v-for="(sceneNumber, sceneIndex) in scenesIndex"
-           v-on:click="switch_to(sceneIndex)"
-           v-bind:key="'scene-'+scenes[sceneNumber].id"
-           v-bind:class="'scene' + ' ' + (selected == sceneIndex? 'selected-scene': '')">
-        <!--
-        Copy: todo
-        <img src="icons/feather/copy.svg"
-             title="copy scene"
-             v-on:click="copyScene(sceneIndex)"
-             width="15"
-             class="copy-scene scene-selector-icon"/>
-        -->
-        <img src="icons/feather/arrow-left.svg"
-             title="Move scene earlier in video"
-             v-on:click.stop="left(sceneIndex)"
-             width="15"
-             class="move-scene-left scene-selector-icon"/>
-        <img src="icons/feather/arrow-right.svg"
-             title="Move scene later in video"
-             v-on:click.stop="right(sceneIndex)"
-             width="15"
-             class="move-scene-right scene-selector-icon"/>
-        <img src="icons/feather/trash.svg"
-             title="remove scene"
-             v-on:click.stop="remove(sceneNumber, sceneIndex)"
-             v-if="scenesIndex.length > 1"
-             width="15"
-             class="remove-scene scene-selector-icon"/>
-        <img v-bind:class="'scene-preview scene-preview-' + scenes[sceneNumber].id"/>
+	<div class="scene-selector">
+      <div class="scene-selector-title">
+		Scene
       </div>
-    </transition-group>
-    <div class="adder-container">
-      <button v-on:click="addSceneButton"
-              class="add-button copy-last-button">
-        <img src="icons/feather/plus.svg" title="new scene" width="20"/>
-        Copy last
-      </button>
-      <button v-on:click="fromTemplateButton"
-              class="add-button from-template-button">
-        <img src="icons/feather/plus.svg" title="new scene from template" width="20"/>
-        From template
-      </button>
-    </div>
-    <!-- These effects are all added to the panel
-         at the left manually in mounted() -->
-    <div class="all-effects">
-      <effects-settings
-        v-for="(sceneNumber, sceneIndex) in scenesIndex"
-        v-bind:class="(selected == sceneIndex)? '': 'effects-settings-hidden'"
-        v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
-        v-bind:ref="'effects-settings-' + scenes[sceneNumber].id"
-        v-on:ready="effectsSettingsReady(sceneIndex)"
-        v-on:effectsChanged="effectsChanged(sceneIndex)"
-        v-bind:player="player"/>
-    </div>
-    <div class="all-scenes">
-      <div
-        v-for="(sceneNumber, sceneIndex) in scenesIndex"
-        v-if="selected == sceneIndex"
-        v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
-      >
-        <label>Duration (seconds)</label>
-        <input type="number" min="0" max="300" step="0.1" v-model="scenes[sceneNumber].duration">
-      </div>
-    </div>
-    <scene-template-selector ref="scene-template-selector"/>
-  </div>`,
+		<transition-group name="fade" v-if="player != null">
+		  <div v-for="(sceneNumber, sceneIndex) in scenesIndex"
+               v-if="!player.rendering"
+			v-on:click="switch_to(sceneIndex)"
+			v-bind:key="'scene-'+scenes[sceneNumber].id"
+			v-bind:class="'scene' + ' ' + (selected == sceneIndex? 'selected-scene': '')">
+			<!--
+			Copy: todo
+			<img src="icons/feather/copy.svg"
+				 title="copy scene"
+            v-on:click="copyScene(sceneIndex)"
+				 width="15"
+				 class="copy-scene scene-selector-icon"/>
+			-->
+			<img src="icons/feather/arrow-left.svg"
+				 title="Move scene earlier in video"
+            v-on:click.stop="left(sceneIndex)"
+				 width="15"
+				 class="move-scene-left scene-selector-icon"/>
+			<img src="icons/feather/arrow-right.svg"
+				 title="Move scene later in video"
+            v-on:click.stop="right(sceneIndex)"
+				 width="15"
+				 class="move-scene-right scene-selector-icon"/>
+			<img src="icons/feather/trash.svg"
+				 title="remove scene"
+            v-on:click.stop="remove(sceneNumber, sceneIndex)"
+				 v-if="scenesIndex.length > 1"
+				 width="15"
+				 class="remove-scene scene-selector-icon"/>
+			<img v-bind:class="'scene-preview scene-preview-' + scenes[sceneNumber].id"/>
+		  </div>
+		</transition-group>
+			<div class="adder-container">
+			  <button v-on:click="addSceneButton"
+					  class="add-button copy-last-button">
+				<img src="icons/feather/plus.svg" title="new scene" width="20"/>
+				Copy last
+			  </button>
+				<button v-on:click="fromTemplateButton"
+						class="add-button from-template-button">
+				  <img src="icons/feather/plus.svg" title="new scene from template" width="20"/>
+				  From template
+				</button>
+			</div>
+				  <!-- These effects are all added to the panel
+				  at the left manually in mounted() -->
+				  <div class="all-effects">
+					<effects-settings
+							v-for="(sceneNumber, sceneIndex) in scenesIndex"
+					  v-bind:class="(selected == sceneIndex)? '': 'effects-settings-hidden'"
+					  v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
+					  v-bind:ref="'effects-settings-' + scenes[sceneNumber].id"
+					  v-on:ready="effectsSettingsReady(sceneIndex)"
+					  v-on:effectsChanged="effectsChanged(sceneIndex)"
+					  v-bind:player="player"/>
+				  </div>
+					  <div class="all-scenes">
+						<div
+							v-for="(sceneNumber, sceneIndex) in scenesIndex"
+							v-if="selected == sceneIndex"
+						  v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
+						  >
+						  <label>Duration (seconds)</label>
+							<input type="number" min="0" max="300" step="0.1" v-model="scenes[sceneNumber].duration">
+						</div>
+					  </div>
+							<scene-template-selector ref="scene-template-selector"/>
+	</div>`,
   data(){
     return {
       scenes: [],
