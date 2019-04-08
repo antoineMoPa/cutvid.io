@@ -162,7 +162,7 @@ Vue.component('effects-settings', {
       }
 
       if(promise == null){
-        return;
+        return Promise.resolve();
       }
 
       if(noApply){
