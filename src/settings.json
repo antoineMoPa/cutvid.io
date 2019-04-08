@@ -1,5 +1,5 @@
 {
-  "app": "http://127.0.0.1:8000/app",
+  "app": "http://127.0.0.1:8000",
   "renderer": "http://127.0.0.1:8004",
   "auth": "http://127.0.0.1:8000",
   "downloadables_folder": "../downloadables/public",
