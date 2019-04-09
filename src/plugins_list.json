@@ -7,7 +7,10 @@
       "description": "Choose from 800+ Google WebFonts."
     },
     "logo": {
-      "description": "Put your logo or any image on the canvas."
+      "description": "Center your logo or any image on the canvas."
+    },
+    "image": {
+      "description": "Put an image at any place, size, rotation on the canvas."
     }
   },
   "Layer Reveals": {
@@ -55,9 +58,9 @@
     "colorAlphaReplace": {
       "description": "Replaces transparent parts with a uniform color."
     },
-	"glow": {
-	  "description": "Makes things glow!"
-	}
+    "glow": {
+      "description": "Makes things glow!"
+    }
   },
   "Glitch": {
     "glitch": {

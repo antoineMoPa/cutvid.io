@@ -81,9 +81,10 @@ class ShaderProgram {
   // Initialize a texture and load an image.
   // When the image finished loading copy it into the texture.
   //
-  set_texture(name, url, ready) {
+  set_texture(name, url, ready, options) {
     let app = this;
     ready = ready || (() => {});
+    options = options || {};
 
     // Cleanup before setting again
     if(this.textures[name] != undefined){
@@ -104,9 +105,14 @@ class ShaderProgram {
     var srcFormat = gl.RGBA;
     var srcType = gl.UNSIGNED_BYTE;
     var pixel = new Uint8Array([0, 0, 0, 0]);
-
-
     var image = new Image();
+
+    if(options.force_width != undefined){
+      image.width = options.force_width;
+    }
+    if(options.force_height != undefined){
+      image.height = options.force_height;
+    }
 
     image.addEventListener("load", function () {
       var texture = gl.createTexture();
