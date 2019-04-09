@@ -637,6 +637,15 @@ input{
   text-align:left;
 }
 
+.buy-video .error{
+  color: #fff;
+  background: #cc0050;
+  padding: 20px;
+  border-radius: 6px;
+  margin: 60px;
+  margin-bottom: 60px;
+}
+
 .buy-video .loading-message{
   font-size: 18px;
   text-align: center;

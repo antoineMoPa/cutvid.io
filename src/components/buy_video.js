@@ -43,6 +43,13 @@ Vue.component('buy-video', {
       </a>
       <br><br>
     </p>
+    <p v-if="notEnoughSecondsLeft" class="error">
+      You don't have enough seconds left this month. Contact us to buy more render seconds.<br><br>
+      Mention your video ID, we should be able to find it: {{ videoID }}
+    </p>
+    <p v-if="error != null" class="error">
+      {{ error }}
+    </p>
   </div>
 </div>
 `,
@@ -52,6 +59,8 @@ Vue.component('buy-video', {
       videoID: null,
       canDownload: false,
       loggedIn: false,
+      notEnoughSecondsLeft: false,
+      error: null,
       stats: null
     };
   },
@@ -94,6 +103,10 @@ Vue.component('buy-video', {
           if(data.success != undefined && data.success == "video-purchased"){
             app.canDownload = true;
             app.stats = data;
+          } else if (data.error != undefined && data.error == "not-enough-seconds") {
+            app.notEnoughSecondsLeft = true;
+          } else {
+            app.error = "An unknown error has happened.";
           }
         });
       });

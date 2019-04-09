@@ -22,6 +22,10 @@ class ConverterHTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(b'Hello, world!')
 
     def do_POST(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', settings['app'])
+        self.end_headers()
+
         ctype, pdict = parse_header(self.headers['content-type'])
         pdict['boundary'] = bytes(pdict['boundary'], "utf-8")
         data = parse_multipart(self.rfile, pdict)
@@ -52,9 +56,6 @@ class ConverterHTTPRequestHandler(BaseHTTPRequestHandler):
         os.system("mv tmp/%s/result.avi tmp/%s/purchased-video-%s.avi" % (downloadableName, downloadableName, downloadableName))
         os.system("mv tmp/%s %s" % (downloadableName, candidates_folder))
 
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', settings['app'])
-        self.end_headers()
 
         # Respond with the downloadable content id
         downloadableNameInBytes = str.encode(downloadableName)
