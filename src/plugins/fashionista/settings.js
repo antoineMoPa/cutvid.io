@@ -18,13 +18,15 @@
   <label>Foreground Color</label>
   <input v-model="fgcolor" type="color">
   <label>Choose mask</label>
-  <div class="fashionista-image-container"
-       v-for="imageIndex in images"
-       >
-    <img width="300"
-         v-on:click="image = imageIndex"
-         class="fashionista-image"
-         v-bind:src="'/app/plugins/fashionista/backgrounds/'+imageIndex+'.svg'"/>
+  <div class="fashionista-scrollbox">
+    <div class="fashionista-image-container"
+         v-for="imageIndex in images"
+         >
+      <img width="300"
+           v-on:click="image = imageIndex"
+           class="fashionista-image"
+           v-bind:src="'/app/plugins/fashionista/backgrounds/'+imageIndex+'.svg'"/>
+    </div>
   </div>
 </div>`,
         data: function(){

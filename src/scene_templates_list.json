@@ -8,6 +8,9 @@
     },
 	"BigBlue": {
       "description": "Big Blue text theme."
+    },
+    "ProductSheet": {
+      "description": "A clean product presentation slide."
     }
   }
 }

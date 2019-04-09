@@ -737,12 +737,19 @@ input{
 
 .fashionista-image-container{
   margin-bottom:20px;
-  margin-top:20px;
   cursor:pointer;
 }
 
 .fashionista-image{
   background:#fff;
+}
+
+.fashionista-scrollbox{
+  max-height:200px;
+  overflow-y:scroll;
+  scrollbar-color: #888 #222;
+  scrollbar-width: thin;
+  margin-top:20px;
 }
 
 /* END FASHIONISTA */
