@@ -337,7 +337,7 @@ Vue.component('scene-selector', {
   watch: {
     player(){
       this.player.on_preview = this.onPreview;
-    }
+    },
   },
   mounted(){
     let allEffects = this.$el.querySelectorAll(".all-effects")[0];

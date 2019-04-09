@@ -45,6 +45,7 @@
             fonts: [],
             font: "Allerta Stencil",
             showFonts: false,
+            uniqueID: (Math.random() + "").substr(0,10),
             text:{
               text: "Your text!",
               color: "#ffffff",
@@ -72,11 +73,12 @@
             }
 
             let size = this.player.width;
+            let scaleFactor = this.player.width / 1920.0;
 
             ctx.textAlign = "center";
 
             // Set font size & style
-            var tsize = this.text.size;
+            var tsize = this.text.size * scaleFactor;
 
             ctx.fillStyle = this.text.color;
             ctx.textBaseline = "middle";
@@ -85,7 +87,7 @@
             // Translate, rotate and render
             ctx.save();
             ctx.translate(this.player.width/2, this.player.height/2);
-            ctx.fillText(this.text.text, this.text.offsetLeft, this.text.offsetTop);
+            ctx.fillText(this.text.text, this.text.offsetLeft * scaleFactor, this.text.offsetTop * scaleFactor);
             ctx.restore();
             this.shaderProgram.set_texture(
               "texture0",
@@ -114,6 +116,7 @@
           },
           player(){
             this.updateTexts();
+            this.player.add_on_resize_listener(this.updateTexts.bind(this), this.uniqueID);
           },
           textCanvas(){
             this.updateTexts();
@@ -132,6 +135,11 @@
             };
           });
           this.img = img;
+
+          if(this.player != null){
+            this.player.add_on_resize_listener(this.updateTexts.bind(this), this.uniqueID);
+          }
+
           img.src = "/app/plugins/gfontTextLayer/fonts.png";
 
           Promise.all([
@@ -147,6 +155,9 @@
                 });
               });
           });
+        },
+        beforeDestroy(){
+          this.player.delete_on_resize_listener(this.uniqueID);
         }
       }
     };

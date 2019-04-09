@@ -201,6 +201,8 @@ class ShaderPlayerWebGL2 {
     this.on_progress = function(progress){};
     this.on_preview = function(current_scene, canvas){};
 
+    this.on_resize_listeners = {};
+
     this.on_error_listener = function () {
       console.log('Shader compilation error');
     };
@@ -255,12 +257,37 @@ class ShaderPlayerWebGL2 {
     this.width = w;
     this.update();
     this.init_gl();
+    this.call_resize_listeners();
   }
 
   set_height(h) {
     this.height = h;
     this.update();
     this.init_gl();
+    this.call_resize_listeners();
+  }
+
+  add_on_resize_listener(listener, uniqueID){
+    this.on_resize_listeners[uniqueID] = listener;
+  }
+
+  delete_on_resize_listener(listener, uniqueID){
+    this.on_resize_listeners[uniqueID] = null;
+  }
+
+  call_resize_listeners(){
+    let listeners = this.on_resize_listeners;
+    Object.keys(listeners).forEach(function(index){
+      let element = listeners[index];
+      if(element == null){
+        return;
+      }
+      try{
+        element();
+      } catch (e) {
+        console.error("Probably a destroyed component callback on a dead component?" + e);
+      }
+    });
   }
 
   set_fps(fps) {
