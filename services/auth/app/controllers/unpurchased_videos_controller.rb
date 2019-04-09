@@ -40,6 +40,7 @@ class UnpurchasedVideosController < ApplicationController
       current_user.seconds_left_this_month > duration
       # Make available
       `mv ../downloadables/candidates/#{videoid} ../downloadables/public`
+
       current_user.seconds_left_this_month -= duration
       current_user.save()
 

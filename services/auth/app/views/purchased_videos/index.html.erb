@@ -1,10 +1,34 @@
 <section class="section">
   <div class="container">
     <% if user_signed_in? %>
-    <h1 class="title">
-      Your purchased videos
-    </h1>
+      <h1 class="title">
+        Your purchased videos
+      </h1>
 
+      <% for video in @videos %>
+        <div class="columns">
+          <div class="column">
+            <div class="purchased-video"
+                 style="background-image:url(<%= @settings['downloadables_url'] %>/<%= video.videoid %>/0000000.png);">
+
+            </div>
+          </div>
+          <div class="column video-actions">
+            <p class="subtitle">Actions</p>
+            <a href="<%= @settings['downloadables_url'] + "/#{video.videoid}/purchased-video-#{video.videoid}.avi" %>"
+               class="button is-primary">
+              Download .AVI video
+            </a>
+            <br><br>
+            <p class="subtitle">Advanced</p>
+            <a href="<%= @settings['downloadables_url'] + "/#{video.videoid}/data.json" %>"
+               download="purchased-data-<%= video.videoid %>.json"
+               class="button">
+              Download JSON source
+            </a>
+          </div>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </section>

@@ -1,0 +1,10 @@
+.purchased-video{
+  width:533px;
+  height:300px;
+  margin: 10px;
+  background-size:contain;
+}
+
+.video-actions{
+  padding-top:20px;
+}
