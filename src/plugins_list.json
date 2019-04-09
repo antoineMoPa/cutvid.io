@@ -32,15 +32,18 @@
       "description": "Reveals scene from left to right."
     }
   },
-  "Animated Backgrounds": {
+  "Backgrounds": {
     "retrowave": {
-      "description": "Retro nostalgia poster effect with text."
+      "description": "Retro nostalgia poster effect with text. [Animated]"
     },
     "epicSunset": {
-      "description": "A retro sunset background."
+      "description": "A retro sunset background. [Animated]"
     },
     "uniformColor": {
-      "description": "Fill screen with a color (not animated)."
+      "description": "Fill screen with a color."
+    },
+    "fashionista": {
+      "description": "Huge clean background shapes."
     }
   },
   "Retro elements": {

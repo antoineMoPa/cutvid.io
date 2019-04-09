@@ -632,6 +632,7 @@ input{
 
 .popup .effect-description,
 .popup .template-description{
+  margin-left:0;
   font-size:13px;
   max-width:200px;
   text-align:left;
@@ -731,3 +732,17 @@ input{
 }
 
 /* END GFONT PICKER SPECIFIC ------------ */
+
+/* BEGIN FASHIONISTA */
+
+.fashionista-image-container{
+  margin-bottom:20px;
+  margin-top:20px;
+  cursor:pointer;
+}
+
+.fashionista-image{
+  background:#fff;
+}
+
+/* END FASHIONISTA */
