@@ -336,7 +336,7 @@ Vue.component('player', {
         const gif = new GIF({
           workers: 2,
           quality: 10,
-          workerScript: '/libs/gif.worker.js'
+          workerScript: '/app/libs/gif.worker.js'
         });
 
         let data = to_export.data;
