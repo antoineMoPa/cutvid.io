@@ -4,7 +4,10 @@
       <h1 class="title">
         Your purchased videos
       </h1>
-
+      <p class="delete-notice">
+        Please note that video renders are deleted after 30 days.<br>
+        The json data will be kept until deletion.
+      </p>
       <% for video in @videos %>
         <div class="columns">
           <div class="column">
@@ -19,12 +22,17 @@
                class="button is-primary">
               Download .AVI video
             </a>
-            <br><br>
             <p class="subtitle">Advanced</p>
             <a href="<%= @settings['downloadables_url'] + "/#{video.videoid}/data.json" %>"
                download="purchased-data-<%= video.videoid %>.json"
                class="button">
               Download JSON source
+            </a>
+            <p class="subtitle">Delete</p>
+            <p>This action is irreversible. Video and data will be deleted.</p>
+            <a href="/purchased_videos/<%= video.videoid %>/delete"
+               class="button is-danger">
+              Delete Video
             </a>
           </div>
         </div>

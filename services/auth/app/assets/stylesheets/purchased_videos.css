@@ -8,3 +8,17 @@
 .video-actions{
   padding-top:20px;
 }
+
+.delete-notice{
+  padding:20px;
+  background:#eee;
+  color:#111;
+  margin-bottom:20px;
+}
+
+.video-actions .subtitle{
+  margin-top:20px;
+  line-height: 23px;
+  padding: 0;
+  margin-bottom: 5px;
+}
