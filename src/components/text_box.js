@@ -3,23 +3,15 @@ Vue.component('textBox', {
 <div class="text-box" v-bind:style="style">
   <div class="handle top-left-handle"
        v-on:mousedown="topLeftDown"
-       v-on:mouseup="topLeftUp"
-       
   />
   <div class="handle top-right-handle"
        v-on:mousedown="topRightDown"
-       v-on:mouseup="topRightUp"
-       
   />
   <div class="handle bottom-left-handle"
        v-on:mousedown="bottomLeftDown"
-       v-on:mouseup="bottomLeftUp"
-       
   />
   <div class="handle bottom-right-handle"
        v-on:mousedown="bottomRightDown"
-       v-on:mouseup="bottomRightUp"
-       
   />
 </div>
 `,
@@ -50,24 +42,19 @@ Vue.component('textBox', {
 	topLeftDown(e){
 	  this.draggingTopLeft = true;
 	},
-	topLeftUp(e){
-	  this.draggingTopLeft = false;
-	},
 	topRightDown(e){
 	  this.draggingTopRight = true;
 	},
-	topRightUp(e){
-	  this.draggingTopRight = false;
-	},	bottomLeftDown(e){
-	  this.draggingBottomLeft = false;
-	},
-	bottomLeftUp(e){
-	  this.draggingBottomLeft = false;
+	bottomLeftDown(e){
+	  this.draggingBottomLeft = true;
 	},
 	bottomRightDown(e){
-	  this.draggingBottomRight = false;
+	  this.draggingBottomRight = true;
 	},
-	bottomRightUp(e){
+	mouseUp(e){
+	  this.draggingTopLeft = false;
+	  this.draggingTopRight = false;
+	  this.draggingBottomLeft = false;
 	  this.draggingBottomRight = false;
 	},
 	mouseMove(e){
@@ -95,8 +82,10 @@ Vue.component('textBox', {
 	this.container = container;
 	container.appendChild(this.$el);
 	this.container.addEventListener('mousemove', this.mouseMove);
+	window.addEventListener('mouseup', this.mouseUp);
   },
   beforeDestroy(){
 	this.container.removeEventListener('mousemove', this.mouseMove);
+	window.removeEventListener('mouseup', this.mouseUp);
   }
 });
