@@ -1,8 +1,5 @@
 {
   "Text": {
-    "textLayer": {
-      "description": "Adds simple text to the canvas."
-    },
     "gfontTextLayer": {
       "description": "Choose from 800+ Google WebFonts."
     },
