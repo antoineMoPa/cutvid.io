@@ -41,6 +41,7 @@ Vue.component('player', {
     </div>
     <div id="main-player">
       <div class="canvas-container"/>
+      <div class="player-overlay"/>
       <scene-selector
         ref="scene-selector"
         v-on:playLooping="playLooping"
@@ -108,20 +109,35 @@ Vue.component('player', {
       }
 
       let displayed_w = available_size;
-      let displayed_h = available_size * app.aspect;
+      let displayed_h = available_size / app.aspect;
       let canvas_container = document.querySelectorAll("#main-player .canvas-container")[0];
+      let player_overlay = document.querySelectorAll("#main-player .player-overlay")[0]
       let scene_selector = document.querySelectorAll("#main-player .scene-selector")[0];
-
-      scene_selector.style.width = (x_available_space - x_spacing) + "px";
-      scene_selector.style.top = (y_available_space - y_spacing + 35) + "px";
+      
+      scene_selector.style.width =
+        (x_available_space - x_spacing) + "px";
+      scene_selector.style.top = 
+        (y_available_space - y_spacing + 35) + "px";
+      
       scene_selector.style.left = (x_spacing - 20) + "px";
-      app.player.canvas.style.maxWidth = displayed_w + "px";
-      app.player.canvas.style.maxHeight = displayed_h + "px";
-      canvas_container.style.position = "absolute";
-      canvas_container.style.top = 0 + "px";
+      
+      player_overlay.style.width =
+        app.player.canvas.style.maxWidth =
+        displayed_w + "px";
+      player_overlay.style.height =
+        app.player.canvas.style.maxHeight =
+          displayed_h + "px";
+      
+      player_overlay.style.position =
+        canvas_container.style.position = "absolute";
+      
+      player_overlay.style.top =
+        canvas_container.style.top = 0 + "px";
+      
       let x_align_center = parseInt((x_available_space - x_spacing - available_size) / 2);
-      canvas_container.style.left = x_spacing - 20 + x_align_center + "px";
-
+      player_overlay.style.left =
+        canvas_container.style.left =
+        x_spacing - 20 + x_align_center + "px";
     },
     on_player_progress(time, duration){
       // TODO: find less visually annoying solution
@@ -481,12 +497,12 @@ Vue.component('player', {
       return data;
     },
     unserialize(data){
-	  let app = this;
-	  
+      let app = this;
+      
       this.width = data.width;
       this.height = data.height;
       this.fps = data.fps;
-	  
+      
       this.$refs['scene-selector'].unserialize(data.scenes);
     }
   },

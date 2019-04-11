@@ -348,5 +348,6 @@ Vue.component('effects-settings', {
     }
   },
   mounted(){
+	this.addEffect("gfontTextLayer", null, true);
   }
 });

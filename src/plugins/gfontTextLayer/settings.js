@@ -1,5 +1,6 @@
 /* This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.  */
-{
+
+{  
   let name = "gfontTextLayer";
 
   let effectSettings = function(){
@@ -38,6 +39,7 @@
       </button><br>
     </div>
   </div>
+  <textBox v-bind:text="text" v-bind:player="player" v-on:move="moveText"/>
 </div>`,
         data: function(){
           return {
@@ -57,6 +59,10 @@
         },
         props: ["player", "shaderProgram"],
         methods: {
+          moveText(x, y){
+            this.text.offsetLeft = x;
+            this.text.offsetTop = y;
+          },
           changeFont(fontName){
             this.font = fontName;
             this.updateTexts();
@@ -75,7 +81,7 @@
             let size = this.player.width;
             let scaleFactor = this.player.width / 1920.0;
 
-            ctx.textAlign = "center";
+            ctx.textAlign = "left";
 
             // Set font size & style
             var tsize = this.text.size * scaleFactor;
