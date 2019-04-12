@@ -175,8 +175,12 @@ Vue.component('textBox', {
   },
   beforeDestroy(){
     let container = document.querySelectorAll(".player-overlay")[0];
-    container.removeChild(this.$el);
-    this.container.removeEventListener('mousemove', this.mouseMove);
+    try{
+      container.removeChild(this.$el);
+      this.container.removeEventListener('mousemove', this.mouseMove);
+    } catch (e) {
+      //
+    }
     window.removeEventListener('mouseup', this.mouseUp);
   }
 });

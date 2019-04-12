@@ -11,8 +11,8 @@
         template: `
 <div class="gfont-plugin">
   <h4>Text</h4>
-  <label>Your text</label>
-  <div v-for="(text, index) in texts">
+  <div v-for="(text, index) in texts" v-bind:key="text+index">
+    <label>Your text</label>
     <input v-model="text.text" name="text-input" type="text" style="width:calc(100% - 30px);">
     <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
     <input v-model.number="text.size">
@@ -23,13 +23,13 @@
     <input v-model="text.color" type="color">
     <h4>Font selection</h4>
     <span class="info">Current font: {{text.font}}</span><br><br>
-    <div v-if="showFonts">
+    <div v-if="text.showFonts">
       <button v-on:click="showFonts = false">Hide Fonts</button>
     </div>
-    <div v-if="!showFonts">
-      <button v-on:click="showFonts = true">Browse Fonts</button>
+    <div v-if="!text.showFonts">
+      <button v-on:click="text.showFonts = true">Browse Fonts</button>
     </div>
-    <div class="gfont-scrollbox" v-if="showFonts">
+    <div class="gfont-scrollbox" v-if="text.showFonts">
       <div v-for="info in fonts">
         <span class="raw-fontname">{{info.font}}</span><br>
         <button v-bind:class="(info.font == text.font ? 'current-font':'') + ' gfont-button'"
@@ -63,7 +63,6 @@
             serializeExclude: ["fonts", "showFonts"],
             fonts: [],
             active: false,
-            showFonts: false,
             uniqueID: (Math.random() + "").substr(0,10),
             texts: []
           };
@@ -79,7 +78,8 @@
               offsetTop: 400,
               offsetLeft: 50,
               width: 1800,
-              align: "center"
+              align: "center",
+              showFonts: false
             });
           },
           remove(index){
@@ -105,69 +105,68 @@
             if(w != null){
               this.texts[index].width = w;
             }
+            this.updateTexts();
           },
           changeFont(index, fontName){
             this.texts[index].font = fontName;
             this.newFont();
           },
           updateTexts(){
-            utils.debounce(this.uniqueID, function(){
-              let textCanvas = document.createElement("canvas");
-              let ctx = textCanvas.getContext("2d");
-              textCanvas.width = this.player.width;
-              textCanvas.height = this.player.height;
-              ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
+            let textCanvas = document.createElement("canvas");
+            let ctx = textCanvas.getContext("2d");
+            textCanvas.width = this.player.width;
+            textCanvas.height = this.player.height;
+            ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
 
-              if(textCanvas == null || this.player == null){
-                return;
+            if(textCanvas == null || this.player == null){
+              return;
+            }
+
+            let size = this.player.width;
+            let scaleFactor = this.player.width / 1920.0;
+
+
+            for(let i = 0; i < this.texts.length; i++){
+              let t = this.texts[i];
+
+              ctx.textAlign = t.align;
+
+              // Set font size & style
+              var tsize = t.size * scaleFactor;
+
+              ctx.fillStyle = t.color;
+              ctx.textBaseline = "middle";
+              ctx.font = tsize + "px " + t.font;
+
+              let left = t.offsetLeft;
+              let top = t.offsetTop;
+
+              // Translate, rotate and render
+              ctx.save();
+              // Adapt width if too small
+
+              let measure = ctx.measureText(t.text);
+              t.width = Math.max(measure.width, t.width);
+
+              let x = 0;
+              let y = (top + t.size * 0.6) * scaleFactor;
+
+              if(t.align == "center"){
+                x  = (left + t.width/2) * scaleFactor;
+              } else if (t.align == "left"){
+                x  = left * scaleFactor;
+              } else {
+                x = (left + t.width) * scaleFactor;
               }
+              ctx.fillText(t.text, x, y);
+              ctx.restore();
+            }
 
-              let size = this.player.width;
-              let scaleFactor = this.player.width / 1920.0;
-
-
-              for(let i = 0; i < this.texts.length; i++){
-                let t = this.texts[i];
-
-                ctx.textAlign = t.align;
-
-                // Set font size & style
-                var tsize = t.size * scaleFactor;
-
-                ctx.fillStyle = t.color;
-                ctx.textBaseline = "middle";
-                ctx.font = tsize + "px " + t.font;
-
-                let left = t.offsetLeft;
-                let top = t.offsetTop;
-
-                // Translate, rotate and render
-                ctx.save();
-                // Adapt width if too small
-
-                let measure = ctx.measureText(t.text);
-                t.width = Math.max(measure.width, t.width);
-
-                let x = 0;
-                let y = (top + t.size * 0.6) * scaleFactor;
-
-                if(t.align == "center"){
-                  x  = (left + t.width/2) * scaleFactor;
-                } else if (t.align == "left"){
-                  x  = left * scaleFactor;
-                } else {
-                  x = (left + t.width) * scaleFactor;
-                }
-                ctx.fillText(t.text, x, y);
-                ctx.restore();
-              }
-
-              this.shaderProgram.set_texture(
-                "texture0",
-                textCanvas.toDataURL(),
-                function(){}
-              );
-            }.bind(this));
+            this.shaderProgram.set_texture(
+              "texture0",
+              textCanvas.toDataURL(),
+              function(){}
+            );
           },
           newFont(){
             let app = this;
@@ -212,14 +211,6 @@
             };
           });
           this.img = img;
-
-          // Temporary backward compat
-          if(this.texts.length < 0){
-            this.texts.push(this.text);
-            this.text = null;
-          } else {
-            this.addBox();
-          }
 
           if(this.player != null){
             this.player.add_on_resize_listener(this.updateTexts.bind(this), this.uniqueID);

@@ -109,7 +109,13 @@ utils.unserialize_vue = function(data, json){
 
   for(let prop in inData){
     if(typeof(inData[prop]) == "object" && data[prop] != undefined){
-      utils.unserialize_vue(data[prop], inData[prop]);
+      if(Array.isArray(inData[prop])){
+        for(let i = 0; i < inData[prop].length; i++){
+          data[prop].push(inData[prop][i]);
+        }
+      } else {
+        utils.unserialize_vue(data[prop], inData[prop]);
+      }
     } else {
       data[prop] = inData[prop];
     }
@@ -121,22 +127,22 @@ utils.debounce = function(id, fn){
   let now = new Date().getTime();
 
   if(utils.bounces[id] != undefined ){
-	if(utils.bounces[id].timeout != null){
-	  clearTimeout(utils.bounces[id].timeout);
-	}
+    if(utils.bounces[id].timeout != null){
+      clearTimeout(utils.bounces[id].timeout);
+    }
   }
   if(utils.bounces[id] != undefined && Math.abs(utils.bounces[id].time - now) < 100){
-	utils.bounces[id] = {
-	  time: now,
-	  timeout: setTimeout(fn, 300)
-	};
-  } else {
-	utils.bounces[id] = {
+    utils.bounces[id] = {
       time: now,
-	  timeout: null 
-	};
-	fn();
+      timeout: setTimeout(fn, 300)
+    };
+  } else {
+    utils.bounces[id] = {
+      time: now,
+      timeout: null
+    };
+    fn();
   }
-  
+
   utils.bounces[id].time = now;
 }
