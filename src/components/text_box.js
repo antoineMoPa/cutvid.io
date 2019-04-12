@@ -116,7 +116,11 @@ Vue.component('textBox', {
     },
     mouseUp(e){
       this.$el.classList.remove("dragging");
-
+      
+      if(this.beginP == undefined){
+        return;
+      }
+      
       let p = this.getRealPos(e);
       let w = this.beginP.w;
       let h = this.beginP.h;
