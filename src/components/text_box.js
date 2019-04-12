@@ -63,7 +63,11 @@ Vue.component('textBox', {
       let w = this.text.width * scaleFactor;
       let h = this.text.size * scaleFactor;
 
-      this.style = "top: "+top+"px;left:"+left+"px;"+"width:"+w+"px;height:"+h+"px;";
+      let box = this.$el.querySelectorAll(".text-box")[0];
+      box.style.top = top+"px";
+      box.style.left = left+"px";
+      box.style.width = w+"px";
+      box.style.height = h+"px";
     },
     remove(){
       this.$emit("remove", this.index);

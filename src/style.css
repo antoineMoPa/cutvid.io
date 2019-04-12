@@ -800,7 +800,7 @@ input{
   background:url(/app/icons/feather/arrow-down-right.svg);
   background-size: cover;
   opacity:0.3;
-  transition:opacity 0.3s;
+  transition:all 0s;
 }
 
 .text-box .bottom-right-handle:hover{
