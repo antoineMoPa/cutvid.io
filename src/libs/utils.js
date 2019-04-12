@@ -87,7 +87,16 @@ utils.increment_unique_counter = function(id_str){
 utils.serialize_vue = function(data){
   let out = {};
 
+  if(Array.isArray(data)){
+    out = [];
+  }
+
   for(let prop in data){
+
+    if(parseInt(prop) == prop){
+      prop = parseInt(prop);
+    }
+
     if(typeof(data[prop]) == "object"){
       // Exclude specified variables
       if(data.serializeExclude != undefined){

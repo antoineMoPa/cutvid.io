@@ -44,24 +44,27 @@ Vue.component('textBox', {
 
   },
   methods: {
-    buildStyle(_left, _top){
+    buildStyle(_left, _top, _w, _h){
       let scaleFactor = this.player.width / 1920.0;
       let canvasScaleFactor = this.player.canvas.clientWidth / this.player.width;
       scaleFactor *= canvasScaleFactor;
 
+      _left = _left || null;
+      _top = _top || null;
+
       let top = this.text.offsetTop * scaleFactor;
       let left = this.text.offsetLeft * scaleFactor;
 
-      if(_top != undefined){
+      if(_top != null){
         top = _top * scaleFactor;
       }
 
-      if(_left != undefined){
+      if(_left != null){
         left = _left * scaleFactor;
       }
 
-      let w = this.text.width * scaleFactor;
-      let h = this.text.size * scaleFactor;
+      let w = (_w || this.text.width) * scaleFactor;
+      let h = (_h || this.text.size) * scaleFactor;
 
       let box = this.$el.querySelectorAll(".text-box")[0];
       box.style.top = top+"px";
@@ -100,6 +103,7 @@ Vue.component('textBox', {
       this.beginP = p;
     },
     textBoxDown(e){
+      this.$el.classList.add("dragging");
       this.draggingBox = true;
       this.setBegin(e);
     },
@@ -111,6 +115,34 @@ Vue.component('textBox', {
       this.setBegin(e);
     },
     mouseUp(e){
+      this.$el.classList.remove("dragging");
+
+      let p = this.getRealPos(e);
+      let w = this.beginP.w;
+      let h = this.beginP.h;
+      let scaleFactor = this.player.width / 1920.0;
+      let canvasScaleFactor = this.player.width / this.player.canvas.clientWidth;
+
+      if(this.draggingBox){
+        let left = this.beginP.l + (p.x - this.beginP.x) * canvasScaleFactor;
+        let top = this.beginP.t + (p.y - this.beginP.y) * canvasScaleFactor;
+
+        this.$emit(
+          "move",
+          this.index,
+          left,
+          top,
+          w,
+          h
+        );
+      } else if (this.draggingBottomRight) {
+        w = w + (p.x - this.beginP.x) * canvasScaleFactor;
+        h = h + (p.y - this.beginP.y) * canvasScaleFactor;
+
+        this.$emit("move", this.index, null, null, w, h);
+        this.buildStyle();
+      }
+
       this.draggingBox = false;
       this.draggingTopLeft = false;
       this.draggingTopRight = false;
@@ -119,6 +151,15 @@ Vue.component('textBox', {
     },
     mouseMove(e){
       e.stopPropagation();
+
+      let now = new Date().getTime();
+      if(this.lastMove != undefined){
+        if(Math.abs(this.lastMove - now) < 60){
+          return;
+        }
+      }
+
+      this.lastMove = now;
 
       if(
         !this.draggingBox &&
@@ -132,36 +173,25 @@ Vue.component('textBox', {
 
       let p = this.getRealPos(e);
 
+      if(this.beginP == undefined){
+        return;
+      }
+
       let w = this.beginP.w;
       let h = this.beginP.h;
 
       let scaleFactor = this.player.width / 1920.0;
       let canvasScaleFactor = this.player.width / this.player.canvas.clientWidth;
 
-      if(this.draggingBox){
-        let left = this.beginP.l + (p.x - this.beginP.x) * canvasScaleFactor;
-        let top = this.beginP.t + (p.y - this.beginP.y) * canvasScaleFactor;
-        // Auto resize prop now for speed
-        this.text.offsetLeft = left;
-        this.text.offsetTop = top;
-        this.buildStyle(left, top);
+      let left = this.beginP.l + (p.x - this.beginP.x) * canvasScaleFactor;
+      let top = this.beginP.t + (p.y - this.beginP.y) * canvasScaleFactor;
 
-        setTimeout(function(){
-          this.$emit(
-            "move",
-            this.index,
-            left,
-            top,
-            w,
-            h
-          );
-        }.bind(this), 200);
+      if(this.draggingBox){
+        this.buildStyle(left, top, w, h);
       } else if (this.draggingBottomRight) {
         w = w + (p.x - this.beginP.x) * canvasScaleFactor;
         h = h + (p.y - this.beginP.y) * canvasScaleFactor;
-
-        this.$emit("move", this.index, null, null, w, h);
-        this.buildStyle();
+        this.buildStyle(null, null, w, h);
       }
     }
   },

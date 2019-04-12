@@ -772,13 +772,15 @@ input{
   left:10px;
   cursor:pointer;
   opacity:0;
-  transition:all 0.2s;
+  transition:all 0s, opacity 0.3s;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  min-width:140px;
 }
 
+.dragging .text-box,
 .text-box:hover{
   background:rgba(0,0,0,0.1);
   border:1px solid rgba(255,255,255,0.2);
@@ -800,7 +802,7 @@ input{
   background:url(/app/icons/feather/arrow-down-right.svg);
   background-size: cover;
   opacity:0.3;
-  transition:all 0s;
+  transition:all 0.2s;
 }
 
 .text-box .bottom-right-handle:hover{
@@ -809,13 +811,13 @@ input{
 
 .text-box .align-buttons{
   position:absolute;
-  top:1px;
+  top:-25px;
   left:1px;
 }
 
 .text-box .delete-button{
   position:absolute;
-  top:1px;
+  top:-25px;
   right:1px;
 }
 

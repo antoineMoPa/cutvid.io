@@ -86,11 +86,6 @@ class ShaderProgram {
     ready = ready || (() => {});
     options = options || {};
 
-    // Cleanup before setting again
-    if(this.textures[name] != undefined){
-      this.delete_texture(name);
-    }
-
     function isPowerOf2(value) {
       return (value & (value - 1)) == 0;
     }
@@ -115,6 +110,11 @@ class ShaderProgram {
     }
 
     image.addEventListener("load", function () {
+	  // Cleanup before setting again
+      if(app.textures[name] != undefined){
+		app.delete_texture(name);
+      }
+
       var texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
 

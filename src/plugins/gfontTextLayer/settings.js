@@ -81,6 +81,7 @@
               align: "center",
               showFonts: false
             });
+            this.newFont();
           },
           remove(index){
             this.texts.splice(index, 1);
