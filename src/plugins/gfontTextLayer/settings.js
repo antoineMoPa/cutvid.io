@@ -1,6 +1,6 @@
 /* This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.  */
 
-{  
+{
   let name = "gfontTextLayer";
 
   let effectSettings = function(){
@@ -54,14 +54,25 @@
               size: 200,
               offsetTop: 0,
               offsetLeft: 0,
+              width: 300
             },
           };
         },
         props: ["player", "shaderProgram"],
         methods: {
-          moveText(x, y){
-            this.text.offsetLeft = x;
-            this.text.offsetTop = y;
+          moveText(x, y, w, h){
+            if(x != null){
+              this.text.offsetLeft = x;
+            }
+            if(y != null){
+              this.text.offsetTop = y;
+            }
+            if(h != null){
+              this.text.size = h;
+            }
+            if(w != null){
+              this.text.width = w;
+            }
           },
           changeFont(fontName){
             this.font = fontName;
@@ -90,11 +101,14 @@
             ctx.textBaseline = "middle";
             ctx.font = tsize + "px " + this.font;
 
+            let l = this.text.offsetLeft;
+            let t = this.text.offsetTop;
+
             // Translate, rotate and render
             ctx.save();
-            ctx.translate(this.player.width/2, this.player.height/2);
-            ctx.fillText(this.text.text, this.text.offsetLeft * scaleFactor, this.text.offsetTop * scaleFactor);
+            ctx.fillText(this.text.text, l * scaleFactor, (t+this.text.size * 0.6) * scaleFactor);
             ctx.restore();
+
             this.shaderProgram.set_texture(
               "texture0",
               textCanvas.toDataURL(),
