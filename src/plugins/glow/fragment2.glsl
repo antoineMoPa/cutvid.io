@@ -7,7 +7,7 @@ uniform sampler2D previous_pass, previous_previous_pass;
 uniform vec2 mouse;
 uniform float ratio, time, relativeTime;
 uniform float intensity, size, modulation;
-uniform float xModulation, yModulation;
+uniform float xModulation, yModulation, boost;
 uniform float rMult, gMult, bMult;
 
 
@@ -38,10 +38,12 @@ void main(void){
   vec4 blur = 1.0/float(count) * sum;
   vec4 original = texture2D(previous_previous_pass, lastUV);
   float fac = intensity;
-  fac += modulation * cos(relativeTime * 6.2832 - p.x * xModulation - p.y * yModulation);
+  fac += modulation * pow(length(original.rgb), 2.0) * cos(relativeTime * 6.2832 - p.x * xModulation - p.y * yModulation);
   blur = fac * sum / float(count) * vec4(rMult, gMult, bMult, 1.0);
 
-  vec4 col = original.a * original + (1.0 - original.a) * blur;
+  fac = intensity / length(original.rgb);
+  original *= boost;
+  vec4 col = fac * blur + (1.0 - fac) * original;
 
   gl_FragColor = col;
 }

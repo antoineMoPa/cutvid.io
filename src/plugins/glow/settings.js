@@ -18,6 +18,13 @@
       step="0.1">
   </label>
   <label>
+    Color boost<br>
+    <input v-model="uniforms.boost.value" type="number"
+      min="0.0"
+      max="10.0"
+      step="0.1">
+  </label>
+  <label>
     Modulation<br>
     <input v-model="uniforms.modulation.value" type="number"
       min="0.0"
@@ -70,17 +77,22 @@
               intensity: {
                 type: "f",
                 len: 1,
-                value: 0.5,
+                value: 0.7,
+              },
+              boost: {
+                type: "f",
+                len: 1,
+                value: 2.0,
               },
               size: {
                 type: "f",
                 len: 1,
-                value: 0.003,
+                value: 0.002,
               },
               modulation: {
                 type: "f",
                 len: 1,
-                value: 0.2,
+                value: 0.0,
               },
               xModulation: {
                 type: "f",
