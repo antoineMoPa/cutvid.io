@@ -71,7 +71,7 @@ Vue.component('effects-settings', {
       moving: false
     };
   },
-  props: ["player"],
+  props: ["player", "active"],
   methods: {
     loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
@@ -210,7 +210,11 @@ Vue.component('effects-settings', {
               if(initialData != undefined){
                 app.unserializeEffect(app.effectsIndex.length - 1, initialData);
               }
-
+			  
+			  let component = this.$refs[this.effects[app.effectsIndex.length - 1].component][0];
+			  component.active = this.active
+			  
+			  
               if(autoApply){
                 app.applyEffectsChange();
               }
@@ -240,7 +244,9 @@ Vue.component('effects-settings', {
         // Put data in component data
         utils.unserialize_vue(component.$data, data);
       }
-
+	  
+	  component.active = this.active;
+	  
       // Update uniforms
       this.applyEffectsChange();
     },
@@ -347,7 +353,15 @@ Vue.component('effects-settings', {
       this.$emit("ready");
     }
   },
+  watch: {
+	active(val){
+	  for(let effect in this.effects){
+        let comp = this.$refs[this.effects[effect].component][0];
+		comp.active = val;
+	  }
+	}
+  },
   mounted(){
-	this.addEffect("gfontTextLayer", null, true);
+	//this.addEffect("gfontTextLayer", null, true);
   }
 });

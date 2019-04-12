@@ -65,6 +65,7 @@ Vue.component('scene-selector', {
 				  <div class="all-effects">
 					<effects-settings
 							v-for="(sceneNumber, sceneIndex) in scenesIndex"
+                      v-bind:active="selected == sceneIndex"
 					  v-bind:class="(selected == sceneIndex)? '': 'effects-settings-hidden'"
 					  v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
 					  v-bind:ref="'effects-settings-' + scenes[sceneNumber].id"

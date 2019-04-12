@@ -1,18 +1,22 @@
 Vue.component('textBox', {
   template: `
-<div class="text-box" v-bind:style="style"
-  v-on:mousedown.self="textBoxDown"
-  >
-  <div class="handle bottom-right-handle"
-       v-on:mousedown="bottomRightDown"
-  />
+<div>
+  <div class="text-box" 
+    v-bind:style="style"
+    v-if="active"
+    v-on:mousedown.self="textBoxDown"
+    >
+    <div class="handle bottom-right-handle"
+         v-on:mousedown="bottomRightDown"
+    />
+  </div>
 </div>
 `,
   data(){
     return {
     };
   },
-  props: ["text", "player"],
+  props: ["text", "player", "active"],
   computed: {
     style(){
       let scaleFactor = this.player.width / 1920.0;

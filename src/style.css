@@ -770,13 +770,16 @@ input{
   position:absolute;
   top:10px;
   left:10px;
-  background:rgba(0,0,0,0.3);
-  border:1px solid #555;
-  border-radius:2px;
   cursor:pointer;
 }
 
-.text-box .handle{
+.text-box:hover{
+  background:rgba(0,0,0,0.3);
+  border:1px solid #555;
+  border-radius:2px;
+}
+
+.text-box:hover .handle{
   position:absolute;
   width:20px;
   height:20px;

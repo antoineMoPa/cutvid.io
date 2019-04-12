@@ -39,13 +39,19 @@
       </button><br>
     </div>
   </div>
-  <textBox v-bind:text="text" v-bind:player="player" v-on:move="moveText"/>
+  <textBox  
+           v-if="active"
+           v-bind:text="text" 
+           v-bind:player="player" 
+           v-on:move="moveText" 
+           v-bind:active="active"/>
 </div>`,
         data: function(){
           return {
             serializeExclude: ["fonts", "showFonts"],
             fonts: [],
             font: "Allerta Stencil",
+            active: false,
             showFonts: false,
             uniqueID: (Math.random() + "").substr(0,10),
             text:{
@@ -143,11 +149,11 @@
           },
           backgroundColor(){
             this.updateTexts();
-          },
+          }
         },
         mounted(){
           let app = this;
-
+          window.c = this;
           let img = document.createElement("img");
           let imgload = new Promise(function(resolve, reject) {
             img.onload = function(){
