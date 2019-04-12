@@ -813,13 +813,21 @@ input{
   left:1px;
 }
 
-.text-box .align-button{
+.text-box .delete-button{
+  position:absolute;
+  top:1px;
+  right:1px;
+}
+
+.text-box .align-button,
+.text-box .delete-button{
   display:inline-block;
   opacity:0.3;
   transition:all 0.3s;
 }
 
-.text-box .align-button:hover{
+.text-box .align-button:hover,
+.text-box .delete-button:hover{
   opacity:0.8;
 }
 

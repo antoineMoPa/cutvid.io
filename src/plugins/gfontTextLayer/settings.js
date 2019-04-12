@@ -12,41 +12,51 @@
 <div class="gfont-plugin">
   <h4>Text</h4>
   <label>Your text</label>
-  <input v-model="text.text" name="text-input" type="text" style="width:calc(100% - 30px);">
-  <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
-  <input v-model.number="text.size">
-  <input v-model.number="text.offsetTop" size="4">
-  <input v-model.number="text.offsetLeft" size="4">
-  <br>
-  <label><span>Color</span></label>
-  <input v-model="text.color" type="color">
-  <h4>Font selection</h4>
-  <span class="info">Current font: {{font}}</span><br><br>
-  <div v-if="showFonts">
-    <button v-on:click="showFonts = false">Hide Fonts</button>
-  </div>
-  <div v-if="!showFonts">
-    <button v-on:click="showFonts = true">Browse Fonts</button>
-  </div>
-  <div class="gfont-scrollbox" v-if="showFonts">
-    <div v-for="info in fonts">
-      <span class="raw-fontname">{{info.font}}</span><br>
-      <button v-bind:class="(info.font == font ? 'current-font':'') + ' gfont-button'"
-              v-on:click="changeFont(info.font)">
-        <img v-bind:data-fontName="info.font"
-             v-bind:src="'/app/plugins/gfontTextLayer/font_previews/'+info.font+'.png'"
-             v-bind:alt="info.font"/>
-      </button><br>
+  <div v-for="(text, index) in texts">
+    <input v-model="text.text" name="text-input" type="text" style="width:calc(100% - 30px);">
+    <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
+    <input v-model.number="text.size">
+    <input v-model.number="text.offsetTop" size="4">
+    <input v-model.number="text.offsetLeft" size="4">
+    <br>
+    <label><span>Color</span></label>
+    <input v-model="text.color" type="color">
+    <h4>Font selection</h4>
+    <span class="info">Current font: {{font}}</span><br><br>
+    <div v-if="showFonts">
+      <button v-on:click="showFonts = false">Hide Fonts</button>
     </div>
-  </div>
-  <textBox
+    <div v-if="!showFonts">
+      <button v-on:click="showFonts = true">Browse Fonts</button>
+    </div>
+    <div class="gfont-scrollbox" v-if="showFonts">
+      <div v-for="info in fonts">
+        <span class="raw-fontname">{{info.font}}</span><br>
+        <button v-bind:class="(info.font == font ? 'current-font':'') + ' gfont-button'"
+                v-on:click="changeFont(info.font)">
+          <img v-bind:data-fontName="info.font"
+               v-bind:src="'/app/plugins/gfontTextLayer/font_previews/'+info.font+'.png'"
+               v-bind:alt="info.font"/>
+        </button><br>
+      </div>
+    </div>
+    <textBox
            v-if="active"
            v-on:down="focusText"
            v-bind:text="text"
+           v-bind:index="index"
            v-bind:player="player"
            v-on:move="moveText"
+           v-on:remove="remove"
            v-on:align="align"
            v-bind:active="active"/>
+  </div>
+  <div class="text-right">
+    <button class="button" v-on:click="addBox">
+      <img src="icons/feather/file-plus.svg" width="20"/>
+      Add text box
+    </button>
+  </div>
 </div>`,
         data: function(){
           return {
@@ -56,38 +66,44 @@
             active: false,
             showFonts: false,
             uniqueID: (Math.random() + "").substr(0,10),
-            text:{
-              text: "Your text!",
+            texts: []
+          };
+        },
+        props: ["player", "shaderProgram"],
+        methods: {
+          addBox(){
+            this.texts.push({
+              text: "Your text " + (this.texts.length+1) + "!",
               color: "#ffffff",
               size: 200,
               offsetTop: 400,
               offsetLeft: 50,
               width: 1800,
               align: "center"
-            },
-          };
-        },
-        props: ["player", "shaderProgram"],
-        methods: {
-          align(val){
-            this.text.align = val;
+            });
           },
-          focusText(){
+          remove(index){
+            this.texts.splice(index, 1);
+          },
+          align(index, val){
+            this.texts[index].align = val;
+          },
+          focusText(index){
             let input = this.$el.querySelectorAll("[name=text-input]")[0];
             input.focus();
           },
-          moveText(x, y, w, h){
+          moveText(index, x, y, w, h){
             if(x != null){
-              this.text.offsetLeft = x;
+              this.texts[index].offsetLeft = x;
             }
             if(y != null){
-              this.text.offsetTop = y;
+              this.texts[index].offsetTop = y;
             }
             if(h != null){
-              this.text.size = h;
+              this.texts[index].size = h;
             }
             if(w != null){
-              this.text.width = w;
+              this.texts[index].width = w;
             }
           },
           changeFont(fontName){
@@ -108,37 +124,42 @@
             let size = this.player.width;
             let scaleFactor = this.player.width / 1920.0;
 
-            ctx.textAlign = this.text.align;
 
-            // Set font size & style
-            var tsize = this.text.size * scaleFactor;
+            for(let i = 0; i < this.texts.length; i++){
+              let t = this.texts[i];
 
-            ctx.fillStyle = this.text.color;
-            ctx.textBaseline = "middle";
-            ctx.font = tsize + "px " + this.font;
+              ctx.textAlign = t.align;
 
-            let l = this.text.offsetLeft;
-            let t = this.text.offsetTop;
+              // Set font size & style
+              var tsize = t.size * scaleFactor;
 
-            // Translate, rotate and render
-            ctx.save();
-            // Adapt width if too small
+              ctx.fillStyle = t.color;
+              ctx.textBaseline = "middle";
+              ctx.font = tsize + "px " + this.font;
 
-            let measure = ctx.measureText(this.text.text);
-            this.text.width = Math.max(measure.width, this.text.width);
+              let left = t.offsetLeft;
+              let top = t.offsetTop;
 
-            let x = 0;
-            let y = (t + this.text.size * 0.6) * scaleFactor;
+              // Translate, rotate and render
+              ctx.save();
+              // Adapt width if too small
 
-            if(this.text.align == "center"){
-              x  = (l + this.text.width/2) * scaleFactor;
-            } else if (this.text.align == "left"){
-              x  = l * scaleFactor;
-            } else {
-              x = (l + this.text.width) * scaleFactor;
+              let measure = ctx.measureText(t.text);
+              t.width = Math.max(measure.width, t.width);
+
+              let x = 0;
+              let y = (top + t.size * 0.6) * scaleFactor;
+
+              if(t.align == "center"){
+                x  = (left + t.width/2) * scaleFactor;
+              } else if (t.align == "left"){
+                x  = left * scaleFactor;
+              } else {
+                x = (left + t.width) * scaleFactor;
+              }
+              ctx.fillText(t.text, x, y);
+              ctx.restore();
             }
-            ctx.fillText(this.text.text, x, y);
-            ctx.restore();
 
             this.shaderProgram.set_texture(
               "texture0",
@@ -147,19 +168,25 @@
             );
           },
           newFont(){
-            let promise = utils.load_gfont(this.font, this.text.size, this.text.text);
             let app = this;
 
-            promise.then(function(){
-              app.updateTexts();
-            });
+            for(let i = 0; i < this.texts.length; i++){
+              let promise = utils.load_gfont(
+                this.font,
+                this.texts[i].size,
+                this.texts[i].text
+              );
+              promise.then(function(){
+                app.updateTexts();
+              });
+            }
           }
         },
         watch: {
           font(){
             this.newFont();
           },
-          text: {
+          texts: {
             handler: function () {
               this.updateTexts();
             },
@@ -186,6 +213,14 @@
             };
           });
           this.img = img;
+
+          // Temporary backward compat
+          if(this.texts.length < 0){
+            this.texts.push(this.text);
+            this.text = null;
+          } else {
+            this.addBox();
+          }
 
           if(this.player != null){
             this.player.add_on_resize_listener(this.updateTexts.bind(this), this.uniqueID);

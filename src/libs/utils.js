@@ -89,12 +89,12 @@ utils.serialize_vue = function(data){
 
   for(let prop in data){
     if(typeof(data[prop]) == "object"){
-	  // Exclude specified variables
-	  if(data.serializeExclude != undefined){
-		if(data.serializeExclude.indexOf(prop) != -1){
-		  continue;
-		}
-	  }
+      // Exclude specified variables
+      if(data.serializeExclude != undefined){
+        if(data.serializeExclude.indexOf(prop) != -1){
+          continue;
+        }
+      }
       out[prop] = utils.serialize_vue(data[prop]);
     } else {
       out[prop] = data[prop];
@@ -115,3 +115,21 @@ utils.unserialize_vue = function(data, json){
     }
   }
 };
+
+utils.bounces = {};
+utils.debounce = function(id, fn){
+  let now = new Date().getTime();
+
+  if(utils.bounces[id] != undefined &&
+     Math.abs(utils.bounces[id].time - now) < 200){
+    return;
+  }
+
+  utils.bounces[id] = {
+    time: now - 300,
+  };
+
+  fn();
+
+  utils.bounces[id].time = now;
+}
