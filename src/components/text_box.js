@@ -33,30 +33,38 @@ Vue.component('textBox', {
 `,
   data(){
     return {
-      debounceID: (Math.random() + "").substr(0,5)
+      style: ""
     };
   },
   props: ["text", "player", "active", "index"],
   computed: {
-    style(){
-      let scaleFactor = this.player.width / 1920.0;
-      let canvasScaleFactor = this.player.canvas.clientWidth / this.player.width;
-      scaleFactor *= canvasScaleFactor;
 
-      let top = this.text.offsetTop * scaleFactor;
-
-      let left = this.text.offsetLeft * scaleFactor;
-
-      let w = this.text.width * scaleFactor;
-      let h = this.text.size * scaleFactor;
-
-      return "top: "+top+"px;left:"+left+"px;"+"width:"+w+"px;height:"+h+"px;";
-    }
   },
   watch: {
 
   },
   methods: {
+    buildStyle(_left, _top){
+      let scaleFactor = this.player.width / 1920.0;
+      let canvasScaleFactor = this.player.canvas.clientWidth / this.player.width;
+      scaleFactor *= canvasScaleFactor;
+
+      let top = this.text.offsetTop * scaleFactor;
+      let left = this.text.offsetLeft * scaleFactor;
+
+      if(_top != undefined){
+        top = _top * scaleFactor;
+      }
+
+      if(_left != undefined){
+        left = _left * scaleFactor;
+      }
+
+      let w = this.text.width * scaleFactor;
+      let h = this.text.size * scaleFactor;
+
+      this.style = "top: "+top+"px;left:"+left+"px;"+"width:"+w+"px;height:"+h+"px;";
+    },
     remove(){
       this.$emit("remove", this.index);
       this.$destroy();
@@ -108,45 +116,49 @@ Vue.component('textBox', {
     mouseMove(e){
       e.stopPropagation();
 
-      utils.debounce(this.debounceID, function(){
-        if(
-          !this.draggingBox &&
-          !this.draggingTopLeft &&
-          !this.draggingTopRight &&
-          !this.draggingBottomLeft &&
-          !this.draggingBottomRight
-        ){
-          return;
-        }
+      if(
+        !this.draggingBox &&
+        !this.draggingTopLeft &&
+        !this.draggingTopRight &&
+        !this.draggingBottomLeft &&
+        !this.draggingBottomRight
+      ){
+        return;
+      }
 
-        let p = this.getRealPos(e);
+      let p = this.getRealPos(e);
 
-        let w = this.beginP.w;
-        let h = this.beginP.h;
+      let w = this.beginP.w;
+      let h = this.beginP.h;
 
-        let scaleFactor = this.player.width / 1920.0;
-        let canvasScaleFactor = this.player.width / this.player.canvas.clientWidth;
+      let scaleFactor = this.player.width / 1920.0;
+      let canvasScaleFactor = this.player.width / this.player.canvas.clientWidth;
 
-        if(this.draggingBox){
+      if(this.draggingBox){
+        let left = this.beginP.l + (p.x - this.beginP.x) * canvasScaleFactor;
+        let top = this.beginP.t + (p.y - this.beginP.y) * canvasScaleFactor;
+        // Auto resize prop now for speed
+        this.text.offsetLeft = left;
+        this.text.offsetTop = top;
+        this.buildStyle(left, top);
+
+        setTimeout(function(){
           this.$emit(
             "move",
             this.index,
-            this.beginP.l + (p.x - this.beginP.x) * canvasScaleFactor,
-            this.beginP.t + (p.y - this.beginP.y) * canvasScaleFactor,
+            left,
+            top,
             w,
             h
           );
-        } else if(this.draggingTopLeft){
-          this.$emit("move", this.index, x, y, w, h);
-        } else if (this.draggingTopRight) {
-          this.$emit("move", this.index, x, y, w, h);
-        } else if (this.draggingBottomLeft) {
-        } else if (this.draggingBottomRight) {
-          w = w + (p.x - this.beginP.x) * canvasScaleFactor;
-          h = h + (p.y - this.beginP.y) * canvasScaleFactor;
-          this.$emit("move", this.index, null, null, w, h);
-        }
-      }.bind(this))
+        }.bind(this), 200);
+      } else if (this.draggingBottomRight) {
+        w = w + (p.x - this.beginP.x) * canvasScaleFactor;
+        h = h + (p.y - this.beginP.y) * canvasScaleFactor;
+
+        this.$emit("move", this.index, null, null, w, h);
+        this.buildStyle();
+      }
     }
   },
   mounted(){
@@ -155,6 +167,7 @@ Vue.component('textBox', {
     container.appendChild(this.$el);
     this.container.addEventListener('mousemove', this.mouseMove);
     window.addEventListener('mouseup', this.mouseUp);
+    this.buildStyle();
   },
   beforeDestroy(){
     let container = document.querySelectorAll(".player-overlay")[0];

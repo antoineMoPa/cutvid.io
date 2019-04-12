@@ -120,16 +120,23 @@ utils.bounces = {};
 utils.debounce = function(id, fn){
   let now = new Date().getTime();
 
-  if(utils.bounces[id] != undefined &&
-     Math.abs(utils.bounces[id].time - now) < 200){
-    return;
+  if(utils.bounces[id] != undefined ){
+	if(utils.bounces[id].timeout != null){
+	  clearTimeout(utils.bounces[id].timeout);
+	}
   }
-
-  utils.bounces[id] = {
-    time: now - 300,
-  };
-
-  fn();
-
+  if(utils.bounces[id] != undefined && Math.abs(utils.bounces[id].time - now) < 100){
+	utils.bounces[id] = {
+	  time: now,
+	  timeout: setTimeout(fn, 300)
+	};
+  } else {
+	utils.bounces[id] = {
+      time: now,
+	  timeout: null 
+	};
+	fn();
+  }
+  
   utils.bounces[id].time = now;
 }
