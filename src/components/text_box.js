@@ -1,11 +1,26 @@
 Vue.component('textBox', {
   template: `
 <div>
-  <div class="text-box" 
+  <div class="text-box"
     v-bind:style="style"
     v-if="active"
     v-on:mousedown.self="textBoxDown"
+    v-on:click="sendFocus"
     >
+    <div class="align-buttons">
+      <div class="align-button"
+           v-on:click="alignLeft">
+        <img src="/app/icons/feather/align-left.svg">
+      </div>
+      <div class="align-button"
+           v-on:click="alignCenter">
+        <img src="/app/icons/feather/align-center.svg">
+      </div>
+      <div class="align-button"
+           v-on:click="alignRight">
+        <img src="/app/icons/feather/align-right.svg">
+      </div>
+    </div>
     <div class="handle bottom-right-handle"
          v-on:mousedown="bottomRightDown"
     />
@@ -37,6 +52,15 @@ Vue.component('textBox', {
 
   },
   methods: {
+	alignLeft(){
+	  this.$emit("align", "left");
+	},
+	alignCenter(){
+	  this.$emit("align", "center");
+	},
+	alignRight(){
+	  this.$emit("align", "right");
+	},
     getRealPos(e){
       let cx = e.clientX - this.player.canvas.parentNode.offsetLeft;
       let cy = e.clientY - this.player.canvas.offsetTop;
@@ -58,17 +82,8 @@ Vue.component('textBox', {
       this.draggingBox = true;
       this.setBegin(e);
     },
-    topLeftDown(e){
-      this.draggingTopLeft = true;
-      this.setBegin(e);
-    },
-    topRightDown(e){
-      this.draggingTopRight = true;
-      this.setBegin(e);
-    },
-    bottomLeftDown(e){
-      this.draggingBottomLeft = true;
-      this.setBegin(e);
+    sendFocus(){
+      this.$emit("down");
     },
     bottomRightDown(e){
       this.draggingBottomRight = true;

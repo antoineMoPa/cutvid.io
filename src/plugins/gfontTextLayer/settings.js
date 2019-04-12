@@ -12,11 +12,11 @@
 <div class="gfont-plugin">
   <h4>Text</h4>
   <label>Your text</label>
-  <input v-model="text.text" type="text" style="width:calc(100% - 30px);">
+  <input v-model="text.text" name="text-input" type="text" style="width:calc(100% - 30px);">
   <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
-  <input v-model.number="text.size" step="10" type="number">
-  <input v-model.number="text.offsetTop" type="number" size="4" step="25">
-  <input v-model.number="text.offsetLeft" type="number" size="4" step="25">
+  <input v-model.number="text.size">
+  <input v-model.number="text.offsetTop" size="4">
+  <input v-model.number="text.offsetLeft" size="4">
   <br>
   <label><span>Color</span></label>
   <input v-model="text.color" type="color">
@@ -39,11 +39,13 @@
       </button><br>
     </div>
   </div>
-  <textBox  
+  <textBox
            v-if="active"
-           v-bind:text="text" 
-           v-bind:player="player" 
-           v-on:move="moveText" 
+           v-on:down="focusText"
+           v-bind:text="text"
+           v-bind:player="player"
+           v-on:move="moveText"
+           v-on:align="align"
            v-bind:active="active"/>
 </div>`,
         data: function(){
@@ -58,14 +60,22 @@
               text: "Your text!",
               color: "#ffffff",
               size: 200,
-              offsetTop: 0,
-              offsetLeft: 0,
-              width: 300
+              offsetTop: 400,
+              offsetLeft: 50,
+              width: 1800,
+              align: "center"
             },
           };
         },
         props: ["player", "shaderProgram"],
         methods: {
+          align(val){
+            this.text.align = val;
+          },
+          focusText(){
+            let input = this.$el.querySelectorAll("[name=text-input]")[0];
+            input.focus();
+          },
           moveText(x, y, w, h){
             if(x != null){
               this.text.offsetLeft = x;
@@ -98,7 +108,7 @@
             let size = this.player.width;
             let scaleFactor = this.player.width / 1920.0;
 
-            ctx.textAlign = "left";
+            ctx.textAlign = this.text.align;
 
             // Set font size & style
             var tsize = this.text.size * scaleFactor;
@@ -112,7 +122,22 @@
 
             // Translate, rotate and render
             ctx.save();
-            ctx.fillText(this.text.text, l * scaleFactor, (t+this.text.size * 0.6) * scaleFactor);
+            // Adapt width if too small
+
+            let measure = ctx.measureText(this.text.text);
+            this.text.width = Math.max(measure.width, this.text.width);
+
+            let x = 0;
+            let y = (t + this.text.size * 0.6) * scaleFactor;
+
+            if(this.text.align == "center"){
+              x  = (l + this.text.width/2) * scaleFactor;
+            } else if (this.text.align == "left"){
+              x  = l * scaleFactor;
+            } else {
+              x = (l + this.text.width) * scaleFactor;
+            }
+            ctx.fillText(this.text.text, x, y);
             ctx.restore();
 
             this.shaderProgram.set_texture(
