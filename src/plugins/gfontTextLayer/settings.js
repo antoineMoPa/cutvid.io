@@ -15,9 +15,9 @@
     <label>Your text</label>
     <input v-model="text.text" name="text-input" type="text" style="width:calc(100% - 30px);">
     <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
-    <input v-model.number="text.size">
-    <input v-model.number="text.offsetTop" size="4">
-    <input v-model.number="text.offsetLeft" size="4">
+    <input type="number" v-model.number="text.size">
+    <input type="number" v-model.number="text.offsetTop" size="4">
+    <input type="number" v-model.number="text.offsetLeft" size="4">
     <br>
     <label><span>Color</span></label>
     <input v-model="text.color" type="color">
@@ -90,8 +90,10 @@
             this.texts[index].align = val;
           },
           focusText(index){
-            let input = this.$el.querySelectorAll("[name=text-input]")[0];
-            input.focus();
+            let inputs = this.$el.querySelectorAll("[name=text-input]");
+            if(inputs.length >= index){
+              inputs[index].focus();
+            }
           },
           moveText(index, x, y, w, h){
             if(x != null){
@@ -147,7 +149,17 @@
               // Adapt width if too small
 
               let measure = ctx.measureText(t.text);
-              t.width = Math.max(measure.width, t.width);
+
+              /*
+                 Beware infine calls to the vuejs
+                 vue watcher here, because we are mutating
+                 text in a watcher.
+               */
+              if(t.width < measure.width){
+                if (measure.width < this.player.width) {
+                  t.width = measure.width + 1;
+                }
+              }
 
               let x = 0;
               let y = (top + t.size * 0.6) * scaleFactor;
@@ -204,7 +216,6 @@
         },
         mounted(){
           let app = this;
-          window.c = this;
           let img = document.createElement("img");
           let imgload = new Promise(function(resolve, reject) {
             img.onload = function(){

@@ -102,17 +102,22 @@ class ShaderProgram {
     var pixel = new Uint8Array([0, 0, 0, 0]);
     var image = new Image();
 
-    if(options.force_width != undefined){
-      image.width = options.force_width;
-    }
-    if(options.force_height != undefined){
-      image.height = options.force_height;
-    }
 
     image.addEventListener("load", function () {
-	  // Cleanup before setting again
+      if(options.force_width != undefined ||
+         options.force_height != undefined
+        ){
+        let can = document.createElement("canvas");
+        let ctx = can.getContext("2d");
+        can.width = options.force_width;
+        can.height = options.force_height;
+        ctx.drawImage(image, 0, 0, options.force_width, options.force_height);
+        image = can;
+      }
+
+      // Cleanup before setting again
       if(app.textures[name] != undefined){
-		app.delete_texture(name);
+        app.delete_texture(name);
       }
 
       var texture = gl.createTexture();

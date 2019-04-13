@@ -58,6 +58,11 @@
         methods: {
           findImageDim(){
             let app = this;
+
+            if(this.image == null){
+              return;
+            }
+
             // Create headless image to find out width and height
             let img = document.createElement("img");
 

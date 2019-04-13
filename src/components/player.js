@@ -45,7 +45,8 @@ Vue.component('player', {
       <scene-selector
         ref="scene-selector"
         v-on:playLooping="playLooping"
-        v-bind:player="player"/>
+        v-bind:player="player"
+	 />
     </div>
     <buy-video ref="buyVideo"
                v-bind:settings="settings"/>

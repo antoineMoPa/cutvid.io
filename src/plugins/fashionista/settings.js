@@ -89,6 +89,9 @@
         },
         watch: {
           image(){
+            if(this.image == null){
+              return;
+            }
             let url = '/app/plugins/fashionista/backgrounds/'+this.image+'.svg';
             this.shaderProgram.set_texture("mask", url, function(){}, {
               force_width: this.player.width,

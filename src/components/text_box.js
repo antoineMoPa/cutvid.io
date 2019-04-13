@@ -2,7 +2,6 @@ Vue.component('textBox', {
   template: `
 <div>
   <div class="text-box"
-    v-bind:style="style"
     v-if="active"
     v-on:mousedown.self="textBoxDown"
     v-on:click="sendFocus"
@@ -33,7 +32,7 @@ Vue.component('textBox', {
 `,
   data(){
     return {
-      style: ""
+      uniqueID: (Math.random() + "").substr(0,10)
     };
   },
   props: ["text", "player", "active", "index"],
@@ -116,11 +115,11 @@ Vue.component('textBox', {
     },
     mouseUp(e){
       this.$el.classList.remove("dragging");
-      
+
       if(this.beginP == undefined){
         return;
       }
-      
+
       let p = this.getRealPos(e);
       let w = this.beginP.w;
       let h = this.beginP.h;
@@ -202,6 +201,12 @@ Vue.component('textBox', {
   mounted(){
     let container = document.querySelectorAll(".player-overlay")[0];
     this.container = container;
+
+
+    if(this.player != null){
+      this.player.add_on_resize_listener(this.buildStyle.bind(this), this.uniqueID);
+    }
+
     container.appendChild(this.$el);
     this.container.addEventListener('mousemove', this.mouseMove);
     window.addEventListener('mouseup', this.mouseUp);
@@ -209,6 +214,9 @@ Vue.component('textBox', {
   },
   beforeDestroy(){
     let container = document.querySelectorAll(".player-overlay")[0];
+
+    this.player.delete_on_resize_listener(this.uniqueID);
+
     try{
       container.removeChild(this.$el);
       this.container.removeEventListener('mousemove', this.mouseMove);
