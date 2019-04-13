@@ -8,13 +8,15 @@ Vue.component('player', {
         <input v-model.number="width" type="number"> x
         <input v-model.number="height" type="number">
         <label>Presets</label>
-        <a class="preset" v-on:click="set_dimensions(1920,1080)">Full HD 1080p</a>
-        <a class="preset" v-on:click="set_dimensions(1280,720)">HD 720p</a>
-        <a class="preset" v-on:click="set_dimensions(540,540);fps=10;">Square 540</a>
-        <a class="preset" v-on:click="set_dimensions(3840,2160)">UHD</a>
-        <a class="preset" v-on:click="set_dimensions(4096,2160)">Movie 4K</a>
-        <a class="preset" v-on:click="set_dimensions(600,315)">Instagram Ad</a>
-        <a class="preset" v-on:click="set_dimensions(864,1080)">Instagram Video</a>
+        <a class="preset" v-on:click="set_dimensions(1280,720,30)">HD 720p</a>
+        <a class="preset" v-on:click="set_dimensions(540,540,10)">Square 540</a>
+        <a class="preset" v-on:click="set_dimensions(600,315,30)">Instagram Ad</a>
+        <a class="preset" v-on:click="set_dimensions(864,1080,30)">Instagram Video</a>
+        <label>HQ presets (got a good GPU?)</label>
+        <a class="preset" v-on:click="set_dimensions(1920,1080,30)">Full HD 1080p</a>
+        <a class="preset" v-on:click="set_dimensions(3840,2160,30)">UHD</a>
+        <a class="preset" v-on:click="set_dimensions(4096,2160,30)">Movie 4K</a>
+
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
         <h3>Experts only</h3>
@@ -63,15 +65,16 @@ Vue.component('player', {
       height: 1080,
       aspect: 1920.0/1080,
       user_token: null,
-      fps: 50,
+      fps: 30,
       watermark: ""
     };
   },
   props: ["settings"],
   methods: {
-    set_dimensions(w, h){
+    set_dimensions(w, h, fps){
       this.width = w;
       this.height = h;
+      this.fps = fps;
       this.update_dimensions();
     },
     playAll(){
