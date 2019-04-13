@@ -10,7 +10,7 @@
       "description": "Put an image at any place, size, rotation on the canvas."
     }
   },
-  "Layer Reveals": {
+  "Layer transitions": {
     "leftRightReveal": {
       "description": "Reveals a text or any layer from left to right."
     },
@@ -18,14 +18,14 @@
       "description": "Reveals left to right and by small parts."
     }
   },
-  "Transitions": {
-    "fadeReveal": {
+  "Scene transitions": {
+    "fadeSceneReveal": {
       "description": "Fades in scene over last one."
     },
-    "clockReveal": {
+    "clockSceneReveal": {
       "description": "Fades in last scene with a clock motion."
     },
-    "slideReveal": {
+    "slideSceneReveal": {
       "description": "Reveals scene from left to right."
     }
   },
