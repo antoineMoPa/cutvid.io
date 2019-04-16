@@ -13,7 +13,14 @@
   <h4>Text</h4>
   <div v-for="(text, index) in texts" v-bind:key="text+index">
     <label>Your text</label>
-    <input v-model="text.text" name="text-input" type="text" style="width:calc(100% - 30px);">
+    <input v-model="text.text"
+           name="text-input"
+           type="text"
+           v-on:focus="onFocus"
+           v-on:blur="onBlur"
+           v-on:keyup="updateTexts"
+           v-bind:data-index="index"
+           style="width:calc(100% - 30px);">
     <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
     <input type="number" v-model.number="text.size">
     <input type="number" v-model.number="text.offsetTop" size="4">
@@ -64,7 +71,8 @@
             fonts: [],
             active: false,
             uniqueID: (Math.random() + "").substr(0,10),
-            texts: []
+            texts: [],
+            focussedInput: null
           };
         },
         props: ["player", "shaderProgram"],
@@ -110,16 +118,28 @@
             }
             this.updateTexts();
           },
+          onFocus(e){
+            let target = e.target;
+            let index = parseInt(target.getAttribute('data-index'));
+
+            this.focussedInput = index;
+            this.focusTarget = target;
+
+            this.updateTexts();
+          },
+          onBlur(){
+            this.focussedInput = null;
+            this.updateTexts();
+          },
           changeFont(index, fontName){
             this.texts[index].font = fontName;
             this.newFont();
           },
           updateTexts(){
-            let textCanvas = document.createElement("canvas");
+            let textCanvas = this.canvas;
             let ctx = textCanvas.getContext("2d");
             textCanvas.width = this.player.width;
             textCanvas.height = this.player.height;
-            ctx.clearRect(0,0,textCanvas.width, textCanvas.height);
 
             if(textCanvas == null || this.player == null){
               return;
@@ -171,13 +191,33 @@
               } else {
                 x = (left + t.width) * scaleFactor;
               }
-              ctx.fillText(t.text, x, y);
+
+              let textWithCursor = t.text;
+
+              if(this.focussedInput != null){
+                if(this.focussedInput == i){
+                  let begin = textWithCursor
+                    .substr(
+                      0,
+                      this.focusTarget.selectionStart
+                    );
+                  let end = textWithCursor
+                    .substr(
+                      this.focusTarget.selectionStart,
+                      textWithCursor.length
+                    );
+
+                  textWithCursor = begin + "|" + end;
+                }
+              }
+
+              ctx.fillText(textWithCursor, x, y);
               ctx.restore();
             }
 
             this.shaderProgram.set_texture(
               "texture0",
-              textCanvas.toDataURL(),
+              textCanvas,
               function(){}
             );
           },
@@ -223,6 +263,8 @@
             };
           });
           this.img = img;
+
+          this.canvas = document.createElement("canvas");
 
           if(this.player != null){
             this.player.add_on_resize_listener(this.updateTexts.bind(this), this.uniqueID);

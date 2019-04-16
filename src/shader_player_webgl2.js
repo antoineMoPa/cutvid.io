@@ -102,8 +102,7 @@ class ShaderProgram {
     var pixel = new Uint8Array([0, 0, 0, 0]);
     var image = new Image();
 
-
-    image.addEventListener("load", function () {
+    function load() {
       if(options.force_width != undefined ||
          options.force_height != undefined
         ){
@@ -143,9 +142,16 @@ class ShaderProgram {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       }
       ready();
-    });
+    }
 
-    image.src = url;
+    // Is this a canvas?
+    if(url.tagName != undefined && url.tagName == "CANVAS"){
+      image = url;
+      load();
+    } else {
+      image.addEventListener("load", load);
+      image.src = url;
+    }
   }
 
   delete_texture(name) {
