@@ -703,6 +703,10 @@ input{
 
 /* GFONT PICKER SPECIFIC ------------ */
 
+.gfont-plugin{
+  position:relative;
+}
+
 .gfont-plugin .gfont-button{
   background:#fff;
   margin:0;
@@ -728,9 +732,13 @@ input{
   margin-bottom: -13px;
 }
 
+.gfont-plugin .hide-fonts-button{
+  position:fixed;
+  top:40px;
+  left:40px;
+}
+
 .gfont-plugin .gfont-scrollbox{
-  max-height:300px;
-  overflow-y:scroll;
   margin-top:10px;
   scrollbar-width: thin;
   margin-right: 20px;

@@ -31,11 +31,14 @@
     <h4>Font selection</h4>
     <span class="info">Current font: {{text.font}}</span><br><br>
     <div v-if="text.showFonts">
-      <button v-on:click="showFonts = false">Hide Fonts</button>
+      <button v-on:click="text.showFonts = false"
+		      class="hide-fonts-button"
+		>Hide Fonts</button>
     </div>
     <div v-if="!text.showFonts">
       <button v-on:click="text.showFonts = true">Browse Fonts</button>
     </div>
+	<br><br>
     <div class="gfont-scrollbox" v-if="text.showFonts">
       <div v-for="info in fonts">
         <span class="raw-fontname">{{info.font}}</span><br>
