@@ -1,38 +1,40 @@
 Vue.component('textBox', {
   template: `
 <div>
-  <div class="text-box"
+  <div v-bind:class="'text-box ' + (editing?'text-box-editable':'')"
     v-if="active"
     v-on:mousedown.self="textBoxDown"
-    v-on:click="sendFocus"
+    v-on:click="focus"
     >
     <div class="align-buttons">
       <div class="align-button"
            v-on:click="alignLeft">
         <img src="/app/icons/feather/align-left.svg">
-      </div>
-      <div class="align-button"
+      </div><div class="align-button"
            v-on:click="alignCenter">
         <img src="/app/icons/feather/align-center.svg">
-      </div>
-      <div class="align-button"
+      </div><div class="align-button"
            v-on:click="alignRight">
         <img src="/app/icons/feather/align-right.svg">
-      </div>
-    </div>
-    <div class="delete-button"
+      </div><div class="delete-button"
          v-on:click="remove">
-      <img src="/app/icons/feather/x.svg">
+        <img src="/app/icons/feather/x.svg">
+      </div>
     </div>
     <div class="handle bottom-right-handle"
          v-on:mousedown="bottomRightDown"
     />
+    <div class="editable-text" contenteditable
+         v-on:mousedown.self="textBoxDown"
+         v-on:input="change">
+    </div>
   </div>
 </div>
 `,
   data(){
     return {
-      uniqueID: (Math.random() + "").substr(0,10)
+      uniqueID: (Math.random() + "").substr(0,10),
+      editing: false
     };
   },
   props: ["text", "player", "active", "index"],
@@ -40,7 +42,12 @@ Vue.component('textBox', {
 
   },
   watch: {
-
+    text: {
+      handler: function(){
+        this.buildStyle();
+      },
+      deep: true
+    }
   },
   methods: {
     buildStyle(_left, _top, _w, _h){
@@ -66,10 +73,26 @@ Vue.component('textBox', {
       let h = (_h || this.text.size) * scaleFactor;
 
       let box = this.$el.querySelectorAll(".text-box")[0];
-      box.style.top = top+"px";
+      let editableText = this.$el.querySelectorAll(".editable-text")[0];
+
+      h += 20;
+
+      box.style.top = (-10+top)+"px";
       box.style.left = left+"px";
       box.style.width = w+"px";
-      box.style.height = h+"px";
+      box.style.maxWidth = w+"px";
+      box.style.height = h+"px"
+      box.style.maxHeight = h+"px"
+      if(editableText != undefined){
+        editableText.style.height = h+"px";
+        editableText.style.maxWidth = w+"px";
+        editableText.style.lineHeight = h + "px";
+        editableText.style.textAlign = this.text.align;
+      }
+      box.style.textAlign = this.text.align;
+      box.style.fontSize = this.text.size * scaleFactor + "px";
+
+      box.style.fontFamily = this.text.font;
     },
     remove(){
       this.$emit("remove", this.index);
@@ -106,12 +129,23 @@ Vue.component('textBox', {
       this.draggingBox = true;
       this.setBegin(e);
     },
-    sendFocus(){
-      this.$emit("down", this.index);
+    focus(){
+      let app = this;
+      this.editing = true;
+      window.addEventListener("click", function(){
+        app.editing = false;
+      }, {once: true});
     },
     bottomRightDown(e){
       this.draggingBottomRight = true;
       this.setBegin(e);
+    },
+    change(){
+      let editableText = this.$el.querySelectorAll(".editable-text")[0];
+
+      //editableText.innerText = editableText.innerText.replace("\n", "");
+
+      this.$emit("input", this.index, editableText.innerText);
     },
     mouseUp(e){
       this.$el.classList.remove("dragging");
@@ -202,6 +236,8 @@ Vue.component('textBox', {
     let container = document.querySelectorAll(".player-overlay")[0];
     this.container = container;
 
+    let editableText = this.$el.querySelectorAll(".editable-text")[0];
+    editableText.innerText = this.text.text;
 
     if(this.player != null){
       this.player.add_on_resize_listener(this.buildStyle.bind(this), this.uniqueID);

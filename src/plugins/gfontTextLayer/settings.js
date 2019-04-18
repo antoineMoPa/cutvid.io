@@ -12,19 +12,8 @@
 <div class="gfont-plugin">
   <h4>Text</h4>
   <div v-for="(text, index) in texts" v-bind:key="text+index">
-    <label>Your text</label>
-    <input v-model="text.text"
-           name="text-input"
-           type="text"
-           v-on:focus="onFocus"
-           v-on:blur="onBlur"
-           v-on:keyup="updateTexts"
-           v-bind:data-index="index"
-           style="width:calc(100% - 30px);">
-    <label class="span-table"><span>Font size</span><span>Offset top</span><span>Offset left</span></label>
-    <input type="number" v-model.number="text.size">
-    <input type="number" v-model.number="text.offsetTop" size="4">
-    <input type="number" v-model.number="text.offsetLeft" size="4">
+    <label>Font size</label>
+    <input type="number" v-model.number="text.size" step="any">
     <br>
     <label><span>Color</span></label>
     <input v-model="text.color" type="color">
@@ -32,13 +21,13 @@
     <span class="info">Current font: {{text.font}}</span><br><br>
     <div v-if="text.showFonts">
       <button v-on:click="text.showFonts = false"
-		      class="hide-fonts-button"
-		>Hide Fonts</button>
+              class="hide-fonts-button"
+        >Hide Fonts</button>
     </div>
     <div v-if="!text.showFonts">
       <button v-on:click="text.showFonts = true">Browse Fonts</button>
     </div>
-	<br><br>
+    <br><br>
     <div class="gfont-scrollbox" v-if="text.showFonts">
       <div v-for="info in fonts">
         <span class="raw-fontname">{{info.font}}</span><br>
@@ -57,6 +46,7 @@
            v-bind:index="index"
            v-bind:player="player"
            v-on:move="moveText"
+           v-on:input="changeText"
            v-on:remove="remove"
            v-on:align="align"
            v-bind:active="active"/>
@@ -105,6 +95,9 @@
             if(inputs.length >= index){
               inputs[index].focus();
             }
+          },
+          changeText(index, text){
+            this.texts[index].text = text;
           },
           moveText(index, x, y, w, h){
             if(x != null){
@@ -195,26 +188,7 @@
                 x = (left + t.width) * scaleFactor;
               }
 
-              let textWithCursor = t.text;
-
-              if(this.focussedInput != null){
-                if(this.focussedInput == i){
-                  let begin = textWithCursor
-                    .substr(
-                      0,
-                      this.focusTarget.selectionStart
-                    );
-                  let end = textWithCursor
-                    .substr(
-                      this.focusTarget.selectionStart,
-                      textWithCursor.length
-                    );
-
-                  textWithCursor = begin + "|" + end;
-                }
-              }
-
-              ctx.fillText(textWithCursor, x, y);
+              ctx.fillText(t.text, x, y);
               ctx.restore();
             }
 
