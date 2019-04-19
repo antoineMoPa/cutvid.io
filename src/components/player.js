@@ -31,11 +31,7 @@ Vue.component('player', {
           <input type="file" v-on:change="onImportJSON"/>
         </label>
       </div>
-      <div class="switchable-panel all-scenes-container">
-        <h3>Scene</h3>
-        <!-- sequencer puts stuff here -->
-      </div>
-      <div class="switchable-panel all-effects-container">
+      <div class="switchable-panel all-sequences-container">
         <h3>Effects</h3>
         <!-- sequencer puts stuff here -->
       </div>
@@ -48,7 +44,7 @@ Vue.component('player', {
         ref="sequencer"
         v-on:playLooping="playLooping"
         v-bind:player="player"
-	 />
+     />
     </div>
     <buy-video ref="buyVideo"
                v-bind:settings="settings"/>
@@ -98,7 +94,7 @@ Vue.component('player', {
       let app = this;
       let left_panel_width = 315;
       let x_spacing = 60 + left_panel_width + 40; // left theme settings panel and margin
-      let y_spacing = 100 + 100 + 20; // 100: bottom ui, 100: sequencer, margin
+      let y_spacing = 100 + 150 + 20; // 100: bottom ui, 250: sequencer, margin
 
       let x_available_space = window.innerWidth;
       let y_available_space = window.innerHeight;
@@ -116,28 +112,28 @@ Vue.component('player', {
       let displayed_h = available_size / app.aspect;
       let canvas_container = document.querySelectorAll("#main-player .canvas-container")[0];
       let player_overlay = document.querySelectorAll("#main-player .player-overlay")[0]
-      let scene_selector = document.querySelectorAll("#main-player .sequencer")[0];
-      
-      scene_selector.style.width =
+      let sequencer = document.querySelectorAll("#main-player .sequencer")[0];
+
+      sequencer.style.width =
         (x_available_space - x_spacing) + "px";
-      scene_selector.style.top = 
+      sequencer.style.top =
         (y_available_space - y_spacing + 35) + "px";
-      
-      scene_selector.style.left = (x_spacing - 20) + "px";
-      
+
+      sequencer.style.left = (x_spacing - 20) + "px";
+
       player_overlay.style.width =
         app.player.canvas.style.maxWidth =
         displayed_w + "px";
       player_overlay.style.height =
         app.player.canvas.style.maxHeight =
           displayed_h + "px";
-      
+
       player_overlay.style.position =
         canvas_container.style.position = "absolute";
-      
+
       player_overlay.style.top =
         canvas_container.style.top = 0 + "px";
-      
+
       let x_align_center = parseInt((x_available_space - x_spacing - available_size) / 2);
       player_overlay.style.left =
         canvas_container.style.left =
@@ -502,11 +498,11 @@ Vue.component('player', {
     },
     unserialize(data){
       let app = this;
-      
+
       this.width = data.width;
       this.height = data.height;
       this.fps = data.fps;
-      
+
       this.$refs['sequencer'].unserialize(data.scenes);
     }
   },
@@ -533,9 +529,9 @@ Vue.component('player', {
     let container = document.querySelectorAll("#main-player .canvas-container")[0];
     app.player.set_container(container);
 
-    this.switch_panel(2);
-    this.$refs['panel-selector'].switch_to(2);
+    this.switch_panel(1);
+    this.$refs['panel-selector'].switch_to(1);
 
     this.$refs['sequencer'].unserialize();
   },
-})
+});

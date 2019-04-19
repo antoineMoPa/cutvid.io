@@ -150,134 +150,6 @@ input{
   margin-left:0;
 }
 
-.sequencer{
-  height:105px;
-  background:#111;
-  border-radius:3px;
-  overflow-x: auto;
-  white-space: nowrap;
-  overflow-y: hidden;
-  scrollbar-color: #888 #222;
-  scrollbar-width: thin;
-  position:relative;
-  user-select: none;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
-}
-
-.sequencer .sequencer-title{
-  position:absolute;
-  top:0;
-  left:10px;
-  line-height:20px;
-  color:#666;
-  font-size:10px;
-  z-index:10;
-}
-
-.sequencer .scene{
-  display: inline-block;
-  background:#000;
-  height: 80px;
-  max-width: 142px;
-  max-height: 80px;
-  overflow:hidden;
-  position:relative;
-  vertical-align: top;
-  margin-top:10px;
-  margin-right:5px;
-  border-radius:3px;
-  cursor:pointer;
-  border:1px solid transparent;
-}
-
-.sequencer .scene-preview{
-  background:#111;
-  height:100%;
-  border-radius:3px;
-  min-width:100px;
-}
-
-.sequencer .selected-scene{
-  box-shadow: 0 0 5px rgba(255,255,255,0.2);
-  border:1px solid #333;
-}
-
-.sequencer .scene .sequencer-icon{
-  position:absolute;
-  top:3px;
-  right:35px;
-  padding:5px;
-  background:#111;
-  border-radius:3px;
-  opacity:0;
-  transition:all 0.1s;
-}
-
-/*
-   Show scene icons only when mouse is hover sequencer
-   for cleaner UI.
-*/
-.sequencer:hover .scene .sequencer-icon{
-  opacity:0.5;
-}
-
-/* Make icon entirely opaque on hover */
-.sequencer .scene .sequencer-icon:hover{
-  opacity:1.0;
-}
-
-.sequencer .scene .remove-scene{
-  right:3px;
-}
-
-.sequencer .scene .move-scene-right{
-  top:auto;
-  right:4px;
-  bottom:5px;
-}
-
-.sequencer .scene .move-scene-left{
-  top:auto;
-  left:4px;
-  right:auto;
-  bottom:5px;
-}
-
-.sequencer .adder-container{
-  height:80px;
-  display:inline-block;
-}
-
-.sequencer .add-button{
-  border:none;
-  border-radius:20px;
-  height:30px;
-  background:#000;
-  cursor:pointer;
-  color:#fff;
-  width:180px;
-  padding-right:15px;
-  text-align:left;
-}
-
-.sequencer .copy-last-button{
-  position: absolute;
-  top:20px;
-}
-
-.sequencer .from-template-button{
-  position: absolute;
-  bottom:20px;
-}
-
-
-.sequencer button img{
-  margin-bottom:-5px;
-}
-
 .player-overlay{
   position:absolute;
   top:0;
@@ -460,19 +332,19 @@ input{
   opacity: 0;
 }
 
-.effects-settings .effect{
+.sequence-effects .effect{
   margin-bottom: 10px;
 }
 
-.effects-settings .component-container{
+.sequence-effects .component-container{
   margin-top:18px;
 }
 
-.effects-settings-hidden{
+.sequence-effects-hidden{
   display:none;
 }
 
-.effects-settings input[type=color]{
+.sequence-effects input[type=color]{
   border:none;
   padding: 0;
   margin-right: 20px;
@@ -481,7 +353,17 @@ input{
   display:inline-block;
 }
 
-.effects-settings .info{
+.time-bar{
+  position:absolute;
+  top:0;
+  left:0;
+  width:6px;
+  height:155px;
+  background:rgba(255,255,255,0.5);
+  cursor:pointer;
+}
+
+.sequence-effects .info{
   font-size:13px;
 }
 
@@ -628,6 +510,73 @@ input{
 }
 
 /* COMPONENT SPECIFICS */
+
+/* BEGIN SEQUENCER */
+
+.sequencer{
+  position:absolute;
+  height:155px;
+  background: #222;
+  border-radius:3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  overflow-x:auto;
+}
+
+.sequencer .sequence{
+  position:absolute;
+  height:20px;
+  background:#333;
+  border-radius:4px;
+  border:1px solid #111;
+}
+
+.sequence-body{
+  position:absolute;
+  top:0;
+  left:25px;
+  width:calc(100% - 45px);
+  font-size:10px;
+  color:#fff;
+  line-height:20px;
+  cursor:pointer;
+}
+
+.sequence-button-left{
+  position:absolute;
+  top:0;
+  left:0;
+  width:20px;
+  height:20px;
+  border-radius:4px;
+  cursor:pointer;
+  background:url(/app/icons/feather/chevron-left.svg);
+  background-size:cover;
+}
+
+.sequence-button-left:hover{
+  opacity:1.0;
+}
+
+.sequence-button-right{
+  position:absolute;
+  top:0;
+  right:0;
+  width:20px;
+  height:20px;
+  opacity:0.7;
+  border-radius:4px;
+  cursor:pointer;
+  background:url(/app/icons/feather/chevron-right.svg);
+  background-size:cover;
+}
+
+.sequence-button-right:hover{
+  opacity:1.0;
+}
+
+/* END SEQUENCER */
 
 .scene-template-selector .theme-box img{
   width:480px;

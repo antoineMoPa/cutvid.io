@@ -62,9 +62,6 @@
         },
         props: ["player", "effect", "shaderProgram"],
         methods: {
-          beforeRender(player, time, currentScene){
-            player.renderPreviousScene(time, currentScene);
-          }
         },
         watch: {
           reverse(newReverseValue){
@@ -76,7 +73,6 @@
         },
         mounted(){
           this.effect.uniforms = this.uniforms;
-          this.effect.beforeRender = this.beforeRender;
         }
       }
     };

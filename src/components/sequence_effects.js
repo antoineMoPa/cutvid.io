@@ -12,9 +12,9 @@
   (However, it makes the code a bit tougher to read and work with)
 */
 
-Vue.component('effects-settings', {
+Vue.component('sequence-effects', {
   template: `
-  <div class="effects-settings">
+  <div class="sequence-effects">
     <p v-if="effectsIndex.length == 0">
       Start by adding an effect!
     </p>
@@ -66,12 +66,11 @@ Vue.component('effects-settings', {
   </div>`,
   data(){
     return {
-      effects: [],
       effectsIndex: [],
       moving: false
     };
   },
-  props: ["player", "active"],
+  props: ["player", "active", "effects"],
   methods: {
     loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
@@ -210,11 +209,11 @@ Vue.component('effects-settings', {
               if(initialData != undefined){
                 app.unserializeEffect(app.effectsIndex.length - 1, initialData);
               }
-			  
-			  let component = this.$refs[this.effects[app.effectsIndex.length - 1].component][0];
-			  component.active = this.active
-			  
-			  
+
+              let component = this.$refs[this.effects[app.effectsIndex.length - 1].component][0];
+              component.active = this.active
+
+
               if(autoApply){
                 app.applyEffectsChange();
               }
@@ -244,9 +243,9 @@ Vue.component('effects-settings', {
         // Put data in component data
         utils.unserialize_vue(component.$data, data);
       }
-	  
-	  component.active = this.active;
-	  
+
+      component.active = this.active;
+
       // Update uniforms
       this.applyEffectsChange();
     },
@@ -354,14 +353,14 @@ Vue.component('effects-settings', {
     }
   },
   watch: {
-	active(val){
-	  for(let effect in this.effects){
+    active(val){
+      for(let effect in this.effects){
         let comp = this.$refs[this.effects[effect].component][0];
-		comp.active = val;
-	  }
-	}
+        comp.active = val;
+      }
+    }
   },
   mounted(){
-	//this.addEffect("gfontTextLayer", null, true);
+    //this.addEffect("gfontTextLayer", null, true);
   }
 });

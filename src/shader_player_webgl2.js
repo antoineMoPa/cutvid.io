@@ -198,15 +198,10 @@ class ShaderPlayerWebGL2 {
     this.window_focused = true;
     this.anim_timeout = null;
     this.paused = false;
-    this.scenes = [];
+    this.sequences = [];
     this.past_durations = 0;
     this.shaderProgram = null;
     this.begin_time = 0;
-    this.animate_force_scene = null;
-
-    // TODO: name all other (previous pass, previous_previous_pass)
-    this.PREVIOUS_SCENE_BUFFER = 6;
-    this.PREVIOUS_SCENE_RTT_TEXTURE = 6;
 
     // TODO: synchronize with vue
     this.width = 540;
@@ -214,9 +209,10 @@ class ShaderPlayerWebGL2 {
     this.rendering = false;
     this.mouse = [0, 0];
 
-    this.time = 0.0;
+    // Create time object just to be by reference
+    this.time = {};
+    this.time.time = 0.0;
     this.on_progress = function(progress){};
-    this.on_preview = function(current_scene, canvas){};
 
     this.on_resize_listeners = {};
 
@@ -412,220 +408,173 @@ class ShaderPlayerWebGL2 {
   get_total_duration() {
     let duration = 0;
 
-    for(let scene = 0; scene < this.scenes.length; scene++){
-      duration += parseFloat(this.scenes[scene].scene.duration);
+    for(let sequence = 0; sequence < this.sequences.length; sequence++){
+      let from = this.sequences[sequence].from;
+      let to = this.sequences[sequence].to;
+      duration += to - from;
     }
 
     return duration;
   }
 
-  /* Renders previous scene to previous scene buffer */
-  renderPreviousScene(time, currentScene){
-    if(currentScene == 0){
-      return;
-    }
-
-    this.draw_gl(time, currentScene - 1, this.PREVIOUS_SCENE_BUFFER);
-  }
-
-  draw_gl(time, force_scene, force_buffer) {
-    force_scene = force_scene != undefined? force_scene : null;
-    force_buffer = force_buffer != undefined? force_buffer : null;
-
+  draw_gl(force_time) {
     const gl = this.gl;
 
     if (gl == null) {
       return;
     }
 
-    let duration = 0;
+    let duration = this.get_total_duration();
 
-    for (let scene = 0; scene < this.scenes.length; scene++) {
-      duration += parseFloat(this.scenes[scene].scene.duration);
+    if(force_time != undefined){
+      this.time.time = force_time;
+    } else {
+      this.time.time = (1.0 * new Date().getTime()) / 1000.0;
+      this.time.time = this.time.time % duration;
     }
 
-    if(!this.animate_force_scene){
-      // Wrapped in the if because we do the modulo later
-      // when forcing a scene
-      time = time % duration;
-    }
+    let time = this.time.time;
 
-    let current_scene = 0;
+    this.on_progress(time, duration);
 
-    // Pseudotime is used to parse scenes
-    // and find current one
-    let scene_end_time = 0;
-
-    this.on_progress(time, duration/1000);
-
-    let scene_begin_time = 0
-    for (let scene = 0; scene < this.scenes.length; scene++) {
-      // Last scene end time becomes current end time
-      scene_begin_time = scene_end_time;
-      scene_end_time += parseFloat(this.scenes[scene].scene.duration);
-      current_scene = scene;
-
-      if( time < scene_end_time ||
-          scene == force_scene ||
-          scene == this.animate_force_scene) {
-        // Found current scene
-        break;
-      }
-    }
-
-    if(force_scene != null) {
-      current_scene = force_scene;
-    } else if (this.animate_force_scene != null) {
-      current_scene = this.animate_force_scene;
-    }
-
-    let scene = this.scenes[current_scene];
-
-    if (scene == undefined) {
+    if(this.sequences.length == 0){
       return;
     }
 
-    // force_scene overrides animate_force_scene
-    if (this.animate_force_scene != null && force_scene == null) {
-      time = (time % scene.scene.duration) + scene_begin_time;
+    let currentPassesByLayer = [
+      [],[],[],[],[],[],
+    ];
+
+    for(let i = 0; i < this.sequences.length; i++){
+      let seq = this.sequences[i];
+      if(time < seq.from || time > seq.to){
+        continue;
+      }
+
+      currentPassesByLayer[seq.layer] = seq;
     }
+    console.log(currentPassesByLayer);
+    for (let layer = 0; layer < currentPassesByLayer; layer++) {
+      let seq = currentPassesByLayer[layer];
+      let passes = sequence.effects;
 
-    let currentRelativeTime = (time - scene_begin_time) / parseFloat(scene.scene.duration);
+      console.log(passes);
 
-    let passes = scene.passes;
+      for (let pass = 0; pass < passes.length; pass++) {
+        let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
+        let passData = passes[pass];
 
-    for (let pass = 0; pass < passes.length; pass++) {
-      let passData = passes[pass];
+        let shaderProgram = passData.shaderProgram;
+        shaderProgram.use();
+        let program = passes[pass].shaderProgram.program;
 
-      if(passData.beforeRender != undefined && passData.beforeRender != null && force_buffer == null){
-        passData.beforeRender(this, time, current_scene);
-      }
-
-      let shaderProgram = passData.shaderProgram;
-      shaderProgram.use();
-      let program = passes[pass].shaderProgram.program;
-
-      if (pass < passes.length - 1) {
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[pass]);
-      } else if (force_buffer != null){
-        // Bind to forced buffer
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[force_buffer]);
-      } else {
-        // null = screen
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      }
-
-      let i = 0;
-
-      gl.activeTexture(gl.TEXTURE0 + i);
-
-      // Manage lastpass
-      if (pass > 0) {
-        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-1]);
-        gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
-      } else {
-        gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
-      }
-
-      i++
-
-      gl.activeTexture(gl.TEXTURE0 + i);
-
-      // Bind last scene
-      if(force_buffer != this.PREVIOUS_SCENE_BUFFER){
-        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[this.PREVIOUS_SCENE_RTT_TEXTURE]);
-        gl.uniform1i(gl.getUniformLocation(program, 'previous_scene'), i);
-      } else {
-        gl.bindTexture(gl.TEXTURE_2D, null);
-      }
-
-      i++;
-
-      // Also add previous pass
-      if (pass > 1) {
-        gl.activeTexture(gl.TEXTURE0 + i);
-        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-2]);
-        gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_pass'), i);
-      }
-
-      i++;
-
-      for(let name in shaderProgram.textures){
-        gl.activeTexture(gl.TEXTURE0 + i);
-        var att = gl.getUniformLocation(program, name);
-        gl.bindTexture(gl.TEXTURE_2D, shaderProgram.textures[name]);
-        gl.uniform1i(att, i);
-        i++;
-      }
-
-      gl.uniform2fv(
-        gl.getUniformLocation(program, 'renderBufferRatio'),
-        [
-          this.renderBufferDim[0] / this.width,
-          this.renderBufferDim[1] / this.height
-        ]
-      );
-
-      gl.uniform2fv(
-        gl.getUniformLocation(program, 'mouse'),
-        [this.mouse[0], this.mouse[1]]
-      );
-
-      const passAttribute = gl.getUniformLocation(program, 'pass');
-      gl.uniform1f(passAttribute, pass + 1);
-
-      const timeAttribute = gl.getUniformLocation(program, 'time');
-      gl.uniform1f(timeAttribute, time);
-
-      const relativeTimeAttribute = gl.getUniformLocation(program, 'relativeTime');
-      gl.uniform1f(relativeTimeAttribute, currentRelativeTime);
-
-      const iGlobalTimeAttribute = gl.getUniformLocation(program, 'iGlobalTime');
-      const date = new Date();
-      let gtime = (date.getTime()) / 1000.0 % (3600 * 24);
-      // Add seconds
-      gtime += time;
-      gl.uniform1f(iGlobalTimeAttribute, gtime);
-
-
-      const iResolutionAttribute = gl.getUniformLocation(program, 'iResolution');
-
-      gl.uniform3fv(
-        iResolutionAttribute,
-        new Float32Array(
-          [
-            this.width,
-            this.height,
-            1.0
-          ]
-        ));
-
-      // Screen ratio
-      const ratio = this.width / this.height;
-
-      const ratioAttribute = gl.getUniformLocation(program, 'ratio');
-      gl.uniform1f(ratioAttribute, ratio);
-
-      for(let name in passData.uniforms){
-        let uni = passData.uniforms[name];
-        let attribute = gl.getUniformLocation(program, name);
-
-        if(uni.type == "f"){
-          gl.uniform1f(attribute, parseFloat(uni.value));
+        if (pass < passes.length - 1) {
+          gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[layer]);
+        } else {
+          // null = screen
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         }
-      }
 
-      gl.viewport(0, 0, this.width, this.height);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        let i = 0;
 
-      // Send preview sometimes
-      if( !this.rendering &&        /* Don't interfere with render*/
-          force_scene == null &&        /* Don't send if rendering past scene */
-          currentRelativeTime < 0.6 &&  /* Aim the middle of scene */
-          currentRelativeTime > 0.4 &&
-          Math.random() < 0.3           /* Not all the time*/
-        ){
-        this.on_preview(current_scene, this.canvas);
+        gl.activeTexture(gl.TEXTURE0 + i);
+
+        // Manage lastpass
+        if (layer > 0) {
+          gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[layer-1]);
+          gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
+        } else {
+          gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
+        }
+
+        i++
+
+        gl.activeTexture(gl.TEXTURE0 + i);
+
+        // Also add previous pass
+        if (pass > 1) {
+          gl.activeTexture(gl.TEXTURE0 + i);
+          gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-2]);
+          gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_pass'), i);
+        }
+
+        i++;
+
+        for(let name in shaderProgram.textures){
+          gl.activeTexture(gl.TEXTURE0 + i);
+          var att = gl.getUniformLocation(program, name);
+          gl.bindTexture(gl.TEXTURE_2D, shaderProgram.textures[name]);
+          gl.uniform1i(att, i);
+          i++;
+        }
+
+        gl.uniform2fv(
+          gl.getUniformLocation(program, 'renderBufferRatio'),
+          [
+            this.renderBufferDim[0] / this.width,
+            this.renderBufferDim[1] / this.height
+          ]
+        );
+
+        gl.uniform2fv(
+          gl.getUniformLocation(program, 'mouse'),
+          [this.mouse[0], this.mouse[1]]
+        );
+
+        const passAttribute = gl.getUniformLocation(program, 'pass');
+        gl.uniform1f(passAttribute, pass + 1);
+
+        const timeAttribute = gl.getUniformLocation(program, 'time');
+        gl.uniform1f(timeAttribute, time);
+
+        const relativeTimeAttribute = gl.getUniformLocation(program, 'relativeTime');
+        gl.uniform1f(relativeTimeAttribute, currentRelativeTime);
+
+        const iGlobalTimeAttribute = gl.getUniformLocation(program, 'iGlobalTime');
+        const date = new Date();
+        let gtime = (date.getTime()) / 1000.0 % (3600 * 24);
+        // Add seconds
+        gtime += time;
+        gl.uniform1f(iGlobalTimeAttribute, gtime);
+
+
+        const iResolutionAttribute = gl.getUniformLocation(program, 'iResolution');
+
+        gl.uniform3fv(
+          iResolutionAttribute,
+          new Float32Array(
+            [
+              this.width,
+              this.height,
+              1.0
+            ]
+          ));
+
+        // Screen ratio
+        const ratio = this.width / this.height;
+
+        const ratioAttribute = gl.getUniformLocation(program, 'ratio');
+        gl.uniform1f(ratioAttribute, ratio);
+
+        for(let name in passData.uniforms){
+          let uni = passData.uniforms[name];
+          let attribute = gl.getUniformLocation(program, name);
+
+          if(uni.type == "f"){
+            gl.uniform1f(attribute, parseFloat(uni.value));
+          }
+        }
+
+        gl.viewport(0, 0, this.width, this.height);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        // Send preview sometimes
+        if( !this.rendering &&        /* Don't interfere with render*/
+            currentRelativeTime < 0.6 &&  /* Aim the middle of scene */
+            currentRelativeTime > 0.4 &&
+            Math.random() < 0.3           /* Not all the time*/
+          ){
+        }
       }
     }
   }
@@ -649,13 +598,10 @@ class ShaderPlayerWebGL2 {
     this.anim_already_started = true;
 
     function _animate() {
-      let time = new Date().getTime();
-      time -= this.begin_time;
-
       // When rendering gif, draw is done elsewhere
       if (!player.rendering && player.window_focused && !player.paused) {
         try{
-          player.draw_gl(time/1000);
+          player.draw_gl();
         } catch (e) {
           console.error(e);
         }

@@ -1,372 +1,199 @@
-/*
-  Convention for the index:
-
-  sceneNumber = this.scenesIndex[sceneIndex]
-  scene = this.scenes[sceneNumber]
-
-  The index allows moving scenes around without removing any data.
-
-  (However, it makes the code a bit tougher to read and work with)
-*/
-
 Vue.component('sequencer', {
   template: `
     <div class="sequencer">
-      <div class="sequencer-title">
-        Scene
+      <div v-for="(sequence, index) in sequences" class="sequence" v-bind:ref="'sequence-'+index">
+        <div class="sequence-button-left"
+             v-on:mousedown="sequenceLeftDown(index)">
+        </div>
+        <div class="sequence-body"
+             v-on:mousedown="sequenceBodyDown(index)">
+          sequence
+        </div>
+        <div class="sequence-button-right"
+             v-on:mousedown="sequenceRightDown(index)">
+        </div>
       </div>
-        <transition-group name="fade" v-if="player != null">
-          <div v-for="(sceneNumber, sceneIndex) in scenesIndex"
-               v-if="!player.rendering"
-            v-on:click="switch_to(sceneIndex)"
-            v-bind:key="'scene-'+scenes[sceneNumber].id"
-            v-bind:class="'scene' + ' ' + (selected == sceneIndex? 'selected-scene': '')">
-            <!--
-            Copy: todo
-            <img src="icons/feather/copy.svg"
-                 title="copy scene"
-            v-on:click="copyScene(sceneIndex)"
-                 width="15"
-                 class="copy-scene sequencer-icon"/>
-            -->
-            <img src="icons/feather/arrow-left.svg"
-                 title="Move scene earlier in video"
-            v-on:click.stop="left(sceneIndex)"
-                 width="15"
-                 class="move-scene-left sequencer-icon"/>
-            <img src="icons/feather/arrow-right.svg"
-                 title="Move scene later in video"
-            v-on:click.stop="right(sceneIndex)"
-                 width="15"
-                 class="move-scene-right sequencer-icon"/>
-            <img src="icons/feather/trash.svg"
-                 title="remove scene"
-            v-on:click.stop="remove(sceneNumber, sceneIndex)"
-                 v-if="scenesIndex.length > 1"
-                 width="15"
-                 class="remove-scene sequencer-icon"/>
-            <img v-bind:class="'scene-preview scene-preview-' + scenes[sceneNumber].id"/>
-          </div>
-        </transition-group>
-            <div class="adder-container">
-              <button v-on:click="addSceneButton"
-                      class="add-button copy-last-button">
-                <img src="icons/feather/plus.svg" title="new scene" width="20"/>
-                Copy last
-              </button>
-                <button v-on:click="fromTemplateButton"
-                        class="add-button from-template-button">
-                  <img src="icons/feather/plus.svg" title="new scene from template" width="20"/>
-                  From template
-                </button>
-            </div>
-                  <!-- These effects are all added to the panel
-                  at the left manually in mounted() -->
-                  <div class="all-effects">
-                    <effects-settings
-                            v-for="(sceneNumber, sceneIndex) in scenesIndex"
-                      v-bind:active="selected == sceneIndex"
-                      v-bind:class="(selected == sceneIndex)? '': 'effects-settings-hidden'"
-                      v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
-                      v-bind:ref="'effects-settings-' + scenes[sceneNumber].id"
-                      v-on:ready="effectsSettingsReady(sceneIndex)"
-                      v-on:effectsChanged="effectsChanged(sceneIndex)"
-                      v-bind:player="player"/>
-                  </div>
-                      <div class="all-scenes">
-                        <div
-                            v-for="(sceneNumber, sceneIndex) in scenesIndex"
-                            v-if="selected == sceneIndex"
-                          v-bind:key="'effects-settings-' + scenes[sceneNumber].id"
-                          >
-                          <label>Duration (seconds)</label>
-                            <input type="number" min="0" max="300" step="0.1" v-model="scenes[sceneNumber].duration">
-                        </div>
-                      </div>
-                            <scene-template-selector ref="scene-template-selector"/>
-    </div>`,
-  data(){
+      <div class="time-bar" ref="timeBar" v-on:mousedown="timeBarDown"></div>
+      <!-- These effects are moved in mounted() -->
+      <div class="all-sequences">
+        <sequence-effects v-for="(sequence, sequenceIndex) in sequences"
+          v-bind:active="sequence.selected"
+          v-bind:class="(sequence.selected)? '': 'sequence-effects-hidden'"
+          v-bind:key="'sequence-' + sequence.id"
+          v-bind:ref="'sequence-' + sequence.id"
+          v-on:ready="effectsSettingsReady(sequenceIndex)"
+          v-bind:effects="sequence.effects"
+          v-bind:player="player"/>
+      </div>
+    </div>
+  `,
+  props: ["player"],
+  data: function(){
     return {
-      scenes: [],
-      scenesIndex: [],
-      selected: 0,
+      time: {time: 0.0},
+      selected: null,
+      dragging: null,
+      draggingBody: null,
+      draggingLeft: null,
+      draggingRight: null,
+      draggingTimeBar: null,
+      sequences: [{
+        id: utils.increment_unique_counter("sequence"),
+        selected: true,
+        layer: 0,
+        from: 0,
+        to: 3,
+        effects: [],
+      }]
     };
   },
-  props: ["player"],
   methods: {
-    switch_to(index){
-      if(index > this.scenes.length || index < 0){
-        return;
-      }
-      this.selected = index;
-      this.effectsChanged(this.selected);
-    },
-    copyScene(i){
-      let uniqueSceneID = utils.increment_unique_counter("scene");
-      // todo
-    },
-    onPreview(sceneIndex, canvas){
-      let number = this.scenesIndex[sceneIndex];
+    serialize(){
+      let data = {};
 
-      if(this.scenes[number] == undefined){
-        // This can happen when deleting scenes
-        return;
-      }
+      for(let i = 0; i < this.sequences.length; i++){
+        let component = this.$refs['sequence-effects-' + scene.id][0];
 
-      let id = this.scenes[number].id;
-      let preview = document.querySelectorAll(".scene-preview-" + id)[0];
-      let tempCanvas = document.createElement("canvas");
-      let ctx = tempCanvas.getContext("2d");
-      let ratio = canvas.width/canvas.height;
-
-      tempCanvas.width = 100*ratio;
-      tempCanvas.height = 100;
-      ctx.drawImage(canvas, 0, 0, 100*ratio, 100);
-      preview.src = tempCanvas.toDataURL();
-    },
-    serialize(index){
-      // If index is given, we only export 1 scene
-
-      let data = [];
-      for(let sceneIndex in this.scenesIndex){
-        if(index != undefined && index != sceneIndex){
-          continue;
-        }
-
-        let scene = this.scenes[this.scenesIndex[sceneIndex]];
-        let component = this.$refs['effects-settings-' + scene.id][0];
         data.push({
           effects: component.serialize(),
           duration:  scene.duration
         });
-      }
-      return data;
-    },
-    unserialize(data, deleteCurrent){
-      let app = this;
 
-      // We assume we delete if deleteCurrent is undefined
-      if(deleteCurrent == undefined || deleteCurrent){
-        this.scenes.splice(0);
-        this.scenesIndex.splice(0);
-      }
-
-      let promise = null;
-
-      for(let sceneIndex in data){
-        let sceneData = data[sceneIndex];
-        let currentPromiseGetter = function(){
-          return app.addScene(sceneData)
-        };
-
-        if(promise == null){
-          promise = currentPromiseGetter();
-        } else {
-          promise = promise.then(currentPromiseGetter);
-        }
+        return "{}";
       }
     },
-    addSceneButton(){
-      // Copy last scene
-      let data = this.serialize(this.scenesIndex.length - 1);
-
-      this.unserialize(data, false);
+    unserialize(data){
+      for(let i = 0; i < data; i++){
+        this.sequences.push(data);
+      }
+      this.repositionSequences();
     },
-    fromTemplateButton(){
-      let app = this;
-      this.$refs['scene-template-selector'].open(function(data){
-
-        let erase = false;
-
-        // If scene is empty and alone, clear it
-        if(app.scenes.length == 1){
-          let id = app.scenes[app.scenesIndex[0]].id;
-          let component = app.$refs['effects-settings-' + id][0];
-
-          if(component.effects.length == 0){
-            erase = true;
-          }
-        }
-
-        app.unserialize(data, erase);
-      });
+    timeBarDown(){
+      this.player.pause();
+      this.dragging = null
+      this.draggingTimeBar = true;
+      this.draggingBody = false;
+      this.draggingLeft = false;
+      this.draggingRight = false;
+      window.addEventListener("mouseup", this.unDrag.bind(this), {once: true});
+      this.mouseMoveListener = this.mouseMove.bind(this);
+      window.addEventListener("mousemove", this.mouseMoveListener);
     },
-    addScene(initialData){
-      let app = this;
-      let uniqueSceneID = utils.increment_unique_counter("scene");
-      let ui = this.$parent.$refs['ui'];
+    sequenceBodyDown(index){
+      this.dragging = index;
+      this.draggingTimeBar = false;
+      this.draggingBody = true;
+      this.draggingLeft = false;
+      this.draggingRight = false;
+      window.addEventListener("mouseup", this.unDrag.bind(this), {once: true});
+      this.mouseMoveListener = this.mouseMove.bind(this);
+      window.addEventListener("mousemove", this.mouseMoveListener);
+    },
+    sequenceLeftDown(index){
+      this.dragging = index;
+      this.draggingTimeBar = false;
+      this.draggingBody = false;
+      this.draggingLeft = true;
+      this.draggingRight = false;
+      window.addEventListener("mouseup", this.unDrag.bind(this), {once: true});
+      this.mouseMoveListener = this.mouseMove.bind(this);
+      window.addEventListener("mousemove", this.mouseMoveListener);
+    },
+    sequenceRightDown(index){
+      this.dragging = index;
+      this.draggingTimeBar = false;
+      this.draggingBody = false;
+      this.draggingLeft = false;
+      this.draggingRight = true;
+      window.addEventListener("mouseup", this.unDrag.bind(this), {once: true});
+      this.mouseMoveListener = this.mouseMove.bind(this);
+      window.addEventListener("mousemove", this.mouseMoveListener);
+    },
+    unDrag(){
+      window.removeEventListener("mousemove", this.mouseMoveListener);
+      this.draggingBody = false;
+      this.draggingLeft = false;
+      this.draggingRight = false;
+    },
+    mouseMove(e){
+      let scale = this.getScale();
+      let seq = this.sequences[this.dragging];
+      let x = e.clientX - parseInt(this.$el.style.left);
+      let y_prime = e.clientY - parseInt(this.$el.style.top);
+      let h = parseInt(this.$el.clientHeight);
+      let y = h - y_prime;
+      let layer = Math.floor(y / scale.layerScale);
 
-      let settings = {
-        id: uniqueSceneID,
-        duration: 1.0,
-      };
+      // Limit to 6 (including 0)
+      layer = Math.min(layer, 5);
+      layer = Math.max(layer, 0);
 
-      if(this.player != null){
-        this.player.pause();
+      if(this.draggingLeft){
+        // -10 to grab from center
+        seq.from = (x - 10) / scale.timeScale;
+        this.repositionSequences();
       }
 
-      ui.set_progress(0.1);
-
-      return new Promise(function(resolve, reject){
-        this.scenes.splice(this.scenes.length, 0, settings);
-        this.scenesIndex.splice(this.scenesIndex.length, 0, this.scenes.length - 1);
-
-        ui.set_progress(0.5);
-
-        this.$nextTick(function(){
-          let component = this.$refs['effects-settings-' + settings.id];
-          if(component == undefined){
-            return;
-          }
-          component = component[0];
-
-          // Unserialize if needed
-          if(initialData != undefined){
-            component.unserialize(initialData.effects, true).then(function(){
-              ui.set_progress(1.0);
-
-              setTimeout(function(){
-                ui.set_progress(0.0);
-              }, 500);
-
-              app.selected = app.scenesIndex[app.scenesIndex.length - 1];
-              if(app.player != null){
-                app.player.play();
-              }
-            });
-            settings.duration = initialData.duration;
-          } else {
-            ui.set_progress(0.0);
-          }
-
-          resolve();
-        });
-      }.bind(this));
-    },
-    right(sceneIndex){
-      if(sceneIndex >= this.scenesIndex.length - 1){
-        return;
+      if(this.draggingRight){
+        // -10 to grab from center
+        seq.to = (x - 10) / scale.timeScale;
+        this.repositionSequences();
       }
 
-      let old = this.scenesIndex[sceneIndex];
-      let oldScene = this.scenes[old];
-      let component = this.$refs['effects-settings-' + oldScene.id][0];
-      let oldData = component.serialize();
-      let preview = document.querySelectorAll(".scene-preview-" + oldScene.id)[0];
-      let oldImg = preview.src;
-
-      this.scenesIndex.splice(sceneIndex, 1);
-
-      setTimeout(function(){
-        this.scenesIndex.splice(sceneIndex + 1, 0, old);
-        this.$nextTick(function(){
-          let index = this.scenesIndex[sceneIndex + 1];
-          let id = this.scenes[index].id;
-          let component = this.$refs['effects-settings-' + id][0];
-          let preview = document.querySelectorAll(".scene-preview-" + id)[0];
-          preview.src = oldImg;
-          component.unserialize(oldData);
-        });
-      }.bind(this), 300);
-    },
-    left(sceneIndex){
-      if(sceneIndex < 1){
-        return;
+      if(this.draggingBody){
+        let duration = seq.to - seq.from;
+        // + duration/2 to grab from center
+        let newFrom = x / scale.timeScale - duration/2;
+        seq.from = newFrom;
+        seq.to = newFrom + duration;
+        seq.layer = layer;
+        this.repositionSequences();
       }
 
-      let old = this.scenesIndex[sceneIndex];
-      let oldScene = this.scenes[old];
-      let component = this.$refs['effects-settings-' + oldScene.id][0];
-      let oldData = component.serialize();
-      let preview = document.querySelectorAll(".scene-preview-" + oldScene.id)[0];
-      let oldImg = preview.src;
-
-      this.scenesIndex.splice(sceneIndex, 1);
-
-      setTimeout(function(){
-        this.scenesIndex.splice(sceneIndex - 1, 0, old);
-
-        this.$nextTick(function(){
-          let index = this.scenesIndex[sceneIndex - 1];
-          let id = this.scenes[index].id;
-          let component = this.$refs['effects-settings-' + id][0];
-          let preview = document.querySelectorAll(".scene-preview-" + id)[0];
-          preview.src = oldImg;
-          component.unserialize(oldData);
-        });
-      }.bind(this), 300);
-    },
-    remove(sceneNumber, sceneIndex){
-      // Don't delete last scene
-      if(this.scenesIndex.length < 1){
-        return;
+      if(this.draggingTimeBar){
+        let time = x / scale.timeScale;
+        this.player.time.time = time;
+        this.player.draw_gl(time);
       }
-
-      // Decrement all elements after current index
-      this.scenesIndex = this.scenesIndex.map((number) => {return number > sceneNumber? number - 1: number; });
-
-      this.scenesIndex.splice(sceneIndex, 1);
-      this.scenes.splice(sceneNumber, 1);
-
-      this.$nextTick(function(){
-        this.switch_to(sceneIndex % this.scenesIndex.length);
-      });
     },
-    getSceneEffects(index){
-      let effect = this.scenes[this.scenesIndex[index]];
-      let component = this.$refs['effects-settings-' + effect.id];
+    getScale(){
+      let totalDuration = 10;
+      let timeScale = this.$el.clientWidth / totalDuration;
+      let layerScale = 25;
 
-      if(component == undefined || component[0] == undefined){
-        return [];
+      return {totalDuration, timeScale, layerScale};
+    },
+    repositionSequences(){
+      let scale = this.getScale();
+      for(let i = 0; i < this.sequences.length; i++){
+        let seq = this.sequences[i];
+        let el = this.$refs["sequence-"+seq.id][0];
+
+        el.style.left = (seq.from * scale.timeScale) + "px";
+        el.style.width = ((seq.to - seq.from) * scale.timeScale) + "px";
+        el.style.bottom = (5 + (seq.layer) * scale.layerScale) + "px";
       }
-
-      component = component[0];
-
-      return component.getOrderedEffects();
-    },
-    effectsChanged(sceneIndex){
-      let app = this;
-
-      if(this.player == undefined){
-        return;
-      }
-      let scene = this.scenes[this.scenesIndex[sceneIndex]];
-
-      this.playAll();
-      this.player.animate_force_scene = sceneIndex;
-      this.$emit("playLooping");
-    },
-    effectsSettingsReady(index){
-    },
-    playAll(){
-      let scenes = [];
-      for(let i in this.scenesIndex){
-        let scene = this.scenes[this.scenesIndex[i]];
-        scenes.push({
-          scene: scene,
-          passes: this.getSceneEffects(i)
-        });
-      }
-      this.player.scenes = scenes;
     }
   },
-  watch: {
+  watch:{
     player(){
-      this.player.on_preview = this.onPreview;
+      this.player.sequences = this.sequences;
+      this.player.time = this.time;
     },
+    time: {
+      handler(){
+        let scale = this.getScale();
+        this.$refs["timeBar"].style.left = (this.time.time * scale.timeScale) + "px";
+      },
+      deep: true
+    }
   },
   mounted(){
-    let allEffects = this.$el.querySelectorAll(".all-effects")[0];
-    let allEffectsContainer = document.querySelectorAll(".all-effects-container")[0];
-    allEffectsContainer.appendChild(allEffects);
+    this.repositionSequences();
 
-    let allScenes = this.$el.querySelectorAll(".all-scenes")[0];
-    let allScenesContainer = document.querySelectorAll(".all-scenes-container")[0];
-    allScenesContainer.appendChild(allScenes);
+    let allSequences = this.$el.querySelectorAll(".all-sequences")[0];
+    let allSequencesContainer = document.querySelectorAll(".all-sequences-container")[0];
 
-    this.$nextTick(function(){
-      // Add at least one empty scene
-      this.addScene();
-    });
+    allSequencesContainer.appendChild(allSequences);
   }
 });

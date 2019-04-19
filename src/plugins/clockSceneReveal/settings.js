@@ -37,9 +37,6 @@
         methods: {
           updateTexts(){
 
-          },
-          beforeRender(player, time, currentScene){
-            player.renderPreviousScene(time, currentScene);
           }
         },
         watch: {
@@ -47,7 +44,6 @@
         mounted(){
           this.updateTexts();
           this.effect.uniforms = this.uniforms;
-          this.effect.beforeRender = this.beforeRender;
         }
       }
     };

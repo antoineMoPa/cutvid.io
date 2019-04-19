@@ -2,13 +2,6 @@ Vue.component('ui', {
   template: `<div class="ui" v-if="player != null">
     <div class="ui-progress" v-bind:style="'width:' + progress_width + 'px'">
     </div>
-    <a v-bind:class="'ui-button play-all-button ' + ((!looping)?'ui-disabled':'')" v-on:click="playAll">
-      <img class="play-icon feather-button"
-           src="icons/feather/play.svg"/>
-      Play All
-    </a>
-    <span class="looping-info" v-if="looping">currently looping scene</span>
-    <span class="looping-info" v-else="looping">select a scene to loop it</span>
     <a class="ui-button play-button" 
        v-on:click="play()" 
        v-if="this.player.paused">
@@ -38,11 +31,6 @@ Vue.component('ui', {
   },
   props: ["player"],
   methods: {
-	playAll(){
-	  this.looping = false;
-	  this.player.setZeroTime();
-	  this.$emit('playAll');
-	},
 	play(){
 	  this.player.paused = false;
 	},
