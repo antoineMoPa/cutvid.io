@@ -150,7 +150,7 @@ input{
   margin-left:0;
 }
 
-.scene-selector{
+.sequencer{
   height:105px;
   background:#111;
   border-radius:3px;
@@ -167,7 +167,7 @@ input{
   -o-user-select: none;
 }
 
-.scene-selector .scene-selector-title{
+.sequencer .sequencer-title{
   position:absolute;
   top:0;
   left:10px;
@@ -177,7 +177,7 @@ input{
   z-index:10;
 }
 
-.scene-selector .scene{
+.sequencer .scene{
   display: inline-block;
   background:#000;
   height: 80px;
@@ -193,19 +193,19 @@ input{
   border:1px solid transparent;
 }
 
-.scene-selector .scene-preview{
+.sequencer .scene-preview{
   background:#111;
   height:100%;
   border-radius:3px;
   min-width:100px;
 }
 
-.scene-selector .selected-scene{
+.sequencer .selected-scene{
   box-shadow: 0 0 5px rgba(255,255,255,0.2);
   border:1px solid #333;
 }
 
-.scene-selector .scene .scene-selector-icon{
+.sequencer .scene .sequencer-icon{
   position:absolute;
   top:3px;
   right:35px;
@@ -217,41 +217,41 @@ input{
 }
 
 /*
-   Show scene icons only when mouse is hover scene-selector
+   Show scene icons only when mouse is hover sequencer
    for cleaner UI.
 */
-.scene-selector:hover .scene .scene-selector-icon{
+.sequencer:hover .scene .sequencer-icon{
   opacity:0.5;
 }
 
 /* Make icon entirely opaque on hover */
-.scene-selector .scene .scene-selector-icon:hover{
+.sequencer .scene .sequencer-icon:hover{
   opacity:1.0;
 }
 
-.scene-selector .scene .remove-scene{
+.sequencer .scene .remove-scene{
   right:3px;
 }
 
-.scene-selector .scene .move-scene-right{
+.sequencer .scene .move-scene-right{
   top:auto;
   right:4px;
   bottom:5px;
 }
 
-.scene-selector .scene .move-scene-left{
+.sequencer .scene .move-scene-left{
   top:auto;
   left:4px;
   right:auto;
   bottom:5px;
 }
 
-.scene-selector .adder-container{
+.sequencer .adder-container{
   height:80px;
   display:inline-block;
 }
 
-.scene-selector .add-button{
+.sequencer .add-button{
   border:none;
   border-radius:20px;
   height:30px;
@@ -263,18 +263,18 @@ input{
   text-align:left;
 }
 
-.scene-selector .copy-last-button{
+.sequencer .copy-last-button{
   position: absolute;
   top:20px;
 }
 
-.scene-selector .from-template-button{
+.sequencer .from-template-button{
   position: absolute;
   bottom:20px;
 }
 
 
-.scene-selector button img{
+.sequencer button img{
   margin-bottom:-5px;
 }
 

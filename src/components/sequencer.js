@@ -9,10 +9,10 @@
   (However, it makes the code a bit tougher to read and work with)
 */
 
-Vue.component('scene-selector', {
+Vue.component('sequencer', {
   template: `
-    <div class="scene-selector">
-      <div class="scene-selector-title">
+    <div class="sequencer">
+      <div class="sequencer-title">
         Scene
       </div>
         <transition-group name="fade" v-if="player != null">
@@ -27,24 +27,24 @@ Vue.component('scene-selector', {
                  title="copy scene"
             v-on:click="copyScene(sceneIndex)"
                  width="15"
-                 class="copy-scene scene-selector-icon"/>
+                 class="copy-scene sequencer-icon"/>
             -->
             <img src="icons/feather/arrow-left.svg"
                  title="Move scene earlier in video"
             v-on:click.stop="left(sceneIndex)"
                  width="15"
-                 class="move-scene-left scene-selector-icon"/>
+                 class="move-scene-left sequencer-icon"/>
             <img src="icons/feather/arrow-right.svg"
                  title="Move scene later in video"
             v-on:click.stop="right(sceneIndex)"
                  width="15"
-                 class="move-scene-right scene-selector-icon"/>
+                 class="move-scene-right sequencer-icon"/>
             <img src="icons/feather/trash.svg"
                  title="remove scene"
             v-on:click.stop="remove(sceneNumber, sceneIndex)"
                  v-if="scenesIndex.length > 1"
                  width="15"
-                 class="remove-scene scene-selector-icon"/>
+                 class="remove-scene sequencer-icon"/>
             <img v-bind:class="'scene-preview scene-preview-' + scenes[sceneNumber].id"/>
           </div>
         </transition-group>

@@ -33,19 +33,19 @@ Vue.component('player', {
       </div>
       <div class="switchable-panel all-scenes-container">
         <h3>Scene</h3>
-        <!-- scene-selector puts stuff here -->
+        <!-- sequencer puts stuff here -->
       </div>
       <div class="switchable-panel all-effects-container">
         <h3>Effects</h3>
-        <!-- scene-selector puts stuff here -->
+        <!-- sequencer puts stuff here -->
       </div>
       <panel-selector ref="panel-selector" v-on:switch="switch_panel"/>
     </div>
     <div id="main-player">
       <div class="canvas-container"/>
       <div class="player-overlay"/>
-      <scene-selector
-        ref="scene-selector"
+      <sequencer
+        ref="sequencer"
         v-on:playLooping="playLooping"
         v-bind:player="player"
 	 />
@@ -78,7 +78,7 @@ Vue.component('player', {
       this.update_dimensions();
     },
     playAll(){
-      this.$refs['scene-selector'].playAll();
+      this.$refs['sequencer'].playAll();
       this.player.animate_force_scene = null;
       this.player.play();
     },
@@ -98,7 +98,7 @@ Vue.component('player', {
       let app = this;
       let left_panel_width = 315;
       let x_spacing = 60 + left_panel_width + 40; // left theme settings panel and margin
-      let y_spacing = 100 + 100 + 20; // 100: bottom ui, 100: scene-selector, margin
+      let y_spacing = 100 + 100 + 20; // 100: bottom ui, 100: sequencer, margin
 
       let x_available_space = window.innerWidth;
       let y_available_space = window.innerHeight;
@@ -116,7 +116,7 @@ Vue.component('player', {
       let displayed_h = available_size / app.aspect;
       let canvas_container = document.querySelectorAll("#main-player .canvas-container")[0];
       let player_overlay = document.querySelectorAll("#main-player .player-overlay")[0]
-      let scene_selector = document.querySelectorAll("#main-player .scene-selector")[0];
+      let scene_selector = document.querySelectorAll("#main-player .sequencer")[0];
       
       scene_selector.style.width =
         (x_available_space - x_spacing) + "px";
@@ -496,7 +496,7 @@ Vue.component('player', {
       data.width = this.width;
       data.height = this.height;
       data.fps = this.fps;
-      data.scenes = this.$refs['scene-selector'].serialize();
+      data.scenes = this.$refs['sequencer'].serialize();
 
       return data;
     },
@@ -507,7 +507,7 @@ Vue.component('player', {
       this.height = data.height;
       this.fps = data.fps;
       
-      this.$refs['scene-selector'].unserialize(data.scenes);
+      this.$refs['sequencer'].unserialize(data.scenes);
     }
   },
   watch: {
@@ -536,6 +536,6 @@ Vue.component('player', {
     this.switch_panel(2);
     this.$refs['panel-selector'].switch_to(2);
 
-    this.$refs['scene-selector'].unserialize();
+    this.$refs['sequencer'].unserialize();
   },
 })
