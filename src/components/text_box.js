@@ -76,6 +76,7 @@ Vue.component('textBox', {
       let editableText = this.$el.querySelectorAll(".editable-text")[0];
 
       h += 20;
+      w -= 5;
 
       box.style.top = (-10+top)+"px";
       box.style.left = left+"px";

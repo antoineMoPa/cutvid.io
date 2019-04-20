@@ -387,10 +387,7 @@ class ShaderPlayerWebGL2 {
       gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, ww, hh);
     }
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    this.clear();
 
     // Triangle strip for whole screen square
     const vertices = [
@@ -417,6 +414,14 @@ class ShaderPlayerWebGL2 {
     return duration;
   }
 
+  clear() {
+    let gl = this.gl;
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  }
+
   draw_gl(force_time) {
     const gl = this.gl;
 
@@ -441,7 +446,9 @@ class ShaderPlayerWebGL2 {
       return;
     }
 
-    let currentPassesByLayer = [
+    let maxLayer = 0;
+
+    let sequencesByLayer = [
       [],[],[],[],[],[],
     ];
 
@@ -450,25 +457,36 @@ class ShaderPlayerWebGL2 {
       if(time < seq.from || time > seq.to){
         continue;
       }
-
-      currentPassesByLayer[seq.layer] = seq;
+      for(let j = 0; j < seq.effects.length; j++){
+        let effect = seq.effects[j];
+        let arr = sequencesByLayer[seq.layer];
+        for(let k = 0; k < effect.shaderPrograms.length; k++){
+          sequencesByLayer[seq.layer] =
+            sequencesByLayer[seq.layer].concat({
+              from: seq.from,
+              to: seq.to,
+              pass: effect.shaderPrograms[k]
+            });
+          if(seq.layer > maxLayer){
+            maxLayer = seq.layer;
+          }
+        }
+      }
     }
-    console.log(currentPassesByLayer);
-    for (let layer = 0; layer < currentPassesByLayer; layer++) {
-      let seq = currentPassesByLayer[layer];
-      let passes = sequence.effects;
 
-      console.log(passes);
+    this.clear();
 
-      for (let pass = 0; pass < passes.length; pass++) {
+    for (let layer = 0; layer < sequencesByLayer.length; layer++) {
+      let sequences = sequencesByLayer[layer];
+      for (let sequenceIndex = 0; sequenceIndex < sequences.length; sequenceIndex++) {
+        let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
-        let passData = passes[pass];
 
-        let shaderProgram = passData.shaderProgram;
+        let shaderProgram = seq.pass;
         shaderProgram.use();
-        let program = passes[pass].shaderProgram.program;
+        let program = shaderProgram.program;
 
-        if (pass < passes.length - 1) {
+        if (sequenceIndex < maxLayer - 1) {
           gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[layer]);
         } else {
           // null = screen
@@ -492,9 +510,9 @@ class ShaderPlayerWebGL2 {
         gl.activeTexture(gl.TEXTURE0 + i);
 
         // Also add previous pass
-        if (pass > 1) {
+        if (sequenceIndex > 1) {
           gl.activeTexture(gl.TEXTURE0 + i);
-          gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[pass-2]);
+          gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[layer-2]);
           gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_pass'), i);
         }
 
@@ -522,7 +540,7 @@ class ShaderPlayerWebGL2 {
         );
 
         const passAttribute = gl.getUniformLocation(program, 'pass');
-        gl.uniform1f(passAttribute, pass + 1);
+        gl.uniform1f(passAttribute, sequenceIndex + 1);
 
         const timeAttribute = gl.getUniformLocation(program, 'time');
         gl.uniform1f(timeAttribute, time);
@@ -556,8 +574,8 @@ class ShaderPlayerWebGL2 {
         const ratioAttribute = gl.getUniformLocation(program, 'ratio');
         gl.uniform1f(ratioAttribute, ratio);
 
-        for(let name in passData.uniforms){
-          let uni = passData.uniforms[name];
+        for(let name in shaderProgram.uniforms){
+          let uni = shaderProgram.uniforms[name];
           let attribute = gl.getUniformLocation(program, name);
 
           if(uni.type == "f"){
