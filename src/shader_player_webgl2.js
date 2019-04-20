@@ -214,6 +214,11 @@ class ShaderPlayerWebGL2 {
     this.time.time = 0.0;
     this.on_progress = function(progress){};
 
+	this.PREVIOUS_PASS_0 = 0;
+	this.PREVIOUS_PASS_1 = 1;
+	this.PREVIOUS_LAYER_0 = 2;
+	this.PREVIOUS_LAYER_1 = 3;
+	
     this.on_resize_listeners = {};
 
     this.on_error_listener = function () {
@@ -404,11 +409,12 @@ class ShaderPlayerWebGL2 {
 
   get_total_duration() {
     let duration = 0;
-
+	
     for(let sequence = 0; sequence < this.sequences.length; sequence++){
-      let from = this.sequences[sequence].from;
       let to = this.sequences[sequence].to;
-      duration += to - from;
+	  if(to > duration){
+		duration = to;
+	  }
     }
 
     return duration;
@@ -458,14 +464,18 @@ class ShaderPlayerWebGL2 {
         continue;
       }
       for(let j = 0; j < seq.effects.length; j++){
-        let effect = seq.effects[j];
+        let effect = seq.effects[seq.effectsIndex[j]];
         let arr = sequencesByLayer[seq.layer];
+		if(effect == undefined){
+		  continue;
+		}
         for(let k = 0; k < effect.shaderPrograms.length; k++){
           sequencesByLayer[seq.layer] =
             sequencesByLayer[seq.layer].concat({
               from: seq.from,
               to: seq.to,
-              pass: effect.shaderPrograms[k]
+              pass: effect.shaderPrograms[k],
+			  uniforms: effect.uniforms
             });
           if(seq.layer > maxLayer){
             maxLayer = seq.layer;
@@ -475,45 +485,52 @@ class ShaderPlayerWebGL2 {
     }
 
     this.clear();
-
+	let is_first = 1.0;
+	
+	let passCounter = -1;
+	let layerCounter = -1;	
     for (let layer = 0; layer < sequencesByLayer.length; layer++) {
+	  
       let sequences = sequencesByLayer[layer];
       for (let sequenceIndex = 0; sequenceIndex < sequences.length; sequenceIndex++) {
+		passCounter++;
+		layerCounter++;
         let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
 
         let shaderProgram = seq.pass;
         shaderProgram.use();
         let program = shaderProgram.program;
-
-        if (sequenceIndex < maxLayer - 1) {
-          gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[layer]);
+		
+        if (layer < maxLayer && sequenceIndex < sequences.length - 1) {
+          gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_PASS_0 + passCounter % 2]);
+		} else if (layer < maxLayer && sequenceIndex == sequences.length - 1) {
+		  // We are rendering last pass of layer
+		  gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_LAYER_0 + layerCounter % 2]);
         } else {
           // null = screen
           gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         }
-
+		
         let i = 0;
 
         gl.activeTexture(gl.TEXTURE0 + i);
 
-        // Manage lastpass
-        if (layer > 0) {
-          gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[layer-1]);
-          gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
-        } else {
-          gl.bindTexture(gl.TEXTURE_2D, null); // Prevent feedback
-        }
+		// The previous_pass buffer cycles constantly
+		let lastID = this.PREVIOUS_PASS_0 + passCounter % 2;
+        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[lastID]);
+        gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
 
         i++
 
         gl.activeTexture(gl.TEXTURE0 + i);
 
         // Also add previous pass
-        if (sequenceIndex > 1) {
+        if (layer > 0) {
+		  let lastLayerID = this.PREVIOUS_LAYER_0 + layerCounter % 2;
           gl.activeTexture(gl.TEXTURE0 + i);
-          gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[layer-2]);
-          gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_pass'), i);
+          gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[lastLayerID]);
+          gl.uniform1i(gl.getUniformLocation(program, 'previous_layer'), i);
         }
 
         i++;
@@ -539,9 +556,6 @@ class ShaderPlayerWebGL2 {
           [this.mouse[0], this.mouse[1]]
         );
 
-        const passAttribute = gl.getUniformLocation(program, 'pass');
-        gl.uniform1f(passAttribute, sequenceIndex + 1);
-
         const timeAttribute = gl.getUniformLocation(program, 'time');
         gl.uniform1f(timeAttribute, time);
 
@@ -555,7 +569,11 @@ class ShaderPlayerWebGL2 {
         gtime += time;
         gl.uniform1f(iGlobalTimeAttribute, gtime);
 
-
+		
+		const isFirstAttribute = gl.getUniformLocation(program, 'is_first');
+        gl.uniform1f(isFirstAttribute, is_first);
+		is_first = 0.0;
+		
         const iResolutionAttribute = gl.getUniformLocation(program, 'iResolution');
 
         gl.uniform3fv(
@@ -574,8 +592,8 @@ class ShaderPlayerWebGL2 {
         const ratioAttribute = gl.getUniformLocation(program, 'ratio');
         gl.uniform1f(ratioAttribute, ratio);
 
-        for(let name in shaderProgram.uniforms){
-          let uni = shaderProgram.uniforms[name];
+        for(let name in seq.uniforms){
+          let uni = seq.uniforms[name];
           let attribute = gl.getUniformLocation(program, name);
 
           if(uni.type == "f"){

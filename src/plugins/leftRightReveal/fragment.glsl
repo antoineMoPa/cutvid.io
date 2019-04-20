@@ -4,7 +4,7 @@ precision highp float;
 varying vec2 UV;
 varying  vec2 lastUV;
 uniform sampler2D previous_pass;
-uniform sampler2D previous_previous_pass;
+uniform sampler2D previous_layer;
 uniform vec2 mouse;
 uniform float ratio, time, relativeTime;
 uniform float beginAt, endAt;
@@ -16,7 +16,7 @@ void main(void){
            vec2(0.5 * ratio, 0.5);
 
   vec4 last = texture2D(previous_pass, lastUV);
-  vec4 lastlast = texture2D(previous_previous_pass, lastUV);
+  vec4 lastlast = texture2D(previous_layer, lastUV);
 
   float fac = 0.0;
 

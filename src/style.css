@@ -355,12 +355,13 @@ input{
 
 .time-bar{
   position:absolute;
-  top:0;
+  top:10px;
   left:0;
   width:6px;
-  height:155px;
+  height:135px;
   background:rgba(255,255,255,0.5);
   cursor:pointer;
+  border-radius:4px;
 }
 
 .sequence-effects .info{
@@ -522,6 +523,7 @@ input{
   -moz-user-select: none;
   -ms-user-select: none;
   overflow-x:auto;
+  overflow-y:none;
 }
 
 .sequencer .sequence{
@@ -530,6 +532,10 @@ input{
   background:#333;
   border-radius:4px;
   border:1px solid #111;
+}
+
+.sequencer .sequence.selected{
+  border:1px solid #fff;
 }
 
 .sequence-body{
@@ -574,6 +580,49 @@ input{
 
 .sequence-button-right:hover{
   opacity:1.0;
+}
+
+.sequencer .adder-container{
+  height:80px;
+  display:inline-block;
+  position: fixed;
+  right: 25px;
+  bottom: 135px;
+}
+ 
+.sequencer .add-button,
+.sequencer .delete-button{
+  cursor:pointer;
+  border:none;
+  background:#333;
+  color:#eee;
+  line-height:30px;
+  border-radius:20px;
+  height:30px;
+  text-align:left;
+  margin-bottom:10px;
+}
+
+.sequencer .delete-button{
+  background:#f31;
+  color:#fff;
+}
+
+.sequencer .delete-button img,
+.sequencer .add-button img{
+  position:relative;
+  top:5px;
+}
+
+.sequencer .time-indicator{
+  background:rgba(0,0,0,0.3);
+  font-size:10px;
+  line-height:20px;
+  position:absolute;
+  top:0px;
+  left:10px;
+  border-radius:4px;
+  color:#fff;
 }
 
 /* END SEQUENCER */

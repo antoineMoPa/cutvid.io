@@ -3,7 +3,7 @@ precision highp float;
 
 varying vec2 UV;
 varying  vec2 lastUV;
-uniform sampler2D previous_pass, previous_previous_pass;
+uniform sampler2D previous_pass, previous_layer;
 uniform vec2 mouse;
 uniform float ratio, time, relativeTime;
 uniform float intensity, size, modulation;
@@ -36,7 +36,7 @@ void main(void){
   }
 
   vec4 blur = 1.0/float(count) * sum;
-  vec4 original = texture2D(previous_previous_pass, lastUV);
+  vec4 original = texture2D(previous_layer, lastUV);
   float fac = intensity;
   fac += modulation * pow(length(original.rgb), 2.0) * cos(relativeTime * 6.2832 - p.x * xModulation - p.y * yModulation);
   blur = fac * sum / float(count) * vec4(rMult, gMult, bMult, 1.0);

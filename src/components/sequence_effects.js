@@ -66,11 +66,10 @@ Vue.component('sequence-effects', {
   </div>`,
   data(){
     return {
-      effectsIndex: [],
       moving: false
     };
   },
-  props: ["player", "active", "effects"],
+  props: ["player", "active", "effects", "effectsIndex"],
   methods: {
     loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
@@ -358,7 +357,7 @@ Vue.component('sequence-effects', {
         let comp = this.$refs[this.effects[effect].component][0];
         comp.active = val;
       }
-    }
+    },
   },
   mounted(){
     //this.addEffect("gfontTextLayer", null, true);
