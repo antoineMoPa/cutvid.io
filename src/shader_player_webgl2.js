@@ -510,9 +510,13 @@ class ShaderPlayerWebGL2 {
 			gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_PASS_0 + (passCounter % 2)]);
 			passCounter++;
 		  }
+		} else if (sequenceIndex < sequences.length - 1) {
+		  gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_PASS_0 + (passCounter % 2)]);
+		  passCounter++;
         } else {
           // null = screen
           gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		  passCounter++;
         }
 		
         let i = 0;
@@ -520,7 +524,7 @@ class ShaderPlayerWebGL2 {
         gl.activeTexture(gl.TEXTURE0 + i);
 
 		// The previous_pass buffer cycles constantly
-		let lastID = this.PREVIOUS_PASS_0 + ((passCounter + 1) % 2);
+		let lastID = this.PREVIOUS_PASS_0 + ((passCounter) % 2);
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[lastID]);
         gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
 

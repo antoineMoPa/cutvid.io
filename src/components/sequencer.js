@@ -29,9 +29,9 @@ Vue.component('sequencer', {
 		  v-bind:class="(selected.indexOf(sequenceIndex) != -1)? '': 'sequence-effects-hidden'"
 		  v-bind:key="'sequence-' + sequence.id"
 		  v-bind:ref="'sequence-effects-' + sequence.id"
+          v-on:register='registerSequenceEffects'
+          v-bind:index='sequenceIndex'
           v-on:ready="effectsSettingsReady(sequenceIndex)"
-          v-bind:effects="sequence.effects"
-          v-bind:effectsIndex="sequence.effectsIndex"
           v-bind:player="player"/>
       </div>
       <scene-template-selector ref="scene-template-selector"/>
@@ -252,7 +252,11 @@ Vue.component('sequencer', {
         return true;
       });
       this.$nextTick(this.repositionSequences);
-    }
+    },
+	registerSequenceEffects(index, effects, effectsIndex){
+	  this.sequences[index].effects = effects;
+	  this.sequences[index].effectsIndex = effectsIndex;
+	}
   },
   watch:{
     player(){
