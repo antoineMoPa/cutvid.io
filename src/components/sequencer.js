@@ -107,7 +107,6 @@ Vue.component('sequencer', {
       this.$nextTick(this.repositionSequences);
     },
     timeBarDown(){
-      this.player.pause();
       this.dragging = null
       this.draggingTimeBar = true;
       this.draggingBody = false;

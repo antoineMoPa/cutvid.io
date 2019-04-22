@@ -493,6 +493,7 @@ class ShaderPlayerWebGL2 {
     for (let layer = 0; layer < sequencesByLayer.length; layer++) {
       let sequences = sequencesByLayer[layer];
       for (let sequenceIndex = 0; sequenceIndex < sequences.length; sequenceIndex++) {
+        let incrementedPasses = false;
         let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
 
@@ -508,14 +509,15 @@ class ShaderPlayerWebGL2 {
           } else {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_PASS_0 + (passCounter % 2)]);
             passCounter++;
+            incrementedPasses = true;
           }
         } else if (sequenceIndex < sequences.length - 1) {
           gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_PASS_0 + (passCounter % 2)]);
           passCounter++;
+          incrementedPasses = true;
         } else {
           // null = screen
           gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-          passCounter++;
         }
 
         let i = 0;
@@ -523,7 +525,7 @@ class ShaderPlayerWebGL2 {
         gl.activeTexture(gl.TEXTURE0 + i);
 
         // The previous_pass buffer cycles constantly
-        let lastID = this.PREVIOUS_PASS_0 + ((passCounter) % 2);
+        let lastID = this.PREVIOUS_PASS_0 + ((passCounter + (incrementedPasses?0:1)) % 2);
         gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[lastID]);
         gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
 
