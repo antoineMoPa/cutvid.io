@@ -74,7 +74,6 @@ Vue.component('player', {
       this.update_dimensions();
     },
     playAll(){
-      this.$refs['sequencer'].playAll();
       this.player.animate_force_scene = null;
       this.player.play();
     },
