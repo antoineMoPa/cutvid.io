@@ -2,42 +2,43 @@ Vue.component('sequencer', {
   template: `
     <div class="sequencer">
       <div class="sequencer-scrollbox">
-		<div 
-		  v-for="(sequence, index) in sequences" 
+        <div
+          v-for="(sequence, index) in sequences"
           v-bind:class="'sequence ' + ((selected.indexOf(index) != -1)? 'selected': '')"
-		  v-bind:ref="'sequence-'+sequence.id">
+          v-bind:ref="'sequence-'+sequence.id">
           <div class="sequence-button-left"
-			   v-on:mousedown="sequenceLeftDown(index)">
+               v-on:mousedown="sequenceLeftDown(index)">
           </div>
           <div class="sequence-body"
                v-on:mousedown="sequenceBodyDown(index)">
-			sequence
+            sequence
           </div>
           <div class="sequence-button-right"
                v-on:mousedown="sequenceRightDown(index)">
           </div>
-		</div>
-		<div class="time-bar" ref="timeBar" v-on:mousedown="timeBarDown">
+        </div>
+        <div class="time-bar" ref="timeBar" v-on:mousedown="timeBarDown">
           <span class="time-indicator" ref="timeIndicator"></span>
-		</div>
-	  </div>
+        </div>
+      </div>
       <!-- These effects are moved in mounted() -->
       <div class="all-sequences">
-        <sequence-effects 
-		  v-for="(sequence, sequenceIndex) in sequences"
-		  v-bind:active="selected.indexOf(sequenceIndex) != -1"
-		  v-bind:class="(selected.indexOf(sequenceIndex) != -1)? '': 'sequence-effects-hidden'"
-		  v-bind:key="'sequence-' + sequence.id"
-		  v-bind:ref="'sequence-effects-' + sequence.id"
+        <sequence-effects
+          v-for="(sequence, sequenceIndex) in sequences"
+          v-bind:active="selected.indexOf(sequenceIndex) != -1"
+          v-bind:class="(selected.indexOf(sequenceIndex) != -1)? '': 'sequence-effects-hidden'"
+          v-bind:key="'sequence-' + sequence.id"
+          v-bind:ref="'sequence-effects-' + sequence.id"
           v-on:register='registerSequenceEffects'
           v-bind:index='sequenceIndex'
           v-on:ready="effectsSettingsReady(sequenceIndex)"
+          v-bind:initialEffectsGetter="sequence.initialEffectsGetter"
           v-bind:player="player"/>
       </div>
       <scene-template-selector ref="scene-template-selector"/>
       <div class="adder-container" v-if="dragging == null">
-		<button v-on:click="addSequence"
-				class="add-button">
+        <button v-on:click="addSequence"
+                class="add-button">
           <img src="icons/feather/plus.svg" title="new sequence" width="20"/>
           New sequence
         </button><br>
@@ -70,24 +71,40 @@ Vue.component('sequencer', {
   },
   methods: {
     serialize(){
-      let data = {};
+      let data = [];
 
       for(let i = 0; i < this.sequences.length; i++){
-        let component = this.$refs['sequence-effects-' + scene.id][0];
+        let seq = this.sequences[i];
+        let component = this.$refs["sequence-effects-"+seq.id][0];
 
         data.push({
           effects: component.serialize(),
-          duration:  scene.duration
+          layer: seq.layer,
+          from: seq.from,
+          to: seq.to
         });
-
-        return "{}";
       }
+
+      return data;
     },
     unserialize(data){
-      for(let i = 0; i < data; i++){
-        this.sequences.push(data);
+      this.sequences = [];
+      this.player.sequences = this.sequences;
+      for(let i = 0; i < data.length; i++){
+        this.sequences.push({
+          id: utils.increment_unique_counter("sequence"),
+          layer: data[i].layer,
+          from: data[i].from,
+          to: data[i].to,
+          effects: [],
+          effectsIndex: [],
+          initialEffectsGetter: function(){
+            return data[i].effects;
+          }
+        });
       }
-      this.repositionSequences();
+
+      this.$nextTick(this.repositionSequences);
     },
     timeBarDown(){
       this.player.pause();
@@ -103,7 +120,7 @@ Vue.component('sequencer', {
     sequenceBodyDown(index){
       this.dragging = index;
       if(this.selected.indexOf(index) != -1){
-		this.selected = this.selected.filter(function(row) {
+        this.selected = this.selected.filter(function(row) {
           return row != index;
         });
       } else {
@@ -143,7 +160,7 @@ Vue.component('sequencer', {
       this.draggingBody = false;
       this.draggingLeft = false;
       this.draggingRight = false;
-	  this.draggingTimeBar = false;
+      this.draggingTimeBar = false;
       this.dragging = null;
     },
     mouseMove(e){
@@ -210,10 +227,10 @@ Vue.component('sequencer', {
     },
     fromTemplateButton(){
       let app = this;
-      
+
       this.$refs['scene-template-selector'].open(function(data){
         let erase = false;
-        
+
         // If scene is empty and alone, clear it
         if(app.scenes.length == 1){
           let id = app.scenes[app.scenesIndex[0]].id;
@@ -232,13 +249,13 @@ Vue.component('sequencer', {
         from: 0,
         to: 3,
         effects: [],
-		effectsIndex: []
+        effectsIndex: []
       });
-      
+
       // Initiate drag
-      
+
       this.$nextTick(this.repositionSequences);
-	  this.selected = [];
+      this.selected = [];
       this.$nextTick(function(){
         this.sequenceBodyDown(this.sequences.length - 1);
       });
@@ -253,10 +270,11 @@ Vue.component('sequencer', {
       });
       this.$nextTick(this.repositionSequences);
     },
-	registerSequenceEffects(index, effects, effectsIndex){
-	  this.sequences[index].effects = effects;
-	  this.sequences[index].effectsIndex = effectsIndex;
-	}
+    registerSequenceEffects(index, effects, effectsIndex){
+      // Ok we use your version of the array
+      this.sequences[index].effects = effects;
+      this.sequences[index].effectsIndex = effectsIndex;
+    }
   },
   watch:{
     player(){
@@ -283,8 +301,8 @@ Vue.component('sequencer', {
   },
   mounted(){
     this.addSequence();
-	this.$nextTick(this.unDrag);
-    
+    this.$nextTick(this.unDrag);
+
     let allSequences = this.$el.querySelectorAll(".all-sequences")[0];
     let allSequencesContainer = document.querySelectorAll(".all-sequences-container")[0];
 

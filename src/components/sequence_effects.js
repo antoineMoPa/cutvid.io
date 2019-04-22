@@ -66,12 +66,12 @@ Vue.component('sequence-effects', {
   </div>`,
   data(){
     return {
-	  effects: [],
-	  effectsIndex: [],
+      effects: [],
+      effectsIndex: [],
       moving: false
     };
   },
-  props: ["player", "active", "index"],
+  props: ["player", "active", "index", "initialEffectsGetter"],
   methods: {
     loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
@@ -144,6 +144,7 @@ Vue.component('sequence-effects', {
       let app = this;
       this.effects = [];
       this.effectsIndex = [];
+      this.$emit("register", this.index, this.effects, this.effectsIndex);
 
       let promise = null;
 
@@ -362,6 +363,12 @@ Vue.component('sequence-effects', {
     },
   },
   mounted(){
-	this.$emit("register", this.index, this.effects, this.effectsIndex);
+
+    if(this.initialEffectsGetter != undefined){
+      let effects = this.initialEffectsGetter();
+      this.unserialize(effects, false);
+    }
+
+    this.$emit("register", this.index, this.effects, this.effectsIndex);
   }
 });
