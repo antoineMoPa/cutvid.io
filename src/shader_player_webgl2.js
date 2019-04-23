@@ -86,14 +86,14 @@ class ShaderProgram {
     ready = ready || (() => {});
     options = options || {};
 
-	let isVideo = false;
-	let videoElement = null;
+    let isVideo = false;
+    let videoElement = null;
 
-	if(options.video != undefined){
-	  isVideo = true;
-	  videoElement = document.createElement("video");
-	}
-	
+    if(options.video != undefined){
+      isVideo = true;
+      videoElement = document.createElement("video");
+    }
+
     function isPowerOf2(value) {
       return (value & (value - 1)) == 0;
     }
@@ -110,17 +110,17 @@ class ShaderProgram {
     var pixel = new Uint8Array([0, 0, 0, 0]);
     var image = null;
 
-	if(!isVideo){
-	  image = new Image();
-	} else {
-	  image = videoElement;
-	}
-	
+    if(!isVideo){
+      image = new Image();
+    } else {
+      image = videoElement;
+    }
+
     function load() {
       if(options.force_width != undefined ||
          options.force_height != undefined
         ){
-		let can = document.createElement("canvas");
+        let can = document.createElement("canvas");
         let ctx = can.getContext("2d");
         can.width = options.force_width;
         can.height = options.force_height;
@@ -137,49 +137,49 @@ class ShaderProgram {
       gl.bindTexture(gl.TEXTURE_2D, texture);
 
       app.textures[name] = {
-		texture,
-		isVideo,
-		videoElement: videoElement
-	  };
-	  
+        texture,
+        isVideo,
+        videoElement: videoElement
+      };
+
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
 
-	  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
       ready();
     }
 
-	let videoInitialized = false;
-	
-	function updateVideo(){
-	  if(!videoInitialized){
-		load();
-	  } else {
-		let texture = app.textures[name].texture
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-		
-		gl.texImage2D(
+    let videoInitialized = false;
+
+    function updateVideo(){
+      if(!videoInitialized){
+        load();
+      } else {
+        let texture = app.textures[name].texture
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        gl.texImage2D(
           gl.TEXTURE_2D, level, internalFormat,
           srcFormat, srcType, image);
-		
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-	  }
-	}
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
+    }
 
     // Is this a canvas?
-	if(isVideo){
-	  videoElement.addEventListener("timeupdate", updateVideo);
-	  videoElement.addEventListener("canplay", options.ready.bind(videoElement));
-	  videoElement.currentTime = 0;
-	  videoElement.src = options.video;
-	  videoElement.play();
-	} else if(url.tagName != undefined && url.tagName == "CANVAS"){
+    if(isVideo){
+      videoElement.addEventListener("timeupdate", updateVideo);
+      videoElement.addEventListener("canplay", options.ready.bind(videoElement));
+      videoElement.currentTime = 0;
+      videoElement.src = options.video;
+      videoElement.play();
+    } else if(url.tagName != undefined && url.tagName == "CANVAS"){
       image = url;
       load();
     } else {
@@ -587,16 +587,16 @@ class ShaderPlayerWebGL2 {
         i++;
 
         for(let name in shaderProgram.textures){
-		  let tex = shaderProgram.textures[name];
-		  if(tex.isVideo){
-			let shouldBeTime = time - seq.from;
-			let currTime = tex.videoElement.currentTime;
-			if(shouldBeTime - currTime > 1){
-			
-			  tex.videoElement.currentTime = shouldBeTime;
-			  tex.videoElement.play();
-			}
-		  }
+          let tex = shaderProgram.textures[name];
+          if(tex.isVideo){
+            let shouldBeTime = time - seq.from;
+            let currTime = tex.videoElement.currentTime;
+            if(Math.abs(shouldBeTime - currTime) > 1){
+
+              tex.videoElement.currentTime = shouldBeTime;
+              tex.videoElement.play();
+            }
+          }
           gl.activeTexture(gl.TEXTURE0 + i);
           var att = gl.getUniformLocation(program, name);
           gl.bindTexture(gl.TEXTURE_2D, tex.texture);
