@@ -92,7 +92,6 @@ class ShaderProgram {
 	if(options.video != undefined){
 	  isVideo = true;
 	  videoElement = document.createElement("video");
-	  videoElement.src = options.video;
 	}
 	
     function isPowerOf2(value) {
@@ -121,7 +120,7 @@ class ShaderProgram {
       if(options.force_width != undefined ||
          options.force_height != undefined
         ){
-        let can = document.createElement("canvas");
+		let can = document.createElement("canvas");
         let ctx = can.getContext("2d");
         can.width = options.force_width;
         can.height = options.force_height;
@@ -137,8 +136,12 @@ class ShaderProgram {
       var texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
 
-      app.textures[name] = texture;
-
+      app.textures[name] = {
+		texture,
+		isVideo,
+		videoElement: videoElement
+	  };
+	  
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
@@ -150,10 +153,31 @@ class ShaderProgram {
       ready();
     }
 
+	let videoInitialized = false;
+	
+	function updateVideo(){
+	  if(!videoInitialized){
+		load();
+	  } else {
+		let texture = app.textures[name].texture
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		
+		gl.texImage2D(
+          gl.TEXTURE_2D, level, internalFormat,
+          srcFormat, srcType, image);
+		
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	  }
+	}
+
     // Is this a canvas?
 	if(isVideo){
-	  videoElement.addEventListener("timeupdate", load);
+	  videoElement.addEventListener("timeupdate", updateVideo);
+	  videoElement.addEventListener("canplay", options.ready.bind(videoElement));
 	  videoElement.currentTime = 0;
+	  videoElement.src = options.video;
 	  videoElement.play();
 	} else if(url.tagName != undefined && url.tagName == "CANVAS"){
       image = url;
@@ -167,12 +191,12 @@ class ShaderProgram {
   delete_texture(name) {
     const gl = this.gl;
 
-    if(this.textures[name] == undefined){
+    if(this.textures[name].texture == undefined){
       console.error("attempt to delete texture which does not exist");
       return;
     }
 
-    gl.deleteTexture(this.textures[name]);
+    gl.deleteTexture(this.textures[name].texture);
     delete this.textures[name];
   }
 
@@ -563,9 +587,19 @@ class ShaderPlayerWebGL2 {
         i++;
 
         for(let name in shaderProgram.textures){
+		  let tex = shaderProgram.textures[name];
+		  if(tex.isVideo){
+			let shouldBeTime = time - seq.from;
+			let currTime = tex.videoElement.currentTime;
+			if(shouldBeTime - currTime > 1){
+			
+			  tex.videoElement.currentTime = shouldBeTime;
+			  tex.videoElement.play();
+			}
+		  }
           gl.activeTexture(gl.TEXTURE0 + i);
           var att = gl.getUniformLocation(program, name);
-          gl.bindTexture(gl.TEXTURE_2D, shaderProgram.textures[name]);
+          gl.bindTexture(gl.TEXTURE_2D, tex.texture);
           gl.uniform1i(att, i);
           i++;
         }

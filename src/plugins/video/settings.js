@@ -39,7 +39,7 @@
               videoScale: {
                 type: "f",
                 len: 1,
-                value: 0.25,
+                value: 1.0,
               },
               offsetTop: {
                 type: "f",
@@ -57,9 +57,15 @@
         props: ["player", "effect", "shaderProgram"],
         methods: {
           loadVideo(data){
+            let app = this;
             this.shaderProgram.set_texture('video', '', function(){}, {
-			  video: data
-			});
+              video: data,
+              ready: function(){
+                // "this" points to <video> element
+                app.uniforms.videoWidth.value = this.videoWidth;
+                app.uniforms.videoHeight.value = this.videoHeight;
+              }
+            });
           },
           onVideo() {
             const app = this;
