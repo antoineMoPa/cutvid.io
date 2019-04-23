@@ -1,13 +1,18 @@
 {
+  "Input": {
+    "video": {
+      "description": "Upload a video."
+    },
+	"image": {
+      "description": "Put an image at any place, size, rotation on the canvas."
+    }
+  },
   "Text": {
     "gfontTextLayer": {
       "description": "Choose from 800+ Google WebFonts."
     },
     "logo": {
       "description": "Center your logo or any image on the canvas."
-    },
-    "image": {
-      "description": "Put an image at any place, size, rotation on the canvas."
     }
   },
   "Layer transitions": {

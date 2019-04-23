@@ -86,6 +86,15 @@ class ShaderProgram {
     ready = ready || (() => {});
     options = options || {};
 
+	let isVideo = false;
+	let videoElement = null;
+
+	if(options.video != undefined){
+	  isVideo = true;
+	  videoElement = document.createElement("video");
+	  videoElement.src = options.video;
+	}
+	
     function isPowerOf2(value) {
       return (value & (value - 1)) == 0;
     }
@@ -100,8 +109,14 @@ class ShaderProgram {
     var srcFormat = gl.RGBA;
     var srcType = gl.UNSIGNED_BYTE;
     var pixel = new Uint8Array([0, 0, 0, 0]);
-    var image = new Image();
+    var image = null;
 
+	if(!isVideo){
+	  image = new Image();
+	} else {
+	  image = videoElement;
+	}
+	
     function load() {
       if(options.force_width != undefined ||
          options.force_height != undefined
@@ -128,24 +143,19 @@ class ShaderProgram {
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
 
-      // WebGL1 has different requirements for power of 2 images
-      // vs non power of 2 images so check if the image is a
-      // power of 2 in both dimensions.
-      if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
-        // Yes, it's a power of 2. Generate mips.
-        gl.generateMipmap(gl.TEXTURE_2D);
-      } else {
-        // No, it's not a power of 2. Turn of mips and set
-        // wrapping to clamp to edge
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      }
+	  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
       ready();
     }
 
     // Is this a canvas?
-    if(url.tagName != undefined && url.tagName == "CANVAS"){
+	if(isVideo){
+	  videoElement.addEventListener("timeupdate", load);
+	  videoElement.currentTime = 0;
+	  videoElement.play();
+	} else if(url.tagName != undefined && url.tagName == "CANVAS"){
       image = url;
       load();
     } else {
