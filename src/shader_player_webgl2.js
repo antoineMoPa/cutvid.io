@@ -116,6 +116,27 @@ class ShaderProgram {
       image = videoElement;
     }
 
+
+    let videoInitialized = false;
+
+    function updateVideo(){
+      if(!videoInitialized){
+        load();
+        videoInitialized = true;
+      } else {
+        let texture = app.textures[name].texture;
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        gl.texImage2D(
+          gl.TEXTURE_2D, level, internalFormat,
+          srcFormat, srcType, image);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
+    }
+
     function load() {
       if(options.force_width != undefined ||
          options.force_height != undefined
@@ -139,7 +160,8 @@ class ShaderProgram {
       app.textures[name] = {
         texture,
         isVideo,
-        videoElement: videoElement
+        videoElement: videoElement,
+        updateVideo: updateVideo
       };
 
       gl.texImage2D(
@@ -153,31 +175,29 @@ class ShaderProgram {
       ready();
     }
 
-    let videoInitialized = false;
+    let timeUpdate = false;
+    let canplay = false;
 
-    function updateVideo(){
-      if(!videoInitialized){
-        load();
-      } else {
-        let texture = app.textures[name].texture
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-
-        gl.texImage2D(
-          gl.TEXTURE_2D, level, internalFormat,
-          srcFormat, srcType, image);
-
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    function checkReady(){
+      if(timeUpdate && canplay){
+        options.ready.bind(videoElement)();
+        updateVideo();
       }
     }
 
     // Is this a canvas?
     if(isVideo){
-      videoElement.addEventListener("timeupdate", updateVideo);
-      videoElement.addEventListener("canplay", options.ready.bind(videoElement));
+      videoElement.addEventListener("timeupdate", function(){
+        timeUpdate = true;
+        checkReady();
+      });
+      videoElement.addEventListener("canplay", function(){
+        canplay = true;
+        checkReady();
+      });
       videoElement.currentTime = 0;
       videoElement.src = options.video;
+      videoElement.loop = true;
       videoElement.play();
     } else if(url.tagName != undefined && url.tagName == "CANVAS"){
       image = url;
@@ -591,11 +611,10 @@ class ShaderPlayerWebGL2 {
           if(tex.isVideo){
             let shouldBeTime = time - seq.from;
             let currTime = tex.videoElement.currentTime;
-            if(Math.abs(shouldBeTime - currTime) > 1){
-
+            if(Math.abs(shouldBeTime - currTime) > 2){
               tex.videoElement.currentTime = shouldBeTime;
-              tex.videoElement.play();
             }
+            tex.updateVideo();
           }
           gl.activeTexture(gl.TEXTURE0 + i);
           var att = gl.getUniformLocation(program, name);
