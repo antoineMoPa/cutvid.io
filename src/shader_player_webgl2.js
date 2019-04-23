@@ -122,6 +122,7 @@ class ShaderProgram {
     function updateVideo(){
       if(!videoInitialized){
         load();
+        console.log("load");
         videoInitialized = true;
       } else {
         let texture = app.textures[name].texture;
@@ -129,15 +130,12 @@ class ShaderProgram {
 
         gl.texImage2D(
           gl.TEXTURE_2D, level, internalFormat,
-          srcFormat, srcType, image);
-
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          srcFormat, srcType, videoElement);
       }
     }
 
     function load() {
+      console.log("load");
       if(options.force_width != undefined ||
          options.force_height != undefined
         ){
@@ -182,6 +180,9 @@ class ShaderProgram {
       if(timeUpdate && canplay){
         options.ready.bind(videoElement)();
         updateVideo();
+        // Don't call again
+        timeUpdate = false;
+        canplay = false;
       }
     }
 
@@ -611,9 +612,9 @@ class ShaderPlayerWebGL2 {
           if(tex.isVideo){
             let shouldBeTime = time - seq.from;
             let currTime = tex.videoElement.currentTime;
-            if(Math.abs(shouldBeTime - currTime) > 2){
-              tex.videoElement.currentTime = shouldBeTime;
-            }
+            //if(Math.abs(shouldBeTime - currTime) > 2){
+            //  tex.videoElement.currentTime = shouldBeTime;
+            //}
             tex.updateVideo();
           }
           gl.activeTexture(gl.TEXTURE0 + i);
