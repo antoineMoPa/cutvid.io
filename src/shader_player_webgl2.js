@@ -92,6 +92,14 @@ class ShaderProgram {
     if(options.video != undefined){
       isVideo = true;
       videoElement = document.createElement("video");
+
+      // Hack to suppress lag in my old chromebook:
+      {
+        document.body.appendChild(videoElement);
+        videoElement.style.position = "absolute";
+        videoElement.style.left = "-1000px";
+        videoElement.style.width = "400px";
+      }
     }
 
     function isPowerOf2(value) {
@@ -122,7 +130,6 @@ class ShaderProgram {
     function updateVideo(){
       if(!videoInitialized){
         load();
-        console.log("load");
         videoInitialized = true;
       } else {
         let texture = app.textures[name].texture;
@@ -135,7 +142,6 @@ class ShaderProgram {
     }
 
     function load() {
-      console.log("load");
       if(options.force_width != undefined ||
          options.force_height != undefined
         ){
@@ -215,6 +221,10 @@ class ShaderProgram {
     if(this.textures[name].texture == undefined){
       console.error("attempt to delete texture which does not exist");
       return;
+    }
+
+    if(this.textures[name].isVideo){
+      document.body.removeChild(this.textures[name].videoElement);
     }
 
     gl.deleteTexture(this.textures[name].texture);
@@ -609,6 +619,9 @@ class ShaderPlayerWebGL2 {
 
         for(let name in shaderProgram.textures){
           let tex = shaderProgram.textures[name];
+          gl.activeTexture(gl.TEXTURE0 + i);
+          var att = gl.getUniformLocation(program, name);
+
           if(tex.isVideo){
             let shouldBeTime = time - seq.from;
             let currTime = tex.videoElement.currentTime;
@@ -616,10 +629,9 @@ class ShaderPlayerWebGL2 {
             //  tex.videoElement.currentTime = shouldBeTime;
             //}
             tex.updateVideo();
+          } else {
+            gl.bindTexture(gl.TEXTURE_2D, tex.texture);
           }
-          gl.activeTexture(gl.TEXTURE0 + i);
-          var att = gl.getUniformLocation(program, name);
-          gl.bindTexture(gl.TEXTURE_2D, tex.texture);
           gl.uniform1i(att, i);
           i++;
         }

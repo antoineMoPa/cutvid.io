@@ -87,6 +87,7 @@
         },
         mounted(){
           this.effect.uniforms = this.uniforms;
+          // TODO : delete video texture on removal
         }
       }
     };
