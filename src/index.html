@@ -1,37 +1,37 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/app/style.css">
-    </head>
-    <body>
-      <div id="main_app">
-      </div>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/app/style.css">
+  </head>
+  <body>
+    <div id="main_app">
+    </div>
 
-      <script src="/app/libs/vue.js"></script>
-      <script src="/app/libs/utils.js"></script>
-      <script src="/app/libs/gif.js"></script>
+    <script src="/app/libs/vue.js"></script>
+    <script src="/app/libs/utils.js"></script>
+    <script src="/app/libs/gif.js"></script>
 
-      <script type="text/javascript">
-        let available_themes = ["epicSunset", "retrowave"];
-        var theme_name = new URL(window.location.href).searchParams.get("theme") || "default";
-        if(!available_themes.find((el) => {return el == theme_name})){
-          theme_name = "epicSunset";
-        }
-      </script>
+    <script type="text/javascript">
+    let available_themes = ["epicSunset", "retrowave"];
+    var theme_name = new URL(window.location.href).searchParams.get("theme") || "default";
+    if(!available_themes.find((el) => {return el == theme_name})){
+      theme_name = "epicSunset";
+    }
+    </script>
 
-      <script type="text/javascript" src="/app/shader_player_webgl2.js"></script>
-      <script type="text/javascript" src="/app/components/sequence_effects.js"></script>
-      <script type="text/javascript" src="/app/components/text_box.js"></script>
-      <script type="text/javascript" src="/app/components/panel_selector.js"></script>
-      <script type="text/javascript" src="/app/components/effects_selector.js"></script>
-      <script type="text/javascript" src="/app/components/buy_video.js"></script>
-      <script type="text/javascript" src="/app/components/scene_template_selector.js"></script>
-      <script type="text/javascript" src="/app/components/sequencer.js"></script>
-      <script type="text/javascript" src="/app/libs/jszip.min.js"></script>
-      <script type="text/javascript" src="/app/components/player.js"></script>
-      <script type="text/javascript" src="/app/components/ui.js"></script>
-      <script type="text/javascript" src="/app/app.js"></script>
-    </body>
+    <script type="text/javascript" src="/app/shader_player_webgl2.js"></script>
+    <script type="text/javascript" src="/app/components/sequence_effects.js"></script>
+    <script type="text/javascript" src="/app/components/text_box.js"></script>
+    <script type="text/javascript" src="/app/components/panel_selector.js"></script>
+    <script type="text/javascript" src="/app/components/effects_selector.js"></script>
+    <script type="text/javascript" src="/app/components/buy_video.js"></script>
+    <script type="text/javascript" src="/app/components/scene_template_selector.js"></script>
+    <script type="text/javascript" src="/app/components/sequencer.js"></script>
+    <script type="text/javascript" src="/app/libs/jszip.min.js"></script>
+    <script type="text/javascript" src="/app/components/player.js"></script>
+    <script type="text/javascript" src="/app/components/ui.js"></script>
+    <script type="text/javascript" src="/app/app.js"></script>
+  </body>
 </html>
