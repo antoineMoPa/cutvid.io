@@ -124,7 +124,6 @@ class ShaderProgram {
       image = videoElement;
     }
 
-
     let videoInitialized = false;
 
     function updateVideo(){
@@ -320,12 +319,32 @@ class ShaderPlayerWebGL2 {
     }
   }
 
+  for_each_current_videos(callback){
+    let layers_info = this.get_sequences_by_layers();
+    let sbl = layers_info.sequencesByLayer;
+
+    for(let i in sbl){
+      for(let j in sbl[i]){
+        let seq = sbl[i][j];
+        let texs = seq.pass.textures;
+        let keys = Object.keys(texs);
+        for(let k in keys){
+          if(texs[keys[k]].isVideo){
+            callback(texs[keys[k]]);
+          }
+        }
+      }
+    }
+  }
+
   play(){
     this.paused = false;
+    this.for_each_current_videos((v) => {v.videoElement.play()});
   }
 
   pause(){
     this.paused = true;
+    this.for_each_current_videos((v) => {v.videoElement.pause()});
   }
 
   /*
@@ -494,29 +513,8 @@ class ShaderPlayerWebGL2 {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
-  draw_gl(force_time) {
-    const gl = this.gl;
-
-    if (gl == null) {
-      return;
-    }
-
-    let duration = this.get_total_duration();
-
-    if(force_time != undefined){
-      this.time.time = force_time;
-    } else {
-      this.time.time = (1.0 * new Date().getTime()) / 1000.0;
-      this.time.time = this.time.time % duration;
-    }
-
+  get_sequences_by_layers(){
     let time = this.time.time;
-
-    this.on_progress(time, duration);
-
-    if(this.sequences.length == 0){
-      return;
-    }
 
     let maxLayer = 0;
 
@@ -549,6 +547,37 @@ class ShaderPlayerWebGL2 {
         }
       }
     }
+
+    return {maxLayer, sequencesByLayer}
+  }
+
+  draw_gl(force_time) {
+    const gl = this.gl;
+
+    if (gl == null) {
+      return;
+    }
+
+    let duration = this.get_total_duration();
+
+    if(force_time != undefined){
+      this.time.time = force_time;
+    } else {
+      this.time.time = (1.0 * new Date().getTime()) / 1000.0;
+      this.time.time = this.time.time % duration;
+    }
+
+    let time = this.time.time;
+
+    this.on_progress(time, duration);
+
+    if(this.sequences.length == 0){
+      return;
+    }
+
+    let layers_info = this.get_sequences_by_layers();
+    let maxLayer = layers_info.maxLayer;
+    let sequencesByLayer = layers_info.sequencesByLayer;
 
     this.clear();
     let is_first = 1.0;
