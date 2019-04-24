@@ -623,11 +623,12 @@ class ShaderPlayerWebGL2 {
           var att = gl.getUniformLocation(program, name);
 
           if(tex.isVideo){
+            // Seek to right time
             let shouldBeTime = time - seq.from;
             let currTime = tex.videoElement.currentTime;
-            //if(Math.abs(shouldBeTime - currTime) > 2){
-            //  tex.videoElement.currentTime = shouldBeTime;
-            //}
+            if(Math.abs(shouldBeTime - currTime) > 2){
+              tex.videoElement.currentTime = shouldBeTime;
+            }
             tex.updateVideo();
           } else {
             gl.bindTexture(gl.TEXTURE_2D, tex.texture);
