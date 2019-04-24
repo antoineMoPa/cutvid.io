@@ -11,7 +11,7 @@
 <div>
   <h4>Video</h4>
   <label>Your Video</label>
-  <input type="file" accept=".mp4,.avi,.mov,.webm" class="video-file-input" v-on:change="onVideo()">
+  <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg" class="video-file-input" v-on:change="onVideo()">
   <label>Video Scale</label>
   <input type="number" v-model="uniforms.videoScale.value" min="0.0" max="2.0" step="0.05">
   <label>Offset Top</label>
