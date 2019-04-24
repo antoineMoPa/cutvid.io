@@ -11,7 +11,7 @@ Vue.component('sequencer', {
           </div>
           <div class="sequence-body"
                v-on:mousedown="sequenceBodyDown(index)">
-            sequence
+            Sequence {{ index + 1 }}
           </div>
           <div class="sequence-button-right"
                v-on:mousedown="sequenceRightDown(index)">

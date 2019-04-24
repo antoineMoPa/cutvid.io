@@ -532,6 +532,7 @@ input{
   background:#333;
   border-radius:4px;
   border:1px solid #111;
+  overflow:hidden;
 }
 
 .sequencer .sequence.selected{
