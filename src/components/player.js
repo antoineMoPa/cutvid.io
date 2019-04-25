@@ -300,6 +300,16 @@ Vue.component('player', {
             form.append("user_token", app.user_token);
             form.append("data", JSON.stringify(app.serialize()));
 
+            let audios = this.player.dump_audio();
+
+            let audio_info = audios.audio_info;
+            let audio_src = audios.audio_src;
+
+            for(let i in audio_info){
+              form.append("audio_info[]", audio_info[i]);
+              form.append("audio_src[]", audio_src[i]);
+            }
+
             app.$refs.buyVideo.show();
 
             fetch(app.settings.renderer, {

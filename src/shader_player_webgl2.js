@@ -1,4 +1,5 @@
 /* Note: I actually downgraded to webgl1 to support more devices */
+/* Note 2: This should be renamed engine or something */
 
 class ShaderProgram {
   constructor(gl){
@@ -319,7 +320,28 @@ class ShaderPlayerWebGL2 {
     }
   }
 
-  for_each_current_videos(callback){
+  dump_audio(){
+    let audio_info = [];
+    let audio_src = [];
+
+    this.for_each_textures((t,s) => {
+      if(t.isVideo && !t.videoElement.muted){
+        audio_info.push({
+          from: s.from,
+          to: s.to,
+          trimBefore: seq.trimBefore,
+          videoFile = seq.videoFile
+        });
+        audio_src.push(t.videoElement.src);
+      } else if (t.isAudio){
+        alert("TODO");
+      }
+    });
+
+    return {audio_info, audio_info};
+  }
+
+  for_each_textures(callback){
     let layers_info = this.get_sequences_by_layers();
     let sbl = layers_info.sequencesByLayer;
 
@@ -329,12 +351,18 @@ class ShaderPlayerWebGL2 {
         let texs = seq.pass.textures;
         let keys = Object.keys(texs);
         for(let k in keys){
-          if(texs[keys[k]].isVideo){
-            callback(texs[keys[k]]);
-          }
+          callback(texs[keys[k]], seq);
         }
       }
     }
+  }
+
+  for_each_current_videos(callback){
+    this.for_each_textures((t) => {
+      if(t.isVideo){
+        callback();
+      }
+    });
   }
 
   play(){

@@ -21,6 +21,10 @@
   <label>Mute Video
     <input v-model="muted" type="checkbox">
   </label>
+  <label>Trim Before
+    <input v-model="trimBefore" step="any" min="0" type="number">
+  </label>
+
 </div>`,
         data: function(){
           return {
@@ -28,6 +32,7 @@
             videoName: "",
             backgroundColor: "#000000",
             muted: false,
+            trimBefore: 0,
             uniforms: {
               videoWidth: {
                 type: "f",
@@ -78,6 +83,7 @@
 
             try {
               const file = input.files[0];
+              app.videoFile = file;
               app.video = window.URL.createObjectURL(file);
             } catch (e) {
               // Well I guess you are using a dumb browser
@@ -93,10 +99,18 @@
             if(this.videoElement != undefined){
               this.videoElement.muted = this.muted;
             }
+          },
+          trimBefore(){
+            this.effect.trimBefore = this.trimBefore;
+
+          },
+          videoFile(){
+            this.effect.videoFile = this.videoFile;
           }
         },
         mounted(){
           this.effect.uniforms = this.uniforms;
+          this.effect.trimBefore = this.trimBefore;
         },
         beforeDestroy(){
           this.shaderProgram.delete_texture('video');
