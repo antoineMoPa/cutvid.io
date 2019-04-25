@@ -18,13 +18,16 @@
   <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.05">
   <label>Offset Left</label>
   <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.05">
-
+  <label>Mute Video
+    <input v-model="muted" type="checkbox">
+  </label>
 </div>`,
         data: function(){
           return {
             video: null,
             videoName: "",
             backgroundColor: "#000000",
+            muted: false,
             uniforms: {
               videoWidth: {
                 type: "f",
@@ -64,6 +67,8 @@
                 // "this" points to <video> element
                 app.uniforms.videoWidth.value = this.videoWidth;
                 app.uniforms.videoHeight.value = this.videoHeight;
+                app.videoElement = this;
+                this.muted = app.muted;
               }
             });
           },
@@ -83,6 +88,11 @@
         watch: {
           video(){
             this.loadVideo(this.video);
+          },
+          muted(){
+            if(this.videoElement != undefined){
+              this.videoElement.muted = this.muted;
+            }
           }
         },
         mounted(){
