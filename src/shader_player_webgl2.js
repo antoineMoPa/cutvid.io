@@ -330,7 +330,7 @@ class ShaderPlayerWebGL2 {
           from: s.from,
           to: s.to,
           trimBefore: seq.trimBefore,
-          videoFile = seq.videoFile
+          videoFile: seq.videoFile
         });
         audio_src.push(t.videoElement.src);
       } else if (t.isAudio){
@@ -360,7 +360,7 @@ class ShaderPlayerWebGL2 {
   for_each_current_videos(callback){
     this.for_each_textures((t) => {
       if(t.isVideo){
-        callback();
+        callback(t);
       }
     });
   }
@@ -686,6 +686,13 @@ class ShaderPlayerWebGL2 {
             if(Math.abs(shouldBeTime - currTime) > 2){
               tex.videoElement.currentTime = shouldBeTime;
             }
+
+            if (this.rendering){
+              tex.videoElement.currentTime = shouldBeTime;
+              tex.videoElement.play();
+              tex.videoElement.pause();
+            }
+            
             tex.updateVideo();
           } else {
             gl.bindTexture(gl.TEXTURE_2D, tex.texture);
