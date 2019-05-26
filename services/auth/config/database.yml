@@ -19,6 +19,7 @@ default: &default
 
 development:
   <<: *default
+  adapter: sqlite3
   database: auth_development
 
 # Warning: The database defined as "test" will be erased and
