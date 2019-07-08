@@ -167,9 +167,8 @@ Vue.component('player', {
       const app = this;
 
       app.player.rendering = true;
-      if (app.player.pause_anim) {
-        app.player.pause_anim();
-      }
+	  
+      app.player.pause();
 
       const to_export = {};
 
@@ -333,9 +332,6 @@ Vue.component('player', {
           } else if (options.zip) {
             const zip = window.current_zip;
             app.player.rendering = false;
-            if (app.player.resume_anim) {
-              app.player.resume_anim();
-            }
             app.$refs.ui.set_progress(1.0);
             zip.generateAsync({ type: 'blob' })
               .then((blob) => {

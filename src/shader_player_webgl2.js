@@ -329,8 +329,8 @@ class ShaderPlayerWebGL2 {
         audio_info.push({
           from: s.from,
           to: s.to,
-          trimBefore: seq.trimBefore,
-          videoFile: seq.videoFile
+          trimBefore: s.trimBefore,
+          videoFile: s.videoFile
         });
         audio_src.push(t.videoElement.src);
       } else if (t.isAudio){
@@ -557,17 +557,19 @@ class ShaderPlayerWebGL2 {
       }
       for(let j = 0; j < seq.effects.length; j++){
         let effect = seq.effects[seq.effectsIndex[j]];
-        let arr = sequencesByLayer[seq.layer];
+        let arr = sequencesByLayer[seq.layer||0]; /* TODO: remove ||0 ||0 and ||1 once templates work */
         if(effect == undefined){
           continue;
         }
         for(let k = 0; k < effect.shaderPrograms.length; k++){
+		  seq.layer = seq.layer || 0;/* TODO: remove ||0 ||0 and ||1 once templates work */
           sequencesByLayer[seq.layer] =
             sequencesByLayer[seq.layer].concat({
-              from: seq.from,
-              to: seq.to,
+              from: seq.from || 0, /* TODO: remove ||0 ||0 and ||1 once templates work */
+              to: seq.to || 1,
               pass: effect.shaderPrograms[k],
-              uniforms: effect.uniforms
+              uniforms: effect.uniforms,
+              trimBefore: effect.trimBefore || 0
             });
           if(seq.layer > maxLayer){
             maxLayer = seq.layer;
@@ -681,9 +683,11 @@ class ShaderPlayerWebGL2 {
 
           if(tex.isVideo){
             // Seek to right time
-            let shouldBeTime = time - seq.from;
+            let trimBefore = parseFloat(seq.trimBefore);
+			let timeFrom = parseFloat(seq.from);
+            let shouldBeTime = time - timeFrom + trimBefore;
             let currTime = tex.videoElement.currentTime;
-            if(Math.abs(shouldBeTime - currTime) > 2){
+            if(Math.abs(shouldBeTime - currTime) > 0.5){
               tex.videoElement.currentTime = shouldBeTime;
             }
 
@@ -692,7 +696,7 @@ class ShaderPlayerWebGL2 {
               tex.videoElement.play();
               tex.videoElement.pause();
             }
-            
+
             tex.updateVideo();
           } else {
             gl.bindTexture(gl.TEXTURE_2D, tex.texture);
