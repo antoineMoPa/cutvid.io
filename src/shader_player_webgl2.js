@@ -524,7 +524,8 @@ class ShaderPlayerWebGL2 {
     let duration = 0;
 
     for(let sequence = 0; sequence < this.sequences.length; sequence++){
-      let to = this.sequences[sequence].to;
+      let to = this.sequences[sequence].to || 0;
+
       if(to > duration){
         duration = to;
       }
@@ -562,7 +563,7 @@ class ShaderPlayerWebGL2 {
           continue;
         }
         for(let k = 0; k < effect.shaderPrograms.length; k++){
-		  seq.layer = seq.layer || 0;/* TODO: remove ||0 ||0 and ||1 once templates work */
+          seq.layer = seq.layer || 0;/* TODO: remove ||0 ||0 and ||1 once templates work */
           sequencesByLayer[seq.layer] =
             sequencesByLayer[seq.layer].concat({
               from: seq.from || 0, /* TODO: remove ||0 ||0 and ||1 once templates work */
@@ -684,7 +685,7 @@ class ShaderPlayerWebGL2 {
           if(tex.isVideo){
             // Seek to right time
             let trimBefore = parseFloat(seq.trimBefore);
-			let timeFrom = parseFloat(seq.from);
+            let timeFrom = parseFloat(seq.from);
             let shouldBeTime = time - timeFrom + trimBefore;
             let currTime = tex.videoElement.currentTime;
             if(Math.abs(shouldBeTime - currTime) > 0.5){

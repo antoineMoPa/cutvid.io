@@ -93,9 +93,9 @@ Vue.component('sequencer', {
       for(let i = 0; i < data.length; i++){
         this.sequences.push({
           id: utils.increment_unique_counter("sequence"),
-          layer: data[i].layer,
-          from: data[i].from,
-          to: data[i].to,
+          layer: data[i].layer || 0,
+          from: data[i].from || 0,
+          to: data[i].to || 1,
           effects: [],
           effectsIndex: [],
           initialEffectsGetter: function(){
@@ -200,7 +200,7 @@ Vue.component('sequencer', {
       if(this.draggingTimeBar){
         let time = x / scale.timeScale;
         this.player.time.time = time;
-        this.player.draw_gl(time);
+        this.player.draw_gl(time.time);
       }
     },
     getScale(){
@@ -234,7 +234,7 @@ Vue.component('sequencer', {
         if(app.sequences.length == 1){
           erase = true;
         }
-		
+
         app.unserialize(data, erase);
       });
     },
