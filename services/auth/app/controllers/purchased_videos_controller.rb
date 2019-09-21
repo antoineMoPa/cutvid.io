@@ -4,7 +4,7 @@ class PurchasedVideosController < ApplicationController
     if current_user.nil?
       return redirect_to '/'
     end
-    settings_file = open '../../src/settings.json'
+    settings_file = open '../lattefx/settings.json'
     settings = JSON.parse(settings_file.read)
     @settings = settings
 

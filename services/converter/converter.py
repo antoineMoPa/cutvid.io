@@ -12,7 +12,7 @@ import string
 def id_generator(size=15, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
-settings = json.load(open('../../src/settings.json'))
+settings = json.load(open('../lattefx/settings.json'))
 
 class ConverterHTTPRequestHandler(BaseHTTPRequestHandler):
 

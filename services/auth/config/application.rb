@@ -16,7 +16,7 @@ module Auth
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
-    settings_file = open '../../src/settings.json'
+    settings_file = open '../lattefx/settings.json'
     settings = JSON.parse(settings_file.read)
 
     config.action_dispatch.default_headers = {
