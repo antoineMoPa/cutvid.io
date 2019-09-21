@@ -150,6 +150,10 @@ input{
   margin-left:0;
 }
 
+#main-player .canvas-container{
+  background:#3f3f3f;
+}
+
 .player-overlay{
   position:absolute;
   top:0;
