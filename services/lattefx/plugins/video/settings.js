@@ -14,10 +14,9 @@
   <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg" class="video-file-input" v-on:change="onVideo()">
   <label>Video Scale</label>
   <input type="number" v-model="uniforms.videoScale.value" min="0.0" max="2.0" step="0.05">
-  <label>Offset Top</label>
-  <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.05">
-  <label>Offset Left</label>
+  <label>X|Y</label>
   <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.05">
+  <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.05">
   <label>Mute Video
     <input v-model="muted" type="checkbox">
   </label>
