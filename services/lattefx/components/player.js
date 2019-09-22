@@ -536,5 +536,6 @@ Vue.component('player', {
 
     this.switch_panel(1);
     this.$refs['panel-selector'].switch_to(1);
+	this.pause();
   },
 });

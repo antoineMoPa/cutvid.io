@@ -89,6 +89,7 @@ class ShaderProgram {
 
     let isVideo = false;
     let videoElement = null;
+	let autoplay = options.autoplay;
 
     if(options.video != undefined){
       isVideo = true;
@@ -192,7 +193,7 @@ class ShaderProgram {
       }
     }
 
-    // Is this a canvas?
+	// Handle videos/canvas texture
     if(isVideo){
       videoElement.addEventListener("timeupdate", function(){
         timeUpdate = true;
@@ -205,7 +206,12 @@ class ShaderProgram {
       videoElement.currentTime = 0;
       videoElement.src = options.video;
       videoElement.loop = true;
+      
       videoElement.play();
+      
+	  if(!autoplay){
+		videoElement.pause();
+	  }
     } else if(url.tagName != undefined && url.tagName == "CANVAS"){
       image = url;
       load();
@@ -218,7 +224,8 @@ class ShaderProgram {
   delete_texture(name) {
     const gl = this.gl;
 
-    if(this.textures[name].texture == undefined){
+    if(this.textures[name] == undefined ||
+	   this.textures[name].texture == undefined){
       console.error("attempt to delete texture which does not exist");
       return;
     }
@@ -359,7 +366,7 @@ class ShaderPlayerWebGL2 {
 
   for_each_current_videos(callback){
     this.for_each_textures((t) => {
-      if(t.isVideo){
+	  if(t.isVideo){
         callback(t);
       }
     });

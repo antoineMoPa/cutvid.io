@@ -10,7 +10,7 @@ Vue.component('sequencer', {
                v-on:mousedown="sequenceLeftDown(index)">
           </div>
           <div class="sequence-body"
-               v-on:mousedown="sequenceBodyDown(index)">
+               v-on:mousedown="sequenceBodyDown(index,$event)">
             Sequence {{ index + 1 }}
           </div>
           <div class="sequence-button-right"
@@ -66,6 +66,7 @@ Vue.component('sequencer', {
       draggingLeft: null,
       draggingRight: null,
       draggingTimeBar: null,
+      draggingTimeFrom: null,
       sequences: []
     };
   },
@@ -79,7 +80,7 @@ Vue.component('sequencer', {
 
         data.push({
           effects: component.serialize(), /* TODO: remove ||0 ||0 and ||1 once templates work */
-          layer: seq.layer || 0, 
+          layer: seq.layer || 0,
           from: seq.from || 0,
           to: seq.to || 1
         });
@@ -116,8 +117,10 @@ Vue.component('sequencer', {
       this.mouseMoveListener = this.mouseMove.bind(this);
       window.addEventListener("mousemove", this.mouseMoveListener);
     },
-    sequenceBodyDown(index){
+    sequenceBodyDown(index,e){
       this.dragging = index;
+      let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
+
       if(this.selected.indexOf(index) != -1){
         this.selected = this.selected.filter(function(row) {
           return row != index;
@@ -130,6 +133,7 @@ Vue.component('sequencer', {
       this.draggingBody = true;
       this.draggingLeft = false;
       this.draggingRight = false;
+      this.draggingTimeFrom = time - seq.from;
       window.addEventListener("mouseup", this.unDrag.bind(this), {once: true});
       this.mouseMoveListener = this.mouseMove.bind(this);
       window.addEventListener("mousemove", this.mouseMoveListener);
@@ -162,14 +166,27 @@ Vue.component('sequencer', {
       this.draggingTimeBar = false;
       this.dragging = null;
     },
-    mouseMove(e){
+    mouseEventInfo(e){
       let scale = this.getScale();
-      let seq = this.sequences[this.dragging];
+      let seq = null;
+      let duration = null;
+
+      if(this.dragging != null){
+        seq = this.sequences[this.dragging];
+        duration = seq.to - seq.from;
+      }
+
       let x = e.clientX - parseInt(this.$el.style.left);
       let y_prime = e.clientY - parseInt(this.$el.style.top);
       let h = parseInt(this.$el.clientHeight);
       let y = h - y_prime;
       let layer = Math.floor(y / scale.layerScale);
+      let time = x / scale.timeScale;
+
+      return [x,y,time,layer,seq,duration,scale];
+    },
+    mouseMove(e){
+      let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
 
       // Limit to 6 (including 0)
       layer = Math.min(layer, 5);
@@ -188,9 +205,7 @@ Vue.component('sequencer', {
       }
 
       if(this.draggingBody){
-        let duration = seq.to - seq.from;
-        // + duration/2 to grab from center
-        let newFrom = x / scale.timeScale - duration/2;
+        let newFrom = time - this.draggingTimeFrom;
         seq.from = newFrom;
         seq.to = newFrom + duration;
         seq.layer = layer;
@@ -252,9 +267,6 @@ Vue.component('sequencer', {
 
       this.$nextTick(this.repositionSequences);
       this.selected = [];
-      this.$nextTick(function(){
-        this.sequenceBodyDown(this.sequences.length - 1);
-      });
     },
     deleteSelected(){
       let selected = this.selected;
