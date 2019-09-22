@@ -215,7 +215,7 @@ Vue.component('sequencer', {
       if(this.draggingTimeBar){
         let time = x / scale.timeScale;
         this.player.time.time = time;
-        this.player.draw_gl(time.time);
+        this.player.draw_gl(time);
       }
     },
     getScale(){
