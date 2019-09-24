@@ -15,7 +15,7 @@
 Vue.component('sequence-effects', {
   template: `
   <div class="sequence-effects">
-	<h4>Sequence {{index + 1}}</h4>
+    <h4>Sequence {{index + 1}}</h4>
     <p v-if="effectsIndex.length == 0">
       Start by adding an effect!
     </p>
@@ -52,6 +52,7 @@ Vue.component('sequence-effects', {
                      v-bind:player="player"
                      v-bind:ready="ready"
                      v-bind:effect="effects[effectNumber]"
+                     v-on:duration="onDuration"
                      ></component>
         </div>
       </div>
@@ -353,6 +354,12 @@ Vue.component('sequence-effects', {
     },
     ready(){
       this.$emit("ready");
+    },
+    onDuration(duration){
+      this.$emit('duration', {
+        sequence: this.index,
+        duration: duration
+      });
     }
   },
   watch: {

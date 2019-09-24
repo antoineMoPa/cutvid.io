@@ -368,6 +368,12 @@ input{
   border-radius:4px;
 }
 
+.time-spacer{
+  position:absolute;
+  top:5px;
+  height:80px;
+}
+
 .sequence-effects .info{
   font-size:13px;
 }
@@ -527,7 +533,7 @@ input{
   -moz-user-select: none;
   -ms-user-select: none;
   overflow-x:auto;
-  overflow-y:none;
+  overflow-y:hidden;
 }
 
 .sequencer .sequence{

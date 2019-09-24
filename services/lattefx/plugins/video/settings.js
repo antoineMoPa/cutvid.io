@@ -67,12 +67,13 @@
             let app = this;
             this.shaderProgram.set_texture('video', '', function(){}, {
               video: data,
-			  autoplay: !this.player.paused,
+              autoplay: !this.player.paused,
               ready: function(){
                 // "this" points to <video> element
                 app.uniforms.videoWidth.value = this.videoWidth;
                 app.uniforms.videoHeight.value = this.videoHeight;
                 app.videoElement = this;
+                app.$emit("duration", this.duration);
                 this.muted = app.muted;
               }
             });

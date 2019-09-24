@@ -17,6 +17,7 @@ Vue.component('sequencer', {
                v-on:mousedown="sequenceRightDown(index)">
           </div>
         </div>
+        <div class="time-spacer" ref="time-spacer">.</div>
         <div class="time-bar" ref="timeBar" v-on:mousedown="timeBarDown">
           <span class="time-indicator" ref="timeIndicator"></span>
         </div>
@@ -33,7 +34,8 @@ Vue.component('sequencer', {
           v-bind:index='sequenceIndex'
           v-on:ready="effectsSettingsReady(sequenceIndex)"
           v-bind:initialEffectsGetter="sequence.initialEffectsGetter"
-          v-bind:player="player"/>
+          v-bind:player="player"
+          v-on:duration="onDuration"/>
       </div>
       <scene-template-selector ref="scene-template-selector"/>
       <div class="adder-container" v-if="dragging == null">
@@ -219,7 +221,7 @@ Vue.component('sequencer', {
       }
     },
     getScale(){
-      let totalDuration = 10;
+      let totalDuration = 63;
       let timeScale = this.$el.clientWidth / totalDuration;
       let layerScale = 25;
 
@@ -227,6 +229,7 @@ Vue.component('sequencer', {
     },
     repositionSequences(){
       let scale = this.getScale();
+      let maxTo = 0.0;
       for(let i = 0; i < this.sequences.length; i++){
         let seq = this.sequences[i];
         let els = this.$refs["sequence-"+seq.id];
@@ -237,7 +240,14 @@ Vue.component('sequencer', {
         el.style.left = (seq.from * scale.timeScale) + "px";
         el.style.width = ((seq.to - seq.from) * scale.timeScale) + "px";
         el.style.bottom = (5 + (seq.layer) * scale.layerScale) + "px";
+
+        if(seq.to > maxTo){
+          maxTo = seq.to;
+        }
       }
+      // Make scroll available until 1/3 later than the last sequence
+      let timeSpacer = this.$refs["time-spacer"];
+      timeSpacer.style.left = (maxTo * scale.timeScale * 1.33) + "px"
     },
     fromTemplateButton(){
       let app = this;
@@ -282,6 +292,17 @@ Vue.component('sequencer', {
       // Ok we use your version of the array
       this.sequences[index].effects = effects;
       this.sequences[index].effectsIndex = effectsIndex;
+    },
+    onDuration(info){
+      /*
+         When a video is loaded
+         we want to resize sequence to length of video
+      */
+      this.sequences[info.sequence].to =
+        this.sequences[info.sequence].from +
+        info.duration;
+
+      this.repositionSequences();
     }
   },
   watch:{
