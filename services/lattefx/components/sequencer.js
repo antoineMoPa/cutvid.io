@@ -268,7 +268,7 @@ Vue.component('sequencer', {
         id: utils.increment_unique_counter("sequence"),
         layer: 0,
         from: 0,
-        to: 3,
+        to: 10,
         effects: [],
         effectsIndex: []
       });
