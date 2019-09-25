@@ -196,13 +196,23 @@ Vue.component('sequencer', {
 
       if(this.draggingLeft){
         // -10 to grab from center
+        let initial_from = seq.from;
         seq.from = (x - 10) / scale.timeScale;
         this.repositionSequences();
+        let sequence_component = this.$refs["sequence-effects-"+seq.id][0];
+        for(let effectName in sequence_component.$refs){
+          // Quite a hack to find video effects
+          // We should find all effect components of a sequence
+          if (effectName.indexOf("video-effect") != -1){
+            let effect = sequence_component.$refs[effectName][0];
+            effect.onTrimLeft(seq.from - initial_from);
+          }
+        }
       }
 
       if(this.draggingRight){
         // -10 to grab from center
-        seq.to = (x - 10) / scale.timeScale;
+        seq.to = (x + 10) / scale.timeScale;
         this.repositionSequences();
       }
 
@@ -321,6 +331,10 @@ Vue.component('sequencer', {
           m = (m < 10)? "0" + m: m;
           cs = (cs < 10)? "0" + cs: cs;
           return m + ":" + s + ":" + cs;
+        }
+        // Stop user from putting time bar before 0
+        if(this.time.time < 0){
+          this.time.time = 0;
         }
         this.$refs["timeBar"].style.left = (this.time.time * scale.timeScale) + "px";
         this.$refs["timeIndicator"].innerHTML = formatTime(this.time.time)

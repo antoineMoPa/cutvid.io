@@ -32,6 +32,7 @@
             backgroundColor: "#000000",
             muted: false,
             trimBefore: 0,
+            durationInitialized: false,
             uniforms: {
               videoWidth: {
                 type: "f",
@@ -73,7 +74,11 @@
                 app.uniforms.videoWidth.value = this.videoWidth;
                 app.uniforms.videoHeight.value = this.videoHeight;
                 app.videoElement = this;
-                app.$emit("duration", this.duration);
+                if(!app.durationInitialized){
+                  app.$emit("duration", this.duration);
+                  // Don't resize video after initial resize
+                  app.durationInitialized = true;
+                }
                 this.muted = app.muted;
               }
             });
@@ -91,6 +96,9 @@
               console.error(e);
             }
           },
+          onTrimLeft(diff){
+            this.trimBefore += diff;
+          }
         },
         watch: {
           video(){
