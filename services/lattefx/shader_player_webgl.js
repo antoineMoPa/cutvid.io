@@ -448,7 +448,7 @@ class ShaderPlayerWebGL2 {
             let shouldBeTime = time - timeFrom + trimBefore;
             let currTime = tex.videoElement.currentTime;
 
-            if (this.paused && Math.abs(shouldBeTime - currTime) > 0.05) {
+            if (this.paused && Math.abs(shouldBeTime - currTime) > 0.2) {
               tex.videoElement.currentTime = shouldBeTime;
               tex.videoElement.play();
               tex.videoElement.pause();
@@ -460,8 +460,6 @@ class ShaderPlayerWebGL2 {
 
             if (this.rendering){
               tex.videoElement.currentTime = shouldBeTime;
-              tex.videoElement.play();
-              tex.videoElement.pause();
             }
 
             tex.updateVideo();
@@ -497,7 +495,6 @@ class ShaderPlayerWebGL2 {
         // Add seconds
         gtime += time;
         gl.uniform1f(iGlobalTimeAttribute, gtime);
-
 
         const isFirstAttribute = gl.getUniformLocation(program, 'is_first');
         gl.uniform1f(isFirstAttribute, is_first);
@@ -560,7 +557,7 @@ class ShaderPlayerWebGL2 {
 
     function _animate() {
       // When rendering gif, draw is done elsewhere
-      if (!player.rendering && player.window_focused && !player.paused) {
+      if (!player.rendering && player.window_focused) {
         try{
           player.draw_gl();
         } catch (e) {

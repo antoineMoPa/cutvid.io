@@ -227,7 +227,6 @@ Vue.component('sequencer', {
       if(this.draggingTimeBar){
         let time = x / scale.timeScale;
         this.player.time.time = time;
-        this.player.draw_gl(time);
       }
     },
     getScale(){
@@ -348,6 +347,9 @@ Vue.component('sequencer', {
 
     let allSequences = this.$el.querySelectorAll(".all-sequences")[0];
     let allSequencesContainer = document.querySelectorAll(".all-sequences-container")[0];
+
+    // Select first sequence by default
+    this.selected = [0];
 
     allSequencesContainer.appendChild(allSequences);
   }

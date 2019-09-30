@@ -9,7 +9,6 @@
       ui: {
         template: `
 <div>
-  <h4>Video</h4>
   <label>Your Video</label>
   <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg" class="video-file-input" v-on:change="onVideo()">
   <label>Video Scale</label>

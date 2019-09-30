@@ -141,7 +141,8 @@ class ShaderProgram {
     }
 
     function load() {
-      if(options.force_width != undefined ||
+      if(!isVideo &&
+         options.force_width != undefined ||
          options.force_height != undefined
         ){
         let can = document.createElement("canvas");
@@ -204,12 +205,12 @@ class ShaderProgram {
       videoElement.currentTime = 0;
       videoElement.src = options.video;
       videoElement.loop = true;
-
+      videoElement.muted = true;
       videoElement.play();
-
       if(!autoplay){
         videoElement.pause();
       }
+      videoElement.muted = false;
     } else if(url.tagName != undefined && url.tagName == "CANVAS"){
       image = url;
       load();
