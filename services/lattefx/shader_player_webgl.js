@@ -181,9 +181,17 @@ class ShaderPlayerWebGL2 {
 
   /* callback receives a canvas element */
   render(time, callback) {
+    let app = this;
     callback = callback || function () {};
-    this.draw_gl(time);
-    callback(this.canvas);
+
+    if(this.draw_gl(time)){
+      callback(this.canvas);
+    } else {
+      // Try again
+      setTimeout(function(){
+        app.render(time, callback);
+      }, 30);
+    }
   }
 
   set_on_error_listener(callback) {
@@ -337,6 +345,7 @@ class ShaderPlayerWebGL2 {
 
   draw_gl(force_time) {
     const gl = this.gl;
+    let texSuccess = true;
 
     if (gl == null) {
       return;
@@ -448,7 +457,9 @@ class ShaderPlayerWebGL2 {
             let shouldBeTime = time - timeFrom + trimBefore;
             let currTime = tex.videoElement.currentTime;
 
-            if (this.paused && Math.abs(shouldBeTime - currTime) > 0.2) {
+            if (this.rendering && tex.videoElement.currentTime != shouldBeTime){
+              tex.videoElement.currentTime = shouldBeTime;
+            } else if (this.paused && Math.abs(shouldBeTime - currTime) > 0.2) {
               tex.videoElement.currentTime = shouldBeTime;
               tex.videoElement.play();
               tex.videoElement.pause();
@@ -458,11 +469,7 @@ class ShaderPlayerWebGL2 {
               tex.videoElement.play();
             }
 
-            if (this.rendering){
-              tex.videoElement.currentTime = shouldBeTime;
-            }
-
-            tex.updateVideo();
+            texSuccess &= tex.updateVideo();
           } else {
             gl.bindTexture(gl.TEXTURE_2D, tex.texture);
           }
@@ -539,6 +546,11 @@ class ShaderPlayerWebGL2 {
         }
       }
     }
+
+    if(this.rendering && !texSuccess){
+      return false;
+    }
+    return true;
   }
 
   animate() {

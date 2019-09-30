@@ -127,17 +127,24 @@ class ShaderProgram {
     let videoInitialized = false;
 
     function updateVideo(){
+      /*
+        Returns true on success
+       */
       if(!videoInitialized){
         load();
         videoInitialized = true;
       } else {
         let texture = app.textures[name].texture;
         gl.bindTexture(gl.TEXTURE_2D, texture);
-
-        gl.texImage2D(
-          gl.TEXTURE_2D, level, internalFormat,
-          srcFormat, srcType, videoElement);
+        if (videoElement.readyState >= 2) { // Fix firefox black screen
+          gl.texImage2D(
+            gl.TEXTURE_2D, level, internalFormat,
+            srcFormat, srcType, videoElement);
+        } else {
+          return false;
+        }
       }
+      return true;
     }
 
     function load() {
