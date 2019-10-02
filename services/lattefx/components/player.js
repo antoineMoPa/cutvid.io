@@ -51,8 +51,7 @@ Vue.component('player', {
     <ui ref="ui"
         v-on:playAll="playAll"
         v-on:buy="make_buy"
-        v-bind:player="player"
-        v-on:gif="make_gif"/>
+        v-bind:player="player"/>
   </div>`,
   data(){
     return {
@@ -155,306 +154,18 @@ Vue.component('player', {
     render(options) {
       let totalFrames = this.fps * this.player.get_total_duration();
 
-      if (typeof (options) === 'undefined') {
-        options = {
-          zip: false,
-          gif: false,
-          sendToServer: false,
-          blob: false
-        };
-      }
       // Renders all the frames to a png
       const app = this;
 
       app.player.rendering = true;
-	  
+
       app.player.pause();
 
-      const to_export = {};
-
-      if (options.gif) {
-        to_export.delay = Math.floor(1000 / app.fps);
-        to_export.data = [];
-      }
-      if (options.sendToServer) {
-        to_export.fps = app.fps;
-        to_export.data = [];
-      }
-
-      const tempCanvas = document.createElement('canvas');
-      const canvas = tempCanvas;
-
-      canvas.width = app.width;
-      canvas.height = app.height;
-
-      const ctx = canvas.getContext('2d');
-
-      let i = 0;
-
-      /*
-        "Unrolled" async loop:
-        for every image:
-        render & load image
-        onload: add to canvas
-        when all are loaded: create image from canvas
-      */
-      function next() {
-        const pl = app.player;
-        if (i < totalFrames) {
-          const curr = i;
-
-          const w = pl.width;
-          const h = pl.height;
-          const watermark = app.watermark;
-          const offset_x = 10;
-          const color = '#888888';
-          ctx.textAlign = 'end';
-          const temp_img = document.createElement('img');
-
-          temp_img.onload = function () {
-            if (options.gif) {
-              ctx.drawImage(temp_img, 0, 0);
-              ctx.fillStyle = color;
-              ctx.fillText(watermark, w - offset_x, h - 10);
-              to_export.data.push(canvas.toDataURL());
-              next();
-            } else if (options.sendToServer) {
-              ctx.drawImage(temp_img, 0, 0);
-              ctx.fillStyle = color;
-              ctx.fillText(watermark, w - offset_x, h - 10);
-              canvas.toBlob(function(blob){
-                to_export.data.push(blob);
-                next();
-              });
-            } else if (options.zip) {
-              const zip = window.current_zip;
-              ctx.drawImage(temp_img, 0, 0);
-              ctx.fillStyle = color;
-              ctx.fillText(watermark, w - offset_x, h - 10);
-              // 4-Zero pad number
-              let filename = 'image-';
-              const numzeros = 4;
-              const numlen = (`${curr}`).length;
-
-              for (let i = 0; i < numzeros - numlen; i++) {
-                filename += '0';
-              }
-
-              filename += `${curr}.png`;
-
-              canvas.toBlob((blob) => {
-                zip.file(
-                  filename,
-                  blob
-                );
-                next();
-              });
-            }
-          };
-          app.$refs.ui.set_progress((curr + 1) / totalFrames * 0.5);
-
-          // Render
-          app.player.render((curr + 1) / app.fps, (canvas) => {
-            let image_data = '';
-            /*
-              Shader player return a canvas,
-              but iframed players (javascript)
-              return a dataurl
-             */
-            if (typeof (canvas) != 'string') {
-              image_data = canvas.toDataURL();
-            } else {
-              image_data = canvas;
-            }
-
-            temp_img.src = image_data;
-          }, curr);
-        } else {
-          // Final step
-          if (options.gif) {
-            app.export_gif(to_export);
-            app.player.rendering = false;
-            if (app.player.resume_anim) {
-              app.player.resume_anim();
-            }
-          } else if (options.sendToServer) {
-            // Build a form
-            // Thanks to
-            // shiya.io/using-fetch-to-upload-a-file/
-            // For the nice quick tutorial
-            let form = new FormData();
-            let images = to_export.data;
-            app.player.rendering = false;
-
-            let padNumber = (number) => {
-              return "00000000".substr(0, 8 - (number+' ').length) + number;
-            };
-
-            for(let i in images){
-              let image = images[i];
-              form.append(padNumber(i)+'.png', image);
-            }
-
-            form.append("fps", to_export.fps);
-            form.append("user_token", app.user_token);
-            form.append("data", JSON.stringify(app.serialize()));
-
-            let audios = app.player.dump_audio();
-
-            let audio_info = audios.audio_info;
-            let audio_src = audios.audio_src;
-
-            for(let i in audio_info){
-              form.append("audio_info[]", audio_info[i]);
-              form.append("audio_src[]", audio_src[i]);
-            }
-
-            app.$refs.buyVideo.show();
-
-            fetch(app.settings.renderer, {
-              method: "POST",
-              body: form,
-              mode: "cors",
-              credentials: "omit"
-            }).then((resp) => {
-              resp.text().then((data) => {
-                // Now we have the video
-                app.$refs.buyVideo.setVideoID(data);
-                app.$refs.ui.set_progress(1.0);
-                setTimeout(() => {
-                  // Bring back to 0 after some time
-                  app.$refs.ui.set_progress(0.0);
-                }, 1000);
-              });
-            });
-            app.$refs.ui.set_progress(0.6);
-
-          } else if (options.zip) {
-            const zip = window.current_zip;
-            app.player.rendering = false;
-            app.$refs.ui.set_progress(1.0);
-            zip.generateAsync({ type: 'blob' })
-              .then((blob) => {
-                let a = document.createElement("a");
-                var url = URL.createObjectURL(blob);
-                a.href = url;
-                a.download = "videopictures.zip";
-                document.body.appendChild(a);
-                a.click();
-              });
-          }
-        }
-        i++;
-      }
-
-      next();
-    },
-    export_gif(to_export) {
-      // Make the gif from the frames
-      const app = this;
-
-      app.$nextTick(() => {
-        const gif = new GIF({
-          workers: 2,
-          quality: 10,
-          workerScript: '/app/libs/gif.worker.js'
-        });
-
-        let data = to_export.data;
-
-        const images = [];
-
-        for (let i = 0; i < data.length; i++) {
-          const image = new Image();
-          image.src = data[i];
-          image.onload = imageLoaded;
-          images.push(image);
-
-        }
-
-        let number_loaded = 0;
-        function imageLoaded() {
-          number_loaded++;
-          if (number_loaded == data.length) {
-            convert();
-          }
-        }
-
-        function convert() {
-          for (let i = 0; i < images.length; i++) {
-            gif.addFrame(images[i], { delay: to_export.delay });
-          }
-
-          gif.render();
-
-          gif.on('progress', (p) => {
-            app.$refs.ui.set_progress(0.5 + 0.5 * p);
-          });
-
-          gif.on('finished', (blob) => {
-            // Create image
-            const size = (blob.size / 1000).toFixed(2);
-            app.$refs.ui.set_progress(0.8);
-            // Create base64 version
-            // PERF: TODO: generate image on submit only
-            const reader = new window.FileReader();
-
-            reader.onloadend = function () {
-              // reader.result = base64 data
-              let div = document.createElement("div");
-              div.classList.add("gif-popup");
-              let content = "<img src='" + URL.createObjectURL(blob) + "'/>";
-              content += "<p>To save gif: Right-Click image + save-as!</p>";
-              div.innerHTML = content;
-
-              let close_button = document.createElement("div");
-              close_button.classList.add("close-button");
-              close_button.innerHTML = '<img src="icons/feather-dark/x.svg" width="40"/>';
-              close_button.addEventListener("click", () => {
-                document.body.removeChild(div);
-              });
-              div.appendChild(close_button);
-
-              document.body.appendChild(div);
-              app.$refs.ui.set_progress(0);
-            };
-            reader.readAsDataURL(blob);
-          });
-        }
-      });
-    },
-    make_gif(){
-      let basic_error = false;
-
-      this.playAll();
-
-      if(this.player.rendering){
-        return;
-      }
-
-      this.player.rendering = true;
-
-      // We'll show all relevant warnings.
-
-      if(this.width > 1000 || this.height > 1000){
-        alert("Please set a lower resolution (less than 1000x1000) before exporting a gif.");
-        basic_error = true;
-      }
-      if(this.fps > 20){
-        alert("Please set a smaller fps (less than 20) before exporting a gif.");
-        basic_error = true;
-      }
-
-      if(basic_error){
-        this.player.rendering = false;
-        return;
-      }
-
-      this.$refs.ui.set_progress(0.0);
-
-      this.render({
-        zip: false,
-        gif: true
+      app.player.render(function(data){
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(data[0]);
+        document.body.appendChild(a);
+        a.target = "_blank";
       });
     },
     make_buy(){
@@ -469,9 +180,7 @@ Vue.component('player', {
 
       this.$refs.ui.set_progress(0.0);
 
-      this.render({
-        sendToServer: true
-      });
+      this.render();
     },
     onExportJSON(){
       let data = JSON.stringify(this.serialize());
@@ -536,6 +245,6 @@ Vue.component('player', {
 
     this.switch_panel(1);
     this.$refs['panel-selector'].switch_to(1);
-	this.pause();
+    this.pause();
   },
 });

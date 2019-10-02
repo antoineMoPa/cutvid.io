@@ -179,19 +179,35 @@ class ShaderPlayerWebGL2 {
     this.update();
   }
 
-  /* callback receives a canvas element */
-  render(time, callback) {
+  render(callback) {
     let app = this;
-    callback = callback || function () {};
+    let stream = this.canvas.captureStream(25);
+    this.capture_stream = stream;
+    this.media_recorder_chunks = [];
+    this.on_render_done = callback;
 
-    if(this.draw_gl(time)){
-      callback(this.canvas);
-    } else {
-      // Try again
-      setTimeout(function(){
-        app.render(time, callback);
-      }, 30);
-    }
+    let media_recorder = new MediaRecorder(stream, {
+      audioBitsPerSecond : 128000,
+      videoBitsPerSecond : 2500000
+    });
+
+    media_recorder.ondataavailable = function(e){
+      if (e.data.size > 0) {
+        app.media_recorder_chunks.push(e.data);
+      }
+    };
+
+    media_recorder.onstop = function(){
+      app.on_render_done(app.media_recorder_chunks);
+    };
+
+    this.time.time = 0;
+    this.last_frame_time = new Date().getTime();
+    this.media_recorder = media_recorder;
+    this.rendering = true;
+
+    media_recorder.start();
+    this.paused = false;
   }
 
   set_on_error_listener(callback) {
@@ -360,11 +376,11 @@ class ShaderPlayerWebGL2 {
       let raw_time = new Date().getTime();
       let delta = raw_time - this.last_frame_time;
       this.time.time += delta / 1000.0;
-      this.time.time = this.time.time % duration;
+      if (!this.rendering) {
+        this.time.time = this.time.time % duration;
+      }
       this.last_frame_time = raw_time;
     }
-
-
 
     let time = this.time.time;
 
@@ -457,16 +473,19 @@ class ShaderPlayerWebGL2 {
             let shouldBeTime = time - timeFrom + trimBefore;
             let currTime = tex.videoElement.currentTime;
 
-            if (this.rendering && tex.videoElement.currentTime != shouldBeTime){
+            /*if (this.rendering && tex.videoElement.currentTime != shouldBeTime){
               tex.videoElement.currentTime = shouldBeTime;
             } else if (this.paused && Math.abs(shouldBeTime - currTime) > 0.2) {
               tex.videoElement.currentTime = shouldBeTime;
               tex.videoElement.play();
               tex.videoElement.pause();
-            } else if (Math.abs(shouldBeTime - currTime) > 2.0) {
+            } else */
+            if (Math.abs(shouldBeTime - currTime) > 2.0) {
               tex.videoElement.pause();
               tex.videoElement.currentTime = shouldBeTime;
-              tex.videoElement.play();
+              if (!this.paused) {
+                tex.videoElement.play();
+              }
             }
 
             texSuccess &= tex.updateVideo();
@@ -547,8 +566,16 @@ class ShaderPlayerWebGL2 {
       }
     }
 
-    if(this.rendering && !texSuccess){
-      return false;
+    if (this.rendering) {
+      if (!texSuccess) {
+        return false;
+      }
+
+      if (time >= duration) {
+        this.media_recorder.stop();
+        this.rendering = false;
+        this.pause();
+      }
     }
     return true;
   }
@@ -568,8 +595,8 @@ class ShaderPlayerWebGL2 {
     this.anim_already_started = true;
 
     function _animate() {
-      // When rendering gif, draw is done elsewhere
-      if (!player.rendering && player.window_focused) {
+      // Make sure to render when focussed or rendering
+      if (player.rendering || player.window_focused) {
         try{
           player.draw_gl();
         } catch (e) {
