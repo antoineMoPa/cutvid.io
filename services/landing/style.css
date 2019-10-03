@@ -1,0 +1,239 @@
+body{
+  text-align:center;
+  background:#fff;
+  font-family:Open Sans;
+  padding:0;
+  margin:0;
+}
+
+html{
+  background:#000;
+}
+
+h3{
+  color:#333;
+  padding:30px;
+  margin:0;
+}
+
+input{
+  border-radius:2px;
+  border: 1px solid #aaa;
+  padding:5px;
+  background:#eee;
+}
+
+.video-container{
+  background:#111;
+}
+
+.hero-video{
+  width: 100%;
+}
+
+.pricing-hero{
+  background:#000;
+}
+
+.pricing-hero .title{
+  color:#fff;
+  margin-bottom:40px;
+}
+
+.hero.is-primary.is-lighter{
+  background:#333;
+  background:linear-gradient(#000,#012);
+}
+
+.pricing-hero h2{
+  color:#fff;
+  font-size: 50px;
+  margin-bottom: 30px;
+}
+
+.pricing-hero .premium-effects{
+  font-size: 20px;
+  color: #fff;
+  margin-top: 40px;
+}
+
+.pricing-hero .premium-effects .button{
+  margin-left:30px;
+}
+
+.pricing-card{
+  background:#fff;
+  background: linear-gradient(#fff,#e1e1e1);
+  box-shadow: 0 0 30px rgba(255,255,255,0.4);
+  width:240px;
+  display:inline-block;
+  vertical-align:top;
+  border-radius:5px;
+  margin:15px;
+}
+
+.pricing-card h3{
+  color:#000;
+  padding: 0;
+  line-height: 24px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size:30px;
+}
+
+.pricing-card .button{
+  margin-top:20px;
+  background: linear-gradient(#468bfb,#124ba8);
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+  border-top: none;
+  transition:all 0.2s;
+}
+
+.pricing-card .button:hover{
+  transform:scale(1.03);
+}
+
+.pricing-card .feature{
+  font-size:20px;
+  color:#333;
+  line-height:50px;
+  font-size: 20px;
+  color: #333;
+  line-height: 60px;
+  background: linear-gradient(#fff,#ddd);
+  width: 240px;
+  margin-left: -24px;
+  margin-bottom: 20px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #bbb;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
+
+.pricing-card .price-per-year{
+  font-size:14px;
+  color:#333;
+  line-height:50px;
+  margin-top:-20px;
+}
+
+.pricing-card .price{
+  color: #3273dc;
+  height:60px;
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+}
+
+.price .dollar-sign{
+  position:relative;
+  top:-17px;
+  left:3px;
+}
+
+.price .the-price{
+  font-size:40px;
+  font-weight:600;
+}
+
+.price .per-what{
+  font-size:20px;
+}
+
+.pricing-card .button{
+  font-size:20px;
+}
+
+.hero.is-primary{
+  background:#111;
+}
+
+.button.is-primary {
+  background: #3af;
+  transition:all 0.3s;
+}
+
+.button.is-primary:hover {
+  background: #16d;
+}
+
+.navbar {
+  background-color: #1e1e1e;
+}
+
+.pricing-card.basic{
+  border-top:10px solid #aaa;
+  border-bottom:10px solid #aaa;
+}
+
+.pricing-card.pro{
+  background:#fff;
+  margin-top:-5px;
+  padding-top:40px;
+  padding-bottom:40px;
+  border-top:10px solid #3af;
+  border-bottom:10px solid #3af;
+}
+
+.pricing-card.business{
+  background:#fff;
+  border-top:10px solid #333;
+  border-bottom:10px solid #333;
+}
+
+.pricing-card.pay-as-you-go{
+  width: 500px;
+}
+
+.pricing-card.pay-as-you-go .button{
+  margin-top:10px;
+  margin-left:30px;
+}
+
+.screenshot{
+  max-width:100%;
+  transform: skew(-0.02turn, 1deg) scale(0.7);
+  box-shadow: 0 0 60px rgba(255,255,255,0.1);
+  margin-top: -100px;
+  margin-bottom: -100px;
+}
+
+.screenshot.other-side{
+  transform: skew(0.01turn, 0deg) scale(0.7);
+}
+
+p.small{
+  font-size:13px;
+  color:#000;
+}
+
+p.subject-to-change{
+  margin-bottom:40px;
+  margin-top:-30px;
+  color:#bbb;
+}
+
+@media all and (min-width:768px) {
+
+  .hero .subtitle{
+    line-height:40px;
+    font-size:150%;
+    margin-top:40px !important;
+    margin-bottom:40px !important;
+  }
+
+  .navbar-end{
+    margin-right:10px;
+  }
+}
+
+@media all and (max-width:768px) {
+  .button.is-large{
+	margin-top: 110px;
+	font-size: 20px;
+  }
+  .screenshot{
+	margin-top:0;
+  }
+  .pricing-card.pay-as-you-go{
+	width:auto;
+  }
+}
+

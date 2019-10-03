@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="85.849289mm"
+   height="22.073069mm"
+   viewBox="0 0 85.849289 22.073069"
+   version="1.1"
+   id="svg5562">
+  <defs
+     id="defs5556" />
+  <metadata
+     id="metadata5559">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(-68.95631,-73.540845)">
+    <text
+       id="text4890-6"
+       y="91.613914"
+       x="71.154381"
+       style="font-style:normal;font-weight:normal;font-size:18.01929474px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#28a4ff;fill-opacity:1;stroke:none;stroke-width:0.45048234"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#28a4ff;fill-opacity:1;stroke-width:0.45048234"
+         y="91.613914"
+         x="71.154381"
+         id="tspan4888-0">LATTE <tspan
+   id="tspan4886-6"
+   style="fill:#ff28ec;fill-opacity:1;stroke-width:0.45048234">fx</tspan></tspan></text>
+  </g>
+</svg>
