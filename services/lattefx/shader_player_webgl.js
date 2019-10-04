@@ -72,25 +72,24 @@ class ShaderPlayerWebGL2 {
     }
   }
 
-  dump_audio(){
-    let audio_info = [];
-    let audio_src = [];
+  /*
+    Gets all audio streams for recording
+   */
+  get_all_audio_streams(){
+    let streams = [];
 
     this.for_each_textures((t,s) => {
       if(t.isVideo && !t.videoElement.muted){
-        audio_info.push({
-          from: s.from,
-          to: s.to,
-          trimBefore: s.trimBefore,
-          videoFile: s.videoFile
-        });
-        audio_src.push(t.videoElement.src);
-      } else if (t.isAudio){
-        alert("TODO");
+        if(typeof(t.audioElement.captureStream) == "undefined"){
+          // Firefox is slow on implementing that one
+          streams.push(t.audioElement.mozCaptureStream().getTracks()[0]);
+        } else {
+          streams.push(t.audioElement.captureStream().getTracks()[0]);
+        }
       }
     });
 
-    return {audio_info, audio_info};
+    return streams;
   }
 
   for_each_textures(callback){
@@ -119,13 +118,19 @@ class ShaderPlayerWebGL2 {
 
   play(){
     this.paused = false;
-    this.for_each_current_videos((v) => {v.videoElement.play()});
+    this.for_each_current_videos((v) => {
+      v.videoElement.play();
+      v.audioElement.play();
+    });
     this.last_frame_time = new Date().getTime();
   }
 
   pause(){
     this.paused = true;
-    this.for_each_current_videos((v) => {v.videoElement.pause()});
+    this.for_each_current_videos((v) => {
+      v.videoElement.pause();
+      v.audioElement.pause();
+    });
   }
 
   /*
@@ -181,8 +186,14 @@ class ShaderPlayerWebGL2 {
 
   render(callback) {
     let app = this;
-    let stream = this.canvas.captureStream(25);
+    let video_stream = this.canvas.captureStream(25).getTracks()[0];
+
+    let all_streams = this.get_all_audio_streams();
+    all_streams.push(video_stream)
+    console.log(all_streams);
+    let stream = new MediaStream(all_streams);
     this.capture_stream = stream;
+
     this.media_recorder_chunks = [];
     this.on_render_done = callback;
 
@@ -471,20 +482,15 @@ class ShaderPlayerWebGL2 {
             let trimBefore = parseFloat(seq.trimBefore);
             let timeFrom = parseFloat(seq.from);
             let shouldBeTime = time - timeFrom + trimBefore;
-            let currTime = tex.videoElement.currentTime;
 
-            /*if (this.rendering && tex.videoElement.currentTime != shouldBeTime){
-              tex.videoElement.currentTime = shouldBeTime;
-            } else if (this.paused && Math.abs(shouldBeTime - currTime) > 0.2) {
-              tex.videoElement.currentTime = shouldBeTime;
-              tex.videoElement.play();
-              tex.videoElement.pause();
-            } else */
-            if (Math.abs(shouldBeTime - currTime) > 2.0) {
-              tex.videoElement.pause();
-              tex.videoElement.currentTime = shouldBeTime;
-              if (!this.paused) {
-                tex.videoElement.play();
+            for (let element of [tex.videoElement, tex.audioElement]){
+              let currTime = element.currentTime;
+              if (Math.abs(shouldBeTime - currTime) > 2.0) {
+                element.pause();
+                element.currentTime = shouldBeTime;
+                if (!this.paused) {
+                  element.play();
+                }
               }
             }
 

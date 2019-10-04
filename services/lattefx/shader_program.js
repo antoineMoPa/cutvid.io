@@ -87,11 +87,13 @@ class ShaderProgram {
 
     let isVideo = false;
     let videoElement = null;
+    let audioElement = null;
     let autoplay = options.autoplay;
 
     if(options.video != undefined){
       isVideo = true;
       videoElement = document.createElement("video");
+      audioElement = document.createElement("audio");
 
       // Hack to suppress lag in my old chromebook:
       {
@@ -172,6 +174,7 @@ class ShaderProgram {
         texture,
         isVideo,
         videoElement: videoElement,
+        audioElement: audioElement,
         updateVideo: updateVideo
       };
 
@@ -211,6 +214,7 @@ class ShaderProgram {
       });
       videoElement.currentTime = 0;
       videoElement.src = options.video;
+      audioElement.src = options.video;
       videoElement.loop = true;
       videoElement.muted = true;
       videoElement.play();
