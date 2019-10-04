@@ -166,6 +166,8 @@ Vue.component('player', {
         a.href = URL.createObjectURL(data[0]);
         document.body.appendChild(a);
         a.target = "_blank";
+        a.style.position = "absolute";
+        a.style.zIndex = 1000;
       });
     },
     make_buy(){
