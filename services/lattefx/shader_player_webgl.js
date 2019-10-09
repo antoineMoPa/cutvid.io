@@ -198,7 +198,7 @@ class ShaderPlayerWebGL2 {
     let all_streams = this.get_all_audio_streams();
     all_streams.push(video_stream)
     let stream = new MediaStream(all_streams);
-    console.log(stream, all_streams);
+
     this.capture_stream = stream;
 
     this.media_recorder_chunks = [];

@@ -162,6 +162,7 @@ Vue.component('player', {
       app.player.pause();
 
       app.player.render(function(data){
+        console.log(data);
         let a = document.createElement("a");
         a.href = URL.createObjectURL(data[0]);
         document.body.appendChild(a);
