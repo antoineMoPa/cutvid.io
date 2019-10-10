@@ -13,13 +13,10 @@
   <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg" class="video-file-input" v-on:change="onVideo()">
   <label>Video Scale</label>
   <input type="number" v-model="uniforms.videoScale.value" min="0.0" max="2.0" step="0.05">
-  <label>X|Y</label>
-  <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.05">
-  <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.05">
-  <label>Mute Video
-    <input v-model="muted" type="checkbox">
-  </label>
-  <label>Trim Before
+  <label>Offset the video X, Y</label>
+  <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.01">
+  <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.01">
+  <label>Trim Before (seconds)<br>
     <input v-model="trimBefore" step="any" min="0" type="number">
   </label>
 
@@ -29,7 +26,6 @@
             video: null,
             videoName: "",
             backgroundColor: "#000000",
-            muted: false,
             trimBefore: 0,
             durationInitialized: false,
             uniforms: {
@@ -78,7 +74,6 @@
                   // Don't resize video after initial resize
                   app.durationInitialized = true;
                 }
-                this.muted = app.muted;
               }
             });
           },
@@ -103,14 +98,8 @@
           video(){
             this.loadVideo(this.video);
           },
-          muted(){
-            if(this.videoElement != undefined){
-              this.videoElement.muted = this.muted;
-            }
-          },
           trimBefore(){
             this.effect.trimBefore = this.trimBefore;
-
           },
           videoFile(){
             this.effect.videoFile = this.videoFile;

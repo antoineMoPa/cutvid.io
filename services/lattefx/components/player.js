@@ -19,17 +19,19 @@ Vue.component('player', {
 
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
-        <h3>Experts only</h3>
-        <label>
-          Export JSON (for experts only)<br>
-          <button v-on:click="onExportJSON">
-            Export
-          </button>
-        </label>
-        <label>
-          Import JSON (for experts only)<br>
-          <input type="file" v-on:change="onImportJSON"/>
-        </label>
+        <div v-if="expert_mode">
+          <h3>Experts only</h3>
+          <label>
+            Export JSON (for experts only)<br>
+            <button v-on:click="onExportJSON">
+              Export
+            </button>
+          </label>
+          <label>
+            Import JSON (for experts only)<br>
+            <input type="file" v-on:change="onImportJSON"/>
+          </label>
+        </div>
       </div>
       <div class="switchable-panel all-sequences-container">
         <h3>Effects</h3>
@@ -60,6 +62,7 @@ Vue.component('player', {
       height: 1080,
       aspect: 1920.0/1080,
       user_token: null,
+      expert_mode: false,
       fps: 30,
       watermark: ""
     };

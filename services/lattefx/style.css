@@ -251,14 +251,13 @@ input{
 }
 
 .settings-panel input[type="file"] {
-  height: 40px;
+  height: auto;
   width: calc(100% - 65px);
-  background: #000;
+  background: transparent;
   border: none;
   border-radius: 10px;
   text-align: center;
   margin-top: 8px;
-  padding:20px;
 }
 
 .settings-panel input:focus{
@@ -600,7 +599,7 @@ input{
   right: 25px;
   bottom: 135px;
 }
- 
+
 .sequencer .add-button,
 .sequencer .delete-button{
   cursor:pointer;
