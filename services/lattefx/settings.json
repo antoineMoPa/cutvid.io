@@ -5,5 +5,6 @@
   "downloadables_folder": "../downloadables/public",
   "candidates_folder": "../downloadables/candidates",
   "By the way": "This last variable is relative to python script working directory",
-  "downloadables_url": "http://127.0.0.1:8005"
+  "downloadables_url": "http://127.0.0.1:8005",
+  "paypal_client_id": ""
 }
