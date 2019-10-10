@@ -9,7 +9,7 @@ Vue.component('panel-selector', {
   </div>`,
   data(){
     return {
-      panelNames: ["Video", "Effects"],
+      panelNames: ["Video", "Effects", "File"],
       selected: 0,
     };
   },

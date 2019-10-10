@@ -81,17 +81,19 @@ Vue.component('sequencer', {
         let component = this.$refs["sequence-effects-"+seq.id][0];
 
         data.push({
-          effects: component.serialize(), /* TODO: remove ||0 ||0 and ||1 once templates work */
-          layer: seq.layer || 0,
-          from: seq.from || 0,
-          to: seq.to || 1
+          effects: component.serialize(),
+          layer: seq.layer,
+          from: seq.from,
+          to: seq.to
         });
       }
 
       return data;
     },
-    unserialize(data){
-      this.sequences = [];
+    unserialize(data, erase){
+      if (erase) {
+        this.sequences = [];
+      }
       this.player.sequences = this.sequences;
       for(let i = 0; i < data.length; i++){
         this.sequences.push({
@@ -265,8 +267,10 @@ Vue.component('sequencer', {
         let erase = false;
 
         // If scene is empty and alone, clear it
-        if(app.sequences.length == 1){
-          erase = true;
+        if (app.sequences.length == 1) {
+          if (app.sequences[0].effects.length == 0) {
+            erase = true;
+          }
         }
 
         app.unserialize(data, erase);

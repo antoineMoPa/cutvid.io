@@ -353,16 +353,15 @@ class ShaderPlayerWebGL2 {
       }
       for(let j = 0; j < seq.effects.length; j++){
         let effect = seq.effects[seq.effectsIndex[j]];
-        let arr = sequencesByLayer[seq.layer||0]; /* TODO: remove ||0 ||0 and ||1 once templates work */
+        let arr = sequencesByLayer[seq.layer];
         if(effect == undefined){
           continue;
         }
         for(let k = 0; k < effect.shaderPrograms.length; k++){
-          seq.layer = seq.layer || 0;/* TODO: remove ||0 ||0 and ||1 once templates work */
-          sequencesByLayer[seq.layer] =
-            sequencesByLayer[seq.layer].concat({
-              from: seq.from || 0, /* TODO: remove ||0 ||0 and ||1 once templates work */
-              to: seq.to || 1,
+          seq.layer = seq.layer || 0;
+          sequencesByLayer[seq.layer].push({
+              from: seq.from,
+              to: seq.to,
               pass: effect.shaderPrograms[k],
               uniforms: effect.uniforms,
               trimBefore: effect.trimBefore || 0
@@ -423,7 +422,6 @@ class ShaderPlayerWebGL2 {
         let incrementedPasses = false;
         let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
-
         let shaderProgram = seq.pass;
         shaderProgram.use();
         let program = shaderProgram.program;

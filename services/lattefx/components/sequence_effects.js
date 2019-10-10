@@ -377,7 +377,6 @@ Vue.component('sequence-effects', {
       this.unserialize(effects, false);
     } else {
       // Default to a video sequence available for upload
-      this.addEffect("video");
     }
 
     this.$emit("register", this.index, this.effects, this.effectsIndex);

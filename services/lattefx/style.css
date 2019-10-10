@@ -745,12 +745,6 @@ input{
   margin-bottom: -13px;
 }
 
-.gfont-plugin .hide-fonts-button{
-  position:fixed;
-  top:40px;
-  left:40px;
-}
-
 .gfont-plugin .gfont-scrollbox{
   margin-top:10px;
   scrollbar-width: thin;

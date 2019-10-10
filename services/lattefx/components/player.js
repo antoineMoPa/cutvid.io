@@ -19,23 +19,25 @@ Vue.component('player', {
 
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
-        <div v-if="expert_mode">
-          <h3>Experts only</h3>
-          <label>
-            Export JSON (for experts only)<br>
-            <button v-on:click="onExportJSON">
-              Export
-            </button>
-          </label>
-          <label>
-            Import JSON (for experts only)<br>
-            <input type="file" v-on:change="onImportJSON"/>
-          </label>
-        </div>
       </div>
       <div class="switchable-panel all-sequences-container">
         <h3>Effects</h3>
         <!-- sequencer puts stuff here -->
+      </div>
+      <div class="switchable-panel">
+        <h3>File & Backup</h3>
+        <p>Download a working copy to modify your video later.</p>
+        <label>
+          Save file to your computer<br><br>
+          <button v-on:click="onSaveLatteFxFile">
+            Download
+          </button>
+        </label>
+        <p>Note: you will have to re-upload videos.</p>
+        <label>
+          Load a .lattefx file<br>
+          <input type="file" v-on:change="onLoadLatteFxFile"/>
+        </label>
       </div>
       <panel-selector ref="panel-selector" v-on:switch="switch_panel"/>
     </div>
@@ -175,17 +177,17 @@ Vue.component('player', {
         this.$refs.buyVideo.show(blob);
       }.bind(this));
     },
-    onExportJSON(){
+    onSaveLatteFxFile(){
       let data = JSON.stringify(this.serialize());
       let a = document.createElement("a");
       var blob = new Blob([data], {type : 'text/json'});
       var url = URL.createObjectURL(blob);
       a.href = url;
-      a.download = "videodata.json";
+      a.download = "videodata.lattefx";
       document.body.appendChild(a);
       a.click();
     },
-    onImportJSON(e){
+    onLoadLatteFxFile(e){
       let app = this;
       let file = e.target.files[0];
       var reader = new FileReader();
