@@ -34,3 +34,4 @@
 /config/credentials.yml.enc
 
 vendor/**
+auth_development
