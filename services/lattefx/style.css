@@ -696,6 +696,11 @@ input{
   color: #000;
 }
 
+.buy-video .payment-container{
+  width: 750px;
+  margin: auto;
+}
+
 @keyframes rotation {
   from {
     transform: rotate(0deg);

@@ -13,109 +13,84 @@ Vue.component('buy-video', {
       Download video
     </span>
   </h3>
-  <p v-if="videoID == null" class="loading-message">
-    Your video is processing on our server.
-     <img src="icons/feather-dark/loader.svg" width="30" class="loading-icon"/>
-  </p>
-  <p v-else class="loading-message">
-    Your video is ready!
-  </p>
-  <p v-if="videoID != null && !loggedIn" class="how-to-download-info">
-    Log in to use your seconds or purchase the video to download.
-  </p>
-  <div v-if="settings != undefined">
-    <iframe v-bind:src="settings.auth + '/users/sign_in'"
-            v-if="!loggedIn"
-            class="auth-iframe">
-    </iframe>
-    <p v-if="canDownload" class="thank-you">
-      Thank you for your purchase!
-    </p>
-    <p v-if="stats != null" class="account-info">
-      For this video, <span class="number">{{stats.seconds_consumed}}</span> seconds were taken from your account.<br>
-      You have <span class="number">{{stats.seconds_left}}</span> seconds left until the end of your billing cycle.<br><br>
-    </p>
-    <p class="text-center" v-if="canDownload">
-      <a class="ui-button large"
-         v-bind:href="settings.downloadables_url + '/' + videoID + '/purchased-video-' +  videoID + '.avi'"
-         v-bind:download="'purchased-video-' + videoID + '.avi'">
-        Download Video
-      </a>
-      <br><br>
-    </p>
-    <p v-if="notEnoughSecondsLeft" class="error">
-      You don't have enough seconds left this month. Contact us to buy more render seconds.<br><br>
-      Mention your video ID, we should be able to find it: {{ videoID }}
-    </p>
-    <p v-if="error != null" class="error">
-      {{ error }}
-    </p>
+  <div class="payment-container" v-if="!canDownload">
+    <!-- Paypal stuff goes here -->
   </div>
+  <p v-if="canDownload" class="thank-you">
+    Thank you for your purchase!<br>
+    Download your creation using the link below:
+  </p>
+  <p class="text-center" v-if="canDownload">
+    <a class="ui-button large"
+       v-bind:href="videoURL"
+       v-bind:download="'lattefx-purchased-video-'+videoTimeStamp()+'.avi'">
+      Download Video
+    </a>
+    <br><br>
+  </p>
+  <p v-if="canDownload" class="thank-you">
+    See you soon!
+  </p>
 </div>
 `,
-  props: ["settings"],
   data: function(){
     return {
-      videoID: null,
+      videoURL: null,
       canDownload: false,
-      loggedIn: false,
-      notEnoughSecondsLeft: false,
       error: null,
       stats: null
     };
   },
+  props: ["settings"],
   methods: {
-    show(){
+    show(blob){
+      this.videoURL = URL.createObjectURL(blob);
       this.$el.classList.remove("hidden");
+
+      let client_id = this.settings.paypal_client_id;
+      let script = document.createElement("script");
+      script.type = "text/javascript";
+      script.onload = this.initPaypal;
+      script.src = "https://www.paypal.com/sdk/js?client-id="+client_id;
+      document.head.appendChild(script);
+    },
+    initPaypal(){
+      let app = this;
+      let paymentContainer = this.$el.querySelectorAll(".payment-container")[0];
+
+      paypal.Buttons({
+        createOrder: function(data, actions) {
+          // Set up the transaction
+          return actions.order.create({
+            purchase_units: [{
+              currency_code: "USD",
+              description: "Video - web render",
+              amount: {
+                value: "3.50"
+              }
+            }]
+          })
+        },
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(details) {
+            app.canDownload = true;
+          });
+        }
+      }).render(paymentContainer);
     },
     setVideoID(_id){
       this.videoID = _id;
       this.loggedIn = false;
       this.canDownload = false;
     },
-    onWindowMessage(message){
-      let app = this;
-      if(this.settings == null){
-        return;
-      }
+    videoTimeStamp(){
+      let date = new Date();
+      let date_string = date.toLocaleString();
 
-      if(message.origin == this.settings.auth){
-        if(message.data == "user-is-signed-in"){
-          app.loggedIn = true;
-          this.consume();
-        }
-      }
-    },
-    consume(){
-      let app = this;
-
-      if(this.videoID == null || this.loggedIn == false){
-        // Wait for logging or video id
-        return;
-      }
-
-      fetch(app.settings.auth + "/consume/" + this.videoID, {
-        mode: 'cors',
-        method: 'POST',
-        credentials: 'include',
-      }).then((resp) => {
-        resp.json().then((data) => {
-          if(data.success != undefined && data.success == "video-purchased"){
-            app.canDownload = true;
-            app.stats = data;
-          } else if (data.error != undefined && data.error == "not-enough-seconds") {
-            app.notEnoughSecondsLeft = true;
-          } else {
-            app.error = "An unknown error has happened.";
-          }
-        });
-      });
+      return date_string.replace(/[^0-9-A-Za-z]+/g,"-");
     }
   },
   watch: {
-    videoID(){
-      this.consume();
-    }
   },
   mounted(){
     let app = this;
@@ -127,7 +102,6 @@ Vue.component('buy-video', {
 
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
-      app.videoID = null;
     });
 
     window.addEventListener("message", this.onWindowMessage);

@@ -48,8 +48,7 @@ Vue.component('player', {
         v-bind:player="player"
      />
     </div>
-    <buy-video ref="buyVideo"
-               v-bind:settings="settings"/>
+    <buy-video ref="buyVideo" v-bind:settings="settings"/>
     <ui ref="ui"
         v-on:playAll="playAll"
         v-on:buy="make_buy"
@@ -154,39 +153,27 @@ Vue.component('player', {
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
     },
-    render(options) {
+    render(doneCallback) {
       let totalFrames = this.fps * this.player.get_total_duration();
-
-      // Renders all the frames to a png
-      const app = this;
-
-      app.player.rendering = true;
-
-      app.player.pause();
-
-      app.player.render(function(data){
-        console.log(data);
-        let a = document.createElement("a");
-        a.href = URL.createObjectURL(data[0]);
-        document.body.appendChild(a);
-        a.target = "_blank";
-        a.style.position = "absolute";
-        a.style.zIndex = 1000;
+      this.player.rendering = true;
+      this.player.pause();
+      this.player.render(function(data){
+        doneCallback(data[0]);
       });
     },
     make_buy(){
       this.playAll();
-      window.current_zip = new JSZip()
 
-      if(this.player.rendering){
+      if (this.player.rendering)
         return;
-      }
 
       this.player.rendering = true;
 
       this.$refs.ui.set_progress(0.0);
 
-      this.render();
+      this.render(function(blob){
+        this.$refs.buyVideo.show(blob);
+      }.bind(this));
     },
     onExportJSON(){
       let data = JSON.stringify(this.serialize());
