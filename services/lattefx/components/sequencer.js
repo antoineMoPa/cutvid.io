@@ -200,14 +200,12 @@ Vue.component('sequencer', {
         let initial_from = seq.from;
         seq.from = (x - 10) / scale.timeScale;
         this.repositionSequences();
-        let sequence_component = this.$refs["sequence-effect-"+seq.id];
-        for(let effectName in sequence_component.$refs){
-          // Quite a hack to find video effects
-          // We should find all effect components of a sequence
-          if (effectName.indexOf("video-effect") != -1){
-            let effect = sequence_component.$refs[effectName];
-            effect.onTrimLeft(seq.from - initial_from);
-          }
+        let sequence_component = this.$refs["sequence-effect-"+seq.id][0];
+        let effect = sequence_component.effect;
+        // Quite a hack to find video effects
+        // We should find all effect components of a sequence
+        if (effect.name.indexOf("video") != -1){
+          sequence_component.plugin.onTrimLeft(seq.from - initial_from);
         }
       }
 

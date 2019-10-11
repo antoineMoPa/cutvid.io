@@ -130,8 +130,6 @@ Vue.component('sequence-effect', {
           let uniqueEffectComponentID = utils.increment_unique_counter("effectComponent");
           let componentName = effectName + "-effect-settings";
 
-
-
           let pass_count = 1;
           if(settings.pass_count != undefined){
             pass_count = settings.pass_count;
@@ -230,9 +228,10 @@ Vue.component('sequence-effect', {
   },
   watch: {
     active(val){
-      /* todo: what is this used for? */
-      let comp = this.plugin;
-      comp.active = val;
+      if (this.plugin != undefined) {
+        let comp = this.plugin;
+        comp.active = val;
+      }
     },
   },
   mounted(){

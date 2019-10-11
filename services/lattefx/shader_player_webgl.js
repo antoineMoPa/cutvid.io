@@ -461,7 +461,7 @@ class ShaderPlayerWebGL2 {
           let lastLayerID = this.PREVIOUS_LAYER_0 + ((layerCounter + 2) % 3);
           gl.activeTexture(gl.TEXTURE0 + i);
           gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[lastLayerID]);
-          gl.uniform1i(gl.getUniformLocation(program, 'previous_layer'), i);
+          gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
         }
 
         i++;
