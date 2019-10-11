@@ -24,16 +24,16 @@ Vue.component('sequencer', {
       </div>
       <!-- These effects are moved in mounted() -->
       <div class="all-sequences">
-        <sequence-effects
+        <sequence-effect
           v-for="(sequence, sequenceIndex) in sequences"
           v-bind:active="selected.indexOf(sequenceIndex) != -1"
           v-bind:class="(selected.indexOf(sequenceIndex) != -1)? '': 'sequence-effects-hidden'"
           v-bind:key="'sequence-' + sequence.id"
-          v-bind:ref="'sequence-effects-' + sequence.id"
-          v-on:register='registerSequenceEffects'
+          v-bind:ref="'sequence-effect-' + sequence.id"
+          v-on:register='registerSequenceEffect'
           v-bind:index='sequenceIndex'
-          v-on:ready="effectsSettingsReady(sequenceIndex)"
-          v-bind:initialEffectsGetter="sequence.initialEffectsGetter"
+          v-on:ready="effectSettingsReady(sequenceIndex)"
+          v-bind:initialEffectGetter="sequence.initialEffectGetter"
           v-bind:player="player"
           v-on:duration="onDuration"/>
       </div>
@@ -78,10 +78,10 @@ Vue.component('sequencer', {
 
       for(let i = 0; i < this.sequences.length; i++){
         let seq = this.sequences[i];
-        let component = this.$refs["sequence-effects-"+seq.id][0];
+        let component = this.$refs["sequence-effect-"+seq.id][0];
 
         data.push({
-          effects: component.serialize(),
+          effect: component.serialize(),
           layer: seq.layer,
           from: seq.from,
           to: seq.to
@@ -101,10 +101,9 @@ Vue.component('sequencer', {
           layer: data[i].layer || 0,
           from: data[i].from || 0,
           to: data[i].to || 1,
-          effects: [],
-          effectsIndex: [],
-          initialEffectsGetter: function(){
-            return data[i].effects;
+          effect: null,
+          initialEffectGetter: function(){
+            return data[i].effect;
           }
         });
       }
@@ -201,12 +200,12 @@ Vue.component('sequencer', {
         let initial_from = seq.from;
         seq.from = (x - 10) / scale.timeScale;
         this.repositionSequences();
-        let sequence_component = this.$refs["sequence-effects-"+seq.id][0];
+        let sequence_component = this.$refs["sequence-effect-"+seq.id];
         for(let effectName in sequence_component.$refs){
           // Quite a hack to find video effects
           // We should find all effect components of a sequence
           if (effectName.indexOf("video-effect") != -1){
-            let effect = sequence_component.$refs[effectName][0];
+            let effect = sequence_component.$refs[effectName];
             effect.onTrimLeft(seq.from - initial_from);
           }
         }
@@ -265,14 +264,6 @@ Vue.component('sequencer', {
 
       this.$refs['scene-template-selector'].open(function(data){
         let erase = false;
-
-        // If scene is empty and alone, clear it
-        if (app.sequences.length == 1) {
-          if (app.sequences[0].effects.length == 0) {
-            erase = true;
-          }
-        }
-
         app.unserialize(data, erase);
       });
     },
@@ -282,8 +273,7 @@ Vue.component('sequencer', {
         layer: 0,
         from: 0,
         to: 10,
-        effects: [],
-        effectsIndex: []
+        effect: null,
       });
 
       // Initiate drag
@@ -301,10 +291,9 @@ Vue.component('sequencer', {
       });
       this.$nextTick(this.repositionSequences);
     },
-    registerSequenceEffects(index, effects, effectsIndex){
+    registerSequenceEffect(index, effect){
       // Ok we use your version of the array
-      this.sequences[index].effects = effects;
-      this.sequences[index].effectsIndex = effectsIndex;
+      this.sequences[index].effect = effect;
     },
     onDuration(info){
       /*

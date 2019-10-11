@@ -28,6 +28,9 @@
             backgroundColor: "#000000",
             trimBefore: 0,
             durationInitialized: false,
+            player: null,
+            effect: null,
+            shaderProgram: null,
             uniforms: {
               videoWidth: {
                 type: "f",
@@ -57,7 +60,6 @@
             }
           };
         },
-        props: ["player", "effect", "shaderProgram"],
         methods: {
           loadVideo(data){
             let app = this;
@@ -70,7 +72,7 @@
                 app.uniforms.videoHeight.value = this.videoHeight;
                 app.videoElement = this;
                 if(!app.durationInitialized){
-                  app.$emit("duration", this.duration);
+                  app.onDuration(this.duration);
                   // Don't resize video after initial resize
                   app.durationInitialized = true;
                 }
@@ -106,8 +108,6 @@
           }
         },
         mounted(){
-          this.effect.uniforms = this.uniforms;
-          this.effect.trimBefore = this.trimBefore;
         },
         beforeDestroy(){
           this.shaderProgram.delete_texture('video');

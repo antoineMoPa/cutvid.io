@@ -1,79 +1,33 @@
-/*
-  Convention for the index:
-
-  effectIndex is the index in effectsIndex and returns the scene
-  position is the real data array
-
-  effectNumber = this.effectsIndex[effectIndex]
-  effect = this.effects[effectNumber]
-
-  The index allows moving effects around without removing any data.
-
-  (However, it makes the code a bit tougher to read and work with)
-*/
-
-Vue.component('sequence-effects', {
+Vue.component('sequence-effect', {
   template: `
-  <div class="sequence-effects">
+  <div class="sequence-effect">
     <h4>Sequence {{index + 1}}</h4>
-    <p v-if="effectsIndex.length == 0">
-      Start by adding an effect!
-    </p>
-    <transition-group name="fade">
-      <div class="effect"
-           v-bind:key="'effect-container-'+effects[effectNumber].id"
-           v-for="(effectNumber, effectIndex) in effectsIndex">
-        <div class="effect-header">
-          {{ effects[effectNumber].human_name || effects[effectNumber].name }}
-          <div class="effect-icons">
-
-            <img class="effect-icon"
-                 title="move effect down"
-                 v-if="effectIndex < effectsIndex.length - 1"
-                 v-on:click.stop="down(effectIndex)"
-                 src="icons/feather/arrow-down.svg" width="15"/>
-            <img class="effect-icon"
-                 v-if="effectIndex > 0"
-                 title="move effect up"
-                 v-on:click.stop="up(effectIndex)"
-                 src="icons/feather/arrow-up.svg" width="15"/>
-            <img class="effect-icon"
-                 v-on:click.stop="remove(effectNumber, effectIndex)"
-                 title="remove effect"
-                 src="icons/feather/x.svg" width="15"/>
-
-          </div>
-        </div>
-        <div class="component-container">
-          <component v-bind:is="effects[effectNumber].component"
-                     v-bind:ref="effects[effectNumber].component"
-                     v-bind:key="'effect-setting-'+effects[effectNumber].component"
-                     v-bind:shaderProgram="effects[effectNumber].shaderPrograms[0]"
-                     v-bind:player="player"
-                     v-bind:ready="ready"
-                     v-bind:effect="effects[effectNumber]"
-                     v-on:duration="onDuration"
-                     ></component>
-        </div>
+    <div class="effect" v-if="effect == null">
+      Start by choosing an effect!
+    </div>
+    <div class="effect">
+      <div class="effect-header" v-if="effect != null">
+        {{ effect.human_name || effect.name }}
       </div>
-    </transition-group>
+      <div class="component-container" ref="componentContainer">
+      </div>
+    </div>
     <div class="text-right">
       <br><br> <!-- Keep some space -->
-      <button v-on:click="onAddEffect">
+      <button v-on:click="onChangeEffect">
         <img src="icons/feather/plus.svg" width="20"/>
-        Add effect
+        Change Effect
       </button>
     </div>
-    <effects-selector ref="effectSelector" v-on:chooseEffect="addEffect"/>
+    <effects-selector ref="effectSelector" v-on:chooseEffect="changeEffect"/>
   </div>`,
   data(){
     return {
-      effects: [],
-      effectsIndex: [],
+      effect: null,
       moving: false
     };
   },
-  props: ["player", "active", "index", "initialEffectsGetter"],
+  props: ["player", "active", "index", "initialEffectGetter"],
   methods: {
     loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
@@ -132,36 +86,24 @@ Vue.component('sequence-effects', {
       });
     },
     serialize(){
-      let data = [];
-      for(let effectIndex in this.effectsIndex){
-        let effectData = this.serializeEffect(this.effectsIndex[effectIndex]);
-        if(effectData == null){
-          console.error("Effect dropped. Effect index messed up.");
-        }
-        data.push(effectData);
-      }
-      return data;
+      return this.serializeEffect(this.effect);
     },
-    unserialize(data, noApply){
+    unserialize(effectData, noApply){
       let app = this;
-      this.effects = [];
-      this.effectsIndex = [];
-      this.$emit("register", this.index, this.effects, this.effectsIndex);
+
+      this.$emit("register", this.index, this.effect);
 
       let promise = null;
 
-      for(let effectIndex in data){
-        let effectData = data[effectIndex];
-        let effectName = effectData.effectName;
-        let currentPromiseGetter = function(){
-          return app.addEffect(effectName, effectData, false);
-        };
+      let effectName = effectData.effectName;
+      let currentPromiseGetter = function(){
+        return app.changeEffect(effectName, effectData, false);
+      };
 
-        if(promise == null){
-          promise = currentPromiseGetter();
-        } else {
-          promise = promise.then(currentPromiseGetter);
-        }
+      if(promise == null){
+        promise = currentPromiseGetter();
+      } else {
+        promise = promise.then(currentPromiseGetter);
       }
 
       if(promise == null){
@@ -171,10 +113,10 @@ Vue.component('sequence-effects', {
       if(noApply){
         return promise;
       } else {
-        return promise.then(this.applyEffectsChange);
+        return promise.then(this.applyEffectChange);
       }
     },
-    addEffect(effectName, initialData, autoApply){
+    changeEffect(effectName, initialData, autoApply){
       let app = this;
 
       if(autoApply == undefined){
@@ -186,40 +128,48 @@ Vue.component('sequence-effects', {
           // Keeping unique components makes sure the components aren't reset
           let settings = utils.plugins[effectName + "-effectSettings"]();
           let uniqueEffectComponentID = utils.increment_unique_counter("effectComponent");
-          let componentName = effectName + "-effect-settings" + uniqueEffectComponentID;
-          Vue.component(componentName, settings.ui);
+          let componentName = effectName + "-effect-settings";
+
+
 
           let pass_count = 1;
           if(settings.pass_count != undefined){
             pass_count = settings.pass_count;
           }
 
-          settings.effectName = effectName;
-          settings.component = componentName;
-          settings.id = uniqueEffectComponentID;
-
           app.loadPrograms(effectName, pass_count, function(_shaderPrograms){
-            settings.shaderPrograms = _shaderPrograms;
-            settings.uniforms = {};
+            settings.ui.el = app.$refs.componentContainer;
+            let plugin = new Vue(settings.ui);
+            plugin.effect = settings;
+            plugin.effect.uniforms = plugin.uniforms;
+            plugin.player = app.player;
+            app.plugin = plugin;
+            app.$emit("register", app.index, plugin.effect);
+            settings.effectName = effectName;
+            settings.component = componentName;
+            plugin.onDuration = app.onDuration;
+            settings.id = uniqueEffectComponentID;
+            plugin.shaderProgram = _shaderPrograms[0];
+            plugin.effect.shaderProgram = _shaderPrograms[0];
+
 
             // Insert effect in array
-            app.effects.splice(app.effects.length, 0, settings);
-            // Add its index
-            app.effectsIndex.splice(app.effectsIndex.length, 0, app.effects.length - 1);
+            app.effect = settings;
+
             app.$nextTick(function(){
               app.updateTexts();
 
               // Load initial data if it is given in argument
               if(initialData != undefined){
-                app.unserializeEffect(app.effectsIndex.length - 1, initialData);
+                app.unserializeEffect(initialData);
               }
 
-              let component = this.$refs[this.effects[app.effectsIndex.length - 1].component][0];
-              component.active = this.active
+              let component = app.plugin;
+              component.active = this.active;
 
 
               if(autoApply){
-                app.applyEffectsChange();
+                app.applyEffectChange();
               }
 
               resolve();
@@ -228,20 +178,15 @@ Vue.component('sequence-effects', {
         });
       });
     },
-    serializeEffect(effectIndex){
-      let effect = this.effects[effectIndex];
-      // Did we mess up the index?
-      if(effect == undefined){
-        return null;
-      }
-      let component = this.$refs[effect.component][0];
+    serializeEffect(){
+      let effect = this.effect;
+      let component = this.$refs[effect.component];
       let data = utils.serialize_vue(component.$data);
       data.effectName = effect.name;
       return data;
     },
-    unserializeEffect(effectIndex, data){
-      let index = this.effectsIndex[effectIndex];
-      let component = this.$refs[this.effects[index].component][0];
+    unserializeEffect(data){
+      let component = this.plugin;
 
       if(data != undefined){
         // Put data in component data
@@ -251,92 +196,15 @@ Vue.component('sequence-effects', {
       component.active = this.active;
 
       // Update uniforms
-      this.applyEffectsChange();
+      this.applyEffectChange();
     },
-    down(effectIndex){
-      if(this.moving || effectIndex > this.effectsIndex.length - 1){
-        return;
-      }
-      this.moving = true;
-      let old = this.effectsIndex[effectIndex];
-      let data = this.serializeEffect(old);
-      this.effectsIndex.splice(effectIndex, 1);
-
-      setTimeout(function(){
-        this.effectsIndex.splice(effectIndex + 1, 0, old);
-        this.$nextTick(function(){
-          this.unserializeEffect(effectIndex + 1, data);
-        });
-        this.moving = false;
-      }.bind(this), 300);
+    applyEffectChange(){
+      this.$emit("effectChanged", this.effect);
     },
-    up(effectIndex){
-      if(this.moving || effectIndex < 1){
-        return;
-      }
-      this.moving = true;
-      let old = this.effectsIndex[effectIndex];
-      let data = this.serializeEffect(old);
-      this.effectsIndex.splice(effectIndex, 1);
-
-      setTimeout(function(){
-        this.effectsIndex.splice(effectIndex - 1, 0, old);
-        this.$nextTick(function(){
-          this.unserializeEffect(effectIndex - 1, data);
-        });
-        this.moving = false;
-      }.bind(this), 300);
-    },
-    remove(effectNumber, effectIndex){
-      // Fix bug when double removing
-      if(this.effectsIndex[effectIndex] == undefined){
-        return;
-      }
-
-      // Decrement all elements after current index
-      this.effectsIndex = this.effectsIndex.map((number) => { return number > effectNumber? number-1: number; });
-      this.effectsIndex.splice(effectIndex, 1);
-      this.effects.splice(effectNumber, 1);
-
-      this.$nextTick(function(){
-        this.applyEffectsChange();
-      });
-    },
-    getOrderedEffects(){
-      let app = this;
-      let orderedEffects = [];
-
-      this.effectsIndex.forEach(function(i){
-        if(app.effects[i] == undefined){
-          return;
-        }
-        app.effects[i].shaderPrograms.forEach(function(program, index){
-          let beforeRender = null;
-          // Only call beforeRender once
-          if(index == 0){
-            beforeRender = app.effects[i].beforeRender || null;
-          }
-
-          orderedEffects.push({
-            shaderProgram: program,
-            uniforms: app.effects[i].uniforms,
-            beforeRender
-          });
-        });
-      });
-
-      return orderedEffects;
-    },
-    applyEffectsChange(){
-      let app = this;
-      let orderedEffects = this.getOrderedEffects();
-
-      this.$emit("effectsChanged", orderedEffects);
-    },
-    onAddEffect(){
+    onChangeEffect(){
       let app = this;
       this.$refs['effectSelector'].open(function(effectName){
-        app.addEffect(effectName);
+        app.changeEffect(effectName);
       });
     },
     launchEffectSelector(callback){
@@ -344,16 +212,14 @@ Vue.component('sequence-effects', {
     },
     updateTexts(){
       let app = this;
-      for(let effect in this.effects){
-        let comp = this.$refs[this.effects[effect].component];
-        if(comp == undefined || comp[0] == undefined || comp[0].updateTexts == undefined){
-          continue;
-        }
-        comp[0].updateTexts();
+      let comp = this.plugin;
+      if("updateTexts" in comp && "texts" in comp){
+        comp.updateTexts();
       }
     },
     ready(){
       this.$emit("ready");
+      console.log("read");
     },
     onDuration(duration){
       this.$emit('duration', {
@@ -364,21 +230,19 @@ Vue.component('sequence-effects', {
   },
   watch: {
     active(val){
-      for(let effect in this.effects){
-        let comp = this.$refs[this.effects[effect].component][0];
-        comp.active = val;
-      }
+      /* todo: what is this used for? */
+      let comp = this.plugin;
+      comp.active = val;
     },
   },
   mounted(){
 
-    if(this.initialEffectsGetter != undefined){
-      let effects = this.initialEffectsGetter();
-      this.unserialize(effects, false);
+    if(this.initialEffectGetter != undefined){
+      let effect = this.initialEffectGetter();
+      this.unserialize(effect, false);
     } else {
       // Default to a video sequence available for upload
+      // this.changeEffect("video");
     }
-
-    this.$emit("register", this.index, this.effects, this.effectsIndex);
   }
 });

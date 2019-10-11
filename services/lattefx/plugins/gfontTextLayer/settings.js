@@ -65,10 +65,11 @@
             active: false,
             uniqueID: (Math.random() + "").substr(0,10),
             texts: [],
-            focussedInput: null
+            focussedInput: null,
+            player: null,
+            shaderProgram: null
           };
         },
-        props: ["player", "shaderProgram"],
         methods: {
           addBox(){
             this.texts.push({

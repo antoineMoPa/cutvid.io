@@ -351,25 +351,21 @@ class ShaderPlayerWebGL2 {
       if(only_current && time < seq.from || time > seq.to){
         continue;
       }
-      for(let j = 0; j < seq.effects.length; j++){
-        let effect = seq.effects[seq.effectsIndex[j]];
-        let arr = sequencesByLayer[seq.layer];
-        if(effect == undefined){
-          continue;
-        }
-        for(let k = 0; k < effect.shaderPrograms.length; k++){
-          seq.layer = seq.layer || 0;
-          sequencesByLayer[seq.layer].push({
-              from: seq.from,
-              to: seq.to,
-              pass: effect.shaderPrograms[k],
-              uniforms: effect.uniforms,
-              trimBefore: effect.trimBefore || 0
-            });
-          if(seq.layer > maxLayer){
-            maxLayer = seq.layer;
-          }
-        }
+      let effect = seq.effect;
+      let arr = sequencesByLayer[seq.layer];
+      if(effect == undefined){
+        continue;
+      }
+      seq.layer = seq.layer || 0;
+      sequencesByLayer[seq.layer].push({
+        from: seq.from,
+        to: seq.to,
+        pass: effect.shaderProgram,
+        uniforms: effect.uniforms,
+        trimBefore: effect.trimBefore || 0
+      });
+      if(seq.layer > maxLayer){
+        maxLayer = seq.layer;
       }
     }
 
@@ -418,11 +414,15 @@ class ShaderPlayerWebGL2 {
     let layerCounter = 0;
     for (let layer = 0; layer < sequencesByLayer.length; layer++) {
       let sequences = sequencesByLayer[layer];
+
       for (let sequenceIndex = 0; sequenceIndex < sequences.length; sequenceIndex++) {
         let incrementedPasses = false;
         let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
         let shaderProgram = seq.pass;
+        if(shaderProgram == undefined){
+          continue;
+        }
         shaderProgram.use();
         let program = shaderProgram.program;
 
@@ -456,8 +456,6 @@ class ShaderPlayerWebGL2 {
 
         i++
 
-        gl.activeTexture(gl.TEXTURE0 + i);
-
         // Also add previous pass
         if (layer > 0) {
           let lastLayerID = this.PREVIOUS_LAYER_0 + ((layerCounter + 2) % 3);
@@ -481,7 +479,6 @@ class ShaderPlayerWebGL2 {
           let tex = shaderProgram.textures[name];
           gl.activeTexture(gl.TEXTURE0 + i);
           var att = gl.getUniformLocation(program, name);
-
           if(tex.isVideo){
             // Seek to right time
             let trimBefore = parseFloat(seq.trimBefore);

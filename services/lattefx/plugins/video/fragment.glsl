@@ -35,6 +35,6 @@ void main(void){
     vec4 last = texture2D(in_tex, lastUV);
     //vec4 col = (1.0 - video.a) * last + video.a * video;
     vec4 col = video + (1.0 - video.a) * last;
-
+	col.a = 1.0;
     gl_FragColor = col;
 }
