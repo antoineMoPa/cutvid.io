@@ -14,7 +14,13 @@ Vue.component('sequence-effect', {
     </div>
     <div class="text-right">
       <br><br> <!-- Keep some space -->
-      <button v-on:click="onChangeEffect">
+      <button v-if="effect == null"
+              v-on:click="onChangeEffect">
+        <img src="icons/feather/plus.svg" width="20"/>
+        Add video or effects
+      </button>
+      <button v-else
+              v-on:click="onChangeEffect">
         <img src="icons/feather/edit.svg" width="20"/>
         Change Effect
       </button>
