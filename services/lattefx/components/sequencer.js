@@ -178,6 +178,7 @@ Vue.component('sequencer', {
       this.draggingRight = false;
       this.draggingTimeBar = false;
       this.dragging = null;
+      fetch("/stats/lattefx_app_dragged_sequence/");
     },
     mouseEventInfo(e){
       let scale = this.getScale();
@@ -311,6 +312,7 @@ Vue.component('sequencer', {
       });
       this.player.sequences = this.sequences;
       this.$nextTick(this.repositionSequences);
+      fetch("/stats/lattefx_app_delete_sequence/");
     },
     registerSequenceEffect(index, effect){
       // Ok we use your version of the array

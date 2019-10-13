@@ -29,15 +29,18 @@ Vue.component('ui', {
   methods: {
     play(){
       this.player.play();
+      fetch("/stats/lattefx_app_hit_play/");
     },
     pause(){
       this.player.pause();
+      fetch("/stats/lattefx_app_hit_pause/");
     },
     playLooping(){
       this.looping = true;
     },
     buy(){
       this.$emit("buy");
+      fetch("/stats/lattefx_app_click_buy/");
     },
     set_progress(progress_ratio){
       this.progress_width = progress_ratio * window.innerWidth;
