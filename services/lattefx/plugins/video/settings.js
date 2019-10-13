@@ -11,6 +11,12 @@
 <div>
   <label>Your Video</label>
   <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg" class="video-file-input" v-on:change="onVideo()">
+  <p v-if="error">ERROR: Your browser does not seem to support this video file encoding.<br>
+  You can try converting it to .ogv at:<br>
+    <a href="https://video.online-convert.com/convert-to-ogv"
+       target="_blank">online-convert.com
+    </a>
+  </p>
   <label>Video Scale</label>
   <input type="number" v-model="uniforms.videoScale.value" min="0.0" max="2.0" step="0.05">
   <label>Offset the video X, Y</label>
@@ -25,6 +31,7 @@
           return {
             video: null,
             videoName: "",
+            error: false,
             backgroundColor: "#000000",
             trimBefore: 0,
             durationInitialized: false,
@@ -63,14 +70,19 @@
         methods: {
           loadVideo(data){
             let app = this;
+            app.durationInitialized = false;
             this.shaderProgram.set_texture('video', '', function(){}, {
               video: data,
               autoplay: !this.player.paused,
+              onerror: function(){
+                app.error = true;
+              },
               ready: function(){
                 // "this" points to <video> element
                 app.uniforms.videoWidth.value = this.videoWidth;
                 app.uniforms.videoHeight.value = this.videoHeight;
                 app.videoElement = this;
+
                 if(!app.durationInitialized){
                   app.onDuration(this.duration);
                   // Don't resize video after initial resize

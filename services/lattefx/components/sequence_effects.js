@@ -15,7 +15,7 @@ Vue.component('sequence-effect', {
     <div class="text-right">
       <br><br> <!-- Keep some space -->
       <button v-on:click="onChangeEffect">
-        <img src="icons/feather/plus.svg" width="20"/>
+        <img src="icons/feather/edit.svg" width="20"/>
         Change Effect
       </button>
     </div>

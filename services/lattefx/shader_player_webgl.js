@@ -124,7 +124,11 @@ class ShaderPlayerWebGL2 {
     this.for_each_current_videos((v) => {
       v.videoElement.muted = true;
       v.audioElement.muted = false;
-      v.videoElement.play();
+      v.videoElement.play().then(function(){
+        console.log("playing");
+      }).catch(function(error){
+        console.log(error);
+      });
       v.audioElement.play();
     });
     this.last_frame_time = new Date().getTime();

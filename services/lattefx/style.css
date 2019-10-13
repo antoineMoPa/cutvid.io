@@ -194,6 +194,10 @@ input{
   line-height: 22px;
 }
 
+.settings-panel a{
+  color: #3af;
+}
+
 .settings-panel h3, .settings-panel h4{
   color:#fff;
   margin:0;

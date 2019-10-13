@@ -95,6 +95,10 @@ class ShaderProgram {
       videoElement = document.createElement("video");
       audioElement = document.createElement("audio");
 
+      videoElement.addEventListener("error", function(error){
+        options.onerror();
+      });
+
       // Hack to suppress lag in my old chromebook:
       {
         document.body.appendChild(videoElement);
@@ -217,7 +221,9 @@ class ShaderProgram {
       audioElement.src = options.video;
       videoElement.loop = true;
       videoElement.muted = true;
-      videoElement.play();
+      videoElement.play().catch(function(error){
+        console.log(error);
+      });
       if(!autoplay){
         videoElement.pause();
       }
