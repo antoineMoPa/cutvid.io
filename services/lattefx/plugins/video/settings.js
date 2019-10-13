@@ -77,6 +77,7 @@
               autoplay: !this.player.paused,
               onerror: function(){
                 app.error = true;
+                fetch("/stats/lattefx_app_video_has_error/");
               },
               ready: function(){
                 // "this" points to <video> element
@@ -86,6 +87,7 @@
 
                 if(!app.durationInitialized){
                   app.onDuration(this.duration);
+                  fetch("/stats/lattefx_app_video_duration/"+parseInt(this.duration));
                   // Don't resize video after initial resize
                   app.durationInitialized = true;
                 }
