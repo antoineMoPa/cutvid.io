@@ -31,11 +31,9 @@ class ShaderPlayerWebGL2 {
     this.time.time = 0.0;
     this.on_progress = function(progress){};
 
-    this.PREVIOUS_PASS_0 = 0;
-    this.PREVIOUS_PASS_1 = 1;
-    this.PREVIOUS_LAYER_0 = 2;
-    this.PREVIOUS_LAYER_1 = 3;
-    this.PREVIOUS_LAYER_2 = 4;
+    this.PREVIOUS_LAYER_0 = 0;
+    this.PREVIOUS_LAYER_1 = 1;
+    this.PREVIOUS_LAYER_2 = 2;
 
     this.on_resize_listeners = {};
 
@@ -284,7 +282,7 @@ class ShaderPlayerWebGL2 {
     this.renderBufferDim = [ww, hh];
 
     // The 10 here limits the pass number
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 3; i++) {
       this.rttTexture[i] = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[i]);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -419,7 +417,6 @@ class ShaderPlayerWebGL2 {
       let sequences = sequencesByLayer[layer];
 
       for (let sequenceIndex = 0; sequenceIndex < sequences.length; sequenceIndex++) {
-        let incrementedPasses = false;
         let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
         let shaderProgram = seq.pass;
@@ -429,50 +426,41 @@ class ShaderPlayerWebGL2 {
         shaderProgram.use();
         let program = shaderProgram.program;
 
+        // Render to buffer
         if (layer < maxLayer) {
-          if(sequenceIndex == sequences.length - 1){
-            // We are rendering last pass of layer
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_LAYER_0 +(layerCounter % 3)]);
-            layerCounter++;
-          } else {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_PASS_0 + (passCounter % 2)]);
-            passCounter++;
-            incrementedPasses = true;
-          }
-        } else if (sequenceIndex < sequences.length - 1) {
-          gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_PASS_0 + (passCounter % 2)]);
-          passCounter++;
-          incrementedPasses = true;
+          gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_LAYER_0 +(layerCounter % 3)]);
         } else {
+          // Render to screen
           // null = screen
           gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         }
 
+        layerCounter++;
+
         let i = 0;
-
-        gl.activeTexture(gl.TEXTURE0 + i);
-
-        // The previous_pass buffer cycles constantly
-        let lastID = this.PREVIOUS_PASS_0 + ((passCounter + (incrementedPasses?0:1)) % 2);
-        gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[lastID]);
-        gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
-
-        i++
 
         // Also add previous pass
         if (layer > 0) {
-          let lastLayerID = this.PREVIOUS_LAYER_0 + ((layerCounter + 2) % 3);
+          let lastLayerID = this.PREVIOUS_LAYER_0 + ((layerCounter + 1) % 3);
           gl.activeTexture(gl.TEXTURE0 + i);
           gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[lastLayerID]);
-          gl.uniform1i(gl.getUniformLocation(program, 'previous_pass'), i);
+          gl.uniform1i(gl.getUniformLocation(program, 'previous_layer'), i);
+        } else {
+          gl.activeTexture(gl.TEXTURE0 + i);
+          gl.bindTexture(gl.TEXTURE_2D, null);
+          gl.uniform1i(gl.getUniformLocation(program, 'previous_layer'), i);
         }
 
         i++;
 
         if (layer > 1) {
-          let lastLayerID = this.PREVIOUS_LAYER_0 + ((layerCounter + 1) % 3);
+          let lastLayerID = this.PREVIOUS_LAYER_0 + ((layerCounter) % 3);
           gl.activeTexture(gl.TEXTURE0 + i);
           gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[lastLayerID]);
+          gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_layer'), i);
+        } else {
+          gl.activeTexture(gl.TEXTURE0 + i);
+          gl.bindTexture(gl.TEXTURE_2D, null);
           gl.uniform1i(gl.getUniformLocation(program, 'previous_previous_layer'), i);
         }
 

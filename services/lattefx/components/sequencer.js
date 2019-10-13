@@ -26,8 +26,8 @@ Vue.component('sequencer', {
       <div class="all-sequences">
         <sequence-effect
           v-for="(sequence, sequenceIndex) in sequences"
-          v-bind:active="selected.indexOf(sequenceIndex) != -1"
-          v-bind:class="(selected.indexOf(sequenceIndex) != -1)? '': 'sequence-effects-hidden'"
+          v-bind:active="selected[selected.length-1] == sequenceIndex"
+          v-bind:class="(selected[selected.length-1] == sequenceIndex)? '': 'sequence-effects-hidden'"
           v-bind:key="'sequence-' + sequence.id"
           v-bind:ref="'sequence-effect-' + sequence.id"
           v-on:register='registerSequenceEffect'

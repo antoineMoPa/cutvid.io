@@ -32,7 +32,6 @@
         watch: {
         },
         mounted(){
-          this.updateTexts();
         }
       }
     };

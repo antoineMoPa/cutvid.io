@@ -15,7 +15,7 @@ void main(void){
   vec2 p = vec2(x,y) - vec2(0.5 * ratio, 0.5);
 
   float d = length(p);
-  float a = atan(p.y, p.x);
+  float a = -atan(p.y, p.x);
 
   vec4 tex = texture2D(previous_layer,  lastUV);
   float t = clamp(relativeTime, 0.0, 1.0);
