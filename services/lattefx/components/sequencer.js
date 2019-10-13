@@ -10,7 +10,7 @@ Vue.component('sequencer', {
                v-on:mousedown="sequenceLeftDown(index)">
           </div>
           <div class="sequence-body"
-               v-on:mousedown="sequenceBodyDown(index,$event)">
+               v-on:mousedown="sequenceBodyDown(index,$event,false)">
             Sequence {{ index + 1 }}
           </div>
           <div class="sequence-button-right"
@@ -39,7 +39,7 @@ Vue.component('sequencer', {
       </div>
       <scene-template-selector ref="scene-template-selector"/>
       <div class="adder-container" v-if="dragging == null">
-        <button v-on:click="addSequence"
+        <button v-on:click="addSequenceAndDrag"
                 class="add-button">
           <img src="icons/feather/plus.svg" title="new sequence" width="20"/>
           New sequence
@@ -120,7 +120,7 @@ Vue.component('sequencer', {
       this.mouseMoveListener = this.mouseMove.bind(this);
       window.addEventListener("mousemove", this.mouseMoveListener);
     },
-    sequenceBodyDown(index,e){
+    sequenceBodyDown(index, e, dragFromMiddle){
       this.dragging = index;
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
 
@@ -136,7 +136,13 @@ Vue.component('sequencer', {
       this.draggingBody = true;
       this.draggingLeft = false;
       this.draggingRight = false;
-      this.draggingTimeFrom = time - seq.from;
+
+      if(dragFromMiddle){
+        this.draggingTimeFrom = seq.from - 0.1;
+      } else {
+        this.draggingTimeFrom = time - seq.from;
+      }
+
       window.addEventListener("mouseup", this.unDrag.bind(this), {once: true});
       this.mouseMoveListener = this.mouseMove.bind(this);
       window.addEventListener("mousemove", this.mouseMoveListener);
@@ -265,16 +271,27 @@ Vue.component('sequencer', {
         app.unserialize(data, erase);
       });
     },
+    addSequenceAndDrag(){
+      this.addSequence();
+      let index = this.sequences.length - 1;
+      window.addEventListener("mousemove", function(e){
+        this.sequenceBodyDown(index, e, true);
+        this.draggingBody = true;
+      }.bind(this),{
+        once: true
+      });
+    },
     addSequence(){
+      let id = utils.increment_unique_counter("sequence");
+      let layer = id % 3; // Alternate layer to avoid overlapping
+
       this.sequences.push({
-        id: utils.increment_unique_counter("sequence"),
-        layer: 0,
+        id: id,
+        layer: layer,
         from: 0,
         to: 10,
         effect: null,
       });
-
-      // Initiate drag
 
       this.$nextTick(this.repositionSequences);
       this.selected = [];
