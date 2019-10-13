@@ -9,38 +9,32 @@
       ui: {
         template: `
 <div>
-  <label>
-    Transition time (0 = instant, 1 = length of scene)<br>
-    <input type="number" min="0.0" step="0.1" max="1.0"
-           v-model="uniforms.transitionTime.value">
-  </label>
+  <p>Place this above 2 other layers.<br>
+  It will reveal the second.</p>
 </div>`,
         data: function(){
           return {
             logo: null,
             backgroundColor: "#000000",
+            player: null,
+            effect: null,
+            shaderProgram: null,
             uniforms: {
               logoWidth: {
                 type: "f",
                 len: 1,
                 value: 1,
               },
-              transitionTime: {
-                type: "f",
-                len: 1,
-                value: 0.3,
-              },
             }
           };
         },
-        props: ["player", "effect", "shaderProgram"],
+        props: [],
         methods: {
         },
         watch: {
         },
         mounted(){
           this.updateTexts();
-          this.effect.uniforms = this.uniforms;
         }
       }
     };

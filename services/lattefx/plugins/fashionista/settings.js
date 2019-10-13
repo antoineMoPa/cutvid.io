@@ -117,8 +117,6 @@
 
         },
         mounted(){
-          this.effect.uniforms = this.uniforms;
-
           document.fonts.ready.then(this.updateTexts);
         }
       }

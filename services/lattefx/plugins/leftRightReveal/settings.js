@@ -9,21 +9,14 @@
       ui: {
         template: `
 <div>
-  <label>
-    Begin time (0.0 = scene begin, 1.0 = end of scene)<br>
-    <input v-model="uniforms.beginAt.value"
-           type="number"
-           min="0.0" max="1.0" step="0.1">
-  </label>
-  <label>
-    End time (0.0 = scene begin, 1.0 = end of scene)<br>
-    <input v-model="uniforms.endAt.value"
-           type="number"
-           min="0.0" max="1.0" step="0.1">
-  </label>
+  <p>Place this above 2 other layers.<br>
+  It will reveal the second.</p>
 </div>`,
         data: function(){
           return {
+            player: null,
+            effect: null,
+            shaderProgram: null,
             uniforms: {
               beginAt: {
                 type: "f",
@@ -38,13 +31,11 @@
             }
           };
         },
-        props: ["player", "effect", "shaderProgram"],
         methods: {
         },
         watch: {
         },
         mounted(){
-          this.effect.uniforms = this.uniforms;
         }
       }
     };

@@ -198,6 +198,10 @@ input{
   color: #3af;
 }
 
+.settings-panel p{
+  font-weight: 300;
+}
+
 .settings-panel h3, .settings-panel h4{
   color:#fff;
   margin:0;

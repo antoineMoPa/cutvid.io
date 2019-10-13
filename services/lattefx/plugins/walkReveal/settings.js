@@ -38,7 +38,6 @@
           }
         },
         mounted(){
-          this.effect.uniforms = this.uniforms;
         }
       }
     };

@@ -11,7 +11,7 @@
 <div>
   <label>
     Fragment Shader<br>
-    <textarea v-model="fragment" 
+    <textarea v-model="fragment"
       style="width:305px; min-height:400px;resize:vertical;tab-size : 4;"></textarea>
   </label>
   <p>Pro tip: Use Firefox Shader editor (F12), ShaderGif or ShaderToy to prototype big chunks of code.</p>
@@ -19,13 +19,13 @@
 </div>`,
         data: function(){
           return {
+            effect: null,
             fragment: "",
             uniforms: {
-            
+
             }
           };
         },
-        props: ["player", "effect", "shaderProgram"],
         methods: {
         },
         watch: {
@@ -36,8 +36,6 @@
           }
         },
         mounted(){
-          this.effect.uniforms = this.uniforms;
-          this.fragment = this.effect.shaderProgram.fragment_shader_code;
         }
       }
     };

@@ -304,6 +304,7 @@ Vue.component('sequencer', {
         }
         return true;
       });
+      this.player.sequences = this.sequences;
       this.$nextTick(this.repositionSequences);
     },
     registerSequenceEffect(index, effect){

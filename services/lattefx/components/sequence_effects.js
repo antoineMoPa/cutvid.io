@@ -2,9 +2,9 @@ Vue.component('sequence-effect', {
   template: `
   <div class="sequence-effect">
     <h4>Sequence {{index + 1}}</h4>
-    <div class="effect" v-if="effect == null">
+    <p class="effect" v-if="effect == null">
       Start by choosing an effect!
-    </div>
+    </p>
     <div class="effect">
       <div class="effect-header" v-if="effect != null">
         {{ effect.human_name || effect.name }}
@@ -136,8 +136,20 @@ Vue.component('sequence-effect', {
           }
 
           app.loadPrograms(effectName, pass_count, function(_shaderPrograms){
-            settings.ui.el = app.$refs.componentContainer;
+            let container = document.createElement("div");
+
+            if(app.last_plugin != undefined){
+              app.last_plugin.$destroy();
+              app.$refs.componentContainer.innerHTML = "";
+            }
+
+            app.$refs.componentContainer.appendChild(container);
+            settings.ui.el = container;
             let plugin = new Vue(settings.ui);
+
+            app.last_plugin = plugin;
+            app.last_el = container;
+
             plugin.effect = settings;
             plugin.effect.uniforms = plugin.uniforms;
             plugin.player = app.player;

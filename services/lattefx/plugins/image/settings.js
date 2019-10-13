@@ -9,7 +9,6 @@
       ui: {
         template: `
 <div>
-  <h4>Image</h4>
   <label>Your Image</label>
   <input type="file" accept=".png,.jpg,.svg,.jpeg" class="image-file-input" v-on:change="onImage()">
   <label>Image Scale</label>
@@ -25,6 +24,9 @@
             image: null,
             imageName: "",
             backgroundColor: "#000000",
+            player: null,
+            effect: null,
+            shaderProgram: null,
             uniforms: {
               imageWidth: {
                 type: "f",
@@ -54,7 +56,6 @@
             }
           };
         },
-        props: ["player", "effect", "shaderProgram"],
         methods: {
           findImageDim(){
             let app = this;
@@ -120,7 +121,6 @@
           }
         },
         mounted(){
-          this.effect.uniforms = this.uniforms;
           this.findImageDim();
         }
       }

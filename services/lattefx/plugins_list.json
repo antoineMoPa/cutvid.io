@@ -10,9 +10,6 @@
   "Text": {
     "gfontTextLayer": {
       "description": "Choose from 800+ Google WebFonts."
-    },
-    "logo": {
-      "description": "Center your logo or any image on the canvas."
     }
   },
   "Layer transitions": {
@@ -21,17 +18,12 @@
     },
     "walkReveal": {
       "description": "Reveals left to right and by small parts."
-    }
-  },
-  "Scene transitions": {
+    },
     "fadeSceneReveal": {
       "description": "Fades in scene over last one."
     },
     "clockSceneReveal": {
       "description": "Fades in last scene with a clock motion."
-    },
-    "slideSceneReveal": {
-      "description": "Reveals scene from left to right."
     }
   },
   "Backgrounds": {
@@ -59,12 +51,6 @@
     },
     "vignette": {
       "description": "Creates darker corners at the edges of the canvas."
-    },
-    "colorAlphaReplace": {
-      "description": "Replaces transparent parts with a uniform color."
-    },
-    "glow": {
-      "description": "Makes things glow!"
     }
   },
   "Glitch": {

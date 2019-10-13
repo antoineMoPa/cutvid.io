@@ -70,6 +70,7 @@
         methods: {
           loadVideo(data){
             let app = this;
+            app.error = false;
             app.durationInitialized = false;
             this.shaderProgram.set_texture('video', '', function(){}, {
               video: data,

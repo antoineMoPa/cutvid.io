@@ -1,7 +1,7 @@
 /* This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.  */
 {
   let name = "retrowave";
-  
+
   let effectSettings = function(){
 	return {
 	  name: name,
@@ -9,7 +9,6 @@
 	  ui: {
 		template: `
 <div>
-  <h4>Retrowave</h4>
   <label>Top text</label>
   <input v-model="textTop.text" type="text">
   <label>Font size | offset</label>
@@ -62,42 +61,42 @@
 			if(textCanvas == null || this.player == null){
 			  return;
 			}
-			
+
 			let size = this.player.width;
 
 			ctx.textAlign = "center";
-			
+
 			// TOP TEXT
 			// Set font size & style
 			var tsize = this.textTop.size;
-			
+
 			ctx.fillStyle = "#ff0000";
-			
+
 			ctx.font = tsize +
 			  "px Kaushan Script";
-			
+
 			// Translate, rotate and render
 			ctx.save();
 			ctx.translate(this.player.width/2, 1/3*this.player.height + tsize/2);
 			ctx.rotate(-0.1);
 			ctx.fillText(this.textTop.text, 0, this.textTop.offsetTop);
 			ctx.restore();
-			
+
 			// MIDDLE TEXT
 			ctx.fillStyle = "#00ff00";
 			var tsize = this.textMiddle.size;
-			
+
 			ctx.font = tsize +
 			  "px Monoton";
-			
+
 			ctx.fillText(this.textMiddle.text, this.player.width/2,  1/2 * this.player.height + tsize/2 + this.textMiddle.offsetTop);
-			
+
 			// BOTTOM TEXT
 			ctx.fillStyle = "#0000ff";
 			var tsize = this.textBottom.size;
 			ctx.font = tsize +
 			  "px Contrail One";
-			
+
 			ctx.fillText(this.textBottom.text, this.player.width/2, 2/3*this.player.height + tsize/2 + this.textBottom.offsetTop);
 
 			this.shaderProgram.set_texture(
@@ -141,6 +140,6 @@
 	  }
 	};
   };
-	
+
   utils.plugins[name + "-effectSettings"] = effectSettings;
 }

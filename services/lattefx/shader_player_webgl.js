@@ -125,7 +125,6 @@ class ShaderPlayerWebGL2 {
       v.videoElement.muted = true;
       v.audioElement.muted = false;
       v.videoElement.play().then(function(){
-        console.log("playing");
       }).catch(function(error){
         console.log(error);
       });
