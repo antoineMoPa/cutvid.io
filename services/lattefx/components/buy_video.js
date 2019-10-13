@@ -33,6 +33,12 @@ Vue.component('buy-video', {
   <p v-if="weGaveYouSomeTime" class="thank-you">
     By the way, we just gave you 1 extra hour to make extra edits and download again. Simply click "buy now" and the download button will be available for this duration!
   </p>
+  <p class="thank-you">
+    For any questions, comments, refunds, feedback on Lattefx, please contact
+    {{email()}}<br>
+    Help me improve this new product!
+    <br><br>
+  </p>
 </div>
 `,
   data: function(){
@@ -46,6 +52,12 @@ Vue.component('buy-video', {
   },
   props: ["settings"],
   methods: {
+    email(){
+      let name = "antoine.morin.paulhus";
+      let at = "@";
+      let host = "g" + "ma" + "il" + "." + "com";
+      return name + at + host;
+    },
     show(blob){
       this.videoURL = URL.createObjectURL(blob);
       this.$el.classList.remove("hidden");
