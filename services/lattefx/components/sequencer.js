@@ -37,7 +37,9 @@ Vue.component('sequencer', {
           v-bind:player="player"
           v-on:duration="onDuration"/>
       </div>
-      <scene-template-selector ref="scene-template-selector"/>
+      <!--
+        <scene-template-selector ref="scene-template-selector"/>
+      -->
       <div class="adder-container" v-if="dragging == null">
         <button v-on:click="addSequenceAndDrag"
                 class="add-button">
