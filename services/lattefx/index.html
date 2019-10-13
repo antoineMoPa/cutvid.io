@@ -45,6 +45,9 @@
     <script type="text/javascript" src="/app/app.js"></script>
     <script type="text/javascript">
      fetch("/stats/lattefx_app_page_view");
+     window.addEventListener("unload",function(){
+       fetch("/stats/lattefx_app_page_leave");
+     });
     </script>
   </body>
 </html>

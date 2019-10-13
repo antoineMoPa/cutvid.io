@@ -212,6 +212,9 @@
     <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript">
      fetch("/stats/home_page_view");
+     window.addEventListener("unload",function(){
+       fetch("/stats/home_page_leave");
+     });
     </script>
 
   </body>
