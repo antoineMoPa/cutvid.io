@@ -284,6 +284,7 @@ Vue.component('sequencer', {
       }.bind(this),{
         once: true
       });
+      fetch("/stats/lattefx_app_add_sequence/");
     },
     addSequence(){
       let id = utils.increment_unique_counter("sequence");
