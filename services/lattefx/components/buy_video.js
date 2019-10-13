@@ -13,6 +13,11 @@ Vue.component('buy-video', {
       Download video
     </span>
   </h3>
+  <p v-if="!canDownload" class="thank-you">
+    USD $ 3.50
+    <br>
+    Most coffee shops would charge you more for a latte.
+  </p>
   <div class="payment-container" v-if="!canDownload">
     <!-- Paypal stuff goes here -->
   </div>
