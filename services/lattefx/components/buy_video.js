@@ -18,7 +18,6 @@ Vue.component('buy-video', {
   </div>
   <p v-if="canDownload" class="thank-you">
     Thank you for your purchase!<br>
-    Download your creation using the link below:
   </p>
   <p class="text-center" v-if="canDownload">
     <a class="ui-button large"
@@ -29,7 +28,10 @@ Vue.component('buy-video', {
     <br><br>
   </p>
   <p v-if="canDownload" class="thank-you">
-    See you soon!
+    See you soon!<br><br>
+  </p>
+  <p v-if="weGaveYouSomeTime" class="thank-you">
+    By the way, we just gave you 1 extra hour to make extra edits and download again. Simply click "buy now" and the download button will be available for this duration!
   </p>
 </div>
 `,
@@ -38,7 +40,8 @@ Vue.component('buy-video', {
       videoURL: null,
       canDownload: false,
       error: null,
-      stats: null
+      stats: null,
+      weGaveYouSomeTime: false
     };
   },
   props: ["settings"],
@@ -46,6 +49,18 @@ Vue.component('buy-video', {
     show(blob){
       this.videoURL = URL.createObjectURL(blob);
       this.$el.classList.remove("hidden");
+
+      // Temporary freebie
+      let last_buy = new Date(window.localStorage.last_buy);
+      let can_buy_until = last_buy;
+      // Leave 1.1 hours to have some buffer
+      can_buy_until.setTime(can_buy_until.getTime() + parseInt(1.1*60*60*1000))
+
+      if(can_buy_until > new Date()){
+        fetch("/stats/lattefx_app_1_hour_freebie_download");
+        this.canDownload = true;
+        return;
+      }
 
       let client_id = this.settings.paypal_client_id;
       let script = document.createElement("script");
@@ -75,6 +90,10 @@ Vue.component('buy-video', {
           return actions.order.capture().then(function(details) {
             fetch("/stats/lattefx_app_payment_done");
             app.canDownload = true;
+
+            // Temporary freebie
+            window.localStorage.last_buy = new Date();
+            app.weGaveYouSomeTime = true;
           });
         }
       }).render(paymentContainer);
@@ -103,6 +122,7 @@ Vue.component('buy-video', {
 
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
+      app.weGaveYouSomeTime = false;
     });
 
     window.addEventListener("message", this.onWindowMessage);
