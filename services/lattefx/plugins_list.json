@@ -4,7 +4,7 @@
       "description": "Upload a video."
     },
 	"image": {
-      "description": "Put an image at any place, size, rotation on the canvas."
+      "description": "Put an image at any place and size on the canvas."
     }
   },
   "Text": {
@@ -12,7 +12,7 @@
       "description": "Choose from 800+ Google WebFonts."
     }
   },
-  "Layer transitions": {
+  "Layer transitions (Place above 2 other sequences)": {
     "leftRightReveal": {
       "description": "Reveals a text or any layer from left to right."
     },

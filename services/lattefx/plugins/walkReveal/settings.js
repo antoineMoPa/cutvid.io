@@ -9,8 +9,10 @@
       ui: {
         template: `
 <div>
+  <p>Place this above 2 other layers.<br>
+  It will reveal the second.</p>
   <label>
-    Part screen divisions<br>
+    Tweak amount of screen divisions<br>
     <input v-model="uniforms.walkDimension.value"
            min="1.0" max="100.0" step="1.0" type="number">
   </label>

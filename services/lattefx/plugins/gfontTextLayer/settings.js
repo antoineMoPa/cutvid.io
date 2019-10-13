@@ -10,7 +10,9 @@
       ui: {
         template: `
 <div class="gfont-plugin">
-  <h4>Text</h4>
+  <p v-if="texts.length == 0">
+    Start by adding a text box. You can then click to edit and resize it.
+  </p>
   <div v-for="(text, index) in texts" v-bind:key="text+index">
     <label>Font size</label>
     <input type="number" v-model.number="text.size" step="any">
