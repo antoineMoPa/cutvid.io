@@ -119,6 +119,8 @@ Vue.component('sequence-effect', {
     changeEffect(effectName, initialData, autoApply){
       let app = this;
 
+      fetch("/stats/lattefx_app_load_effect/"+effectName);
+
       if(autoApply == undefined){
         autoApply = true;
       }

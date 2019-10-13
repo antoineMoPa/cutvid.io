@@ -21,11 +21,11 @@
     <script src="/app/libs/gif.js"></script>
 
     <script type="text/javascript">
-    let available_themes = ["epicSunset", "retrowave"];
-    var theme_name = new URL(window.location.href).searchParams.get("theme") || "default";
-    if(!available_themes.find((el) => {return el == theme_name})){
-      theme_name = "epicSunset";
-    }
+     let available_themes = ["epicSunset", "retrowave"];
+     var theme_name = new URL(window.location.href).searchParams.get("theme") || "default";
+     if(!available_themes.find((el) => {return el == theme_name})){
+       theme_name = "epicSunset";
+     }
     </script>
 
     <script type="text/javascript" src="/app/shader_program.js"></script>
@@ -41,6 +41,8 @@
     <script type="text/javascript" src="/app/components/player.js"></script>
     <script type="text/javascript" src="/app/components/ui.js"></script>
     <script type="text/javascript" src="/app/app.js"></script>
-
+    <script type="text/javascript">
+     fetch("/stats/lattefx_app_page_view");
+    </script>
   </body>
 </html>

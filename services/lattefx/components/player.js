@@ -164,6 +164,7 @@ Vue.component('player', {
       });
     },
     make_buy(){
+      fetch("/stats/lattefx_app_initiate_buy");
       this.playAll();
 
       if (this.player.rendering)
@@ -174,6 +175,7 @@ Vue.component('player', {
       this.$refs.ui.set_progress(0.0);
 
       this.render(function(blob){
+        fetch("/stats/lattefx_app_render_done");
         this.$refs.buyVideo.show(blob);
       }.bind(this));
     },

@@ -57,7 +57,7 @@ Vue.component('buy-video', {
     initPaypal(){
       let app = this;
       let paymentContainer = this.$el.querySelectorAll(".payment-container")[0];
-
+      fetch("/stats/lattefx_app_paypal_init");
       paypal.Buttons({
         createOrder: function(data, actions) {
           // Set up the transaction
@@ -73,6 +73,7 @@ Vue.component('buy-video', {
         },
         onApprove: function(data, actions) {
           return actions.order.capture().then(function(details) {
+            fetch("/stats/lattefx_app_payment_done");
             app.canDownload = true;
           });
         }
