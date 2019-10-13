@@ -79,10 +79,16 @@ class ShaderPlayerWebGL2 {
     this.for_each_textures((t,s) => {
       if(t.isVideo){
         if(typeof(t.audioElement.captureStream) == "undefined"){
+          let track = t.audioElement.mozCaptureStream().getTracks()[0];
           // Firefox is slow on implementing that one
-          streams.push(t.audioElement.mozCaptureStream().getTracks()[0]);
+          if(typeof(track) != "undefined"){
+            streams.push(track);
+          }
         } else {
-          streams.push(t.audioElement.captureStream().getTracks()[0]);
+          let track = t.audioElement.captureStream().getTracks()[0];
+          if(typeof(track) != "undefined"){
+            streams.push(track);
+          }
         }
       }
     }, false);
@@ -197,7 +203,8 @@ class ShaderPlayerWebGL2 {
     let video_stream = this.canvas.captureStream(this.fps).getTracks()[0];
 
     let all_streams = this.get_all_audio_streams();
-    all_streams.push(video_stream)
+    all_streams.push(video_stream);
+    console.log(all_streams);
     let stream = new MediaStream(all_streams);
 
     this.capture_stream = stream;
