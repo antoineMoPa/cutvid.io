@@ -164,20 +164,22 @@ Vue.component('player', {
       });
     },
     make_buy(){
-      fetch("/stats/lattefx_app_initiate_buy");
       this.playAll();
 
-      if (this.player.rendering)
+      if (this.player.rendering) {
         return;
+      }
 
       this.player.rendering = true;
 
       this.$refs.ui.set_progress(0.0);
 
       this.render(function(blob){
-        fetch("/stats/lattefx_app_render_done");
         this.$refs.buyVideo.show(blob);
+        fetch("/stats/lattefx_app_render_done/");
       }.bind(this));
+
+      fetch("/stats/lattefx_app_initiate_buy/");
     },
     onSaveLatteFxFile(){
       let data = JSON.stringify(this.serialize());

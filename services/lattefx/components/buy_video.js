@@ -77,8 +77,8 @@ Vue.component('buy-video', {
       can_buy_until.setTime(can_buy_until.getTime() + parseInt(1.1*60*60*1000))
 
       if(can_buy_until > new Date()){
-        fetch("/stats/lattefx_app_1_hour_freebie_download");
         this.canDownload = true;
+        fetch("/stats/lattefx_app_1_hour_freebie_download/");
         return;
       }
 
@@ -92,7 +92,6 @@ Vue.component('buy-video', {
     initPaypal(){
       let app = this;
       let paymentContainer = this.$el.querySelectorAll(".payment-container")[0];
-      fetch("/stats/lattefx_app_paypal_init");
       paypal.Buttons({
         createOrder: function(data, actions) {
           // Set up the transaction
@@ -104,11 +103,12 @@ Vue.component('buy-video', {
                 value: "3.50"
               }
             }]
-          })
+          });
+          fetch("/stats/lattefx_app_paypal_order_created/");
         },
         onApprove: function(data, actions) {
           return actions.order.capture().then(function(details) {
-            fetch("/stats/lattefx_app_payment_done");
+            fetch("/stats/lattefx_app_payment_done/");
             app.canDownload = true;
 
             // Temporary freebie
@@ -117,6 +117,8 @@ Vue.component('buy-video', {
           });
         }
       }).render(paymentContainer);
+
+      fetch("/stats/lattefx_app_paypal_init/");
     },
     setVideoID(_id){
       this.videoID = _id;
@@ -143,7 +145,7 @@ Vue.component('buy-video', {
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
       app.weGaveYouSomeTime = false;
-      fetch("/stats/lattefx_app_hit_close");
+      fetch("/stats/lattefx_app_hit_close/");
     });
 
     window.addEventListener("message", this.onWindowMessage);
