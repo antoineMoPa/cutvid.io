@@ -20,7 +20,7 @@ Vue.component('ui', {
        class="is-rendering">
       Please be patient while your video is rendering.
     </p>
-    <a class="ui-button buy-button button-1" v-on:click="buy">
+    <a class="ui-button buy-button button-1" v-if="!player.rendering" v-on:click="buy">
       <img class="feather-button" src="icons/feather/download-cloud.svg"/>
       Buy Video
     </a>
