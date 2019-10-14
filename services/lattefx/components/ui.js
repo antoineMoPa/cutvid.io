@@ -2,18 +2,24 @@ Vue.component('ui', {
   template: `<div class="ui" v-if="player != null">
     <div class="ui-progress" v-bind:style="'width:' + progress_width + 'px'">
     </div>
-    <a class="ui-button play-button"
-       v-on:click="play()"
-       v-if="this.player.paused">
-      <img class="play-icon feather-button"
-           src="icons/feather/play.svg"/>
-    </a>
-    <a v-else
-       class="ui-button pause-button"
-       v-on:click="pause()">
-      <img class="pause-icon feather-button"
-           src="icons/feather/pause.svg"/>
-    </a>
+    <div v-if="!player.rendering">
+      <a class="ui-button play-button"
+         v-on:click="play()"
+         v-if="this.player.paused">
+        <img class="play-icon feather-button"
+             src="icons/feather/play.svg"/>
+      </a>
+      <a v-else
+         class="ui-button pause-button"
+         v-on:click="pause()">
+        <img class="pause-icon feather-button"
+             src="icons/feather/pause.svg"/>
+      </a>
+    </div>
+    <p v-else
+       class="is-rendering">
+      Please be patient while your video is rendering.
+    </p>
     <a class="ui-button buy-button button-1" v-on:click="buy">
       <img class="feather-button" src="icons/feather/download-cloud.svg"/>
       Buy Video

@@ -103,6 +103,19 @@ input{
   transition: all 0.3s;
 }
 
+.ui .is-rendering{
+  color: #f35;
+  line-height: 28px;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+
 .play-all-button{
   left:10px;
   cursor:pointer;
