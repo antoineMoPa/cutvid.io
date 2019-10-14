@@ -18,6 +18,8 @@ Vue.component('buy-video', {
     It's USD $ 3.50
     <br>
     Most coffee shops would charge you more for a pumpkin spice latte.
+    <br>
+    Once you buy, you will be able to download new versions for 1 hour.
   </p>
   <div class="payment-container" v-if="!canDownload">
     <!-- Paypal stuff goes here -->
@@ -37,7 +39,7 @@ Vue.component('buy-video', {
     See you soon!<br><br>
   </p>
   <p v-if="weGaveYouSomeTime" class="thank-you">
-    By the way, we just gave you 1 extra hour to make extra edits and download again. Simply click "buy now" and the download button will be available for this duration!
+    We just gave you 1 extra hour to make extra edits and download again. Simply click "buy now" and the download button will be available for this duration!
   </p>
   <p class="thank-you">
     For any questions, comments, refunds, feedback on Lattefx, please contact
