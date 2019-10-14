@@ -178,7 +178,6 @@ Vue.component('sequencer', {
       this.draggingRight = false;
       this.draggingTimeBar = false;
       this.dragging = null;
-      fetch("/stats/lattefx_app_dragged_sequence/");
     },
     mouseEventInfo(e){
       let scale = this.getScale();
