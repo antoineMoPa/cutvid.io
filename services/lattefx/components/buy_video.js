@@ -14,9 +14,10 @@ Vue.component('buy-video', {
     </span>
   </h3>
   <p v-if="!canDownload" class="thank-you">
-    USD $ 3.50
+    Ready to download your video?<br>
+    It's USD $ 3.50
     <br>
-    Most coffee shops would charge you more for a latte.
+    Most coffee shops would charge you more for a pumpkin spice latte.
   </p>
   <div class="payment-container" v-if="!canDownload">
     <!-- Paypal stuff goes here -->
