@@ -143,6 +143,7 @@ Vue.component('buy-video', {
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
       app.weGaveYouSomeTime = false;
+      fetch("/stats/lattefx_app_hit_close");
     });
 
     window.addEventListener("message", this.onWindowMessage);
