@@ -677,6 +677,16 @@ input{
   text-align:left;
 }
 
+.video-preview{
+  margin: 0 30px;
+  margin-bottom: 20px;
+  text-align:center;
+}
+
+.video-preview video{
+  max-width: 1018px;
+}
+
 .buy-video .error{
   color: #fff;
   background: #cc0050;

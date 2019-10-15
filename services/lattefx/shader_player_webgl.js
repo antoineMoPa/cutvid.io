@@ -200,39 +200,47 @@ class ShaderPlayerWebGL2 {
 
   render(callback) {
     let app = this;
-    let video_stream = this.canvas.captureStream(this.fps).getTracks()[0];
-
-    let all_streams = this.get_all_audio_streams();
+    let video_stream = app.canvas.captureStream(app.fps).getTracks()[0];
+    let all_streams = app.get_all_audio_streams();
     all_streams.push(video_stream);
     let stream = new MediaStream(all_streams);
 
-    this.capture_stream = stream;
-
-    this.media_recorder_chunks = [];
-    this.on_render_done = callback;
+    app.capture_stream = stream;
+    app.media_recorder_chunks = [];
+    app.on_render_done = callback;
 
     let media_recorder = new MediaRecorder(stream, {
       audioBitsPerSecond : 128000,
-      videoBitsPerSecond : 2500000
+      videoBitsPerSecond : 8000000
     });
 
-    media_recorder.ondataavailable = function(e){
-      if (e.data.size > 0) {
-        app.media_recorder_chunks.push(e.data);
+    this.for_each_textures((t,s) => {
+      if(t.isVideo){
+        t.videoElement.currentTime = 0;
       }
-    };
+    }, false);
 
-    media_recorder.onstop = function(){
-      app.on_render_done(app.media_recorder_chunks);
-    };
+    // Leave some time for videos to seek
+    setTimeout(function(){
+      media_recorder.ondataavailable = function(e){
+        if (e.data.size > 0) {
+          app.media_recorder_chunks.push(e.data);
+        }
+      };
 
-    this.time.time = 0;
-    this.last_frame_time = new Date().getTime();
-    this.media_recorder = media_recorder;
-    this.rendering = true;
+      media_recorder.onstop = function(){
+        app.on_render_done(app.media_recorder_chunks);
+      };
 
-    media_recorder.start();
-    this.paused = false;
+      app.time.time = 0;
+      app.last_frame_time = new Date().getTime();
+      app.media_recorder = media_recorder;
+      app.rendering = true;
+
+      media_recorder.start();
+      app.paused = false;
+
+    },10);
   }
 
   set_on_error_listener(callback) {
@@ -484,12 +492,15 @@ class ShaderPlayerWebGL2 {
 
             for (let element of [tex.videoElement, tex.audioElement]){
               let currTime = element.currentTime;
+              // Attempt: dont sync while rendering
               if (Math.abs(shouldBeTime - currTime) > 2.0) {
                 element.pause();
                 element.currentTime = shouldBeTime;
                 if (!this.paused) {
                   element.play();
                 }
+              } else if (this.rendering) {
+                element.play();
               }
             }
 
@@ -563,14 +574,6 @@ class ShaderPlayerWebGL2 {
 
         gl.viewport(0, 0, this.width, this.height);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-        // Send preview sometimes
-        if( !this.rendering &&        /* Don't interfere with render*/
-            currentRelativeTime < 0.6 &&  /* Aim the middle of scene */
-            currentRelativeTime > 0.4 &&
-            Math.random() < 0.3           /* Not all the time*/
-          ){
-        }
       }
     }
 

@@ -21,6 +21,9 @@ Vue.component('buy-video', {
     <br>
     Once you buy, you will be able to download new versions for 1 hour.
   </p>
+  <div v-if="!canDownload" class="video-preview" v-on:contextmenu="onContextMenu">
+    <video v-bind:src="videoURL" controls></video>
+  </div>
   <div class="payment-container" v-if="!canDownload">
     <!-- Paypal stuff goes here -->
   </div>
@@ -65,6 +68,15 @@ Vue.component('buy-video', {
       let at = "@";
       let host = "g" + "ma" + "il" + "." + "com";
       return name + at + host;
+    },
+    onContextMenu(){
+      // If you know how to remove this,
+      // maybe you deserve your download
+      // But keep in mind that paying allows
+      // me to develop features & host LatteFx
+      // You can also pay me by suggesting features
+      // And improvement at my email address!
+      return false;
     },
     show(blob){
       this.videoURL = URL.createObjectURL(blob);

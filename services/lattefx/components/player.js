@@ -159,6 +159,7 @@ Vue.component('player', {
       let totalFrames = this.fps * this.player.get_total_duration();
       this.player.rendering = true;
       this.player.pause();
+
       this.player.render(function(data){
         doneCallback(data[0]);
       });
