@@ -57,6 +57,8 @@ input{
   cursor:pointer;
   background: linear-gradient(#333, #222);
   text-decoration:none;
+  font-size:14px;
+  line-height:24px;
 }
 
 .ui .ui-button{
@@ -71,10 +73,12 @@ input{
 }
 
 .ui-button.buy-button{
-  background:#fff;
-  color:#333;
-  font-size:12px;
-  line-height:23px;
+  background:#3af;
+  color:#fff;
+}
+
+.ui-button .feather-button {
+  margin-bottom: -7px;
 }
 
 .ui .paypal-logo{
@@ -86,6 +90,13 @@ input{
 
 .ui-button.ui-disabled{
   opacity:0.4;
+}
+
+.ui-button-paypal-part{
+  background: #fff;
+  display: inline-block;
+  border-radius:3px;
+  margin-right:5px;
 }
 
 .ui-button.button-1{
@@ -113,7 +124,7 @@ input{
 }
 
 .ui .is-rendering{
-  color: #f35;
+  color: #fff;
   line-height: 28px;
   animation: blinker 1s linear infinite;
 }
@@ -124,6 +135,10 @@ input{
   }
 }
 
+.ui-button.cancel-button{
+  background:#f31;
+  margin-bottom:-2px;
+}
 
 .play-all-button{
   left:10px;

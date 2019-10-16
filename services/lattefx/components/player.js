@@ -54,6 +54,7 @@ Vue.component('player', {
     <ui ref="ui"
         v-on:playAll="playAll"
         v-on:buy="make_buy"
+        v-on:cancelRender="onCancelRender"
         v-bind:player="player"/>
   </div>`,
   data(){
@@ -181,6 +182,9 @@ Vue.component('player', {
       }.bind(this));
 
       fetch("/stats/lattefx_app_initiate_buy/");
+    },
+    onCancelRender(){
+      this.player.cancel_render();
     },
     onSaveLatteFxFile(){
       let data = JSON.stringify(this.serialize());

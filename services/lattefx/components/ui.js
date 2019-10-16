@@ -21,10 +21,18 @@ Vue.component('ui', {
       Please be patient while your video is rendering.
     </p>
     <a class="ui-button buy-button button-1" v-if="!player.rendering" v-on:click="buy">
-      <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="PayPal">
+      <span class="ui-button-paypal-part">
+        <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="PayPal">
+      </span>
       Render & Buy  US$ 3.50
     </a>
-
+    <a v-if="player.rendering"
+       v-on:click="cancelRender"
+       class="ui-button button-1 cancel-button">
+      <img class="pause-icon feather-button"
+           src="icons/feather/x.svg"/>
+      Cancel render
+    </a>
   </div>`,
   data(){
     return {
@@ -48,6 +56,9 @@ Vue.component('ui', {
     buy(){
       this.$emit("buy");
       fetch("/stats/lattefx_app_click_buy/");
+    },
+    cancelRender(){
+      this.$emit("cancelRender");
     },
     set_progress(progress_ratio){
       this.progress_width = progress_ratio * window.innerWidth;

@@ -1,3 +1,8 @@
+
+/*
+  For the history, this file has mostly underscore case
+  because it was copied from shadergif's shader player
+ */
 /* Note: I actually downgraded to webgl1 to support more devices */
 /* Note 2: This should be renamed engine or something */
 
@@ -241,6 +246,14 @@ class ShaderPlayerWebGL2 {
       app.paused = false;
 
     },10);
+  }
+
+  cancel_render() {
+    this.media_recorder.onstop = null;
+    this.media_recorder.stop();
+    this.time.time = 0;
+    this.pause();
+    this.rendering = false;
   }
 
   set_on_error_listener(callback) {
