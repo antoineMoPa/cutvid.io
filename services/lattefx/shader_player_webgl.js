@@ -352,6 +352,29 @@ class ShaderPlayerWebGL2 {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
+  pause_non_current_media(){
+    let time = this.time.time;
+    for (let i = 0; i < this.sequences.length; i++) {
+      let seq = this.sequences[i];
+      if(seq.effect == undefined){
+        continue
+      }
+      let pass = seq.effect.shaderProgram;
+      if(typeof(pass) == "undefined"){
+        continue;
+      }
+      if (time < seq.from || time > seq.to) {
+        for (let tex_index in pass.textures) {
+          let t = pass.textures[tex_index];
+          if (t.isVideo) {
+            t.audioElement.pause();
+            t.videoElement.pause();
+          }
+        }
+      }
+    }
+  }
+
   get_sequences_by_layers(only_current){
     let time = this.time.time;
 
@@ -397,6 +420,7 @@ class ShaderPlayerWebGL2 {
 
     let duration = this.get_total_duration();
 
+    this.pause_non_current_media();
 
     if(force_time != undefined){
       this.time.time = force_time;

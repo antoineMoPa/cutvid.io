@@ -71,8 +71,17 @@ input{
 }
 
 .ui-button.buy-button{
-  background:#3af;
-  color:#fff;
+  background:#fff;
+  color:#333;
+  font-size:12px;
+  line-height:23px;
+}
+
+.ui .paypal-logo{
+  height: 13px;
+  position: relative;
+  top: 2px;
+  margin: 0 8px;
 }
 
 .ui-button.ui-disabled{

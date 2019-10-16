@@ -21,9 +21,10 @@ Vue.component('ui', {
       Please be patient while your video is rendering.
     </p>
     <a class="ui-button buy-button button-1" v-if="!player.rendering" v-on:click="buy">
-      <img class="feather-button" src="icons/feather/download-cloud.svg"/>
-      Buy Video
+      <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="PayPal">
+      Render & Buy  US$ 3.50
     </a>
+
   </div>`,
   data(){
     return {
