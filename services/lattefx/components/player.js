@@ -51,6 +51,8 @@ Vue.component('player', {
      />
     </div>
     <buy-video ref="buyVideo" v-bind:settings="settings"/>
+    <download-lq ref="downloadLQ"
+                 v-on:renderHQ="makeHQ"/>
     <ui ref="ui"
         v-on:playAll="playAll"
         v-on:renderHQ="makeHQ"
@@ -179,7 +181,7 @@ Vue.component('player', {
       this.$refs.ui.set_progress(0.0);
 
       this.render(function(blob){
-        this.$refs.buyVideo.show(blob);
+        this.$refs.downloadLQ.show(blob);
         fetch("/stats/lattefx_app_lq_render_done/");
       }.bind(this));
 

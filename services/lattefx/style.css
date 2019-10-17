@@ -81,7 +81,7 @@ input{
   margin-bottom: -7px;
 }
 
-.ui .paypal-logo{
+.paypal-logo{
   height: 13px;
   position: relative;
   top: 2px;
@@ -763,6 +763,27 @@ input{
   to {
     transform: rotate(359deg);
   }
+}
+
+.goto-hq{
+  text-align: center;
+  line-height: 40px;
+  font-size: 20px;
+}
+
+.goto-hq-details{
+  text-align: center;
+  line-height: 18px;
+  font-size: 11px;
+  margin-top: -18px;
+}
+
+.goto-hq-button{
+  display:inline-block;
+  margin:5px;
+  background: #3af;
+  color:#fff;
+  font-size:14px;
 }
 
 /* END COMPONENT SPECIFICS */
