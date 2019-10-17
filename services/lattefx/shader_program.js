@@ -8,6 +8,16 @@ class ShaderProgram {
     this.textures = {};
   }
 
+  async get_file_digest(file) {
+    let buf = await file.arrayBuffer();
+    let digest = await crypto.subtle.digest('SHA-1', buf);
+    // thanks MDN for the next lines
+    let array = Array.from(new Uint8Array(digest))
+    let hashHex = array.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    return hashHex;
+  }
+
   compile(vertex_shader_code, fragment_shader_code) {
     // For external use
     this.fragment_shader_code= fragment_shader_code;
@@ -90,7 +100,7 @@ class ShaderProgram {
     let audioElement = null;
     let autoplay = options.autoplay;
 
-    if(options.video != undefined){
+    if(options.videoFile != undefined){
       isVideo = true;
       videoElement = document.createElement("video");
       audioElement = document.createElement("audio");
@@ -208,6 +218,12 @@ class ShaderProgram {
 
     // Handle videos/canvas texture
     if(isVideo){
+      let videoBlobURL = window.URL.createObjectURL(options.videoFile);
+      this.get_file_digest(options.videoFile).then((digest) => {
+        options.videoDigest = digest;
+      });
+      console.log(options);
+
       videoElement.addEventListener("timeupdate", function(){
         timeUpdate = true;
         checkReady();
@@ -217,8 +233,8 @@ class ShaderProgram {
         checkReady();
       });
       videoElement.currentTime = 0;
-      videoElement.src = options.video;
-      audioElement.src = options.video;
+      videoElement.src = videoBlobURL;
+      audioElement.src = videoBlobURL;
       videoElement.loop = true;
       videoElement.muted = true;
       videoElement.play().catch(function(error){

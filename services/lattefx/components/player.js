@@ -53,7 +53,8 @@ Vue.component('player', {
     <buy-video ref="buyVideo" v-bind:settings="settings"/>
     <ui ref="ui"
         v-on:playAll="playAll"
-        v-on:buy="make_buy"
+        v-on:renderHQ="makeHQ"
+        v-on:renderLQ="makeLQ"
         v-on:cancelRender="onCancelRender"
         v-bind:player="player"/>
   </div>`,
@@ -165,7 +166,27 @@ Vue.component('player', {
         doneCallback(data[0]);
       });
     },
-    make_buy(){
+    makeLQ(){
+      // Web render with low quality
+      this.playAll();
+
+      if (this.player.rendering) {
+        return;
+      }
+
+      this.player.rendering = true;
+
+      this.$refs.ui.set_progress(0.0);
+
+      this.render(function(blob){
+        this.$refs.buyVideo.show(blob);
+        fetch("/stats/lattefx_app_lq_render_done/");
+      }.bind(this));
+
+      fetch("/stats/lattefx_app_lq_initiate_download/");
+    },
+    makeHQ(){
+      // Hybrid render High Quality
       this.playAll();
 
       if (this.player.rendering) {

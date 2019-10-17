@@ -20,11 +20,20 @@ Vue.component('ui', {
        class="is-rendering">
       Please be patient while your video is rendering.
     </p>
-    <a class="ui-button buy-button button-1" v-if="!player.rendering" v-on:click="buy">
+    <a class="ui-button buy-button button-2"
+       v-if="!player.rendering"
+       v-on:click="renderLQ"
+       title="Free, but low quality & FPS">
+      Render free LQ
+    </a>
+    <a class="ui-button buy-button button-1"
+       v-if="!player.rendering"
+       v-on:click="renderHQ"
+       title="You can afford it in High Quality and best FPS">
       <span class="ui-button-paypal-part">
         <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="PayPal">
       </span>
-      Render & Buy  US$ 3.50
+      Render & Buy  US$ 7.50
     </a>
     <a v-if="player.rendering"
        v-on:click="cancelRender"
@@ -53,9 +62,13 @@ Vue.component('ui', {
     playLooping(){
       this.looping = true;
     },
-    buy(){
-      this.$emit("buy");
-      fetch("/stats/lattefx_app_click_buy/");
+    renderLQ(){
+      this.$emit("renderLQ");
+      fetch("/stats/lattefx_app_click_render_lq/");
+    },
+    renderHQ(){
+      this.$emit("renderHQ");
+      fetch("/stats/lattefx_app_click_render_hq/");
     },
     cancelRender(){
       this.$emit("cancelRender");

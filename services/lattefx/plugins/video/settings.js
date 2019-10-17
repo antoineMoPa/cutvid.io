@@ -68,12 +68,13 @@
           };
         },
         methods: {
-          loadVideo(data){
+          loadVideo(){
             let app = this;
             app.error = false;
             app.durationInitialized = false;
             this.shaderProgram.set_texture('video', '', function(){}, {
-              video: data,
+              video: this.video,
+              videoFile: this.videoFile,
               autoplay: !this.player.paused,
               onerror: function(){
                 app.error = true;
@@ -113,7 +114,7 @@
         },
         watch: {
           video(){
-            this.loadVideo(this.video);
+            this.loadVideo();
           },
           trimBefore(){
             this.effect.trimBefore = this.trimBefore;

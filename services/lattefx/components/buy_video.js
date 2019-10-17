@@ -15,11 +15,8 @@ Vue.component('buy-video', {
   </h3>
   <p v-if="!canDownload" class="thank-you">
     Ready to download your video?<br>
-    It's USD $ 3.50
+    It's USD $ 7.50
     <br>
-    Most coffee shops would charge you more for a pumpkin spice latte.
-    <br>
-    Once you buy, you will be able to download new versions for 1 hour.
   </p>
   <div v-if="!canDownload" class="video-preview" v-on:contextmenu="onContextMenu">
     <video v-bind:src="videoURL" controls></video>
@@ -41,9 +38,6 @@ Vue.component('buy-video', {
   <p v-if="canDownload" class="thank-you">
     See you soon!<br><br>
   </p>
-  <p v-if="weGaveYouSomeTime" class="thank-you">
-    We just gave you 1 extra hour to make extra edits and download again. Simply click "buy now" and the download button will be available for this duration!
-  </p>
   <p class="thank-you">
     For any questions, comments, refunds, feedback on Lattefx, please contact
     {{email()}}<br>
@@ -57,8 +51,7 @@ Vue.component('buy-video', {
       videoURL: null,
       canDownload: false,
       error: null,
-      stats: null,
-      weGaveYouSomeTime: false
+      stats: null
     };
   },
   props: ["settings"],
@@ -112,7 +105,7 @@ Vue.component('buy-video', {
               currency_code: "USD",
               description: "Video - web render",
               amount: {
-                value: "3.50"
+                value: "7.50"
               }
             }]
           });
@@ -125,7 +118,6 @@ Vue.component('buy-video', {
 
             // Temporary freebie
             window.localStorage.last_buy = new Date();
-            app.weGaveYouSomeTime = true;
           });
         }
       }).render(paymentContainer);
@@ -156,7 +148,6 @@ Vue.component('buy-video', {
 
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
-      app.weGaveYouSomeTime = false;
       fetch("/stats/lattefx_app_hit_close/");
     });
 

@@ -526,8 +526,13 @@ class ShaderPlayerWebGL2 {
             let trimBefore = parseFloat(seq.trimBefore);
             let timeFrom = parseFloat(seq.from);
             let shouldBeTime = time - timeFrom + trimBefore;
+            let mediaElements = [tex.videoElement];
 
-            for (let element of [tex.videoElement, tex.audioElement]){
+            if(tex.hasAudio){
+              mediaElements.push(tex.audioElement);
+            }
+
+            for (let element of mediaElements){
               let currTime = element.currentTime;
               // Attempt: dont sync while rendering
               if (Math.abs(shouldBeTime - currTime) > 2.0) {
