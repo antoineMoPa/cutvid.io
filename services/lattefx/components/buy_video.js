@@ -14,8 +14,7 @@ Vue.component('buy-video', {
     </span>
   </h3>
   <p v-if="!canDownload" class="thank-you">
-    Ready to download your video?<br>
-    It's USD $ 7.50
+    HQ videos are USD $ 7.50
     <br>
   </p>
   <div v-if="!canDownload" class="video-preview" v-on:contextmenu="onContextMenu">
@@ -72,8 +71,10 @@ Vue.component('buy-video', {
       return false;
     },
     show(blob){
-      this.videoURL = URL.createObjectURL(blob);
       this.$el.classList.remove("hidden");
+      console.log(blob);
+      return;
+      this.videoURL = URL.createObjectURL(blob);
 
       // Temporary freebie
       let last_buy = new Date(window.localStorage.last_buy);

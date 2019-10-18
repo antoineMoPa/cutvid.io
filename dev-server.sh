@@ -2,8 +2,8 @@
 
 cd services
 
-cd converter
-./start.bash &
+cd renderer
+python3 serve.py
 cd ..
 
 cd downloadables
@@ -13,4 +13,3 @@ cd ..
 cd auth
 bundle exec rails s -p 8000 &
 cd ..
-

@@ -77,6 +77,7 @@ Vue.component('download-lq', {
     },
     close(){
       this.$el.classList.add("hidden");
+      this.$el.querySelectorAll("video")[0].pause();
       fetch("/stats/lattefx_app_hit_close/");
     }
   },

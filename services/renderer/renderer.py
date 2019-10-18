@@ -8,17 +8,26 @@ import os
 import random
 import string
 
+from urllib.parse import urlparse
+
 # Thanks to https://stackoverflow.com/questions/2257441/
-def id_generator(size=15, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
+ID_CHARS=string.ascii_uppercase + string.ascii_lowercase + string.digits
+def id_generator(
+    size=15,
+    chars=ID_CHARS
+):
     return ''.join(random.choice(chars) for _ in range(size))
 
 settings = json.load(open('../lattefx/settings.json'))
 
-class ConverterHTTPRequestHandler(BaseHTTPRequestHandler):
+class RendererHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
+
+        import pdb; pdb.set_trace()
+
         self.wfile.write(b'Hello, world!')
 
     def do_POST(self):
@@ -62,7 +71,7 @@ class ConverterHTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(downloadableNameInBytes)
 
 
-httpd = HTTPServer(('localhost', 8004), ConverterHTTPRequestHandler)
+httpd = HTTPServer(('localhost', 8004), RendererHTTPRequestHandler)
 httpd.serve_forever()
 
 # Testing this service:

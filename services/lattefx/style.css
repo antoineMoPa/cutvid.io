@@ -29,6 +29,10 @@ input{
   text-align:center;
 }
 
+.with-title-tag{
+  text-decoration: underline;
+}
+
 /* END HELPERS --------------*/
 
 /* UI -------------- */
@@ -185,9 +189,6 @@ input{
   width:100%;
   margin-top:20px;
   margin-left:0;
-}
-
-#main-player .canvas-container{
   background:#3f3f3f;
 }
 

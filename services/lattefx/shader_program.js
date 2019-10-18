@@ -6,6 +6,7 @@ class ShaderProgram {
     this.vertex_shader_object = null;
     this.fragment_shader_code = null;
     this.textures = {};
+    this.videoCache = {};
   }
 
   async get_file_digest(file) {
@@ -16,6 +17,32 @@ class ShaderProgram {
     let hashHex = array.map(b => b.toString(16).padStart(2, '0')).join('');
 
     return hashHex;
+  }
+
+  async get_video_frame_at_time(texture, trimBefore, from, to, video_time) {
+    let digest = texture.videoDigest;
+    let cache_hit = digest in this.videoCache;
+    let base_path = window.lattefx_settings.renderer;
+
+    if (!cache_hit) {
+      // Not in our cache, but might be on server
+      let resp = await fetch(base_path + "/has_vid_in_cache/"+digest);
+      let has_video = await resp.text();
+
+      if(has_video != "true"){
+        // Send video
+        let form = new FormData();
+        form.append('video.vid', texture.videoFile);
+
+        await fetch(base_path + "/upload_video/"+digest, {
+          method: 'POST',
+          mode: 'cors',
+          body: form
+        });
+      }
+
+    }
+
   }
 
   compile(vertex_shader_code, fragment_shader_code) {
@@ -163,6 +190,19 @@ class ShaderProgram {
       return true;
     }
 
+    async function updateVideoHQ(trimBefore, from, to, video_time){
+      let texture = app.textures[name];
+      gl.bindTexture(gl.TEXTURE_2D, texture.texture);
+
+      let image = await app.get_video_frame_at_time(
+        texture, trimBefore, from, to, video_time
+      );
+
+      /*gl.texImage2D(
+        gl.TEXTURE_2D, level, internalFormat,
+        srcFormat, srcType, image);*/
+    }
+
     function load() {
       if(!isVideo &&
          options.force_width != undefined ||
@@ -189,7 +229,8 @@ class ShaderProgram {
         isVideo,
         videoElement: videoElement,
         audioElement: audioElement,
-        updateVideo: updateVideo
+        updateVideo: updateVideo,
+        updateVideoHQ: updateVideoHQ,
       };
 
       gl.texImage2D(
@@ -220,9 +261,9 @@ class ShaderProgram {
     if(isVideo){
       let videoBlobURL = window.URL.createObjectURL(options.videoFile);
       this.get_file_digest(options.videoFile).then((digest) => {
-        options.videoDigest = digest;
+        app.textures[name].videoDigest = digest;
+        app.textures[name].videoFile = options.videoFile;
       });
-      console.log(options);
 
       videoElement.addEventListener("timeupdate", function(){
         timeUpdate = true;

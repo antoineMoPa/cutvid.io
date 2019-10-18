@@ -159,11 +159,11 @@ Vue.component('player', {
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
     },
-    render(doneCallback) {
+    render(mode, doneCallback) {
       let totalFrames = this.fps * this.player.get_total_duration();
       this.player.rendering = true;
+      this.player.renderMode = mode;
       this.player.pause();
-
       this.player.render(function(data){
         doneCallback(data[0]);
       });
@@ -180,7 +180,7 @@ Vue.component('player', {
 
       this.$refs.ui.set_progress(0.0);
 
-      this.render(function(blob){
+      this.render("LQ", function(blob){
         this.$refs.downloadLQ.show(blob);
         fetch("/stats/lattefx_app_lq_render_done/");
       }.bind(this));
@@ -189,8 +189,6 @@ Vue.component('player', {
     },
     makeHQ(){
       // Hybrid render High Quality
-      this.playAll();
-
       if (this.player.rendering) {
         return;
       }
@@ -199,7 +197,7 @@ Vue.component('player', {
 
       this.$refs.ui.set_progress(0.0);
 
-      this.render(function(blob){
+      this.render("HQ", function(blob){
         this.$refs.buyVideo.show(blob);
         fetch("/stats/lattefx_app_render_done/");
       }.bind(this));

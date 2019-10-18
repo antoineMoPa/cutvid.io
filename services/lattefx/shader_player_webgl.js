@@ -205,6 +205,24 @@ class ShaderPlayerWebGL2 {
 
   render(callback) {
     let app = this;
+    app.rendering = true;
+
+    this.pause();
+
+    switch(this.renderMode){
+    case "LQ":
+      this.render_lq(callback);
+      break;
+    case "HQ":
+      this.render_hq(callback);
+      break;
+    default:
+      console.error("Unhandled render mode");
+    }
+  }
+
+  render_lq(callback) {
+    let app = this;
     let video_stream = app.canvas.captureStream(app.fps).getTracks()[0];
     let all_streams = app.get_all_audio_streams();
     all_streams.push(video_stream);
@@ -240,7 +258,6 @@ class ShaderPlayerWebGL2 {
       app.time.time = 0;
       app.last_frame_time = new Date().getTime();
       app.media_recorder = media_recorder;
-      app.rendering = true;
 
       media_recorder.start();
       app.paused = false;
@@ -248,12 +265,58 @@ class ShaderPlayerWebGL2 {
     },10);
   }
 
-  cancel_render() {
-    this.media_recorder.onstop = null;
-    this.media_recorder.stop();
-    this.time.time = 0;
-    this.pause();
+  get_canvas_blob() {
+    let app = this;
+    // Thanks to stack overflow
+    // https://stackoverflow.com/questions/42458849/
+    return new Promise(function(resolve, reject) {
+      app.canvas.toBlob(function(blob) {
+        resolve(blob)
+      }, "image/png")
+    });
+  }
+
+  async render_hq(callback) {
+    let app = this;
+    let duration = this.get_total_duration();
+    let fps = this.fps;
+    let total_frames = fps * duration;
+
+    for(let frame = 0; frame < total_frames; frame++){
+      if(app.cancel_hq_render){
+        app.cancel_hq_render = false;
+        this.time.time = 0;
+        this.pause();
+        this.rendering = false;
+        return;
+      }
+
+      let time = frame / fps;
+      await this.draw_gl(time);
+      let canvasFrame = await this.get_canvas_blob();
+      var zip = new JSZip();
+      zip.file("frame-"+frame+".png", canvasFrame);
+    }
+
+    let zipFile = await zip.generateAsync({type:"blob"});
     this.rendering = false;
+    this.time.time = 0;
+
+    callback(zipFile);
+  }
+
+  cancel_render() {
+    if(this.rendering){
+      if(this.renderMode == "LQ"){
+        this.media_recorder.onstop = null;
+        this.media_recorder.stop();
+        this.time.time = 0;
+        this.pause();
+        this.rendering = false;
+      } else {
+        this.cancel_hq_render = true;
+      }
+    }
   }
 
   set_on_error_listener(callback) {
@@ -423,7 +486,7 @@ class ShaderPlayerWebGL2 {
     return {maxLayer, sequencesByLayer}
   }
 
-  draw_gl(force_time) {
+  async draw_gl(force_time) {
     const gl = this.gl;
     let texSuccess = true;
 
@@ -526,30 +589,42 @@ class ShaderPlayerWebGL2 {
             let trimBefore = parseFloat(seq.trimBefore);
             let timeFrom = parseFloat(seq.from);
             let shouldBeTime = time - timeFrom + trimBefore;
-            let mediaElements = [tex.videoElement];
 
-            if(tex.hasAudio){
+            if (this.rendering && this.renderMode == "HQ") {
+              let timeTo = parseFloat(seq.to);
+              // Get exact frame
+              tex.updateVideoHQ(
+                trimBefore,
+                timeFrom-trimBefore,
+                timeTo-trimBefore,
+                shouldBeTime
+              );
+            } else {
+              // Get approximate frame
+
+              let mediaElements = [tex.videoElement];
               mediaElements.push(tex.audioElement);
-            }
 
-            for (let element of mediaElements){
-              let currTime = element.currentTime;
-              // Attempt: dont sync while rendering
-              if (Math.abs(shouldBeTime - currTime) > 2.0) {
-                element.pause();
-                element.currentTime = shouldBeTime;
-                if (!this.paused) {
+              for (let element of mediaElements){
+                let currTime = element.currentTime;
+                // Attempt: dont sync while rendering
+                if (Math.abs(shouldBeTime - currTime) > 2.0) {
+                  element.pause();
+                  element.currentTime = shouldBeTime;
+
+                  if (!this.paused) {
+                    element.play();
+                  }
+                } else if (this.rendering) {
                   element.play();
                 }
-              } else if (this.rendering) {
-                element.play();
               }
+
+              tex.videoElement.muted = true;
+              tex.audioElement.muted = false;
+
+              texSuccess &= tex.updateVideo();
             }
-
-            tex.videoElement.muted = true;
-            tex.audioElement.muted = false;
-
-            texSuccess &= tex.updateVideo();
           } else {
             gl.bindTexture(gl.TEXTURE_2D, tex.texture);
           }
@@ -624,7 +699,7 @@ class ShaderPlayerWebGL2 {
         return false;
       }
 
-      if (time >= duration) {
+      if (time >= duration && this.renderMode == "LQ") {
         this.media_recorder.stop();
         this.rendering = false;
         this.time.time = 0;
