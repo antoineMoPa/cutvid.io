@@ -593,7 +593,8 @@ class ShaderPlayerWebGL2 {
             if (this.rendering && this.renderMode == "HQ") {
               let timeTo = parseFloat(seq.to);
               // Get exact frame
-              tex.updateVideoHQ(
+              await tex.updateVideoHQ(
+                this.fps,
                 trimBefore,
                 timeFrom-trimBefore,
                 timeTo-trimBefore,
@@ -726,6 +727,10 @@ class ShaderPlayerWebGL2 {
     function _animate() {
       // Make sure to render when focussed or rendering
       if (player.rendering || player.window_focused) {
+        if(player.renderMode == "HQ"){
+          // Draw is handled elsewhere
+          return;
+        }
         try{
           player.draw_gl();
         } catch (e) {

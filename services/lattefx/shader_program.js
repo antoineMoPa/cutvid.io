@@ -19,14 +19,16 @@ class ShaderProgram {
     return hashHex;
   }
 
-  async get_video_frame_at_time(texture, trimBefore, from, to, video_time) {
+  async get_video_frame_at_time(texture, fps, trimBefore, from, to, video_time) {
     let digest = texture.videoDigest;
     let cache_hit = digest in this.videoCache;
     let base_path = window.lattefx_settings.renderer;
 
     if (!cache_hit) {
       // Not in our cache, but might be on server
-      let resp = await fetch(base_path + "/has_vid_in_cache/"+digest);
+      let resp = await fetch(base_path + "/has_vid_in_cache/" + digest, {
+        cache: 'no-cache'
+      });
       let has_video = await resp.text();
 
       if(has_video != "true"){
@@ -34,12 +36,19 @@ class ShaderProgram {
         let form = new FormData();
         form.append('video.vid', texture.videoFile);
 
-        await fetch(base_path + "/upload_video/"+digest, {
+        await fetch(base_path + "/upload_video/" + digest, {
           method: 'POST',
           mode: 'cors',
           body: form
         });
+
+        this.videoCache[digest] = video_zip;
       }
+
+      let video_file = await fetch(base_path + "/get_video_frames/" + digest + "/" + fps + "/" + + from + "/" + to);
+      let video_blob = await video_file.blob();
+      let content = await JSZip.loadAsync(video_blob);
+      console.log(content);
 
     }
 
@@ -190,12 +199,12 @@ class ShaderProgram {
       return true;
     }
 
-    async function updateVideoHQ(trimBefore, from, to, video_time){
+    async function updateVideoHQ(fps, trimBefore, from, to, video_time){
       let texture = app.textures[name];
       gl.bindTexture(gl.TEXTURE_2D, texture.texture);
 
       let image = await app.get_video_frame_at_time(
-        texture, trimBefore, from, to, video_time
+        texture, fps, trimBefore, from, to, video_time
       );
 
       /*gl.texImage2D(
@@ -203,7 +212,7 @@ class ShaderProgram {
         srcFormat, srcType, image);*/
     }
 
-    function load() {
+    async function load() {
       if(!isVideo &&
          options.force_width != undefined ||
          options.force_height != undefined
@@ -233,6 +242,13 @@ class ShaderProgram {
         updateVideoHQ: updateVideoHQ,
       };
 
+      if (isVideo) {
+        await app.get_file_digest(options.videoFile).then((digest) => {
+          app.textures[name].videoDigest = digest;
+          app.textures[name].videoFile = options.videoFile;
+        });
+      }
+
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
@@ -260,10 +276,6 @@ class ShaderProgram {
     // Handle videos/canvas texture
     if(isVideo){
       let videoBlobURL = window.URL.createObjectURL(options.videoFile);
-      this.get_file_digest(options.videoFile).then((digest) => {
-        app.textures[name].videoDigest = digest;
-        app.textures[name].videoFile = options.videoFile;
-      });
 
       videoElement.addEventListener("timeupdate", function(){
         timeUpdate = true;
