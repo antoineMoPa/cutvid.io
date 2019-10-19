@@ -8,7 +8,7 @@
 
 class ShaderPlayerWebGL2 {
   constructor(canvas) {
-    this.fps = 10;
+    this.fps = 30;
     this.canvas = canvas || document.createElement('canvas');
     this.gl = null;
     this.rttTexture = [];
