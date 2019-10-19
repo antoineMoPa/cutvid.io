@@ -1,3 +1,25 @@
+function leading_zeros(num, num_zeros){
+  let str_num = num + "";
+  while(str_num.length < num_zeros){
+    str_num = "0" + str_num;
+  }
+  return str_num;
+}
+
+async function url_to_image(dataurl){
+  // Thanks to https://stackoverflow.com/questions/46399223
+  // on this one:
+  return new Promise((resolve, reject) => {
+    let image = new Image();
+    image.crossOrigin = "use-credentials";
+    image.onload = function () { resolve(image); };
+    image.onerror = function(e){
+      console.error(e);
+      reject();
+    };
+    image.src = dataurl;
+  });
+}
 
 class ShaderProgram {
   constructor(gl){
@@ -6,7 +28,6 @@ class ShaderProgram {
     this.vertex_shader_object = null;
     this.fragment_shader_code = null;
     this.textures = {};
-    this.videoCache = {};
   }
 
   async get_file_digest(file) {
@@ -19,39 +40,36 @@ class ShaderProgram {
     return hashHex;
   }
 
-  async get_video_frame_at_time(texture, fps, trimBefore, from, to, video_time) {
+  async get_video_frame_at_time(texture, fps, trimBefore, from, video_time) {
     let digest = texture.videoDigest;
-    let cache_hit = digest in this.videoCache;
     let base_path = window.lattefx_settings.renderer;
 
-    if (!cache_hit) {
-      // Not in our cache, but might be on server
-      let resp = await fetch(base_path + "/has_vid_in_cache/" + digest, {
-        cache: 'no-cache'
+    // Verify if server has file
+    let resp = await fetch(base_path + "/has_vid_in_cache/" + digest, {
+      cache: 'no-cache'
+    });
+
+    let has_video = await resp.text();
+
+    if(has_video != "true"){
+      // Upload video
+      let form = new FormData();
+      form.append('video.vid', texture.videoFile);
+
+      await fetch(base_path + "/upload_video/" + digest, {
+        method: 'POST',
+        mode: 'cors',
+        body: form
       });
-      let has_video = await resp.text();
 
-      if(has_video != "true"){
-        // Send video
-        let form = new FormData();
-        form.append('video.vid', texture.videoFile);
-
-        await fetch(base_path + "/upload_video/" + digest, {
-          method: 'POST',
-          mode: 'cors',
-          body: form
-        });
-
-        this.videoCache[digest] = video_zip;
-      }
-
-      let video_file = await fetch(base_path + "/get_video_frames/" + digest + "/" + fps + "/" + + from + "/" + to);
-      let video_blob = await video_file.blob();
-      let content = await JSZip.loadAsync(video_blob);
-      console.log(content);
-
+      console.log("upload done");
     }
 
+    let frame_num = leading_zeros(1,6);
+    let url = base_path + "/get_video_frame/" +
+        digest + "/" + fps + "/"+video_time;
+
+    return await url_to_image(url);
   }
 
   compile(vertex_shader_code, fragment_shader_code) {
@@ -160,6 +178,11 @@ class ShaderProgram {
 
     var gl = this.gl;
 
+    if(gl == null){
+      // We are fucked
+      return;
+    }
+
     var level = 0;
     var internalFormat = gl.RGBA;
     var width = 1;
@@ -199,17 +222,17 @@ class ShaderProgram {
       return true;
     }
 
-    async function updateVideoHQ(fps, trimBefore, from, to, video_time){
+    async function updateVideoHQ(fps, trimBefore, from, video_time){
       let texture = app.textures[name];
       gl.bindTexture(gl.TEXTURE_2D, texture.texture);
 
       let image = await app.get_video_frame_at_time(
-        texture, fps, trimBefore, from, to, video_time
+        texture, fps, trimBefore, from, video_time
       );
 
-      /*gl.texImage2D(
+      gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
-        srcFormat, srcType, image);*/
+        srcFormat, srcType, image);
     }
 
     async function load() {

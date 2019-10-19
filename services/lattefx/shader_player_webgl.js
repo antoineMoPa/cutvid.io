@@ -8,7 +8,7 @@
 
 class ShaderPlayerWebGL2 {
   constructor(canvas) {
-    this.fps = 10;
+    this.fps = 30;
     this.canvas = canvas || document.createElement('canvas');
     this.gl = null;
     this.rttTexture = [];
@@ -597,7 +597,6 @@ class ShaderPlayerWebGL2 {
                 this.fps,
                 trimBefore,
                 timeFrom-trimBefore,
-                timeTo-trimBefore,
                 shouldBeTime
               );
             } else {
@@ -727,7 +726,7 @@ class ShaderPlayerWebGL2 {
     function _animate() {
       // Make sure to render when focussed or rendering
       if (player.rendering || player.window_focused) {
-        if(player.renderMode == "HQ"){
+        if(player.rendering && player.renderMode == "HQ"){
           // Draw is handled elsewhere
           return;
         }

@@ -30,7 +30,7 @@ def clean_old_cache():
     folders = glob.glob("/tmp/lattefx-cache-*")
 
     now = datetime.datetime.now()
-    limit = datetime.timedelta(minutes=1)
+    limit = now - datetime.timedelta(hours=1)
 
     for folder in folders:
         with open(folder + "/cache.time", "r") as cache_time_file:
@@ -40,12 +40,12 @@ def clean_old_cache():
 
             if date_modified < limit:
                 shutil.rmtree(folder)
-                print("remove this print if it works deleted video folder " + folder)
 
 
 @app.after_request
 def apply_cors_headers(response):
     response.headers["Access-Control-Allow-Origin"] = settings['app']
+    response.headers["Access-Control-Allow-Credentials"] = "true"
     return response
 
 @app.route("/has_vid_in_cache/<vidid>")
@@ -83,18 +83,19 @@ def upload_video(vidid):
     mark_cache(vidid)
 
     # Poor man's cron: delete old files before
+    # Make sure to put somewhere else if you delete this
     clean_old_cache()
 
     return "success"
 
-@app.route("/get_video_frames/<vidid>/<fps>/<fromtime>/<totime>")
-def get_video_frames(vidid, fps, fromtime, totime):
+@app.route("/get_video_frame/<vidid>/<fps>/<frame_time>")
+def get_video_frame(vidid, fps, frame_time):
     """
-    Get frames between a certain range at a certain fps
+    Render frames between a certain range at a certain fps
+    if not already rendered.
 
-    Uses current version of video (vidid)
+    Then return selected frame
 
-    This could be optimized by using nginx direct uploading
     """
     vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
 
@@ -104,8 +105,7 @@ def get_video_frames(vidid, fps, fromtime, totime):
     # Sorted is used for clamping here
     # I think it is really beautiful
     fps = sorted([0, int(fps), 100])[1]
-    fromtime = sorted([0, float(fromtime), 1e6])[1]
-    totime = sorted([0, float(totime), 1e6])[1]
+    frame_time = sorted([0.0, float(frame_time), 1e6])[1]
 
     folder = "/tmp/lattefx-cache-" + vidid
 
@@ -118,11 +118,8 @@ def get_video_frames(vidid, fps, fromtime, totime):
     if os.path.exists(folder + "/images.zip"):
         os.remove(folder + "/images.zip")
 
-    # Lets make the "/images folder work as a mutex
-    if os.path.exists(folder + "/images"):
-        return "error 3 another request already working on that same file"
-
-    os.mkdir(folder + "/images")
+    if not os.path.exists(folder + "/images"):
+        os.mkdir(folder + "/images")
 
     # Convert video
     extract_frames = subprocess.Popen(
@@ -130,22 +127,10 @@ def get_video_frames(vidid, fps, fromtime, totime):
          "-nostdin",
          "-y",
          "-r", str(fps),
-         "-ss", str(fromtime),
-         "-to", str(totime),
+         "-ss", str(frame_time),
+         "-frames:v",  str(30), # limit to 30
          "images/image-%06d.png"
         ], cwd=folder)
     extract_frames.wait()
 
-    # Make a zip
-    make_zip = subprocess.Popen([
-        "zip",
-        "-Z", "store", # no compression as png is already compressed
-        "-r", "images.zip",
-        "images"
-    ], cwd=folder)
-    make_zip.wait()
-
-    # Delete folder
-    shutil.rmtree(folder + "/images")
-
-    return send_file(folder + "/images.zip")
+    return send_file(folder + "/images/image-000001.png")
