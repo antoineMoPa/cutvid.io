@@ -14,3 +14,4 @@ ruby
 python3
 avconv/ffmpeg
 mediainfo
+rbenv ruby-build

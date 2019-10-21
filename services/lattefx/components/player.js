@@ -2,8 +2,14 @@ Vue.component('player', {
   template:
   `<div class="player">
     <div class="settings-panel">
+      <panel-selector ref="panel-selector"
+        v-bind:panelNames="['Effects', 'Video']"
+        v-on:switch="switch_panel"/>
+
+      <div class="switchable-panel all-sequences-container">
+        <!-- sequencer puts stuff here -->
+      </div>
       <div class="switchable-panel">
-        <h3>Video Settings</h3>
         <label>width x height (pixels):</label>
         <input v-model.number="width" type="number"> x
         <input v-model.number="height" type="number">
@@ -20,12 +26,7 @@ Vue.component('player', {
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
       </div>
-      <div class="switchable-panel all-sequences-container">
-        <h3>Effects</h3>
-        <!-- sequencer puts stuff here -->
-      </div>
       <div class="switchable-panel">
-        <h3>File & Backup</h3>
         <p>Download a working copy to modify your video later.</p>
         <label>
           Save file to your computer<br><br>
@@ -39,7 +40,6 @@ Vue.component('player', {
           <input type="file" v-on:change="onLoadLatteFxFile"/>
         </label>
       </div>
-      <panel-selector ref="panel-selector" v-on:switch="switch_panel"/>
     </div>
     <div id="main-player">
       <div class="canvas-container"/>
@@ -246,9 +246,8 @@ Vue.component('player', {
     app.on_resize();
     let container = document.querySelectorAll("#main-player .canvas-container")[0];
     app.player.set_container(container);
-
-    this.switch_panel(1);
-    this.$refs['panel-selector'].switch_to(1);
+    this.switch_panel(0);
+    this.$refs['panel-selector'].switch_to(0);
     this.pause();
   },
 });

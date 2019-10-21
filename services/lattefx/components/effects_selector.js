@@ -39,7 +39,7 @@ Vue.component('effects-selector', {
   },
   mounted(){
 	let app = this;
-	
+
     this.callback = null;
     document.body.append(this.$el);
     let close_button = this.$el.querySelectorAll(".close-button")[0];
@@ -47,7 +47,7 @@ Vue.component('effects-selector', {
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
     });
-	
+
 	fetch("plugins_list.json").then(function(resp){
 	  resp.json()
 		.then(function(data){
@@ -56,5 +56,3 @@ Vue.component('effects-selector', {
 	});
   }
 });
-
-  
