@@ -219,17 +219,21 @@ input{
   height:calc(100% - 100px);
   text-align:left;
   padding-left:15px;
+  border-top-right-radius:5px;
+  border-top-left-radius:5px;
 }
 
 .settings-panel a.preset{
   cursor:pointer;
-  font-size:10px;
-  background:transparent;
-  border:1px solid #aaa;
-  padding:3px;
+  font-size:12px;
+  background:#eee;
+  padding:5px;
   border-radius:3px;
   margin-bottom:4px;
+  margin:4px 3px;
+  display: inline-block;
   line-height: 22px;
+  color:#222;
 }
 
 .settings-panel a{
@@ -314,7 +318,7 @@ input{
 
 .settings-panel label{
   display:block;
-  font-size:10px;
+  font-size:13px;
   margin-top:5px;
 }
 
@@ -429,26 +433,35 @@ input{
 
 .panel-selector{
   text-align: center;
-  position:absolute;
-  bottom:10px;
-  width:100%;
-  margin-left:-10px;
+  width:355px;
+  margin-left:-15px;
+  background:linear-gradient(#333,#222);
+  overflow:hidden;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  height: 34px;
+  margin-bottom: 20px;
 }
 
-.panel-bullet{
+.panel-tab-header{
   display:inline-block;
-  background:#666;
-  border-radius:3px;
-  margin-right:3px;
   margin-bottom:4px;
-  padding:3px;
+  padding:10px 0;
   cursor:pointer;
-  color:#fff;
-  font-size:10px;
+  font-size:13px;
+  width:50%;
 }
 
-.panel-bullet.selected-bullet{
-  background:#3af;
+.panel-tab-header:not(.selected-tab-header){
+  background:#333;
+  color:#aaa;
+}
+
+.panel-tab-header.selected-tab-header{
+  background:#222;
+  color:#fff;
+  border-top-right-radius:3px;
+  border-top-left-radius:3px;
 }
 
 .switchable-panel{
@@ -457,6 +470,7 @@ input{
   max-height: calc(100% - 50px);
   scrollbar-color: #888 #222;
   scrollbar-width: thin;
+  padding-top: 3px;
 }
 
 .switchable-panel-shown{
