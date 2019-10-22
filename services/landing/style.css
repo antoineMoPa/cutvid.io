@@ -83,14 +83,10 @@ input{
 
 .pricing-card .button{
   margin-top:20px;
-  background: linear-gradient(#468bfb,#124ba8);
+  background: linear-gradient(#9c5200,#c96800);
   box-shadow: 0 0 8px rgba(0,0,0,0.5);
   border-top: none;
   transition:all 0.2s;
-}
-
-.pricing-card .button:hover{
-  transform:scale(1.03);
 }
 
 .pricing-card .feature{
@@ -117,7 +113,7 @@ input{
 }
 
 .pricing-card .price{
-  color: #3273dc;
+  color: #0a0e12;
   height:60px;
   text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
 }
@@ -146,16 +142,24 @@ input{
 }
 
 .button.is-primary {
-  background: #3af;
+  background: #c96800;
   transition:all 0.3s;
 }
 
 .button.is-primary:hover {
-  background: #16d;
+  background-color: #9c5200;
+}
+
+.button.is-primary:active {
+  background-color: #9c5200;
 }
 
 .navbar {
   background-color: #1e1e1e;
+}
+
+.navbar-logo{
+  margin-top: -3px;
 }
 
 .pricing-card.basic{
@@ -168,8 +172,8 @@ input{
   margin-top:-5px;
   padding-top:40px;
   padding-bottom:40px;
-  border-top:10px solid #3af;
-  border-bottom:10px solid #3af;
+  border-top:10px solid #c96800;
+  border-bottom:10px solid #c96800;
 }
 
 .pricing-card.business{
@@ -237,3 +241,10 @@ p.subject-to-change{
   }
 }
 
+.button.is-link {
+    background-color: #c96800;
+}
+
+.button.is-link:hover,.button.is-link:active {
+    background-color: #9c5200;
+}
