@@ -9,15 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="236.67325mm"
-   height="60mm"
-   viewBox="0 0 236.67325 60"
+   width="128mm"
+   height="128mm"
+   viewBox="0 0 128 128"
    version="1.1"
    id="svg4838"
    inkscape:version="0.92.1 r15371"
    sodipodi:docname="logo.svg"
    style="enable-background:new"
-   inkscape:export-filename="/home/antoine/logo.png"
+   inkscape:export-filename="/home/antoine/favicon.png"
    inkscape:export-xdpi="25.4"
    inkscape:export-ydpi="25.4">
   <defs
@@ -40,9 +40,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.175"
-     inkscape:cx="-1080.6041"
-     inkscape:cy="-1350.3383"
+     inkscape:zoom="0.24748737"
+     inkscape:cx="137.43182"
+     inkscape:cy="-304.79235"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -71,8 +71,8 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(240.40923,245.16826)"
-     style="filter:url(#filter5464);opacity:0.95">
+     transform="translate(240.40923,313.16826)"
+     style="opacity:0.95;filter:url(#filter5464)">
     <rect
        y="-136.72397"
        x="-634.70563"
@@ -197,18 +197,18 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:38.5240593px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#dcd1c8;fill-opacity:1;stroke:none;stroke-width:0.96310133;stroke-opacity:1"
-       x="-152.66196"
-       y="-196.42896"
+       x="-144.10934"
+       y="-64.93235"
        id="text5519"><tspan
          sodipodi:role="line"
          id="tspan5517"
-         x="-152.66196"
-         y="-196.42896"
+         x="-144.10934"
+         y="-64.93235"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#dcd1c8;fill-opacity:1;stroke:none;stroke-width:0.96310133;stroke-opacity:1">Latte<tspan
    style="fill:#c96800;fill-opacity:1;stroke:none;stroke-width:0.96310133;stroke-opacity:1"
    id="tspan5515">fx</tspan></tspan></text>
     <g
-       transform="matrix(4.5557715,0,0,4.5557715,-3576.7942,-462.56997)"
+       transform="matrix(4.5557715,0,0,4.5557715,-3568.2416,-331.07336)"
        style="stroke:#dcd1c8;stroke-opacity:1"
        id="g5535">
       <path
@@ -311,5 +311,47 @@
          id="path4550"
          inkscape:connector-curvature="0" />
     </g>
+    <text
+       id="text4576"
+       y="-335.06961"
+       x="-248.0551"
+       style="font-style:normal;font-weight:normal;font-size:38.5240593px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#28a4ff;fill-opacity:1;stroke:none;stroke-width:0.96310133"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#000000;fill-opacity:1;stroke-width:0.96310133"
+         y="-335.06961"
+         x="-248.0551"
+         id="tspan4574"
+         sodipodi:role="line">favicon</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:38.5240593px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#28a4ff;fill-opacity:1;stroke:none;stroke-width:0.96310133"
+       x="-233.08801"
+       y="-136.22108"
+       id="text4580"><tspan
+         sodipodi:role="line"
+         id="tspan4578"
+         x="-233.08801"
+         y="-136.22108"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#000000;fill-opacity:1;stroke-width:0.96310133">logo</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path4594"
+       d="m -126.14024,-260.77499 c -1.11141,14.32088 2.86953,29.21077 -2.03036,43.10395 -2.82279,7.48558 -10.06048,13.71965 -18.40597,13.01735 -14.36171,0.96414 -28.76642,0.55475 -43.13933,0.10075 -7.2926,-0.90927 -11.65141,-7.89489 -13.0139,-14.53817 -1.99229,-5.62764 -7.80278,-10.88279 -14.09435,-9.10137 -9.90864,-0.61221 -18.21751,-12.47264 -13.37098,-21.71283 4.74863,-7.11787 15.21784,-7.2695 22.02362,-3.19764 4.47843,0.25312 -0.81436,-9.27348 5.83409,-7.41043 25.38968,0.13126 50.80074,-0.21187 76.19718,-0.26264 z"
+       style="fill:none;stroke:#3b3126;stroke-width:9.68835926;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4596"
+       d="m -179.2673,-277.64191 c -1.95239,-2.25967 -2.76506,-5.52108 -1.67538,-8.35773 1.88471,-5.34692 6.87696,-9.04302 8.27977,-14.60866 0.25399,-0.97636 0.24052,-1.95523 0.0279,-2.93489"
+       style="fill:none;stroke:#3b3126;stroke-width:4.66848421;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4598"
+       d="m -162.333,-275.31777 c -2.5895,-1.46227 -4.47908,-4.28781 -4.22672,-7.33972 0.30484,-5.43729 3.9753,-9.86324 5.55523,-14.90802"
+       style="fill:none;stroke:#3b3126;stroke-width:4.66848421;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4600"
+       d="m -151.3756,-278.97024 c -3.47913,-3.52847 -3.38425,-9.95314 0.3315,-13.2802"
+       style="fill:none;stroke:#3b3126;stroke-width:4.66848421;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>
