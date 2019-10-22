@@ -6,7 +6,7 @@ function leading_zeros(num, num_zeros){
   return str_num;
 }
 
-async function url_to_image(dataurl){
+async function url_to_image(url){
   // Thanks to https://stackoverflow.com/questions/46399223
   // on this one:
   return new Promise((resolve, reject) => {
@@ -17,7 +17,7 @@ async function url_to_image(dataurl){
       console.error(e);
       reject();
     };
-    image.src = dataurl;
+    image.src = url;
   });
 }
 
@@ -28,6 +28,7 @@ class ShaderProgram {
     this.vertex_shader_object = null;
     this.fragment_shader_code = null;
     this.textures = {};
+    this.has_vid_in_cache = false;
   }
 
   async get_file_digest(file) {
@@ -43,15 +44,23 @@ class ShaderProgram {
   async get_video_frame_at_time(texture, fps, trimBefore, from, video_time) {
     let digest = texture.videoDigest;
     let base_path = window.lattefx_settings.renderer;
+    let has_video = false;
+    if(this.has_vid_in_cache == false){
+      // Verify if server has file
+      let resp = await fetch(base_path + "/has_vid_in_cache/" + digest, {
+        cache: 'no-cache'
+      });
 
-    // Verify if server has file
-    let resp = await fetch(base_path + "/has_vid_in_cache/" + digest, {
-      cache: 'no-cache'
-    });
+      this.has_vid_in_cache = (await resp.text() == "true");
 
-    let has_video = await resp.text();
+      setTimeout(function(){
+        // Clear our cache info sometimes
+        // Don't delete this line
+        this.has_vid_in_cache = false;
+      }.bind(this),10000);
+    }
 
-    if(has_video != "true"){
+    if(!this.has_vid_in_cache){
       // Upload video
       let form = new FormData();
       form.append('video.vid', texture.videoFile);
@@ -61,8 +70,6 @@ class ShaderProgram {
         mode: 'cors',
         body: form
       });
-
-      console.log("upload done");
     }
 
     let frame_num = leading_zeros(1,6);

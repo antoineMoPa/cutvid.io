@@ -467,7 +467,7 @@ input{
 .switchable-panel{
   display:none;
   overflow-y: auto;
-  max-height: calc(100% - 50px);
+  max-height: calc(100% - 60px);
   scrollbar-color: #888 #222;
   scrollbar-width: thin;
   padding-top: 3px;

@@ -41,7 +41,6 @@ def clean_old_cache():
             if date_modified < limit:
                 shutil.rmtree(folder)
 
-
 @app.after_request
 def apply_cors_headers(response):
     response.headers["Access-Control-Allow-Origin"] = settings['app']
@@ -78,7 +77,7 @@ def upload_video(vidid):
 
     video_path = folder + "/video.vid"
 
-    video_file.save(folder + "/video.vid")
+    video_file.save(video_path)
 
     mark_cache(vidid)
 
@@ -87,6 +86,36 @@ def upload_video(vidid):
     clean_old_cache()
 
     return "success"
+
+@app.route("/upload_frame/<vidid>/<frame>", methods=['POST'])
+def upload_frame(vidid, frame):
+    """
+    This could be optimized by using nginx direct uploading
+    """
+
+    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
+
+    if len(vidid) != 40:
+        return "error 1 bad token"
+
+    frame = int(frame)
+
+    image_file = request.files['frame.png']
+    folder = "/tmp/lattefx-cache-" + vidid
+
+    os.makedirs(folder, exist_ok=True)
+
+    image_path = folder + "/image-%06d.png" % frame
+    image_file.save(image_path)
+
+    mark_cache(vidid)
+
+    # Poor man's cron: delete old files before
+    # Make sure to put somewhere else if you delete this
+    clean_old_cache()
+
+    return "success"
+
 
 @app.route("/get_video_frame/<vidid>/<fps>/<frame_time>")
 def get_video_frame(vidid, fps, frame_time):
@@ -121,16 +150,27 @@ def get_video_frame(vidid, fps, frame_time):
     if not os.path.exists(folder + "/images"):
         os.mkdir(folder + "/images")
 
-    # Convert video
-    extract_frames = subprocess.Popen(
-        ["ffmpeg", "-i", "video.vid",
-         "-nostdin",
-         "-y",
-         "-r", str(fps),
-         "-ss", str(frame_time),
-         "-frames:v",  str(30), # limit to 30
-         "images/image-%06d.png"
-        ], cwd=folder)
-    extract_frames.wait()
+        # Convert video
+        extract_frames = subprocess.Popen(
+            ["ffmpeg", "-i", "video.vid",
+             "-nostdin",
+             "-y",
+             "-r", str(fps),
+             "images/image-%06d.png"
+            ], cwd=folder)
+        extract_frames.wait()
 
-    return send_file(folder + "/images/image-000001.png")
+    available_files = sorted([
+        int(f[-10:].replace(".png", ""))
+        for f in
+        glob.glob(folder + "/images/image-*.png")
+    ])
+
+    frame_num = int(frame_time * fps + 1)
+
+    # Does the frame exist in folder
+    if frame_num not in available_files:
+        # Then use last frame
+        frame_num = len(available_files) - 1
+
+    return send_file(folder + "/images/image-%06d.png" % frame_num)

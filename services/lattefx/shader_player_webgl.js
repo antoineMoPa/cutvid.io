@@ -276,11 +276,26 @@ class ShaderPlayerWebGL2 {
     });
   }
 
+  gen_vid_id() {
+    /* generate random vid id */
+    let id = "";
+
+    for(let i = 0; i < 40; i++){
+      id += parseInt(Math.random()*10) + "";
+    }
+
+    return id;
+  }
+
   async render_hq(callback) {
+    /* render high quality video */
+
     let app = this;
     let duration = this.get_total_duration();
     let fps = this.fps;
     let total_frames = fps * duration;
+    let vid_id = this.gen_vid_id();
+    let base_path = window.lattefx_settings.renderer;
 
     for(let frame = 0; frame < total_frames; frame++){
       if(app.cancel_hq_render){
@@ -294,15 +309,20 @@ class ShaderPlayerWebGL2 {
       let time = frame / fps;
       await this.draw_gl(time);
       let canvasFrame = await this.get_canvas_blob();
-      var zip = new JSZip();
-      zip.file("frame-"+frame+".png", canvasFrame);
+      let form = new FormData();
+
+      form.append("frame.png", canvasFrame);
+      await fetch(base_path + "/upload_frame/" + vid_id + "/" + frame, {
+        method: "POST",
+        mode: "cors",
+        body: form
+      });
     }
 
-    let zipFile = await zip.generateAsync({type:"blob"});
     this.rendering = false;
     this.time.time = 0;
 
-    callback(zipFile);
+    callback();
   }
 
   cancel_render() {
@@ -522,7 +542,8 @@ class ShaderPlayerWebGL2 {
     let maxLayer = layers_info.maxLayer;
     let sequencesByLayer = layers_info.sequencesByLayer;
 
-    this.clear();
+    // this.clear();
+
     let is_first = 1.0;
 
     let passCounter = 0;
