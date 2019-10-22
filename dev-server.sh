@@ -3,7 +3,7 @@
 cd services
 
 cd renderer
-python3 serve.py
+python3 serve.py &
 cd ..
 
 cd downloadables

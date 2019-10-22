@@ -14,7 +14,7 @@ Vue.component('buy-video', {
     </span>
   </h3>
   <p v-if="!canDownload" class="thank-you">
-    HQ videos are USD $ 7.50
+    HQ videos are USD $ 4.50
     <br>
   </p>
   <div v-if="!canDownload" class="video-preview" v-on:contextmenu="onContextMenu">
@@ -106,7 +106,7 @@ Vue.component('buy-video', {
               currency_code: "USD",
               description: "Video - web render",
               amount: {
-                value: "7.50"
+                value: "4.50"
               }
             }]
           });

@@ -33,7 +33,7 @@ Vue.component('ui', {
       <span class="ui-button-paypal-part">
         <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="PayPal">
       </span>
-      Render & Buy  US$ 7.50
+      Render & Buy  US$ 4.50
     </a>
     <a v-if="player.rendering"
        v-on:click="cancelRender"
