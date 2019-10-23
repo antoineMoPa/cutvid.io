@@ -115,6 +115,8 @@ Vue.component('sequencer', {
       this.$nextTick(this.repositionSequences);
     },
     timeBarDown(){
+      if(this.player != null && this.player.rendering) { return; }
+
       this.dragging = null
       this.draggingTimeBar = true;
       this.draggingBody = false;
@@ -125,6 +127,8 @@ Vue.component('sequencer', {
       window.addEventListener("mousemove", this.mouseMoveListener);
     },
     sequenceBodyDown(index, e, dragFromMiddle){
+      if(this.player != null && this.player.rendering) { return; }
+
       this.dragging = index;
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
 
@@ -152,6 +156,8 @@ Vue.component('sequencer', {
       window.addEventListener("mousemove", this.mouseMoveListener);
     },
     sequenceLeftDown(index){
+      if(this.player != null && this.player.rendering) { return; }
+
       this.dragging = index;
       this.draggingTimeBar = false;
       this.draggingBody = false;
@@ -162,6 +168,8 @@ Vue.component('sequencer', {
       window.addEventListener("mousemove", this.mouseMoveListener);
     },
     sequenceRightDown(index){
+      if(this.player != null && this.player.rendering) { return; }
+
       this.dragging = index;
       this.draggingTimeBar = false;
       this.draggingBody = false;
@@ -172,6 +180,8 @@ Vue.component('sequencer', {
       window.addEventListener("mousemove", this.mouseMoveListener);
     },
     unDrag(){
+      if(this.player != null && this.player.rendering) { return; }
+
       window.removeEventListener("mousemove", this.mouseMoveListener);
       this.draggingBody = false;
       this.draggingLeft = false;
@@ -180,6 +190,8 @@ Vue.component('sequencer', {
       this.dragging = null;
     },
     mouseEventInfo(e){
+      if(this.player != null && this.player.rendering) { return; }
+
       let scale = this.getScale();
       let seq = null;
       let duration = null;
@@ -199,6 +211,8 @@ Vue.component('sequencer', {
       return [x,y,time,layer,seq,duration,scale];
     },
     mouseMove(e){
+      if(this.player != null && this.player.rendering) { return; }
+
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
 
       // Limit to 6 (including 0)
@@ -246,6 +260,8 @@ Vue.component('sequencer', {
       return {totalDuration, timeScale, layerScale};
     },
     repositionSequences(){
+      if(this.player != null && this.player.rendering) { return; }
+
       let scale = this.getScale();
       let maxTo = 0.0;
       for(let i = 0; i < this.sequences.length; i++){
@@ -268,6 +284,8 @@ Vue.component('sequencer', {
       timeSpacer.style.left = (maxTo * scale.timeScale * 1.33) + "px"
     },
     fromTemplateButton(){
+      if(this.player != null && this.player.rendering) { return; }
+
       let app = this;
 
       this.$refs['scene-template-selector'].open(function(data){
@@ -276,6 +294,8 @@ Vue.component('sequencer', {
       });
     },
     addSequenceAndDrag(){
+      if(this.player != null && this.player.rendering) { return; }
+
       this.addSequence();
       let index = this.sequences.length - 1;
       window.addEventListener("mousemove", function(e){
@@ -287,6 +307,8 @@ Vue.component('sequencer', {
       fetch("/stats/lattefx_app_add_sequence/");
     },
     addSequence(){
+      if(this.player != null && this.player.rendering) { return; }
+
       let id = utils.increment_unique_counter("sequence");
       let layer = id % 3; // Alternate layer to avoid overlapping
 
@@ -302,6 +324,8 @@ Vue.component('sequencer', {
       this.selected = [];
     },
     deleteSelected(){
+      if(this.player != null && this.player.rendering) { return; }
+
       let selected = this.selected;
       this.sequences = this.sequences.filter(function(row, id){
         if(selected.indexOf(id) != -1){

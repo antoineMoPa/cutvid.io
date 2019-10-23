@@ -1,7 +1,38 @@
 Vue.component('player', {
   template:
   `<div class="player">
-    <div class="settings-panel">
+    <div v-bind:class="'settings-panel ' +
+                       (player == null || !player.rendering?
+                       'settings-panel-hidden':
+                       '')">
+      <h3>Rendering in progress</h3>
+      <h4>Magic in progress</h4>
+      <p>
+        We are rendering your video, this process takes some time.
+      </p>
+      <h4>Don't close your tab</h4>
+      <p>
+        Don't close or reload this tab, as you will lose your progress.
+      </p>
+      <h4>When it is done</h4>
+      <p>
+        When rendering is over, you will be presented instructions on how to
+        purchase or download your video.
+      </p>
+      <h4>Cancelling</h4>
+      <p>
+        You can cancel this render and keep working with the big red button in
+        the sequencer.
+      </p>
+      <h4>Pricing</h4>
+      <p>
+        One time video renders cost US$ 4.50
+      </p>
+    </div>
+    <div v-bind:class="'settings-panel ' +
+                       (player != null && player.rendering?
+                       'settings-panel-hidden':
+                       '')">
       <panel-selector ref="panel-selector"
         v-bind:panelNames="['Effects', 'Video']"
         v-on:switch="switch_panel"/>

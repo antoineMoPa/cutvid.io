@@ -312,6 +312,7 @@ class ShaderPlayerWebGL {
       let form = new FormData();
 
       form.append("frame.png", canvasFrame);
+
       await fetch(base_path + "/upload_frame/" + vid_id + "/" + frame, {
         method: "POST",
         mode: "cors",

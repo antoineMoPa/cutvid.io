@@ -223,6 +223,10 @@ input{
   border-top-left-radius:5px;
 }
 
+.settings-panel-hidden{
+  display: none;
+}
+
 .settings-panel a.preset{
   cursor:pointer;
   font-size:12px;
@@ -242,6 +246,8 @@ input{
 
 .settings-panel p{
   font-weight: 400;
+  line-height:20px;
+  font-size:13px;
 }
 
 .settings-panel h3, .settings-panel h4{
@@ -259,6 +265,9 @@ input{
 
 .settings-panel h4{
   font-weight: 300;
+  line-height: 10px;
+  padding-top: 20px;
+  padding-bottom: 0;
 }
 
 .settings-panel h4:first-child{
@@ -351,10 +360,6 @@ input{
   display:table-cell;
 }
 
-.settings-panel p{
-  font-size:12px;
-}
-
 .effect-header{
   position:relative;
   height:35px;
@@ -364,7 +369,8 @@ input{
   padding-left: 7px;
   font-size: 15px;
   line-height: 35px;
-  text-align:center;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .effect-icons{
