@@ -322,8 +322,21 @@ class ShaderPlayerWebGL {
 
     this.rendering = false;
     this.time.time = 0;
+    this.pause();
 
-    callback();
+    let form = new FormData();
+    form.append("sequence.lattefx", JSON.stringify(this.sequences));
+
+    let resp = await fetch(base_path + "/render_video/" + vid_id + "/" + fps, {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      body: form
+    });
+
+    let filename = await resp.text();
+    let url = base_path + "/rendered_video/" + filename
+    callback([url]);
   }
 
   cancel_render() {
@@ -750,6 +763,7 @@ class ShaderPlayerWebGL {
       if (player.rendering || player.window_focused) {
         if(player.rendering && player.renderMode == "HQ"){
           // Draw is handled elsewhere
+          window.requestAnimationFrame(_animate.bind(this));
           return;
         }
         try{

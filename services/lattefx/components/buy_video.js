@@ -70,9 +70,9 @@ Vue.component('buy-video', {
       // And improvement at my email address!
       return false;
     },
-    show(blob){
+    show(url){
       this.$el.classList.remove("hidden");
-      console.log(blob);
+      console.log(url + "/video.avi");
       return;
       this.videoURL = URL.createObjectURL(blob);
 
