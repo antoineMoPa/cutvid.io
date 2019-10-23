@@ -6,7 +6,7 @@
 /* Note: I actually downgraded to webgl1 to support more devices */
 /* Note 2: This should be renamed engine or something */
 
-class ShaderPlayerWebGL2 {
+class ShaderPlayerWebGL {
   constructor(canvas) {
     this.fps = 30;
     this.canvas = canvas || document.createElement('canvas');

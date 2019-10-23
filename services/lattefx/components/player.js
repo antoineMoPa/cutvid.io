@@ -260,7 +260,7 @@ Vue.component('player', {
     window.player = this;
     window.addEventListener("resize", app.on_resize);
 
-    app.player = new ShaderPlayerWebGL2();
+    app.player = new ShaderPlayerWebGL();
     app.player.on_progress = this.on_player_progress;
     app.player.set_width(app.width);
     app.player.set_height(app.height);

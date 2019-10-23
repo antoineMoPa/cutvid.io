@@ -40,9 +40,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.24748737"
-     inkscape:cx="137.43182"
-     inkscape:cy="-304.79235"
+     inkscape:zoom="0.35"
+     inkscape:cx="-663.93759"
+     inkscape:cy="-1410.5967"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -51,9 +51,9 @@
      fit-margin-right="5"
      fit-margin-bottom="3"
      inkscape:window-width="1600"
-     inkscape:window-height="836"
+     inkscape:window-height="900"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata4835">
@@ -255,13 +255,19 @@
        width="391.103"
        height="284.85986"
        x="-640.75323"
-       y="25.25746" />
+       y="25.25746"
+       inkscape:export-filename="/home/antoine/lattefx.png"
+       inkscape:export-xdpi="194.83"
+       inkscape:export-ydpi="194.83" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:20.81859398px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#dcd1c8;fill-opacity:1;stroke:none;stroke-width:0.52046472;stroke-opacity:1"
        x="-474.62271"
        y="178.18564"
-       id="text4536"><tspan
+       id="text4536"
+       inkscape:export-filename="/home/antoine/lattefx.png"
+       inkscape:export-xdpi="194.83"
+       inkscape:export-ydpi="194.83"><tspan
          sodipodi:role="line"
          id="tspan4534"
          x="-474.62271"
@@ -272,7 +278,10 @@
     <g
        transform="matrix(2.4619616,0,0,2.4619616,-2325.0407,34.361717)"
        style="stroke:#dcd1c8;stroke-opacity:1"
-       id="g4552">
+       id="g4552"
+       inkscape:export-filename="/home/antoine/lattefx.png"
+       inkscape:export-xdpi="194.83"
+       inkscape:export-ydpi="194.83">
       <path
          sodipodi:nodetypes="ccc"
          inkscape:connector-curvature="0"

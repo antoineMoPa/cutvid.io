@@ -890,8 +890,7 @@ input{
 .text-box.text-box-editable,
 .text-box:hover{
   background:rgba(0,0,0,0.1);
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:2px;
+  border:1px dotted rgba(255,255,255,0.2);
   opacity:1;
 }
 
@@ -899,7 +898,6 @@ input{
   position:absolute;
   width:20px;
   height:20px;
-  border:1px solid rgba(255,255,255,0.2);
   border-radius:2px;
 }
 
@@ -918,8 +916,8 @@ input{
 
 .text-box .align-buttons{
   position:absolute;
-  top:-14px;
-  left:1px;
+  top:0;
+  left:0;
   height:30px;
   max-height:30px;
   line-height:0;
@@ -927,10 +925,23 @@ input{
 
 .text-box .align-button,
 .text-box .delete-button{
-  display:inline-block;
+  display:block;
   opacity:0.3;
   transition:all 0.3s;
+  position:absolute;
+  top:0;
 }
+
+.text-box .align-button img{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.text-box .align-button:nth-child(1){left:0;}
+.text-box .align-button:nth-child(2){left:25px;}
+.text-box .align-button:nth-child(3){left:50px;}
+.text-box .align-button:nth-child(4){left:80px;}
 
 .text-box .align-button:hover,
 .text-box .delete-button:hover{
@@ -944,6 +955,9 @@ input{
   overflow:hidden;
   background: rgba(0,0,0,0.8);
   color: #eee;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 /* END TEXT BOX */

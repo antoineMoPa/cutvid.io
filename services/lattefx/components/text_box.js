@@ -6,8 +6,7 @@ Vue.component('textBox', {
     v-on:mousedown.self="textBoxDown"
     v-on:click="focus"
     >
-    <div class="align-buttons">
-      <div class="align-button"
+    <div class="align-buttons"><div class="align-button"
            v-on:click="alignLeft">
         <img src="/app/icons/feather/align-left.svg">
       </div><div class="align-button"
@@ -16,7 +15,7 @@ Vue.component('textBox', {
       </div><div class="align-button"
            v-on:click="alignRight">
         <img src="/app/icons/feather/align-right.svg">
-      </div><div class="delete-button"
+      </div><div class="align-button delete-button"
          v-on:click="remove">
         <img src="/app/icons/feather/x.svg">
       </div>
@@ -231,6 +230,9 @@ Vue.component('textBox', {
         h = h + (p.y - this.beginP.y) * canvasScaleFactor;
         this.buildStyle(null, null, w, h);
       }
+    },
+    windowResize(){
+      this.buildStyle();
     }
   },
   mounted(){
@@ -247,6 +249,7 @@ Vue.component('textBox', {
     container.appendChild(this.$el);
     this.container.addEventListener('mousemove', this.mouseMove);
     window.addEventListener('mouseup', this.mouseUp);
+    window.addEventListener('resize', this.windowResize);
     this.buildStyle();
   },
   beforeDestroy(){
@@ -260,6 +263,8 @@ Vue.component('textBox', {
     } catch (e) {
       //
     }
+
     window.removeEventListener('mouseup', this.mouseUp);
+    window.removeEventListener('resize', this.windowResize);
   }
 });
