@@ -282,6 +282,10 @@ def render_video(vidid, fps):
 
         media_file = make_audio_media(file_digest)
 
+        if not os.path.exists(media_file):
+            # Some files do not have audio
+            continue
+
         audio_args += [
             "-ss", str(trim_before),
             "-itsoffset", str(time_from),

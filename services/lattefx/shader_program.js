@@ -21,6 +21,18 @@ async function url_to_image(url){
   });
 }
 
+async function file_to_arraybuffer(file){
+  return new Promise((resolve, reject) => {
+	let reader = new FileReader();
+    reader.onloadend = function(e){
+	  resolve(reader.result);
+      reject();
+    };
+	reader.readAsArrayBuffer(file);
+  });
+}
+
+
 class ShaderProgram {
   constructor(gl){
     this.gl = gl;
@@ -39,7 +51,7 @@ class ShaderProgram {
   }
 
   async get_file_digest(file) {
-    let buf = await file.arrayBuffer();
+	let buf = await file_to_arraybuffer(file);
     let digest = await crypto.subtle.digest('SHA-1', buf);
     // thanks MDN for the next lines
     let array = Array.from(new Uint8Array(digest))
