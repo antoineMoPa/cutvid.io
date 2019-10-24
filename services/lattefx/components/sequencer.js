@@ -1,6 +1,6 @@
 Vue.component('sequencer', {
   template: `
-    <div class="sequencer">
+    <div class="sequencer" v-on:click.self="clickSequencer">
       <div class="sequencer-scrollbox">
         <div
           v-for="(sequence, index) in sequences"
@@ -114,6 +114,9 @@ Vue.component('sequencer', {
 
       this.$nextTick(this.repositionSequences);
     },
+    clickSequencer(e){
+      this.selected = [];
+    },
     timeBarDown(){
       if(this.player != null && this.player.rendering) { return; }
 
@@ -146,7 +149,7 @@ Vue.component('sequencer', {
       this.draggingRight = false;
 
       if(dragFromMiddle){
-        this.draggingTimeFrom = seq.from - 0.1;
+        this.draggingTimeFrom = seq.from + (seq.to - seq.from) * 0.5;
       } else {
         this.draggingTimeFrom = time - seq.from;
       }
