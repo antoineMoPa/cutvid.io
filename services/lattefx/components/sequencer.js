@@ -57,6 +57,12 @@ Vue.component('sequencer', {
                 class="delete-button">
           <img src="icons/feather/trash.svg" title="new sequence from template" width="20"/>
           Delete selected
+        </button><br>
+        <button v-on:click="splitSelected"
+                v-if="selected.length > 0"
+                class="split-button">
+          <img src="icons/feather/scissors.svg" title="cut sequence at selected time" width="20"/>
+          Split selection
         </button>
 
       </div>
@@ -113,6 +119,34 @@ Vue.component('sequencer', {
       }
 
       this.$nextTick(this.repositionSequences);
+    },
+    splitSelected(){
+      let new_sequences = [];
+
+      for(let i in this.sequences){
+        // Is this sequence selected?
+        if(this.selected.indexOf(this.sequences[i].id) == -1){
+          continue;
+        }
+        let sequence = this.sequences[i];
+        this.addSequence();
+        let new_sequence = this.sequences[this.sequences.length - 1];
+        let from = sequence.from;
+        let to = sequence.to;
+        let time = this.player.time.time;
+
+        // If timebar is between from and to,
+        // split at timebar position
+        // else split in half
+        if(time < from || time > to){
+          time = from + (to - from) * 0.5;
+        }
+
+        new_sequence.to = sequence.to;
+        sequence.to = time;
+        new_sequence.from = time
+        new_sequence.layer = sequence.layer;
+      }
     },
     clickSequencer(e){
       this.selected = [];

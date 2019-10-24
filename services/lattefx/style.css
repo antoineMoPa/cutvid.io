@@ -673,7 +673,8 @@ input{
 }
 
 .sequencer .add-button,
-.sequencer .delete-button{
+.sequencer .delete-button,
+.sequencer .split-button{
   cursor:pointer;
   border:none;
   background:#333;
@@ -690,6 +691,7 @@ input{
   color:#fff;
 }
 
+.sequencer .split-button img,
 .sequencer .delete-button img,
 .sequencer .add-button img{
   position:relative;
