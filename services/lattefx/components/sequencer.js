@@ -116,6 +116,9 @@ Vue.component('sequencer', {
     },
     clickSequencer(e){
       this.selected = [];
+      let info = this.mouseEventInfo(e);
+      // Move cursor to this time
+      this.player.time.time = info[2];
     },
     timeBarDown(){
       if(this.player != null && this.player.rendering) { return; }
