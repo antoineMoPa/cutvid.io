@@ -1,33 +1,54 @@
 Vue.component('player', {
   template:
   `<div class="player">
-    <div v-bind:class="'settings-panel ' +
+    <div v-bind:class="'settings-panel rendering-info-panel ' +
                        (player == null || !player.rendering?
                        'settings-panel-hidden':
                        '')">
-      <h3>Rendering in progress</h3>
-      <h4>Magic in progress</h4>
-      <p>
-        We are rendering your video, this process takes some time.
-      </p>
-      <h4>Don't close your tab</h4>
-      <p>
-        Don't close or reload this tab, as you will lose your progress.
-      </p>
-      <h4>When it is done</h4>
-      <p>
-        When rendering is over, you will be presented instructions on how to
-        purchase or download your video.
-      </p>
-      <h4>Cancelling</h4>
-      <p>
-        You can cancel this render and keep working with the big red button in
-        the sequencer.
-      </p>
-      <h4>Pricing</h4>
-      <p>
-        One time video renders cost US$ 4.50
-      </p>
+      <div v-if="player != null && player.renderMode == 'HQ'">
+        <h3>Rendering in progress</h3>
+        <h4>Magic in progress</h4>
+        <p>
+          Feel free to read a blog post or order a coffee while we work!
+        </p>
+        <p>
+          We are rendering your video, this process takes some time.
+        </p>
+        <h4>Status</h4>
+        <p class="render-status">
+          Beginning render
+        </p>
+        <h4>Don't close your tab</h4>
+        <p>
+          Don't close or reload this tab, as you will lose your progress.
+        </p>
+        <h4>When it is done</h4>
+        <p>
+          When rendering is over, you will be presented instructions on how to
+          purchase or download your video.
+        </p>
+        <h4>Cancelling</h4>
+        <p>
+          You can cancel this render and keep working with the big red button in
+          the sequencer.
+        </p>
+        <h4>Pricing</h4>
+        <p>
+          One time video renders cost US$ 4.50
+        </p>
+      </div>
+      <div v-else>
+        <h3>Rendering in progress</h3>
+        <h4>Why buy HQ rendering?</h4>
+        <p>1. Support the development of Lattefx.<br>
+           2. Careful video + sound timing.<br>
+           3. High quality frame by frame render.
+        </p>
+        <h4>How does HQ rendering work?</h4>
+        <p>HQ rendering carefully extracts your video frames on our server. The frames are then sent back to your browser, which applies effects. Everything is then put together on our server.</p>
+        <h4>How does LQ rendering work?</h4>
+        <p>LQ (low-quality, free) rendering happens entirely in your browser, which is quick but incurs some limitations. (dropped frames, poor quality)</p>
+      </div>
     </div>
     <div v-bind:class="'settings-panel ' +
                        (player != null && player.rendering?
@@ -228,8 +249,8 @@ Vue.component('player', {
 
       this.$refs.ui.set_progress(0.0);
 
-      this.render("HQ", function(blob){
-        this.$refs.buyVideo.show(blob);
+      this.render("HQ", function(vidid){
+        this.$refs.buyVideo.show(vidid);
         fetch("/stats/lattefx_app_render_done/");
       }.bind(this));
 

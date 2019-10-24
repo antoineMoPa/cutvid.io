@@ -31,6 +31,13 @@ class ShaderProgram {
     this.has_vid_in_cache = false;
   }
 
+  update_render_status(new_status){
+    let nodes = document.querySelectorAll(".render-status");
+    nodes.forEach(function(el){
+      el.innerText = new_status
+    });
+  }
+
   async get_file_digest(file) {
     let buf = await file.arrayBuffer();
     let digest = await crypto.subtle.digest('SHA-1', buf);
@@ -64,7 +71,7 @@ class ShaderProgram {
       // Upload video
       let form = new FormData();
       form.append('video.vid', texture.videoFile);
-
+      this.update_render_status("Uploading a video");
       await fetch(base_path + "/upload_video/" + digest, {
         method: 'POST',
         mode: 'cors',
@@ -233,6 +240,7 @@ class ShaderProgram {
       let texture = app.textures[name];
       gl.bindTexture(gl.TEXTURE_2D, texture.texture);
 
+      app.update_render_status("Fetching a frame from server");
       let image = await app.get_video_frame_at_time(
         texture, fps, trimBefore, from, video_time
       );

@@ -14,6 +14,11 @@ app = Flask(__name__)
 
 settings = json.load(open('../lattefx/settings.json'))
 
+TMP_FOLDER=os.path.expanduser("~/tmp/")
+
+if not os.path.exists(TMP_FOLDER):
+    os.mkdir(TMP_FOLDER)
+
 def id_generator(size=40):
     """
     video id generator
@@ -34,7 +39,7 @@ def mark_cache(vidid,  keep_delta=None):
     else:
         timestamp = (datetime.datetime.now() + keep_delta).timestamp()
 
-    folder = "/tmp/lattefx-cache-" + vidid
+    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 
     if os.path.exists(folder):
         with open(folder + "/cache.time", "w") as cache_time_file:
@@ -45,7 +50,7 @@ def mark_cache(vidid,  keep_delta=None):
 def clean_old_cache():
     """ call this to delete old files in cache """
 
-    folders = glob.glob("/tmp/lattefx-cache-*")
+    folders = glob.glob(TMP_FOLDER + "/lattefx-cache-*")
 
     now = datetime.datetime.now()
     limit = now - datetime.timedelta(hours=1)
@@ -87,7 +92,7 @@ def has_vid_in_cache(vidid):
     verify if we have a cache folder for this video
     """
     vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
-    folder = "/tmp/lattefx-cache-" + vidid
+    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 
     mark_cache(vidid)
 
@@ -104,7 +109,7 @@ def upload_video(vidid):
         return "error 1 bad token"
 
     video_file = request.files['video.vid']
-    folder = "/tmp/lattefx-cache-" + vidid
+    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 
     os.makedirs(folder, exist_ok=True)
 
@@ -133,7 +138,7 @@ def upload_frame(vidid, frame):
     frame = int(frame)
 
     image_file = request.files['frame.png']
-    folder = "/tmp/lattefx-cache-" + vidid
+    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 
     os.makedirs(folder, exist_ok=True)
 
@@ -168,7 +173,7 @@ def get_video_frame(vidid, fps, frame_time):
     fps = sorted([0, int(fps), 100])[1]
     frame_time = sorted([0.0, float(frame_time), 1e6])[1]
 
-    folder = "/tmp/lattefx-cache-" + vidid
+    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 
     if not os.path.exists(folder):
         return "error 2 cache video does not exist"
@@ -212,7 +217,7 @@ def make_audio_media(vidid):
     Exctracts audio for a given media
     """
 
-    video_files = glob.glob("/tmp/lattefx-cache-" + vidid + "/video.*")
+    video_files = glob.glob(TMP_FOLDER + "/lattefx-cache-" + vidid + "/video.*")
 
     if len(video_files) == 0:
         return None
@@ -248,7 +253,7 @@ def render_video(vidid, fps):
     fps = sorted([0, int(fps), 100])[1]
 
     audio_sequences = request.form['audio-sequences']
-    folder = "/tmp/lattefx-cache-" + vidid
+    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 
     audio_sequences = json.loads(audio_sequences)
 
@@ -318,7 +323,7 @@ def render_video(vidid, fps):
     render_vid.wait()
 
     downloadable_id = id_generator()
-    downloadable_folder = "/tmp/lattefx-cache-" + downloadable_id
+    downloadable_folder = TMP_FOLDER + "/lattefx-cache-" + downloadable_id
     os.mkdir(downloadable_folder)
     mark_cache(downloadable_id, datetime.timedelta(days=1))
 
@@ -343,7 +348,7 @@ def rendered_video(vidid, desired_filename):
     if vidid is None:
         return "error 1 bad token"
 
-    folder = "/tmp/lattefx-cache-" + vidid
+    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 
     if not os.path.exists(folder):
         # prevent ddos
@@ -353,4 +358,38 @@ def rendered_video(vidid, desired_filename):
     vid_format = "avi"
     filename = "lattefx-hq-video." + vid_format
 
-    return send_file(folder + "/" + filename, as_attachment=True, attachment_filename=filename)
+    return send_file(folder + "/" + filename)
+
+
+@app.route("/rendered_video_preview/<vidid>", methods=['GET'])
+def rendered_video_preview(vidid):
+    """
+    Get a rendered video preview from cache
+    """
+    vidid = validate_and_sanitize_vidid(vidid)
+
+    if vidid is None:
+        return "error 1 bad token"
+
+    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
+
+    if not os.path.exists(folder):
+        # prevent ddos
+        time.sleep(1.0)
+        return "error 3 no file for this id"
+
+    vid_format = "avi"
+    filename = "lattefx-hq-video." + vid_format
+
+    # Create ogv preview, because it works in most places
+    render_preview = subprocess.Popen([
+        "ffmpeg", "-t", "5",
+        "-nostdin",
+        "-y",
+        "-i", filename,
+        "-vb", "10M",
+        "preview.ogv"
+    ], cwd=folder)
+    render_preview.wait()
+
+    return send_file(folder + "/preview.ogv")

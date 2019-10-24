@@ -130,13 +130,6 @@ input{
 .ui .is-rendering{
   color: #fff;
   line-height: 28px;
-  animation: blinker 1s linear infinite;
-}
-
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
 }
 
 .ui-button.cancel-button{
@@ -240,6 +233,10 @@ input{
   color:#222;
 }
 
+.rendering-info-panel{
+  overflow-y: auto;
+}
+
 .settings-panel a{
   color: #3af;
 }
@@ -248,6 +245,14 @@ input{
   font-weight: 400;
   line-height:20px;
   font-size:13px;
+}
+
+.rendering-info-panel p{
+  font-size: 14px;
+  text-align: justify;
+  margin-right: 21px;
+  line-height: 22px;
+  color: #eee;
 }
 
 .settings-panel h3, .settings-panel h4{
@@ -430,7 +435,8 @@ input{
 }
 
 .sequence-effects .info{
-  font-size:13px;
+  line-height: 40px;
+  font-size: 13px;
 }
 
 /* END SETTINGS PANEL --------------- */
@@ -754,12 +760,17 @@ input{
   margin-left:10px;
 }
 
+.buy-video .ui-button{
+    font-size: 20px;
+}
+
 .buy-video .auth-iframe{
   border: none;
   width: 560px;
   height: 530px;
 }
 
+.buy-video p,
 .buy-video .account-info,
 .buy-video .thank-you,
 .buy-video .how-to-download-info{

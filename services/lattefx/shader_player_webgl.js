@@ -307,12 +307,14 @@ class ShaderPlayerWebGL {
       }
 
       let time = frame / fps;
+      this.update_render_status("Rendering a frame");
       await this.draw_gl(time);
       let canvasFrame = await this.get_canvas_blob();
       let form = new FormData();
 
       form.append("frame.png", canvasFrame);
 
+      this.update_render_status("Uploading a frame");
       await fetch(base_path + "/upload_frame/" + vid_id + "/" + frame, {
         method: "POST",
         mode: "cors",
@@ -320,13 +322,13 @@ class ShaderPlayerWebGL {
       });
     }
 
-    this.rendering = false;
     this.time.time = 0;
     this.pause();
 
     let form = new FormData();
-    form.append("sequence.lattefx", JSON.stringify(this.sequences));
+    form.append("audio-sequences", JSON.stringify(this.export_audio_sequences()));
 
+    this.update_render_status("Server is rendering video");
     let resp = await fetch(base_path + "/render_video/" + vid_id + "/" + fps, {
       method: "POST",
       mode: "cors",
@@ -334,9 +336,40 @@ class ShaderPlayerWebGL {
       body: form
     });
 
-    let filename = await resp.text();
-    let url = base_path + "/rendered_video/" + filename
-    callback([url]);
+    let vidid = await resp.text();
+    callback([vidid]);
+  }
+
+  export_audio_sequences() {
+    let sequences = [];
+    for(let i in this.sequences){
+      let seq = this.sequences[i];
+
+      if(seq.effect == null){
+        continue;
+      }
+
+      let effect = seq.effect;
+      let textures = effect.shaderProgram.textures;
+
+      if(!("video" in textures)){
+        continue;
+      }
+
+      let vid = textures.video;
+
+      if(!vid.isVideo){
+        continue;
+      }
+
+      sequences.push({
+        from: seq.from,
+        to: seq.to,
+        trimBefore: effect.trimBefore || 0,
+        digest: vid.videoDigest
+      });
+    }
+    return sequences;
   }
 
   cancel_render() {
@@ -485,6 +518,13 @@ class ShaderPlayerWebGL {
     }
   }
 
+  update_render_status(new_status){
+    let nodes = document.querySelectorAll(".render-status");
+    nodes.forEach(function(el){
+      el.innerText = new_status
+    });
+  }
+
   get_sequences_by_layers(only_current){
     let time = this.time.time;
 
@@ -552,11 +592,11 @@ class ShaderPlayerWebGL {
       return;
     }
 
+    let has_cleared = false;
+
     let layers_info = this.get_sequences_by_layers(true);
     let maxLayer = layers_info.maxLayer;
     let sequencesByLayer = layers_info.sequencesByLayer;
-
-    // this.clear();
 
     let is_first = 1.0;
 
@@ -634,6 +674,10 @@ class ShaderPlayerWebGL {
                 timeFrom-trimBefore,
                 shouldBeTime
               );
+              if(!has_cleared){
+                this.clear();
+                has_cleared = true;
+              }
             } else {
               // Get approximate frame
 

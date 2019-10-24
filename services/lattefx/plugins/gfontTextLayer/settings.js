@@ -20,7 +20,7 @@
     <label><span>Color</span></label>
     <input v-model="text.color" type="color">
     <h4>Font selection</h4>
-    <span class="info">Current font: {{text.font}}</span><br><br>
+    <p class="info">Current font: {{text.font}}</p>
     <div v-if="text.showFonts">
       <button v-on:click="text.showFonts = false"
               class="hide-fonts-button"

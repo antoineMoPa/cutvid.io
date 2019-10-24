@@ -18,13 +18,15 @@ Vue.component('buy-video', {
     <br>
   </p>
   <div v-if="!canDownload" class="video-preview" v-on:contextmenu="onContextMenu">
-    <video v-bind:src="videoURL" controls></video>
+    <p>Here is a 5 second video preview</p>
+    <video v-bind:src="previewURL" controls></video>
   </div>
   <div class="payment-container" v-if="!canDownload">
     <!-- Paypal stuff goes here -->
   </div>
   <p v-if="canDownload" class="thank-you">
     Thank you for your purchase!<br>
+    Use this button to save your video.<br>
   </p>
   <p class="text-center" v-if="canDownload">
     <a class="ui-button large"
@@ -48,6 +50,7 @@ Vue.component('buy-video', {
   data: function(){
     return {
       videoURL: null,
+      previewURL: null,
       canDownload: false,
       error: null,
       stats: null
@@ -70,23 +73,13 @@ Vue.component('buy-video', {
       // And improvement at my email address!
       return false;
     },
-    show(url){
+    show(vidid){
       this.$el.classList.remove("hidden");
-      console.log(url + "/video.avi");
-      return;
-      this.videoURL = URL.createObjectURL(blob);
-
-      // Temporary freebie
-      let last_buy = new Date(window.localStorage.last_buy);
-      let can_buy_until = last_buy;
-      // Leave 1.1 hours to have some buffer
-      can_buy_until.setTime(can_buy_until.getTime() + parseInt(1.1*60*60*1000))
-
-      if(can_buy_until > new Date()){
-        this.canDownload = true;
-        fetch("/stats/lattefx_app_1_hour_freebie_download/");
-        return;
-      }
+      this.previewURL = window.lattefx_settings.renderer +
+        "/rendered_video_preview/" +
+        vidid;
+      this.videoURL = window.lattefx_settings.renderer +
+        "/rendered_video/" + vidid + "/lattefx-hq-video.avi";
 
       let client_id = this.settings.paypal_client_id;
       let script = document.createElement("script");
@@ -149,6 +142,7 @@ Vue.component('buy-video', {
 
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
+      window.player.player.rendering = false;
       fetch("/stats/lattefx_app_hit_close/");
     });
 
