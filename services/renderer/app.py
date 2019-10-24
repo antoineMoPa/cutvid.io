@@ -59,6 +59,14 @@ def clean_old_cache():
             if date_modified < limit:
                 shutil.rmtree(folder)
 
+def validate_and_sanitize_vidid(vidid):
+    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
+
+    if len(vidid) != 40:
+        return None
+
+    return vidid
+
 @app.after_request
 def apply_cors_headers(response):
     response.headers["Access-Control-Allow-Origin"] = settings['app']
@@ -90,9 +98,9 @@ def upload_video(vidid):
     """
     This could be optimized by using nginx direct uploading
     """
-    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
+    vidid = validate_and_sanitize_vidid(vidid)
 
-    if len(vidid) != 40:
+    if vidid is None:
         return "error 1 bad token"
 
     video_file = request.files['video.vid']
@@ -117,10 +125,9 @@ def upload_frame(vidid, frame):
     """
     This could be optimized by using nginx direct uploading
     """
+    vidid = validate_and_sanitize_vidid(vidid)
 
-    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
-
-    if len(vidid) != 40:
+    if vidid is None:
         return "error 1 bad token"
 
     frame = int(frame)
@@ -151,9 +158,9 @@ def get_video_frame(vidid, fps, frame_time):
     Then return selected frame
 
     """
-    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
+    vidid = validate_and_sanitize_vidid(vidid)
 
-    if len(vidid) != 40:
+    if vidid is None:
         return "error 1 bad token"
 
     # Sorted is used for clamping here
@@ -200,6 +207,29 @@ def get_video_frame(vidid, fps, frame_time):
 
     return send_file(folder + "/images/image-%06d.png" % frame_num)
 
+def make_audio_media(vidid):
+    """
+    Exctracts audio for a given media
+    """
+
+    video_files = glob.glob("/tmp/lattefx-cache-" + vidid + "/video.*")
+
+    if len(video_files) == 0:
+        return None
+
+    folder = os.path.dirname(video_files[0])
+
+    render_audio = subprocess.Popen(
+        ["ffmpeg", "-i", video_files[0],
+         "-nostdin",
+         "-y",
+         "-vn",
+         "-acodec", "copy",
+         folder + "/audio.mp4"
+    ], cwd=folder)
+    render_audio.wait()
+
+    return folder + "/audio.mp4"
 
 @app.route("/render_video/<vidid>/<fps>", methods=['POST'])
 def render_video(vidid, fps):
@@ -210,18 +240,52 @@ def render_video(vidid, fps):
 
     returns generated video id
     """
-    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
+    vidid = validate_and_sanitize_vidid(vidid)
 
-    if len(vidid) != 40:
+    if vidid is None:
         return "error 1 bad token"
 
     fps = sorted([0, int(fps), 100])[1]
 
-    sequence = request.form['sequence.lattefx']
+    audio_sequences = request.form['audio-sequences']
     folder = "/tmp/lattefx-cache-" + vidid
 
-    with open(folder + "/sequence.lattefx", "w") as file:
-        file.write(sequence)
+    audio_sequences = json.loads(audio_sequences)
+
+    audio_args = []
+    audio_map_args = []
+
+    audio_index = 1
+
+    for sequence in audio_sequences:
+        time_from = float(sequence['from'])
+        time_to = float(sequence['to'])
+        trim_before = float(sequence['trimBefore'])
+        file_digest = validate_and_sanitize_vidid(sequence['digest'])
+
+        if time_from < 0:
+            # Trim part before 0
+            trim_before -= time_from
+            time_to -= time_from
+            time_from = 0
+
+        if time_from > time_to:
+            return "error 4 incoherent sequence timing"
+
+        if file_digest is None:
+            return "error 5 bad token in sub sequence"
+
+        media_file = make_audio_media(file_digest)
+
+        audio_args += [
+            "-ss", str(trim_before),
+            "-itsoffset", str(time_from),
+            "-t", str(time_to),
+            "-i", media_file
+        ]
+        audio_map_args += ["-map", str(audio_index)]
+        audio_index += 1
+
 
     os.makedirs(folder, exist_ok=True)
 
@@ -233,14 +297,24 @@ def render_video(vidid, fps):
 
     vid_format = "avi"
 
+    command_line = ["ffmpeg",
+            "-r", str(fps),
+            "-i", "image-%06d.png"] + audio_args + [
+            "-nostdin",
+            "-y",
+            "-r", str(fps),
+            "-vb", "20M", # HQ
+            "-map", "0"
+        ] + audio_map_args + [
+            "video." + vid_format
+        ]
+
+    # Pro tip: debug command line with:
+    # print(" ".join(command_line))
+
     render_vid = subprocess.Popen(
-        ["ffmpeg", "-i", "image-%06d.png",
-         "-nostdin",
-         "-y",
-         "-r", str(fps),
-         "-vb", "20M", # HQ
-         "video." + vid_format
-    ], cwd=folder)
+        command_line,
+        cwd=folder)
     render_vid.wait()
 
     downloadable_id = id_generator()
@@ -264,9 +338,9 @@ def rendered_video(vidid, desired_filename):
 
     Desired filename is arbitray and not used here
     """
-    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
+    vidid = validate_and_sanitize_vidid(vidid)
 
-    if len(vidid) != 40:
+    if vidid is None:
         return "error 1 bad token"
 
     folder = "/tmp/lattefx-cache-" + vidid
