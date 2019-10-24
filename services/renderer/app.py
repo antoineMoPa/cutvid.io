@@ -180,37 +180,32 @@ def get_video_frame(vidid, fps, frame_time):
 
     video_path = folder + "/video.vid"
 
-    # delete old zip if exists
-    if os.path.exists(folder + "/images.zip"):
-        os.remove(folder + "/images.zip")
+    frame_num = int(frame_time * fps + 1)
 
     if not os.path.exists(folder + "/images"):
         os.mkdir(folder + "/images")
-
         # Convert video
         extract_frames = subprocess.Popen(
             ["ffmpeg", "-i", "video.vid",
              "-nostdin",
              "-y",
+             "-start_number", str(frame_num), # Start at this frame
+             "-frames:v", "30", # No more than 30 frames per GET
              "-r", str(fps),
+             "-compression_level", str(100),
              "images/image-%06d.png"
             ], cwd=folder)
         extract_frames.wait()
 
-    available_files = sorted([
-        int(f[-10:].replace(".png", ""))
-        for f in
-        glob.glob(folder + "/images/image-*.png")
-    ])
+    file_path = folder + "/images/image-%06d.png" % frame_num
 
-    frame_num = int(frame_time * fps + 1)
+    if os.path.exists(file_path):
+        return send_file(file_path)
 
-    # Does the frame exist in folder
-    if frame_num not in available_files:
-        # Then use last frame
-        frame_num = len(available_files) - 1
+    if not os.path.exists(folder + "/images/image-000001.png"):
+        return "error 6 no frames found"
 
-    return send_file(folder + "/images/image-%06d.png" % frame_num)
+    return send_file(folder + "/images/image-000001.png")
 
 def make_audio_media(vidid):
     """

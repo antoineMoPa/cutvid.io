@@ -43,6 +43,43 @@ class ShaderProgram {
     this.has_vid_in_cache = false;
   }
 
+  fetch_with_progress(url, body){
+    let app = this;
+    return new Promise(function(resolve, reject) {
+      var request = new XMLHttpRequest();
+
+      request.open("POST", url);
+
+      request.addEventListener("progress", progress);
+      request.addEventListener("load", transfer_complete);
+      request.addEventListener("error", transfer_failed);
+      request.addEventListener("abort", transfer_canceled);
+
+      request.send(body);
+
+      // progress on transfers from the server to the client (downloads)
+      function progress (event) {
+        console.log(progress, event);
+        if (event.lengthComputable) {
+          var percent_complete = event.loaded / event.total * 100;
+          app.update_render_status("Uploading a video (" + percent_complete + "%)");
+        }
+      }
+
+      function transfer_complete(event) {
+        resolve(request.responseText);
+      }
+
+      function transfer_failed(event) {
+        reject();
+      }
+
+      function transfer_canceled(event) {
+        reject();
+      }
+    });
+  }
+
   update_render_status(new_status){
     let nodes = document.querySelectorAll(".render-status");
     nodes.forEach(function(el){
@@ -83,15 +120,13 @@ class ShaderProgram {
       // Upload video
       let form = new FormData();
       form.append('video.vid', texture.videoFile);
-      this.update_render_status("Uploading a video");
-      await fetch(base_path + "/upload_video/" + digest, {
-        method: 'POST',
-        mode: 'cors',
-        body: form
-      });
+      this.update_render_status("Uploading a video (0%)");
+
+      await this.fetch_with_progress(base_path + "/upload_video/" + digest, form);
     }
 
     let frame_num = leading_zeros(1,6);
+    this.update_render_status("Server is extracting frames");
     let url = base_path + "/get_video_frame/" +
         digest + "/" + fps + "/"+video_time;
 

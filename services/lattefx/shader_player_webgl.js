@@ -1,4 +1,3 @@
-
 /*
   For the history, this file has mostly underscore case
   because it was copied from shadergif's shader player
