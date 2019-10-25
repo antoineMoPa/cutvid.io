@@ -13,8 +13,6 @@
   <label>Glitch Factor</label>
   <input v-model.number="uniforms.glitchFactor.value" min="0.0" max="2.0" step="0.1" type="number">
   -->
-  <label>Background Color</label>
-  <input v-model="bgcolor" type="color">
   <label>Foreground Color</label>
   <input v-model="fgcolor" type="color">
   <label>Choose mask</label>
@@ -41,7 +39,7 @@
           };
 
           return {
-            images: range(1,20),
+            images: range(1,24),
             image: null,
             bgcolor: "#000000",
             fgcolor: "#ffffff",
@@ -50,21 +48,6 @@
                 type: "f",
                 len: 1,
                 value: 0.5,
-              },
-              bgr: {
-                type: "f",
-                len: 1,
-                value: 0.0,
-              },
-              bgg: {
-                type: "f",
-                len: 1,
-                value: 0.0,
-              },
-              bgb: {
-                type: "f",
-                len: 1,
-                value: 0.0,
               },
               fgr: {
                 type: "f",
@@ -98,14 +81,6 @@
               force_height: this.player.height
             });
           },
-          "bgcolor": {
-            handler(){
-              this.uniforms.bgr.value = parseInt(this.bgcolor.substring(1,3), 16)/255;
-              this.uniforms.bgg.value = parseInt(this.bgcolor.substring(3,5), 16)/255;
-              this.uniforms.bgb.value = parseInt(this.bgcolor.substring(5,7), 16)/255;
-            },
-            deep: true
-          },
           "fgcolor": {
             handler(){
               this.uniforms.fgr.value = parseInt(this.fgcolor.substring(1,3), 16)/255;
@@ -117,7 +92,6 @@
 
         },
         mounted(){
-          document.fonts.ready.then(this.updateTexts);
         }
       }
     }

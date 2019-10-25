@@ -62,6 +62,8 @@ Vue.component('player', {
         <!-- sequencer puts stuff here -->
       </div>
       <div class="switchable-panel">
+        <h4>Dimensions & fps</h4>
+        <br>
         <label>width x height (pixels):</label>
         <input v-model.number="width" type="number"> x
         <input v-model.number="height" type="number">
@@ -77,20 +79,19 @@ Vue.component('player', {
 
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
-      </div>
-      <div class="switchable-panel">
+        <h4>File & save</h4>
         <p>Download a working copy to modify your video later.</p>
         <label>
-          Save file to your computer<br><br>
           <button v-on:click="onSaveLatteFxFile">
             Download
           </button>
         </label>
-        <p>Note: you will have to re-upload videos.</p>
+        <p style="color:#f31;">Note: you will have to re-upload videos and images, as they are not contained in the .lattefx file</p>
         <label>
           Load a .lattefx file<br>
           <input type="file" v-on:change="onLoadLatteFxFile"/>
         </label>
+        <br><br>
       </div>
     </div>
     <div id="main-player">
@@ -119,7 +120,7 @@ Vue.component('player', {
       height: 1080,
       aspect: 1920.0/1080,
       user_token: null,
-      expert_mode: false,
+      expert_mode: true,
       fps: 30,
       watermark: ""
     };

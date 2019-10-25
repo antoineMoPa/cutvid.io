@@ -101,6 +101,10 @@ Vue.component('sequence-effect', {
 
       let promise = null;
 
+      if(effectData == null){
+        return;
+      }
+
       let effectName = effectData.effectName;
       let currentPromiseGetter = function(){
         return app.changeEffect(effectName, effectData, false);
@@ -198,7 +202,12 @@ Vue.component('sequence-effect', {
     },
     serializeEffect(){
       let effect = this.effect;
-      let component = this.$refs[effect.component];
+
+      if(effect == null){
+        return null;
+      }
+
+      let component = this.plugin;
       let data = utils.serialize_vue(component.$data);
       data.effectName = effect.name;
       return data;

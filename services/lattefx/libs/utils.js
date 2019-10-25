@@ -84,6 +84,8 @@ utils.increment_unique_counter = function(id_str){
   return utils.unique_counters[id_str]++;
 };
 
+utils.recurs_guard = 0;
+
 utils.serialize_vue = function(data){
   let out = {};
 
@@ -91,10 +93,28 @@ utils.serialize_vue = function(data){
     out = [];
   }
 
-  for(let prop in data){
+  utils.recurs_guard++;
 
+  if(utils.recurs_guard > 10){
+    console.error("busted recurs guard");
+    return {};
+  }
+
+  for(let prop in data){
     if(parseInt(prop) == prop){
       prop = parseInt(prop);
+    }
+
+    if(data[prop] instanceof HTMLElement){
+      continue;
+    }
+
+    if(data[prop] instanceof ShaderPlayerWebGL){
+      continue;
+    }
+
+    if(data[prop] instanceof ShaderProgram){
+      continue;
     }
 
     if(typeof(data[prop]) == "object"){
@@ -109,6 +129,8 @@ utils.serialize_vue = function(data){
       out[prop] = data[prop];
     }
   }
+
+  utils.recurs_guard--;
 
   return out;
 };

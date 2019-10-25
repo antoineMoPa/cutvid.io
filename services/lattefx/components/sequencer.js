@@ -58,13 +58,14 @@ Vue.component('sequencer', {
           <img src="icons/feather/trash.svg" title="new sequence from template" width="20"/>
           Delete selected
         </button><br>
+        <!--
         <button v-on:click="splitSelected"
                 v-if="selected.length > 0"
                 class="split-button">
           <img src="icons/feather/scissors.svg" title="cut sequence at selected time" width="20"/>
           Split selection
         </button>
-
+        -->
       </div>
     </div>
   `,
