@@ -14,9 +14,9 @@
   <label>Image Scale</label>
   <input type="number" v-model="uniforms.imageScale.value" min="0.0" max="2.0" step="0.05">
   <label>Offset Top</label>
-  <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.05">
+  <input v-model.number="uniforms.offsetTop.value" type="number" size="6" step="0.05">
   <label>Offset Left</label>
-  <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.05">
+  <input v-model.number="uniforms.offsetLeft.value" type="number" size="6" step="0.05">
 
 </div>`,
         data: function(){

@@ -16,9 +16,6 @@
     "leftRightReveal": {
       "description": "Reveals a text or any layer from left to right."
     },
-    "walkReveal": {
-      "description": "Reveals left to right and by small parts."
-    },
     "fadeSceneReveal": {
       "description": "Fades in scene over last one."
     },

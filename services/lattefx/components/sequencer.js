@@ -75,7 +75,7 @@ Vue.component('sequencer', {
     return {
       time: {time: 0.0},
       selected: [],
-      visibleDuration: 60,
+      visibleDuration: 10,
       dragging: null,
       draggingBody: null,
       draggingLeft: null,
@@ -187,6 +187,7 @@ Vue.component('sequencer', {
       if(this.player != null && this.player.rendering) { return; }
 
       this.dragging = index;
+
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
 
       if(this.selected.indexOf(index) != -1){
@@ -195,6 +196,8 @@ Vue.component('sequencer', {
         });
       } else {
         this.selected.push(index);
+        // Move time to middle of newly selected sequence
+        this.time.time = seq.from + (seq.to - seq.from) * 0.5;
       }
 
       this.draggingTimeBar = false;
@@ -258,7 +261,7 @@ Vue.component('sequencer', {
         duration = seq.to - seq.from;
       }
 
-      let x = e.clientX - parseInt(this.$el.style.left);
+      let x = e.clientX + this.$el.scrollLeft - parseInt(this.$el.style.left);
       let y_prime = e.clientY - parseInt(this.$el.style.top);
       let h = parseInt(this.$el.clientHeight);
       let y = h - y_prime;
@@ -289,7 +292,6 @@ Vue.component('sequencer', {
         if(Math.abs(seq.to - time) < delta){
           return seq.to;
         }
-
       }
 
       // Snap to 0

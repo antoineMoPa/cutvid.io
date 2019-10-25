@@ -86,7 +86,6 @@ Vue.component('player', {
             Download
           </button>
         </label>
-        <p style="color:#f31;">Note: you will have to re-upload videos and images, as they are not contained in the .lattefx file</p>
         <label>
           Load a .lattefx file<br>
           <input type="file" v-on:change="onLoadLatteFxFile"/>
@@ -279,6 +278,14 @@ Vue.component('player', {
       });
       reader.readAsText(file);
     },
+    loadLatteFxFile(url){
+      let app = this;
+      fetch(url).then((result) => {
+        result.json().then((obj) => {
+          app.unserialize(obj);
+        })
+      })
+    },
     serialize(){
       let data = {};
       data.width = this.width;
@@ -295,7 +302,7 @@ Vue.component('player', {
       this.height = data.height;
       this.fps = data.fps;
 
-      this.$refs['sequencer'].unserialize(data.scenes);
+      this.$refs['sequencer'].unserialize(data.scenes, true);
     }
   },
   watch: {
@@ -323,5 +330,7 @@ Vue.component('player', {
     this.switch_panel(0);
     this.$refs['panel-selector'].switch_to(0);
     this.pause();
+
+    this.loadLatteFxFile("default.lattefx");
   },
 });

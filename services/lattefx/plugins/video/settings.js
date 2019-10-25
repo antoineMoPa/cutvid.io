@@ -30,6 +30,8 @@
         data: function(){
           return {
             video: null,
+            videoFile: null,
+            videoFileB64: null,
             videoName: "",
             error: false,
             backgroundColor: "#000000",
@@ -71,7 +73,6 @@
           loadVideo(){
             let app = this;
             app.error = false;
-            app.durationInitialized = false;
             this.shaderProgram.set_texture('video', '', function(){}, {
               video: this.video,
               videoFile: this.videoFile,
@@ -95,14 +96,22 @@
               }
             });
           },
-          onVideo() {
+          onVideo(videoToLoad) {
             const app = this;
             const input = this.$el.querySelectorAll('.video-file-input')[0];
 
             try {
-              const file = input.files[0];
+              let file = null;
+              if(typeof(videoToLoad) != "undefined"){
+                file = videoToLoad;
+              } else {
+                file = input.files[0];
+              }
               app.videoFile = file;
               app.video = window.URL.createObjectURL(file);
+              utils.file_to_base64(file).then((result)=>{
+                app.videoFileB64 = result;
+              });
             } catch (e) {
               // Well I guess you are using a dumb browser
               console.error(e);
@@ -121,9 +130,20 @@
           },
           videoFile(){
             this.effect.videoFile = this.videoFile;
+          },
+          videoFileB64(){
+            let app = this;
+            fetch(this.videoFileB64).then((result) => {
+              result.blob().then((result) => {
+                let file = new File([result], "video.vid");
+                app.durationInitialized = true;
+                app.onVideo(file);
+              });
+            });
           }
         },
         mounted(){
+
         },
         beforeDestroy(){
           this.shaderProgram.delete_texture('video');

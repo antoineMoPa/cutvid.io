@@ -3,6 +3,17 @@ var utils = {};
 // Tool to load google webfonts with title
 utils.loaded_gfonts = {};
 
+utils.file_to_base64 = async function (file) {
+  /* Reverse operation: just use fetch */
+  return new Promise((resolve, reject) => {
+    // Thanks SO: https://stackoverflow.com/questions/36280818/
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+
 utils.load_gfont = function(name_in, size, text){
   // Was font already loaded
   if(utils.loaded_gfonts[name_in] != undefined){
@@ -117,7 +128,9 @@ utils.serialize_vue = function(data){
       continue;
     }
 
-    if(typeof(data[prop]) == "object"){
+    if(data[prop] instanceof File){
+      // Too bad
+    } else if(typeof(data[prop]) == "object"){
       // Exclude specified variables
       if(data.serializeExclude != undefined){
         if(data.serializeExclude.indexOf(prop) != -1){
