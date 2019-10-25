@@ -1,6 +1,7 @@
 Vue.component('sequencer', {
   template: `
-    <div class="sequencer" v-on:click.self="clickSequencer">
+    <div class="sequencer"
+         v-on:click.self="clickSequencer">
       <div class="sequencer-scrollbox">
         <div
           v-for="(sequence, index) in sequences"
@@ -74,6 +75,7 @@ Vue.component('sequencer', {
     return {
       time: {time: 0.0},
       selected: [],
+      visibleDuration: 60,
       dragging: null,
       draggingBody: null,
       draggingLeft: null,
@@ -148,6 +150,20 @@ Vue.component('sequencer', {
         new_sequence.from = time
         new_sequence.layer = sequence.layer;
       }
+    },
+    onWheel(e){
+      if(e.deltaY < 0){
+        this.visibleDuration -= 10;
+      } else {
+        this.visibleDuration += 10;
+      }
+
+      if(this.visibleDuration < 4){
+        this.visibleDuration = 4;
+      }
+
+      this.time.time = this.time.time + 0.001; // hack to update the timebar
+      this.repositionSequences();
     },
     clickSequencer(e){
       this.selected = [];
@@ -251,6 +267,38 @@ Vue.component('sequencer', {
 
       return [x,y,time,layer,seq,duration,scale];
     },
+    findSnap(time){
+      /*
+        Find things close to "time":
+
+         - sequence that end/start close to time
+         - 0
+
+        (except currently dragged sequences)
+      */
+
+      let delta = 0.005 * this.visibleDuration; // in second
+      for(let i = 0; i < this.sequences.length; i++){
+        let seq = this.sequences[i];
+        if(this.dragging == i){
+          continue;
+        }
+        if(Math.abs(seq.from - time) < delta){
+          return seq.from;
+        }
+        if(Math.abs(seq.to - time) < delta){
+          return seq.to;
+        }
+
+      }
+
+      // Snap to 0
+      if(Math.abs(time - 0) < delta){
+        return 0;
+      }
+
+      return null;
+    },
     mouseMove(e){
       if(this.player != null && this.player.rendering) { return; }
 
@@ -264,19 +312,32 @@ Vue.component('sequencer', {
         // -10 to grab from center
         let initial_from = seq.from;
         seq.from = (x - 10) / scale.timeScale;
+
+        let snap = this.findSnap(seq.from);
+        if(snap != null){
+          seq.from = snap;
+        }
+
         this.repositionSequences();
         let sequence_component = this.$refs["sequence-effect-"+seq.id][0];
         let effect = sequence_component.effect;
-        // Quite a hack to find video effects
-        // We should find all effect components of a sequence
-        if (effect.name.indexOf("video") != -1){
-          sequence_component.plugin.onTrimLeft(seq.from - initial_from);
+
+        if (sequence_component.plugin != undefined){
+          if (sequence_component.plugin.onTrimLeft != undefined){
+            sequence_component.plugin.onTrimLeft(seq.from - initial_from);
+          }
         }
       }
 
       if(this.draggingRight){
         // -10 to grab from center
         seq.to = (x + 10) / scale.timeScale;
+
+        let snap = this.findSnap(seq.to);
+        if(snap != null){
+          seq.to = snap;
+        }
+
         this.repositionSequences();
       }
 
@@ -294,7 +355,7 @@ Vue.component('sequencer', {
       }
     },
     getScale(){
-      let totalDuration = 63;
+      let totalDuration = this.visibleDuration;
       let timeScale = this.$el.clientWidth / totalDuration;
       let layerScale = 25;
 
@@ -427,6 +488,8 @@ Vue.component('sequencer', {
 
     let allSequences = this.$el.querySelectorAll(".all-sequences")[0];
     let allSequencesContainer = document.querySelectorAll(".all-sequences-container")[0];
+
+    this.$el.addEventListener("wheel", this.onWheel);
 
     // Select first sequence by default
     this.selected = [0];

@@ -39,7 +39,7 @@
           };
 
           return {
-            images: range(1,24),
+            images: range(1,25),
             image: null,
             bgcolor: "#000000",
             fgcolor: "#ffffff",
