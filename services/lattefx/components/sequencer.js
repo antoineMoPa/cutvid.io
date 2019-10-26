@@ -12,14 +12,16 @@ Vue.component('sequencer', {
           </div>
           <div class="sequence-body"
                v-on:mousedown="sequenceBodyDown(index,$event,false)">
-            Sequence {{ index + 1 }}
+            <span v-if="sequences[index].effect != null">
+              {{ sequences[index].effect.human_name }}
+            </span>
           </div>
           <div class="sequence-button-right"
                v-on:mousedown="sequenceRightDown(index)">
           </div>
         </div>
         <div class="time-spacer" ref="time-spacer">.</div>
-        <div class="time-bar" ref="timeBar" v-on:mousedown="timeBarDown">
+        <div class="time-bar" ref="timeBar">
           <span class="time-indicator" ref="timeIndicator"></span>
         </div>
       </div>
@@ -37,6 +39,9 @@ Vue.component('sequencer', {
           v-bind:initialEffectGetter="sequence.initialEffectGetter"
           v-bind:player="player"
           v-on:duration="onDuration"/>
+          <p v-if="sequences.length == 0">
+            Add a sequence to begin!
+          </p>
       </div>
       <!--
         <scene-template-selector ref="scene-template-selector"/>
@@ -80,7 +85,6 @@ Vue.component('sequencer', {
       draggingBody: null,
       draggingLeft: null,
       draggingRight: null,
-      draggingTimeBar: null,
       draggingTimeFrom: null,
       sequences: []
     };
@@ -171,18 +175,6 @@ Vue.component('sequencer', {
       // Move cursor to this time
       this.player.time.time = info[2];
     },
-    timeBarDown(){
-      if(this.player != null && this.player.rendering) { return; }
-
-      this.dragging = null
-      this.draggingTimeBar = true;
-      this.draggingBody = false;
-      this.draggingLeft = false;
-      this.draggingRight = false;
-      window.addEventListener("mouseup", this.unDrag.bind(this), {once: true});
-      this.mouseMoveListener = this.mouseMove.bind(this);
-      window.addEventListener("mousemove", this.mouseMoveListener);
-    },
     sequenceBodyDown(index, e, dragFromMiddle){
       if(this.player != null && this.player.rendering) { return; }
 
@@ -208,7 +200,6 @@ Vue.component('sequencer', {
         this.time.time = seq.from + (seq.to - seq.from) * 0.5;
       }
 
-      this.draggingTimeBar = false;
       this.draggingBody = true;
       this.draggingLeft = false;
       this.draggingRight = false;
@@ -227,7 +218,6 @@ Vue.component('sequencer', {
       if(this.player != null && this.player.rendering) { return; }
 
       this.dragging = index;
-      this.draggingTimeBar = false;
       this.draggingBody = false;
       this.draggingLeft = true;
       this.draggingRight = false;
@@ -239,7 +229,6 @@ Vue.component('sequencer', {
       if(this.player != null && this.player.rendering) { return; }
 
       this.dragging = index;
-      this.draggingTimeBar = false;
       this.draggingBody = false;
       this.draggingLeft = false;
       this.draggingRight = true;
@@ -254,7 +243,6 @@ Vue.component('sequencer', {
       this.draggingBody = false;
       this.draggingLeft = false;
       this.draggingRight = false;
-      this.draggingTimeBar = false;
       this.dragging = null;
     },
     mouseEventInfo(e){
@@ -358,11 +346,6 @@ Vue.component('sequencer', {
         seq.layer = layer;
         this.repositionSequences();
       }
-
-      if(this.draggingTimeBar){
-        let time = x / scale.timeScale;
-        this.player.time.time = time;
-      }
     },
     getScale(){
       let totalDuration = this.visibleDuration;
@@ -428,7 +411,7 @@ Vue.component('sequencer', {
         id: id,
         layer: layer,
         from: 0,
-        to: 10,
+        to: this.visibleDuration * 0.2,
         effect: null,
       });
 
@@ -463,6 +446,32 @@ Vue.component('sequencer', {
         info.duration;
 
       this.repositionSequences();
+    },
+    bindShortcuts(){
+      let app = this;
+      window.addEventListener("keydown", (e) => {
+        if(app.player != null && app.player.rendering) { return; }
+
+        if(e.key == "a"){
+          if(e.ctrlKey){
+            e.preventDefault();
+            this.selected = [];
+            for(let i = 0; i < this.sequences.length; i++){
+              this.selected.push(i);
+            }
+            return false;
+          }
+        }
+        if(e.key == "ArrowLeft"){
+          app.time.time -= 0.008 * app.visibleDuration;
+        }
+        if(e.key == "ArrowRight"){
+          app.time.time += 0.008 * app.visibleDuration;
+        }
+        if(e.key == "Delete"){
+          app.deleteSelected();
+        }
+      });
     }
   },
   watch:{
@@ -504,5 +513,7 @@ Vue.component('sequencer', {
     this.selected = [0];
 
     allSequencesContainer.appendChild(allSequences);
+
+    this.bindShortcuts();
   }
 });

@@ -423,11 +423,11 @@ input{
   position:absolute;
   top:10px;
   left:0;
-  width:6px;
+  width:1px;
   height:135px;
-  background:rgba(255,255,255,0.5);
-  cursor:pointer;
+  border-left:1px dotted #aaa;
   border-radius:4px;
+  z-index:0;
 }
 
 .time-spacer{
@@ -616,6 +616,8 @@ input{
   border-radius:4px;
   border:1px solid #111;
   overflow:hidden;
+  z-index:10;
+  opacity:0.9;
 }
 
 .sequencer .sequence.selected{
@@ -627,6 +629,7 @@ input{
   top:0;
   left:25px;
   width:calc(100% - 45px);
+  height:20px;
   font-size:10px;
   color:#fff;
   line-height:20px;
@@ -706,8 +709,9 @@ input{
   line-height:20px;
   position:absolute;
   top:0px;
-  left:10px;
+  left:3px;
   border-radius:4px;
+  padding: 0 3px;
   color:#fff;
 }
 
