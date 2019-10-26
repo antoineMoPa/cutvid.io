@@ -485,7 +485,6 @@ Vue.component('sequencer', {
     }
   },
   mounted(){
-    this.addSequence();
     this.$nextTick(this.unDrag);
 
     let allSequences = this.$el.querySelectorAll(".all-sequences")[0];
