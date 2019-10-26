@@ -159,11 +159,16 @@ Vue.component('sequencer', {
           time = from + (to - from) * 0.5;
         }
 
+        if(time == 0){
+          continue;
+        }
+
         // Build second part, by serializing and unserializing
         let data = this.serialize([parseInt(i)]);
         data[0].to = sequence.to;
         data[0].from = time;
         data[0].layer = sequence.layer;
+
         if(data[0] == null){
           continue;
         }

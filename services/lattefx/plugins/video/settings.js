@@ -29,6 +29,7 @@
 </div>`,
         data: function(){
           return {
+            serializeExclude: ["video", "videoFile"],
             video: null,
             videoFile: null,
             videoFileB64: null,
@@ -82,6 +83,7 @@
                 fetch("/stats/lattefx_app_video_has_error/");
               },
               ready: function(){
+                console.log("set texture done");
                 // "this" points to <video> element
                 app.uniforms.videoWidth.value = this.videoWidth;
                 app.uniforms.videoHeight.value = this.videoHeight;
