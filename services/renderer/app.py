@@ -188,7 +188,9 @@ def get_video_frame(vidid, fps, frame_time):
         os.makedirs(folder + "/images", exist_ok=True)
         # Convert video
         extract_frames = subprocess.Popen(
-            ["ffmpeg", "-i", "video.vid",
+            ["ffmpeg",
+             "-ss", str(frame_time),
+             "-i", "video.vid",
              "-nostdin",
              "-y",
              "-start_number", str(frame_num), # Start at this frame

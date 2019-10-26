@@ -547,6 +547,7 @@ class ShaderPlayerWebGL {
       sequencesByLayer[seq.layer].push({
         from: seq.from,
         to: seq.to,
+        effect: effect,
         pass: effect.shaderProgram,
         uniforms: effect.uniforms,
         trimBefore: effect.trimBefore || 0
@@ -608,6 +609,15 @@ class ShaderPlayerWebGL {
         let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
         let shaderProgram = seq.pass;
+
+        if(this.rendering && this.renderMode == "HQ"){
+          if( seq.effect != null &&
+              seq.effect.plugin != null &&
+              seq.effect.plugin.updateTexts != undefined){
+            seq.effect.plugin.updateTexts();
+          }
+        }
+
         if(shaderProgram == undefined){
           continue;
         }

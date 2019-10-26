@@ -191,11 +191,19 @@ Vue.component('sequencer', {
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
 
       if(this.selected.indexOf(index) != -1){
-        this.selected = this.selected.filter(function(row) {
-          return row != index;
-        });
+        if(e.shiftKey) {
+          this.selected = this.selected.filter(function(row) {
+            return row != index;
+          });
+        } else {
+          this.selected = [];
+        }
       } else {
-        this.selected.push(index);
+        if(e.shiftKey) {
+          this.selected.push(index);
+        } else {
+          this.selected = [index];
+        }
         // Move time to middle of newly selected sequence
         this.time.time = seq.from + (seq.to - seq.from) * 0.5;
       }
