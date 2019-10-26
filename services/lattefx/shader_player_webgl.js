@@ -136,7 +136,11 @@ class ShaderPlayerWebGL {
       }).catch(function(error){
         console.log(error);
       });
-      v.audioElement.play();
+      try{
+        v.audioElement.play();
+      } catch (e) {
+        // Probably no audio here
+      }
     });
     this.last_frame_time = new Date().getTime();
   }

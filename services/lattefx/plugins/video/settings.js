@@ -86,7 +86,6 @@
                 app.uniforms.videoWidth.value = this.videoWidth;
                 app.uniforms.videoHeight.value = this.videoHeight;
                 app.videoElement = this;
-
                 if(!app.durationInitialized){
                   app.onDuration(this.duration);
                   fetch("/stats/lattefx_app_video_duration/"+parseInt(this.duration));

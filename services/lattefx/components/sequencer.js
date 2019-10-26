@@ -42,6 +42,9 @@ Vue.component('sequencer', {
           <p v-if="sequences.length == 0">
             Add a sequence to begin!
           </p>
+          <p v-else-if="selected.length == 0">
+            Select a sequence to begin!
+          </p>
       </div>
       <!--
         <scene-template-selector ref="scene-template-selector"/>
@@ -64,14 +67,12 @@ Vue.component('sequencer', {
           <img src="icons/feather/trash.svg" title="new sequence from template" width="20"/>
           Delete selected
         </button><br>
-        <!--
         <button v-on:click="splitSelected"
                 v-if="selected.length > 0"
                 class="split-button">
           <img src="icons/feather/scissors.svg" title="cut sequence at selected time" width="20"/>
           Split selection
         </button>
-        -->
       </div>
     </div>
   `,
@@ -90,10 +91,21 @@ Vue.component('sequencer', {
     };
   },
   methods: {
-    serialize(){
+    serialize(only_indexes){
+      /*
+         Serialize sequences
+
+         only_indexes, if defined, is a whitelist filter
+      */
+      if(typeof(only_indexes) == "undefined"){
+        only_indexes = null;
+      }
       let data = [];
 
       for(let i = 0; i < this.sequences.length; i++){
+        if(only_indexes != null && only_indexes.indexOf(i) == -1){
+          continue;
+        }
         let seq = this.sequences[i];
         let component = this.$refs["sequence-effect-"+seq.id][0];
 
@@ -136,8 +148,6 @@ Vue.component('sequencer', {
           continue;
         }
         let sequence = this.sequences[i];
-        this.addSequence();
-        let new_sequence = this.sequences[this.sequences.length - 1];
         let from = sequence.from;
         let to = sequence.to;
         let time = this.player.time.time;
@@ -149,10 +159,23 @@ Vue.component('sequencer', {
           time = from + (to - from) * 0.5;
         }
 
-        new_sequence.to = sequence.to;
+        // Build second part, by serializing and unserializing
+        let data = this.serialize([parseInt(i)]);
+        data[0].to = sequence.to;
+        data[0].from = time;
+        data[0].layer = sequence.layer;
+        if(data[0] == null){
+          continue;
+        }
+        // Videos: add a trim
+        if("trimBefore" in data[0].effect){
+          let new_trim = time - sequence.from;
+          data[0].effect.trimBefore += new_trim;
+        }
+        this.unserialize(JSON.parse(JSON.stringify(data)), false);
+
+        // Finally, update initial sequence's end
         sequence.to = time;
-        new_sequence.from = time
-        new_sequence.layer = sequence.layer;
       }
     },
     onWheel(e){

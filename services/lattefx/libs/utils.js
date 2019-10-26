@@ -33,7 +33,7 @@ utils.load_gfont = function(name_in, size, text){
     document.head.appendChild(l);
 
     let fakeDiv = document.createElement("div");
-    fakeDiv.innerHTML = "<span style='font-family:" + name_in + ";'>" + name_in + "</span>";
+    fakeDiv.innerHTML = "<span style='font-family:" + name_in + ";'>Loading font - " + name_in + "</span>";
 
     document.body.appendChild(fakeDiv);
 

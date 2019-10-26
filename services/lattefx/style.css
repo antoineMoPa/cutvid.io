@@ -675,6 +675,7 @@ input{
   position: fixed;
   right: 25px;
   bottom: 135px;
+  z-index:20;
 }
 
 .sequencer .add-button,
