@@ -182,8 +182,10 @@ def get_video_frame(vidid, fps, frame_time):
 
     frame_num = int(frame_time * fps + 1)
 
-    if not os.path.exists(folder + "/images"):
-        os.mkdir(folder + "/images")
+    file_path = folder + "/images/image-%06d.png" % frame_num
+
+    if not os.path.exists(file_path):
+        os.makedirs(folder + "/images", exist_ok=True)
         # Convert video
         extract_frames = subprocess.Popen(
             ["ffmpeg", "-i", "video.vid",
@@ -197,7 +199,6 @@ def get_video_frame(vidid, fps, frame_time):
             ], cwd=folder)
         extract_frames.wait()
 
-    file_path = folder + "/images/image-%06d.png" % frame_num
 
     if os.path.exists(file_path):
         return send_file(file_path)

@@ -59,7 +59,6 @@ class ShaderProgram {
 
       // progress on transfers from the server to the client (downloads)
       function progress (event) {
-        console.log(progress, event);
         if (event.lengthComputable) {
           var percent_complete = event.loaded / event.total * 100;
           app.update_render_status("Uploading a video (" + percent_complete + "%)");
