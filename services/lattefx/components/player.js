@@ -58,6 +58,20 @@ Vue.component('player', {
         <!-- sequencer puts stuff here -->
       </div>
       <div class="switchable-panel">
+        <h4>Save</h4>
+        <p>Download a working copy to modify your video later.</p>
+        <label>
+          <button v-on:click="onSaveLatteFxFile">
+            Download
+          </button>
+        </label>
+        <br>
+        <h4>Load</h4>
+        <label>
+          Load a .lattefx file<br>
+          <input type="file" v-on:change="onLoadLatteFxFile"/>
+        </label>
+        <br><br>
         <h4>Dimensions & fps</h4>
         <br>
         <label>width x height (pixels):</label>
@@ -75,17 +89,6 @@ Vue.component('player', {
 
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
-        <h4>File & save</h4>
-        <p>Download a working copy to modify your video later.</p>
-        <label>
-          <button v-on:click="onSaveLatteFxFile">
-            Download
-          </button>
-        </label>
-        <label>
-          Load a .lattefx file<br>
-          <input type="file" v-on:change="onLoadLatteFxFile"/>
-        </label>
         <br><br>
       </div>
     </div>
@@ -265,6 +268,7 @@ Vue.component('player', {
       a.download = "videodata.lattefx";
       document.body.appendChild(a);
       a.click();
+      fetch("/stats/lattefx_save_file/");
     },
     onLoadLatteFxFile(e){
       let app = this;
@@ -274,6 +278,8 @@ Vue.component('player', {
         app.unserialize(JSON.parse(reader.result));
       });
       reader.readAsText(file);
+
+      fetch("/stats/lattefx_load_file/");
     },
     loadLatteFxFile(url){
       let app = this;

@@ -207,7 +207,6 @@ Vue.component('sequencer', {
       this.repositionSequences();
     },
     clickSequencer(e){
-      this.selected = [];
       let info = this.mouseEventInfo(e);
       // Move cursor to this time
       this.player.time.time = info[2];
@@ -273,10 +272,15 @@ Vue.component('sequencer', {
       this.mouseMoveListener = this.mouseMove.bind(this);
       window.addEventListener("mousemove", this.mouseMoveListener);
     },
-    unDrag(){
+    unDrag(e){
       if(this.player != null && this.player.rendering) { return; }
 
       window.removeEventListener("mousemove", this.mouseMoveListener);
+
+      if(this.dragging != null){
+        this.selected = [this.dragging];
+      }
+
       this.draggingBody = false;
       this.draggingLeft = false;
       this.draggingRight = false;
@@ -519,6 +523,7 @@ Vue.component('sequencer', {
     time: {
       handler(){
         let scale = this.getScale();
+
         function formatTime(t){
           let m = Math.floor(t / 60);
           let s = Math.floor(t % 60);

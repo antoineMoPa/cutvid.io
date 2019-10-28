@@ -41,7 +41,7 @@
               imageScale: {
                 type: "f",
                 len: 1,
-                value: 0.25,
+                value: 1.0,
               },
               offsetTop: {
                 type: "f",
