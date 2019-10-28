@@ -2,6 +2,12 @@ Vue.component('sequencer', {
   template: `
     <div class="sequencer"
          v-on:click.self="clickSequencer">
+      <div class="sequencer-loading"
+           v-if="loading_scene">
+        <p>
+          loading scene
+        </p>
+      </div>
       <div class="sequencer-scrollbox">
         <div
           v-for="(sequence, index) in sequences"
@@ -89,6 +95,7 @@ Vue.component('sequencer', {
       draggingLeft: null,
       draggingRight: null,
       draggingTimeFrom: null,
+      loading_scene: false,
       sequences: []
     };
   },

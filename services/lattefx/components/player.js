@@ -280,9 +280,13 @@ Vue.component('player', {
     },
     loadLatteFxFile(url){
       let app = this;
+
+      this.$refs['sequencer'].loading_scene = true;
+
       fetch(url).then((result) => {
         result.json().then((obj) => {
           app.unserialize(obj);
+          this.$refs['sequencer'].loading_scene = false;
         })
       })
     },
