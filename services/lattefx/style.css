@@ -107,7 +107,7 @@ input{
   right:20px;
 }
 .ui-button.button-2{
-  right:290px;
+  right:220px;
 }
 .ui-button.button-3{
   right:340px;
@@ -994,7 +994,22 @@ input{
 
 /* END TEXT BOX */
 
-
+.navigator-no-support{
+  color:#111;
+  line-height: 35px;
+  background: #fff;
+  padding: 30px;
+  width: 800px;
+  margin: auto;
+  border-radius:30px;
+  box-shadow:0 0 30px rgba(0,0,0,0.5);
+  border: 1px solid #000;
+  position: absolute;
+  z-index:1000;
+  top:40px;
+  left:100px;
+  left:calc(50% - 400px);
+}
 
 /* ANIMATIONS */
 

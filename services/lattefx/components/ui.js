@@ -30,9 +30,6 @@ Vue.component('ui', {
        v-if="!player.rendering"
        v-on:click="renderHQ"
        title="You can afford it in High Quality and best FPS">
-      <span class="ui-button-paypal-part">
-        <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="PayPal">
-      </span>
       Render & Buy  US$ 4.50
     </a>
     <a v-if="player.rendering"
