@@ -39,15 +39,11 @@ Vue.component('player', {
       </div>
       <div v-else>
         <h3>Rendering in progress</h3>
-        <h4>Why buy HQ rendering?</h4>
-        <p>1. Support the development of Lattefx.<br>
-           2. Careful video + sound timing.<br>
-           3. High quality frame by frame render.
-        </p>
-        <h4>How does HQ rendering work?</h4>
+        <h4>How does Espresso/LQ rendering work?</h4>
+        <p>Espresso/LQ rendering happens entirely in your browser, which is quick but incurs some limitations. (dropped frames, poor quality). But it's quick and cheap!</p>
+        <h4>How does Latte/HQ rendering work?</h4>
         <p>HQ rendering carefully extracts your video frames on our server. The frames are then sent back to your browser, which applies effects. Everything is then put together on our server.</p>
-        <h4>How does LQ rendering work?</h4>
-        <p>LQ (low-quality, free) rendering happens entirely in your browser, which is quick but incurs some limitations. (dropped frames, poor quality)</p>
+
       </div>
     </div>
     <div v-bind:class="'settings-panel ' +
@@ -103,7 +99,8 @@ Vue.component('player', {
      />
     </div>
     <buy-video ref="buyVideo" v-bind:settings="settings"/>
-    <download-lq ref="downloadLQ"
+    <buy-video-lq ref="buyVideoLQ"
+                 v-bind:settings="settings"
                  v-on:renderHQ="makeHQ"/>
     <ui ref="ui"
         v-on:playAll="playAll"
@@ -233,7 +230,7 @@ Vue.component('player', {
       this.$refs.ui.set_progress(0.0);
 
       this.render("LQ", function(blob){
-        this.$refs.downloadLQ.show(blob);
+        this.$refs.buyVideoLQ.show(blob);
         fetch("/stats/lattefx_app_lq_render_done/");
       }.bind(this));
 

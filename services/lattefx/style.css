@@ -103,14 +103,24 @@ input{
   margin-right:5px;
 }
 
+.ui .ui-price{
+  font-weight: 600;
+}
+
 .ui-button.button-1{
   right:20px;
 }
 .ui-button.button-2{
-  right:220px;
+  right:200px;
 }
-.ui-button.button-3{
-  right:340px;
+
+.render-buy-info{
+  position:absolute;
+  top:0;
+  right:410px;
+  color:#eee;
+  font-size:14px;
+  line-height:30px;
 }
 
 .ui-button.large{
@@ -172,7 +182,6 @@ input{
   right:10px;
   cursor:pointer;
 }
-
 
 /* END UI --------------- */
 
@@ -812,20 +821,20 @@ input{
   }
 }
 
-.goto-hq{
+.buy-video .goto-hq{
   text-align: center;
   line-height: 40px;
   font-size: 20px;
 }
 
-.goto-hq-details{
+.buy-video .goto-hq-details{
   text-align: center;
   line-height: 18px;
   font-size: 11px;
   margin-top: -18px;
 }
 
-.goto-hq-button{
+.buy-video .goto-hq-button{
   display:inline-block;
   margin:5px;
   background: #3af;

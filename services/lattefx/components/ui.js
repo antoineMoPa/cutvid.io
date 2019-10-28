@@ -20,23 +20,30 @@ Vue.component('ui', {
        class="is-rendering">
       Please be patient while your video is rendering.
     </p>
+    <div class="render-buy-info" v-if="!player.rendering">
+      <p>
+        Render & buy
+      </p>
+    </div>
     <a class="ui-button buy-button button-2"
        v-if="!player.rendering"
        v-on:click="renderLQ"
-       title="Free, but low quality & FPS">
-      Render free LQ
+       title="Quick render">
+      <img class="feather-button"
+           src="icons/feather/image.svg"/>
+      Espresso - US$ <span class="ui-price">2.50</span>
     </a>
     <a class="ui-button buy-button button-1"
        v-if="!player.rendering"
        v-on:click="renderHQ"
-       title="You can afford it in High Quality and best FPS">
-      Render & Buy  US$ 4.50
+       title="High Quality render">
+      <img class="feather-button"
+           src="icons/feather/image.svg"/>
+      Latte - US$ <span class="ui-price">4.50</span>
     </a>
     <a v-if="player.rendering"
        v-on:click="cancelRender"
        class="ui-button button-1 cancel-button">
-      <img class="pause-icon feather-button"
-           src="icons/feather/x.svg"/>
       Cancel render
     </a>
   </div>`,

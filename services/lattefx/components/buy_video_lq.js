@@ -1,4 +1,4 @@
-Vue.component('buy-video', {
+Vue.component('buy-video-lq', {
   template: `
 <div class="popup buy-video hidden">
   <div class="close-button">
@@ -14,20 +14,18 @@ Vue.component('buy-video', {
     </span>
   </h3>
   <p v-if="!canDownload" class="thank-you">
-    Latte/<span title="High Quality">HQ</span> videos are USD $ 4.50
+    Espresso/<span title="low quality">LQ</span> videos are USD $ 2.50
     <br>
   </p>
   <div v-if="!canDownload" class="video-preview" v-on:contextmenu="onContextMenu">
-    <p v-if="!previewReady">We are building a 5 seconds preview...</p>
-    <p v-else>Here is a 5 seconds preview:</p>
     <video v-bind:src="previewURL" controls></video>
   </div>
   <div class="payment-container" v-if="!canDownload">
     <!-- Paypal stuff goes here -->
   </div>
   <p v-if="canDownload" class="thank-you">
-    Thank you for your purchase!<br>
-    Use this button to save your video.<br>
+    Thank you for your purchase!<br><br>
+    Click this button to save your video.<br>
   </p>
   <p class="text-center" v-if="canDownload">
     <a class="ui-button large"
@@ -40,6 +38,25 @@ Vue.component('buy-video', {
   <p v-if="canDownload" class="thank-you">
     See you soon!<br><br>
   </p>
+  <!-- hide for now
+    <p class="goto-hq">
+      Need more quality?
+      <br>
+      <a class="ui-button goto-hq-button"
+         v-on:click="renderHQ"
+         >
+        <span class="ui-button-paypal-part">
+          <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="PayPal">
+        </span>
+        Render & Buy  US$ 2.50
+      </a>
+    </p>
+  <p class="goto-hq-details">
+    No frame drop<br>
+    Accurate audio timing<br>
+    Professionnal quality
+  </p>
+  -->
   <p class="thank-you">
     For any questions, comments, refunds, feedback on Lattefx, please contact
     {{email()}}<br>
@@ -75,14 +92,12 @@ Vue.component('buy-video', {
       // And improvement at my email address!
       return false;
     },
-    show(vidid){
+    show(blob){
       this.$el.classList.remove("hidden");
+      let url = URL.createObjectURL(blob);
       this.previewReady = false;
-      this.previewURL = window.lattefx_settings.renderer +
-        "/rendered_video_preview/" +
-        vidid;
-      this.videoURL = window.lattefx_settings.renderer +
-        "/rendered_video/" + vidid + "/lattefx-hq-video.avi";
+      this.previewURL = url;
+      this.videoURL = url;
 
       this.$el.querySelectorAll("video")[0].addEventListener(
         "loadeddata",
@@ -110,7 +125,7 @@ Vue.component('buy-video', {
               currency_code: "USD",
               description: "Video - web render",
               amount: {
-                value: "4.50"
+                value: "2.50"
               }
             }]
           });
