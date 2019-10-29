@@ -86,5 +86,12 @@ Vue.component('ui', {
     set_progress(progress_ratio){
       this.progress_width = progress_ratio * window.innerWidth;
     }
+  },
+  watch:{
+    show_render_options(){
+      setTimeout(function(){
+        this.show_render_options = false;
+      }.bind(this), 5000);
+    }
   }
 })
