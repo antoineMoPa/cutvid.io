@@ -20,13 +20,16 @@ Vue.component('ui', {
        class="is-rendering">
       Please be patient while your video is rendering.
     </p>
-    <div class="render-buy-info" v-if="!player.rendering">
-      <p>
-        Render & buy
-      </p>
-    </div>
+    <a class="ui-button buy-button button-1"
+       v-if="!player.rendering && !show_render_options"
+       v-on:click="show_render_options = true"
+       title="High Quality render">
+      <img class="feather-button"
+           src="icons/feather/image.svg"/>
+      Render & buy
+    </a>
     <a class="ui-button buy-button button-2"
-       v-if="!player.rendering"
+       v-if="!player.rendering && show_render_options"
        v-on:click="renderLQ"
        title="Quick render">
       <img class="feather-button"
@@ -34,7 +37,7 @@ Vue.component('ui', {
       Espresso - US$ <span class="ui-price">2.50</span>
     </a>
     <a class="ui-button buy-button button-1"
-       v-if="!player.rendering"
+       v-if="!player.rendering && show_render_options"
        v-on:click="renderHQ"
        title="High Quality render">
       <img class="feather-button"
@@ -44,13 +47,16 @@ Vue.component('ui', {
     <a v-if="player.rendering"
        v-on:click="cancelRender"
        class="ui-button button-1 cancel-button">
+      <img class="feather-button"
+           src="icons/feather/x.svg"/>
       Cancel render
     </a>
   </div>`,
   data(){
     return {
       looping: false,
-      progress_width: 0
+      progress_width: 0,
+      show_render_options: false
     }
   },
   props: ["player"],

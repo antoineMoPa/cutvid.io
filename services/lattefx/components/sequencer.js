@@ -525,12 +525,18 @@ Vue.component('sequencer', {
         let scale = this.getScale();
 
         function formatTime(t){
+          if(isNaN(t)){
+            return "00m00s00";
+          }
+
           let m = Math.floor(t / 60);
           let s = Math.floor(t % 60);
           let cs = Math.floor((t - s) * 100);
+
           s = (s < 10)? "0" + s: s;
           m = (m < 10)? "0" + m: m;
           cs = (cs < 10)? "0" + cs: cs;
+
           return m + "m" + s + "s" + cs;
         }
         // Stop user from putting time bar before 0
