@@ -67,9 +67,11 @@
             active: false,
             uniqueID: (Math.random() + "").substr(0,10),
             texts: [],
+            textCanvas: null,
             focussedInput: null,
             player: null,
-            shaderProgram: null
+            shaderProgram: null,
+            backgroundColor: null
           };
         },
         methods: {
@@ -194,7 +196,6 @@
               ctx.fillText(t.text, x, y);
               ctx.restore();
             }
-
             this.shaderProgram.set_texture(
               "texture0",
               textCanvas,
@@ -265,6 +266,8 @@
                 });
               });
           });
+
+          document.fonts.ready.then(this.updateTexts);
         },
         beforeDestroy(){
           this.player.delete_on_resize_listener(this.uniqueID);

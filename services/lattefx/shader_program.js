@@ -312,6 +312,7 @@ class ShaderProgram {
 
     async function load() {
       if(!isVideo &&
+         !isAudio &&
          options.force_width != undefined ||
          options.force_height != undefined
         ){
@@ -325,15 +326,13 @@ class ShaderProgram {
 
       // Cleanup before setting again
       if(app.textures[name] != undefined){
-        if(name != "audio"){
-          app.delete_texture(name);
-        }
+        app.delete_texture(name);
       }
 
       var texture = null;
 
       if(!isAudioOnly) {
-        gl.createTexture();
+        texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
       }
 
@@ -450,6 +449,10 @@ class ShaderProgram {
 
     if(this.textures[name].isVideo){
       document.body.removeChild(this.textures[name].videoElement);
+    }
+    if(this.textures[name].isAudio){
+      document.body.removeChild(this.textures[name].audioElement);
+      return;
     }
 
     gl.deleteTexture(this.textures[name].texture);
