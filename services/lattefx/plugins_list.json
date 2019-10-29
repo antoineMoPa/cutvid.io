@@ -5,6 +5,9 @@
     },
 	"image": {
       "description": "Put an image at any place and size on the canvas."
+    },
+    "audio": {
+      "description": "Upload an audio track."
     }
   },
   "Text": {

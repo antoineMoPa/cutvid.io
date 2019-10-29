@@ -180,7 +180,7 @@ class ShaderProgram {
     gl.linkProgram(program);
 
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.log(gl.getProgramInfoLog(program));
+      console.error(gl.getProgramInfoLog(program));
     }
 
     gl.useProgram(program);
@@ -210,15 +210,29 @@ class ShaderProgram {
     options = options || {};
 
     let isVideo = false;
+    let isAudio = false;
+    let isAudioOnly = false;
     let videoElement = null;
     let audioElement = null;
     let autoplay = options.autoplay;
 
     if(options.videoFile != undefined){
       isVideo = true;
+      isAudio = true;
       videoElement = document.createElement("video");
+    }
+
+    if(isVideo || options.audioFile != undefined){
+      // Video also have an audio element for rendering purposes
+      isAudio = true;
       audioElement = document.createElement("audio");
 
+      if(!isVideo){
+        isAudioOnly = true;
+      }
+    }
+
+    if(isVideo){
       videoElement.addEventListener("error", function(error){
         options.onerror();
       });
@@ -253,9 +267,9 @@ class ShaderProgram {
     var pixel = new Uint8Array([0, 0, 0, 0]);
     var image = null;
 
-    if(!isVideo){
+    if(!isVideo && !isAudioOnly) {
       image = new Image();
-    } else {
+    } else if (isVideo) {
       image = videoElement;
     }
 
@@ -311,15 +325,22 @@ class ShaderProgram {
 
       // Cleanup before setting again
       if(app.textures[name] != undefined){
-        app.delete_texture(name);
+        if(name != "audio"){
+          app.delete_texture(name);
+        }
       }
 
-      var texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
+      var texture = null;
+
+      if(!isAudioOnly) {
+        gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+      }
 
       app.textures[name] = {
         texture,
         isVideo,
+        isAudio,
         videoElement: videoElement,
         audioElement: audioElement,
         updateVideo: updateVideo,
@@ -331,15 +352,23 @@ class ShaderProgram {
           app.textures[name].videoDigest = digest;
           app.textures[name].videoFile = options.videoFile;
         });
+      } else if (isAudioOnly) {
+        // Create digest for audio-only files
+        await app.get_file_digest(options.audioFile).then((digest) => {
+          app.textures[name].audioDigest = digest;
+          app.textures[name].audioFile = options.audioFile;
+        });
       }
 
-      gl.texImage2D(
-        gl.TEXTURE_2D, level, internalFormat,
-        srcFormat, srcType, image);
+      if(!isAudioOnly){
+        gl.texImage2D(
+          gl.TEXTURE_2D, level, internalFormat,
+          srcFormat, srcType, image);
 
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
 
       ready();
     }
@@ -349,14 +378,14 @@ class ShaderProgram {
 
     function checkReady(){
       if(timeUpdate && canplay){
-        options.ready.bind(videoElement)();
         updateVideo();
+        options.ready.bind(videoElement)();
+
         // Don't call again
         timeUpdate = false;
         canplay = false;
       }
     }
-
     // Handle videos/canvas texture
     if(isVideo){
       let videoBlobURL = window.URL.createObjectURL(options.videoFile);
@@ -369,6 +398,7 @@ class ShaderProgram {
         canplay = true;
         checkReady();
       });
+
       videoElement.currentTime = 0;
       videoElement.src = videoBlobURL;
       audioElement.src = videoBlobURL;
@@ -380,6 +410,26 @@ class ShaderProgram {
       if(!autoplay){
         videoElement.pause();
       }
+    } else if (isAudioOnly) {
+      let audioBlobURL = window.URL.createObjectURL(options.audioFile);
+
+      audioElement.addEventListener("canplay", function(){
+        options.ready.bind(audioElement)();
+      });
+
+      load();
+
+      audioElement.play().catch(function(error){
+        console.log(error);
+      });
+
+      if(!autoplay){
+        audioElement.pause();
+      }
+
+      audioElement.src = audioBlobURL;
+
+      load();
     } else if(url.tagName != undefined && url.tagName == "CANVAS"){
       image = url;
       load();

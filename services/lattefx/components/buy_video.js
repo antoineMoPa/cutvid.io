@@ -154,6 +154,7 @@ Vue.component('buy-video', {
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
       window.player.player.rendering = false;
+      el.querySelectorAll("video")[0].pause();
       fetch("/stats/lattefx_app_hit_close/");
     });
 

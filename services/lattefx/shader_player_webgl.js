@@ -76,12 +76,14 @@ class ShaderPlayerWebGL {
 
   /*
     Gets all audio streams for recording
+
+    Including videos, which can contain audio
    */
   get_all_audio_streams(){
     let streams = [];
 
     this.for_each_textures((t,s) => {
-      if(t.isVideo){
+      if(t.isAudio){
         if(typeof(t.audioElement.captureStream) == "undefined"){
           let track = t.audioElement.mozCaptureStream().getTracks()[0];
           // Firefox is slow on implementing that one
@@ -119,9 +121,9 @@ class ShaderPlayerWebGL {
     }
   }
 
-  for_each_current_videos(callback){
+  for_each_current_media(callback){
     this.for_each_textures((t) => {
-      if(t.isVideo){
+      if(t.isVideo || t.isAudio){
         callback(t);
       }
     });
@@ -129,16 +131,21 @@ class ShaderPlayerWebGL {
 
   play(){
     this.paused = false;
-    this.for_each_current_videos((v) => {
-      v.videoElement.muted = true;
-      v.audioElement.muted = false;
-      v.videoElement.play().then(function(){
-      }).catch(function(error){
-        console.log(error);
-      });
+    this.for_each_current_media((m) => {
+      // Play video if it is a video
+      if(m.isVideo){
+        m.videoElement.muted = true;
+        m.audioElement.muted = false;
+        m.videoElement.play().then(function(){
+        }).catch(function(error){
+          console.log(error);
+        });
+      }
+      // Play audio
       try{
-        v.audioElement.play();
+        m.audioElement.play();
       } catch (e) {
+        console.log(e);
         // Probably no audio here
       }
     });
@@ -148,9 +155,11 @@ class ShaderPlayerWebGL {
   pause(){
     this.paused = true;
     this.for_each_textures((t,s) => {
-      if(t.isVideo){
+      if (t.isVideo){
         t.audioElement.pause();
         t.videoElement.pause();
+      } else if (t.isAudio) {
+        t.audioElement.pause();
       }
     }, false);
   }
@@ -243,6 +252,9 @@ class ShaderPlayerWebGL {
     this.for_each_textures((t,s) => {
       if(t.isVideo){
         t.videoElement.currentTime = 0;
+      }
+      if(t.isAudio){
+        t.audioElement.currentTime = 0;
       }
     }, false);
 
@@ -355,22 +367,32 @@ class ShaderPlayerWebGL {
       let effect = seq.effect;
       let textures = effect.shaderProgram.textures;
 
-      if(!("video" in textures)){
-        continue;
+      if("video" in textures){
+        let vid = textures.video;
+
+        if(vid.isVideo){
+          sequences.push({
+            from: seq.from,
+            to: seq.to,
+            trimBefore: effect.trimBefore || 0,
+            digest: vid.videoDigest
+          });
+        }
       }
 
-      let vid = textures.video;
+      if("audio" in textures){
+        let aud = textures.audio;
 
-      if(!vid.isVideo){
-        continue;
+        if(aud.isAudio){
+          sequences.push({
+            from: seq.from,
+            to: seq.to,
+            trimBefore: effect.trimBefore || 0,
+            digest: aud.audioDigest
+          });
+        }
       }
 
-      sequences.push({
-        from: seq.from,
-        to: seq.to,
-        trimBefore: effect.trimBefore || 0,
-        digest: vid.videoDigest
-      });
     }
     return sequences;
   }
@@ -515,6 +537,8 @@ class ShaderPlayerWebGL {
           if (t.isVideo) {
             t.audioElement.pause();
             t.videoElement.pause();
+          } else if (t.isAudio) {
+            t.audioElement.pause();
           }
         }
       }
@@ -672,7 +696,7 @@ class ShaderPlayerWebGL {
           let tex = shaderProgram.textures[name];
           gl.activeTexture(gl.TEXTURE0 + i);
           var att = gl.getUniformLocation(program, name);
-          if(tex.isVideo){
+          if(tex.isVideo || tex.isAudio){
             // Seek to right time
             let trimBefore = parseFloat(seq.trimBefore);
             let timeFrom = parseFloat(seq.from);
@@ -681,21 +705,29 @@ class ShaderPlayerWebGL {
             if (this.rendering && this.renderMode == "HQ") {
               let timeTo = parseFloat(seq.to);
               // Get exact frame
-              await tex.updateVideoHQ(
-                this.fps,
-                trimBefore,
-                timeFrom-trimBefore,
-                shouldBeTime
-              );
+              if(tex.isVideo){
+                await tex.updateVideoHQ(
+                  this.fps,
+                  trimBefore,
+                  timeFrom-trimBefore,
+                  shouldBeTime
+                );
+              }
+
+              // Clear after first instance of a video for a frame
+              // This prevent flicker when rendering
               if(!has_cleared){
                 this.clear();
                 has_cleared = true;
               }
             } else {
-              // Get approximate frame
-
-              let mediaElements = [tex.videoElement];
-              mediaElements.push(tex.audioElement);
+              // Get approximate timing
+              let mediaElements = [];
+              if(tex.isVideo){
+                mediaElements.push(tex.videoElement);
+              } else if (tex.isAudio) {
+                mediaElements.push(tex.audioElement);
+              }
 
               for (let element of mediaElements){
                 let currTime = element.currentTime;
@@ -712,10 +744,11 @@ class ShaderPlayerWebGL {
                 }
               }
 
-              tex.videoElement.muted = true;
-              tex.audioElement.muted = false;
-
-              texSuccess &= tex.updateVideo();
+              if(tex.isVideo){
+                tex.videoElement.muted = true;
+                tex.audioElement.muted = false;
+                texSuccess &= tex.updateVideo();
+              }
             }
           } else {
             gl.bindTexture(gl.TEXTURE_2D, tex.texture);
