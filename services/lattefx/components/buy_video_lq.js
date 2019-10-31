@@ -115,6 +115,13 @@ Vue.component('buy-video-lq', {
       document.head.appendChild(script);
     },
     initPaypal(){
+      let free_this_month = true;
+
+      if(free_this_month){
+        this.canDownload = true;
+        return
+      }
+
       let app = this;
       let paymentContainer = this.$el.querySelectorAll(".payment-container")[0];
       paypal.Buttons({
