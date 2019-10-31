@@ -94,12 +94,13 @@ Vue.component('player', {
     </div>
     <div id="main-player">
       <div class="canvas-container">
-        <button
-          v-if="player != null && player.sequences.length == 0"
-          class="empty-player-button lfx-button"
-          v-on:click="launch_template_selector()">
-          Start by loading a template
-        </button>
+        <div v-if="player != null && player.sequences.length == 0">
+          <button
+            class="empty-player-button lfx-button"
+            v-on:click="launch_template_selector()">
+            Start by loading a template
+          </button>
+        </div>
       </div>
       <div class="player-overlay"/>
       <sequencer
@@ -349,7 +350,5 @@ Vue.component('player', {
     this.switch_panel(0);
     this.$refs['panel-selector'].switch_to(0);
     this.pause();
-
-    this.loadLatteFxFile("default.lattefx");
   },
 });

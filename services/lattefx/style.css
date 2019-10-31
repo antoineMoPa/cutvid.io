@@ -227,6 +227,11 @@ a:visited{
   background:#3f3f3f;
 }
 
+#main-player canvas{
+  background: url(images/landing_image.png);
+  background-size: contain;
+}
+
 .player-overlay{
   position:absolute;
   top:0;
