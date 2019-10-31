@@ -93,7 +93,14 @@ Vue.component('player', {
       </div>
     </div>
     <div id="main-player">
-      <div class="canvas-container"/>
+      <div class="canvas-container">
+        <button
+          v-if="player != null && player.sequences.length == 0"
+          class="empty-player-button lfx-button"
+          v-on:click="launch_template_selector()">
+          Start by loading a template
+        </button>
+      </div>
       <div class="player-overlay"/>
       <sequencer
         ref="sequencer"
@@ -312,6 +319,9 @@ Vue.component('player', {
       this.fps = data.fps;
 
       this.$refs['sequencer'].unserialize(data.scenes, true);
+    },
+    launch_template_selector(){
+      this.$refs['sequencer'].launch_template_selector();
     }
   },
   watch: {

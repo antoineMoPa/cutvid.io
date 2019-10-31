@@ -59,7 +59,7 @@ Vue.component('sequencer', {
           <img src="icons/feather/plus.svg" title="new sequence" width="20"/>
           New sequence
         </button><br>
-        <button v-on:click="fromTemplateButton"
+        <button v-on:click="launch_template_selector()"
                 class="add-button">
           <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
           From template
@@ -424,7 +424,7 @@ Vue.component('sequencer', {
       let timeSpacer = this.$refs["time-spacer"];
       timeSpacer.style.left = (maxTo * scale.timeScale * 1.33) + "px"
     },
-    fromTemplateButton(){
+    launch_template_selector(){
       if(this.player != null && this.player.rendering) { return; }
 
       let app = this;

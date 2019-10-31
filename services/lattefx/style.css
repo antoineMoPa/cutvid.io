@@ -204,6 +204,14 @@ input{
   margin-top:20px;
 }
 
+.empty-player-button{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:1010;
+}
+
 /* END PLAYER --------------- */
 
 
@@ -506,7 +514,6 @@ input{
   position:absolute;
   top:20px;
   left: calc(50% - 250px);
-  z-index:1000;
   max-width:580px;
   box-shadow: 0 0 10px rgba(0,0,0,0.8);
   background:#fff;
@@ -531,7 +538,7 @@ input{
   left:calc(50% - 510px);
   padding-left:20px;
   padding-right:20px;
-  z-index:1000;
+  z-index:2000;
   box-shadow:0 0 30px rgba(0,0,0,0.8);
   border-radius:10px;
   text-align:left;
@@ -744,13 +751,19 @@ input{
   max-width:480px;
 }
 
-.scene-template-selector button{
+.lfx-button{
   background:#3af;
   color:#fff;
-  display: inline-block;
   border: none;
-  float: right;
+  padding:10px;
+  border-radius:3px;
+  cursor:pointer;
+}
+
+.scene-template-selector .lfx-button{
   margin-bottom: 20px;
+  float: right;
+  display: inline-block;
 }
 
 .popup .effect-description,

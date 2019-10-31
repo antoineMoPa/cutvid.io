@@ -21,7 +21,7 @@ Vue.component('scene-template-selector', {
 
       <p class="template-description">
        {{ content.description }}
-        <button class="ui-button">
+        <button class="ui-button lfx-button">
           Use!
         </button>
       </p>
