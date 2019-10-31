@@ -429,9 +429,14 @@ Vue.component('sequencer', {
 
       let app = this;
 
+      app.loading_scene = true;
+
       this.$refs['scene-template-selector'].open(function(data){
         let erase = false;
         app.unserialize(data, erase);
+        setTimeout(function(){
+          app.loading_scene = false;
+        },1000)
       });
     },
     addSequenceAndDrag(){
