@@ -51,14 +51,14 @@ Vue.component('player', {
                        'settings-panel-hidden':
                        '')">
       <panel-selector ref="panel-selector"
-        v-bind:panelNames="['Effects', 'Video']"
+        v-bind:panelNames="['Effects &  Videos', 'Properties']"
         v-on:switch="switch_panel"/>
 
       <div class="switchable-panel all-sequences-container">
         <!-- sequencer puts stuff here -->
       </div>
       <div class="switchable-panel">
-        <h4>Save</h4>
+        <h4>Save a .lattefx project</h4>
         <p>Download a working copy to modify your video later.</p>
         <label>
           <button v-on:click="onSaveLatteFxFile">
@@ -66,7 +66,7 @@ Vue.component('player', {
           </button>
         </label>
         <br>
-        <h4>Load</h4>
+        <h4>Load a .lattefx project</h4>
         <label>
           Load a .lattefx file<br>
           <input type="file" v-on:change="onLoadLatteFxFile"/>
