@@ -8,11 +8,34 @@
   <body>
     <div id="main_app">
     </div>
-
+    <div class="form-notice">
+      <p>
+        Please help me jumpstart Lattefx by filling a
+        <br>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScb_mbpafTrCLf73RPhNlkVz3RUHK_k-4KUKa69RKKn8f4evQ/viewform?usp=sf_link"
+           target="_blank">
+          2 minutes Form
+        </a>
+        <br>
+        I would appreciate a ton!
+      </p>
+      <button class="lfx-button close-button"
+              onclick="closeForm()">
+        No, close this
+      </button>
+      <p style="font-size:10px;margin-top:-10px;">If you already responded, feel free to close!</p>
+    </div>
     <script>
      /* redirect /app to /app/ */
      if(/\/app$/.test(window.location.href)){
        window.location.href += "/";
+     }
+     function closeForm(){
+       document.querySelectorAll('.form-notice')[0].classList.add('hidden');
+       window.localStorage.close_form_notice_november_2019 = "true";
+     }
+     if(window.localStorage.close_form_notice_november_2019 == "true"){
+       closeForm();
      }
     </script>
 
