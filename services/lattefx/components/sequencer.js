@@ -125,16 +125,20 @@ Vue.component('sequencer', {
       return data;
     },
     unserialize(data, erase){
+      let time_offset = 0;
       if (erase) {
         this.sequences = [];
+      } else {
+        // If not erasing, add at end of last sequence
+        time_offset = this.player.get_total_duration();
       }
       this.player.sequences = this.sequences;
       for(let i = 0; i < data.length; i++){
         this.sequences.push({
           id: utils.increment_unique_counter("sequence"),
           layer: data[i].layer || 0,
-          from: data[i].from || 0,
-          to: data[i].to || 1,
+          from: data[i].from + time_offset|| 0,
+          to: data[i].to + time_offset || 1,
           effect: null,
           initialEffectGetter: function(){
             return data[i].effect;
