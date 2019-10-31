@@ -21,7 +21,8 @@ Vue.component('ui', {
       Please be patient while your video is rendering.
     </p>
     <a class="ui-button buy-button button-1"
-       v-if="!player.rendering && !show_render_options"
+       v-if="!player.rendering && !show_render_options &&
+             player.sequences.length > 0"
        v-on:click="show_render_options = true"
        title="High Quality render">
       <img class="feather-button"

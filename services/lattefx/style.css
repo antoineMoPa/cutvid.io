@@ -584,7 +584,6 @@ input{
 
 .theme-box:hover{
   box-shadow:0 0 30px rgba(0,0,0,0.3);
-  transform:scale(1.05);
 }
 
 .theme-box img{
@@ -592,6 +591,29 @@ input{
   height:200px;
   border-radius:3px;
   box-shadow:0 0 8px rgba(0,0,0,0.3);
+}
+
+.theme-box{
+    position:relative;
+}
+
+.new-item-indicator{
+    position:absolute;
+    top:0;
+    right:-20px;
+    background:#af00ff;
+    color:#fff;
+    font-size:15px;
+    padding:8px;
+    border-radius:6px;
+    font-weight:600;
+    transition:0.3s;
+	cursor:default;
+}
+
+.theme-box:hover .new-item-indicator{
+    top:-20px;
+    right:-40px;
 }
 
 .popup .theme-box img{

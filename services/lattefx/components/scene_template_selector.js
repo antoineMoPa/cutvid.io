@@ -10,6 +10,7 @@ Vue.component('scene-template-selector', {
   </h3>
   <div v-for="(templates, categoryName) in categories">
     <h4>{{ categoryName }}</h4>
+    <br>
     <a v-for="(content, template) in templates" class="theme-box" v-on:click="chooseTemplate(template)">
       <video controls loop
              v-bind:poster='"scene_templates/" + template + "/preview.png"'>
@@ -24,6 +25,11 @@ Vue.component('scene-template-selector', {
         <button class="ui-button lfx-button">
           Use!
         </button>
+        <div class="new-item-indicator"
+             v-if="is_date_new(content.date)"
+             v-bind:title="content.date">
+          New!
+        </div>
       </p>
     </a>
     <br><br>
@@ -54,6 +60,17 @@ Vue.component('scene-template-selector', {
     open(callback) {
       this.callback = callback;
       this.$el.classList.toggle("hidden");
+    },
+    is_date_new(_date){
+      let date = new Date(_date).getTime();
+      let now = new Date().getTime()
+      let new_threshold = 60*60*1000*7*2*24; // 2 Week
+
+      if(now - date < new_threshold){
+        return true;
+      }
+
+      return false;
     }
   },
   mounted(){
