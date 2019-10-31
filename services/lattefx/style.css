@@ -744,12 +744,26 @@ input{
   max-width:480px;
 }
 
+.scene-template-selector button{
+  background:#3af;
+  color:#fff;
+  display: inline-block;
+  border: none;
+  float: right;
+  margin-bottom: 20px;
+}
+
 .popup .effect-description,
 .popup .template-description{
   margin-left:0;
   font-size:13px;
-  max-width:200px;
+  max-width:480px;
   text-align:left;
+}
+
+.popup .template-description{
+  line-height:45px;
+  font-size:15px;
 }
 
 .video-preview{

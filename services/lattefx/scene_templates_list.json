@@ -1,16 +1,7 @@
 {
-  "Text": {
-    "freeCookiesAllWeekend": {
-      "description": "A cute theme to get you started with text."
-    },
-	"BUG": {
-      "description": "A glitchy theme with an 80's vibe."
-    },
-	"BigBlue": {
-      "description": "Big Blue text theme."
-    },
-    "ProductSheet": {
-      "description": "A clean product presentation slide."
+  "Lattefx Intro": {
+    "lattefx_intro": {
+      "description": "A quick introduction to Lattefx editing"
     }
   }
 }

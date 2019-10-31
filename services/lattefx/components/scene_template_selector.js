@@ -21,6 +21,9 @@ Vue.component('scene-template-selector', {
 
       <p class="template-description">
        {{ content.description }}
+        <button class="ui-button">
+          Use!
+        </button>
       </p>
     </a>
     <br><br>
@@ -38,7 +41,7 @@ Vue.component('scene-template-selector', {
       if(this.callback != null){
         let callback = this.callback;
 
-        fetch('scene_templates/'+template+'/scenes.json?' + Math.random())
+        fetch('scene_templates/'+template+'/template.lattefx?' + Math.random())
           .then((data) => {
             data.json().then((data) => {
               callback(data.scenes);

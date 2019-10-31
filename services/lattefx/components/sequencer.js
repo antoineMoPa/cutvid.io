@@ -52,22 +52,18 @@ Vue.component('sequencer', {
             Select a sequence to begin!
           </p>
       </div>
-      <!--
-        <scene-template-selector ref="scene-template-selector"/>
-      -->
+      <scene-template-selector ref="scene-template-selector"/>
       <div class="adder-container" v-if="dragging == null">
         <button v-on:click="addSequenceAndDrag"
                 class="add-button">
           <img src="icons/feather/plus.svg" title="new sequence" width="20"/>
           New sequence
         </button><br>
-        <!--
         <button v-on:click="fromTemplateButton"
                 class="add-button">
           <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
           From template
         </button><br>
-        -->
         <button v-on:click="deleteSelected"
                 class="delete-button">
           <img src="icons/feather/trash.svg" title="new sequence from template" width="20"/>
