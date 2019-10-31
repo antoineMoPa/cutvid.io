@@ -470,16 +470,25 @@ Vue.component('sequencer', {
       this.selected = [];
     },
     deleteSelected(){
+      let app = this;
       if(this.player != null && this.player.rendering) { return; }
 
       let selected = this.selected;
       this.sequences = this.sequences.filter(function(row, id){
         if(selected.indexOf(id) != -1){
+          let component = app.$refs["sequence-effect-"+id];
+
+          if(typeof(component) != "undefined"){
+            component = component[0];
+            component.$destroy();
+          }
+
           return false;
         }
         return true;
       });
       this.player.sequences = this.sequences;
+      this.player.clear_transparent();
       this.$nextTick(this.repositionSequences);
       fetch("/stats/lattefx_app_delete_sequence/");
     },

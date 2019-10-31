@@ -520,6 +520,14 @@ class ShaderPlayerWebGL {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
+  clear_transparent() {
+    let gl = this.gl;
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  }
+
   pause_non_current_media(){
     let time = this.time.time;
     for (let i = 0; i < this.sequences.length; i++) {
