@@ -86,6 +86,8 @@ Vue.component('sequencer', {
       time: {time: 0.0},
       selected: [],
       visibleDuration: 10,
+      has_moved: false,                /* Used to detect if mouse has moved
+                                          after clicking body */
       dragging: null,
       draggingBody: null,
       draggingLeft: null,
@@ -214,6 +216,7 @@ Vue.component('sequencer', {
     sequenceBodyDown(index, e, dragFromMiddle){
       if(this.player != null && this.player.rendering) { return; }
 
+      this.has_moved = false;
       this.dragging = index;
 
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
@@ -277,7 +280,7 @@ Vue.component('sequencer', {
 
       window.removeEventListener("mousemove", this.mouseMoveListener);
 
-      if(this.dragging != null){
+      if(this.dragging != null && this.has_moved){
         this.selected = [this.dragging];
       }
 
@@ -339,6 +342,8 @@ Vue.component('sequencer', {
       return null;
     },
     mouseMove(e){
+      this.has_moved = true;
+
       if(this.player != null && this.player.rendering) { return; }
 
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
