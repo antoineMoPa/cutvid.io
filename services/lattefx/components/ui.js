@@ -2,7 +2,7 @@ Vue.component('ui', {
   template: `<div class="ui" v-if="player != null">
     <div class="ui-progress" v-bind:style="'width:' + progress_width + 'px'">
     </div>
-    <div v-if="!player.rendering">
+    <div v-if="!player.rendering && player.sequences.length > 0">
       <a class="ui-button play-button"
          v-on:click="play()"
          v-if="this.player.paused">
@@ -16,7 +16,7 @@ Vue.component('ui', {
              src="icons/feather/pause.svg"/>
       </a>
     </div>
-    <p v-else
+    <p v-else-if="player.rendering"
        class="is-rendering">
       Please be patient while your video is rendering.
     </p>
