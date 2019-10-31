@@ -68,6 +68,9 @@ Vue.component('ui', {
     },
     pause(){
       this.player.pause();
+      if(window.localStorage.close_form_notice_november_2019 != "true"){
+        document.querySelectorAll('.form-notice')[0].classList.remove('hidden');
+      }
       fetch("/stats/lattefx_app_hit_pause/");
     },
     playLooping(){
