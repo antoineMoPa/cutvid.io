@@ -26,8 +26,8 @@ Vue.component('ui', {
        v-on:click="show_render_options = true"
        title="High Quality render">
       <img class="feather-button"
-           src="icons/feather/image.svg"/>
-      Render & buy
+           src="icons/feather/download.svg"/>
+      Download video
     </a>
     <a class="ui-button buy-button button-2"
        v-if="!player.rendering && show_render_options"
@@ -95,7 +95,7 @@ Vue.component('ui', {
     show_render_options(){
       setTimeout(function(){
         this.show_render_options = false;
-      }.bind(this), 5000);
+      }.bind(this), 10000);
     }
   }
 })
