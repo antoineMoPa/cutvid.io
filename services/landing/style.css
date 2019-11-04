@@ -162,6 +162,11 @@ input{
   margin-top: -3px;
 }
 
+.navbar a{
+  color: #fff;
+  margin-right: 20px;
+}
+
 .pricing-card.basic{
   border-top:10px solid #aaa;
   border-bottom:10px solid #aaa;
