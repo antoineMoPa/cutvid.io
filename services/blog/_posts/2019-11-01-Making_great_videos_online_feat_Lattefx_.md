@@ -78,6 +78,6 @@ There are many tools to bring videos together. The option I'd recommend is Latte
 <img src="https://lattefx.com/blog_static/lattefx.jpg" class="post-img" alt="Lattefx screenshot">
 <p class="img-legend">Use Lattefx to assemble great videos</p>
 
-With Lattefx, you can trim videos, combine videos, add text and effects. You can save your work as .lattefx files to keep editing another day. Once you are ready, just click render, enter your payment information (Payments are safely handled by paypal) and download your creation!
+With Lattefx, you can trim videos, combine videos, add text and effects. You can save your work as .lattefx files to keep editing another day. Once you are ready, just click render, enter your payment information (Payments are safely handled by PayPal) and download your creation!
 
 [Try Lattefx](https://lattefx.com/app/)
