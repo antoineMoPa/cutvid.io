@@ -4,4 +4,3 @@
 
 layout: home
 ---
-<h1>Lattefx blog</h1>

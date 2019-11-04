@@ -55,6 +55,13 @@ h1{
   font-size:40px;
 }
 
+h1, h2, a, .post-link{
+  color: #c96800;
+  &:visited{
+	color: #c96800;
+  }
+}
+
 p{
   font-size:20px;
   line-height:40px;
@@ -80,4 +87,14 @@ p{
   top:-95px;
   left:-20px;
   transform: skew(-0.01turn);
+}
+
+.head-img{
+  width:100%;
+  max-width:800px;
+  margin:auto;
+}
+
+header{
+  background:rgba(255,255,255,0.9);
 }

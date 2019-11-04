@@ -19,8 +19,8 @@
 # in the templates via {{ site.myvariable }}.
 
 name: Lattefx blog
-title: Fresh Lattefx posts to read with your coffee
-description: Lattefx is a new online video editor
+title: Lattefx blog
+description: Lattefx is an online video editor
 tags:
   - blog
   - template
