@@ -153,6 +153,10 @@
         },
         mounted(){
           this.findImageDim();
+          if(this.image == null){
+            this.image = "/app/plugins/mask/default.png";
+            this.loadImage(this.image);
+          }
         }
       }
     };
