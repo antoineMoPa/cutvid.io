@@ -24,7 +24,7 @@ Vue.component('buy-video-lq', {
     <!-- Paypal stuff goes here -->
   </div>
   <p v-if="canDownload" class="thank-you">
-    Thank you for your purchase!<br><br>
+    Thank you for using Lattefx!<br><br>
     Click this button to save your video.<br>
   </p>
   <p class="text-center" v-if="canDownload">
@@ -62,6 +62,12 @@ Vue.component('buy-video-lq', {
     {{email()}}<br>
     Help me improve this new product!
     <br><br>
+    We would also like you to fill our survey to help improve Lattefx:
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLScb_mbpafTrCLf73RPhNlkVz3RUHK_k-4KUKa69RKKn8f4evQ/viewform?usp=sf_link"
+       target="_blank">
+      2 minutes Form
+    </a>
+    <br><br>
   </p>
 </div>
 `,
@@ -69,7 +75,7 @@ Vue.component('buy-video-lq', {
     return {
       videoURL: null,
       previewURL: null,
-      canDownload: false,
+      canDownload: true,
       previewReady: false,
       error: null,
       stats: null
@@ -107,49 +113,6 @@ Vue.component('buy-video-lq', {
         {once: true}
       );
 
-      let client_id = this.settings.paypal_client_id;
-      let script = document.createElement("script");
-      script.type = "text/javascript";
-      script.onload = this.initPaypal;
-      script.src = "https://www.paypal.com/sdk/js?client-id="+client_id;
-      document.head.appendChild(script);
-    },
-    initPaypal(){
-      let free_this_month = true;
-
-      if(free_this_month){
-        this.canDownload = true;
-        return
-      }
-
-      let app = this;
-      let paymentContainer = this.$el.querySelectorAll(".payment-container")[0];
-      paypal.Buttons({
-        createOrder: function(data, actions) {
-          // Set up the transaction
-          return actions.order.create({
-            purchase_units: [{
-              currency_code: "USD",
-              description: "Video - web render",
-              amount: {
-                value: "2.50"
-              }
-            }]
-          });
-          fetch("/stats/lattefx_app_paypal_order_created/");
-        },
-        onApprove: function(data, actions) {
-          return actions.order.capture().then(function(details) {
-            fetch("/stats/lattefx_app_payment_done/");
-            app.canDownload = true;
-
-            // Temporary freebie
-            window.localStorage.last_buy = new Date();
-          });
-        }
-      }).render(paymentContainer);
-
-      fetch("/stats/lattefx_app_paypal_init/");
     },
     setVideoID(_id){
       this.videoID = _id;

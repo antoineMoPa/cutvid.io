@@ -35,7 +35,7 @@ Vue.component('ui', {
        title="Quick render">
       <img class="feather-button"
            src="icons/feather/image.svg"/>
-      Espresso - US$ <span class="ui-price">2.50</span> - FREE FOR NOVEMBER
+      Espresso <span class="ui-price">FREE</span>
     </a>
     <a class="ui-button buy-button button-1"
        v-if="!player.rendering && show_render_options"
