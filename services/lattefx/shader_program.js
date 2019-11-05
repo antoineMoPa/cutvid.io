@@ -448,14 +448,23 @@ class ShaderProgram {
     }
 
     if(this.textures[name].isVideo){
-      document.body.removeChild(this.textures[name].videoElement);
+      let el = this.textures[name].videoElement;
+      if(el.parentNode != null){
+        el.parentNode.removeChild(el);
+      }
     }
     if(this.textures[name].isAudio){
-      document.body.removeChild(this.textures[name].audioElement);
-      return;
+      let el = this.textures[name].audioElement;
+      if(el.parentNode != null){
+        document.body.removeChild(el);
+      }
     }
 
-    gl.deleteTexture(this.textures[name].texture);
+    if(this.textures[name].isVideo){
+      // Don't delete texture if audio only
+      gl.deleteTexture(this.textures[name].texture);
+    }
+
     delete this.textures[name];
   }
 
