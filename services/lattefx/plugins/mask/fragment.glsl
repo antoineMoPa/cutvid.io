@@ -36,7 +36,7 @@ void main(void){
     image *= step(0.0, imageUV.x);
     image *= step(0.0, imageUV.y);
 
-	float opacity = (image.r + image.g + image.b)/3.0;
+	float opacity = clamp(image.r + image.g + image.b, 0.0, 1.0);
 
     vec4 last = texture2D(previous_layer, lastUV);
 	vec4 mask_col = vec4(r,g,b,1.0);

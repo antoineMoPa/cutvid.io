@@ -1016,8 +1016,7 @@ a:visited{
 .dragging .text-box,
 .text-box.text-box-editable,
 .text-box:hover{
-  background:rgba(0,0,0,0.1);
-  border:1px dotted rgba(255,255,255,0.2);
+  border:1px dashed #000;
   opacity:1;
 }
 
@@ -1080,11 +1079,11 @@ a:visited{
   max-width:100%;
   max-height:100%;
   overflow:hidden;
-  background: rgba(0,0,0,0.8);
-  color: #eee;
+  background:rgba(0,0,0,0.2);
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  user-select: none;
 }
 
 /* END TEXT BOX */

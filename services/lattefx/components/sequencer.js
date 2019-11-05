@@ -35,8 +35,8 @@ Vue.component('sequencer', {
       <div class="all-sequences">
         <sequence-effect
           v-for="(sequence, sequenceIndex) in sequences"
-          v-bind:active="selected[selected.length-1] == sequenceIndex"
-          v-bind:class="(selected[selected.length-1] == sequenceIndex)? '': 'sequence-effects-hidden'"
+          v-bind:active="selected.length > 0 && selected[selected.length-1] == sequenceIndex"
+          v-bind:class="(selected.length > 0 && selected[selected.length-1] == sequenceIndex)? '': 'sequence-effects-hidden'"
           v-bind:key="'sequence-' + sequence.id"
           v-bind:ref="'sequence-effect-' + sequence.id"
           v-on:register='registerSequenceEffect'
@@ -485,7 +485,9 @@ Vue.component('sequencer', {
 
           if(typeof(component) != "undefined"){
             component = component[0];
-            component.$destroy();
+            if(typeof(component) != "undefined"){
+              component.$destroy();
+            }
           }
 
           return false;

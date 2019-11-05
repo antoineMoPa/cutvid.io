@@ -97,12 +97,11 @@
             });
           },
           loadImage(data){
+            if(this.shaderProgram == null){
+              return;
+            }
             if(this.imageName.indexOf(".svg") != -1){
-              this.uniforms.imageWidth.value = 2048;
-              this.uniforms.imageHeight.value = 2048;
               this.shaderProgram.set_texture('image', data, function(){}, {
-                force_width: 2048,
-                force_height: 2048
               });
             } else {
               this.shaderProgram.set_texture('image', data);
@@ -116,8 +115,6 @@
               reader.addEventListener('load', () => {
                 app.image = reader.result;
                 app.imageName = name;
-
-
               }, false);
             }
 
@@ -153,10 +150,7 @@
         },
         mounted(){
           this.findImageDim();
-          if(this.image == null){
-            this.image = "/app/plugins/mask/default.png";
-            this.loadImage(this.image);
-          }
+          this.loadImage(this.image);
         }
       }
     };

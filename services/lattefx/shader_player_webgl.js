@@ -47,13 +47,19 @@ class ShaderPlayerWebGL {
 
     if(this.gl == null){
       // Init canvas
-      var gl = this.canvas.getContext('webgl', {preserveDrawingBuffer: true, premultipliedAlpha: false});
+      var gl = this.canvas.getContext('webgl2', {preserveDrawingBuffer: true, premultipliedAlpha: false});
 
       // Detect webgl2 native problems
       // (read: my old laptop's graphics card is too old)
-      // We default to not working
-      if (gl != null) {
+      if (gl == null) {
         this.native_webgl2_supported = true;
+        gl = this.canvas.getContext('webgl', {preserveDrawingBuffer: true, premultipliedAlpha: false});
+
+        if (gl == null) {
+          fetch("/stats/no-webgl/");
+        } else {
+          fetch("/stats/no-webgl2/");
+        }
       }
 
       this.canvas.width = this.width;

@@ -64,7 +64,7 @@ Vue.component('effects-selector', {
       el.classList.add("hidden");
     });
 
-	fetch("plugins_list.json?v=0.0.1").then(function(resp){
+	fetch("plugins_list.json?v=0.0.2").then(function(resp){
 	  resp.json()
 		.then(function(data){
 		  app.categories = data;
