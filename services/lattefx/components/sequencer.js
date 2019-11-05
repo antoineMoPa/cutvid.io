@@ -387,8 +387,15 @@ Vue.component('sequencer', {
 
       if(this.draggingBody){
         let newFrom = time - this.draggingTimeFrom;
-        seq.from = newFrom;
-        seq.to = newFrom + duration;
+        let snap = this.findSnap(seq.from);
+        let diff = 0;
+
+        if(snap != null){
+          diff = snap - seq.from;
+        }
+
+        seq.from = newFrom + diff;
+        seq.to = newFrom + duration + diff;
         seq.layer = layer;
         this.repositionSequences();
       }
