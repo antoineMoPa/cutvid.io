@@ -1,69 +1,88 @@
 {
   "Input": {
     "video": {
-      "description": "Upload a video."
+      "description": "Upload a video.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
 	"image": {
-      "description": "Put an image at any place and size on the canvas."
+      "description": "Put an image at any place and size on the canvas.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
     "audio": {
-      "description": "Upload an audio track."
+      "description": "Upload an audio track.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
+    }
+  },
+  "Images": {
+    "mask": {
+      "description": "Use black&white images as a mask to create shapes.",
+      "date": "Mon Nov  4 22:53:12 EST 2019"
     }
   },
   "Text": {
     "gfontTextLayer": {
-      "description": "Choose from 800+ Google WebFonts."
+      "description": "Choose from 800+ Google WebFonts.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },
   "Layer transitions (Place above 2 other sequences)": {
     "leftRightReveal": {
-      "description": "Reveals a text or any layer from left to right."
+      "description": "Reveals a text or any layer from left to right.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
     "fadeSceneReveal": {
-      "description": "Fades in scene over last one."
+      "description": "Fades in scene over last one.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
     "clockSceneReveal": {
-      "description": "Fades in last scene with a clock motion."
+      "description": "Fades in last scene with a clock motion.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },
   "Backgrounds": {
     "retrowave": {
-      "description": "Retro nostalgia poster effect with text. [Animated]"
+      "description": "Retro nostalgia poster effect with text. [Animated]",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
     "epicSunset": {
-      "description": "A retro sunset background. [Animated]"
+      "description": "A retro sunset background. [Animated]",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
     "uniformColor": {
-      "description": "Fill screen with a color."
-    },
-    "fashionista": {
-      "description": "Huge clean background shapes."
+      "description": "Fill screen with a color.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },
   "Retro elements": {
     "retroGrid": {
-      "description": "A retro computer grid as you have seen in classic posters."
+      "description": "A retro computer grid as you have seen in classic posters.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },
   "Post-Processing": {
     "edgeDetect": {
-      "description": "Edge detection effect."
+      "description": "Edge detection effect.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
     "vignette": {
-      "description": "Creates darker corners at the edges of the canvas."
+      "description": "Creates darker corners at the edges of the canvas.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },
   "Glitch": {
     "glitch": {
-      "description": "Old school color glitching effect."
+      "description": "Old school color glitching effect.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
     "glitchLines": {
-      "description": "Huge vertical glitch lines (use with care)."
+      "description": "Huge vertical glitch lines (use with care).",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },
   "Experts Only": {
     "blankEffect": {
-      "description": "Know how to code GLSL? Create your own effect!"
+      "description": "Know how to code GLSL? Create your own effect!",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   }
 }

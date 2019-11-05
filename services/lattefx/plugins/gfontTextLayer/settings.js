@@ -271,6 +271,8 @@
         },
         beforeDestroy(){
           this.player.delete_on_resize_listener(this.uniqueID);
+          alert("destroy");
+
         }
       }
     };

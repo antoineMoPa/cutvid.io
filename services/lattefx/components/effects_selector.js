@@ -15,6 +15,11 @@ Vue.component('effects-selector', {
       <p class="effect-description">
        {{ content.description }}
       </p>
+      <div class="new-item-indicator"
+         v-if="is_date_new(content.date)"
+         v-bind:title="content.date">
+        New!
+      </div>
     </a>
     <br><br>
   </div>
@@ -35,6 +40,17 @@ Vue.component('effects-selector', {
     open(callback) {
       this.callback = callback;
       this.$el.classList.toggle("hidden");
+    },
+    is_date_new(_date){
+      let date = new Date(_date).getTime();
+      let now = new Date().getTime()
+      let new_threshold = 60*60*1000*7*2*24; // 2 Week
+
+      if(now - date < new_threshold){
+        return true;
+      }
+
+      return false;
     }
   },
   mounted(){

@@ -401,8 +401,6 @@ Vue.component('sequencer', {
       return {totalDuration, timeScale, layerScale};
     },
     repositionSequences(){
-      if(this.player != null && this.player.rendering) { return; }
-
       let scale = this.getScale();
       let maxTo = 0.0;
       for(let i = 0; i < this.sequences.length; i++){

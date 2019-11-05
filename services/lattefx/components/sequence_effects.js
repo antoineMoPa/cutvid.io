@@ -1,7 +1,6 @@
 Vue.component('sequence-effect', {
   template: `
   <div class="sequence-effect">
-    <h4>Sequence {{index + 1}}</h4>
     <p class="effect" v-if="effect == null">
       <br>
       Start by choosing an effect!
