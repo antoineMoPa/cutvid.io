@@ -8,46 +8,10 @@
   <body>
     <div id="main_app">
     </div>
-    <div class="form-notice hidden">
-      <h3 style="margin-bottom:-20px;">Message from Lattefx developer: Sorry to interrupt!</h3>
-      <p>I'm the developer of Lattefx.</p>
-      <p>
-        Please help me jumpstart Lattefx by filling a
-        <br>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLScb_mbpafTrCLf73RPhNlkVz3RUHK_k-4KUKa69RKKn8f4evQ/viewform?usp=sf_link"
-           target="_blank">
-          2 minutes Form
-        </a>
-        <br>
-        I would appreciate a ton!
-      </p>
-      <p>
-        I'm a student, but I pledge to donate 2$ to greenpeace for the first 50 responders who give their email (I'll send proof).
-      </p>
-      <a class="lfx-button close-button"
-              href="https://docs.google.com/forms/d/e/1FAIpQLScb_mbpafTrCLf73RPhNlkVz3RUHK_k-4KUKa69RKKn8f4evQ/viewform?usp=sf_link"
-              target="_blank"
-              onclick="closeFeorm(true)">
-        Yes, take the form and give $2 to the planet for free
-      </a>
-      <button class="lfx-button close-button"
-              onclick="closeForm(false)">
-        Close this
-      </button>
-      <p style="font-size:10px;margin-top:-10px;">If you already responded, feel free to close! We will not show this again on this browser.</p>
-    </div>
     <script>
      /* redirect /app to /app/ */
      if(/\/app$/.test(window.location.href)){
        window.location.href += "/";
-     }
-     function closeForm(ret){
-       document.querySelectorAll('.form-notice')[0].classList.add('hidden');
-       window.localStorage.close_form_notice_november_2019 = "true";
-       return ret;
-     }
-     if(window.localStorage.close_form_notice_november_2019 == "true"){
-       closeForm();
      }
     </script>
 
