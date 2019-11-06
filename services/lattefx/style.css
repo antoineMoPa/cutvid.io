@@ -147,6 +147,15 @@ a:visited{
   right:200px;
 }
 
+.ui-button.button-left-1{
+  left:10px;
+  right:auto;
+}
+
+.ui-button.button-save{
+  background: #42935a;
+}
+
 .render-buy-info{
   position:absolute;
   top:0;
