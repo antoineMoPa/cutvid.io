@@ -56,6 +56,10 @@
       "description": "Multiply and apply exponent to rgb values.",
       "date": "Thu Nov  7 21:03:32 EST 2019"
     },
+    "invertColor": {
+      "description": "Invert colors",
+      "date": "Thu Nov  7 21:34:04 EST 2019"
+    },
     "uniformColor": {
       "description": "Fill screen with a color, optional transparency.",
       "date": "Monday Jul 1 16:03:37 EDT 2019"
