@@ -43,15 +43,21 @@
     "epicSunset": {
       "description": "A retro sunset background. [Animated]",
       "date": "Monday Jul 1 16:03:37 EDT 2019"
-    },
-    "uniformColor": {
-      "description": "Fill screen with a color, optional transparency.",
-      "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },
   "Retro elements": {
     "retroGrid": {
       "description": "A retro computer grid as you have seen in classic posters.",
+      "date": "Monday Jul 1 16:03:37 EDT 2019"
+    }
+  },
+  "Color": {
+    "colorBoost": {
+      "description": "Multiply and apply exponent to rgb values.",
+      "date": "Thu Nov  7 21:03:32 EST 2019"
+    },
+    "uniformColor": {
+      "description": "Fill screen with a color, optional transparency.",
       "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },

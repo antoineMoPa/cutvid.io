@@ -79,7 +79,7 @@
             this.texts.push({
               text: "Your text " + (this.texts.length+1) + "!",
               color: "#ffffff",
-              font: "Allerta Stencil",
+              font: "ABeeZee",
               size: 200,
               offsetTop: 400,
               offsetLeft: 50,
