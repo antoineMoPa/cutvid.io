@@ -317,29 +317,37 @@ Vue.component('sequencer', {
          - sequence that end/start close to time
          - 0
 
+
+        Returns the lowest of close element to avoid glitching
         (except currently dragged sequences)
+
+        Returns null if no snap is found
       */
 
+      // Fix negative times glitch
+      time = Math.max(time, 0.0);
       let delta = 0.005 * this.visibleDuration; // in second
+      let smallest = null;
+
       for(let i = 0; i < this.sequences.length; i++){
         let seq = this.sequences[i];
         if(this.dragging == i){
           continue;
         }
-        if(Math.abs(seq.from - time) < delta){
-          return seq.from;
+        if(Math.abs(seq.from - time) < delta && (smallest == null || smallest > seq.from)){
+          smallest = seq.from;
         }
-        if(Math.abs(seq.to - time) < delta){
-          return seq.to;
+        if(Math.abs(seq.to - time) < delta && (smallest == null || smallest > seq.to)){
+          smallest = seq.to;
         }
       }
 
       // Snap to 0
       if(Math.abs(time - 0) < delta){
-        return 0;
+        smallest = 0;
       }
 
-      return null;
+      return smallest;
     },
     mouseMove(e){
       this.has_moved = true;
