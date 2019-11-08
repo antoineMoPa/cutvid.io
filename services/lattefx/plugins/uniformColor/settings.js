@@ -11,11 +11,18 @@
 <div>
   <label>Color</label>
   <input v-model="color" type="color">
+  <label>Transparency</label>
+  <input v-model="uniforms.transparency.value" type="number" min="0" max="1" step="0.05">
 </div>`,
         data: function(){
           return {
             color: "#000000",
             uniforms: {
+              transparency: {
+                type: "f",
+                len: 1,
+                value: 0.0,
+              },
               r: {
                 type: "f",
                 len: 1,
