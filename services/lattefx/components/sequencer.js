@@ -30,7 +30,6 @@ Vue.component('sequencer', {
         <div class="time-bar" ref="timeBar">
           <span class="time-indicator" ref="timeIndicator"></span>
         </div>
-      </div>
       <!-- These effects are moved in mounted() -->
       <div class="all-sequences">
         <sequence-effect
@@ -51,33 +50,35 @@ Vue.component('sequencer', {
           <p v-else-if="selected.length == 0">
             Select a sequence to begin!
           </p>
+
+        </div>
       </div>
-      <scene-template-selector ref="scene-template-selector"/>
-      <div class="adder-container" v-if="dragging == null">
+
+      <div class="sequencer-buttons-container" v-if="dragging == null">
         <button v-on:click="addSequenceAndDrag"
                 class="add-button">
           <img src="icons/feather/plus.svg" title="new sequence" width="20"/>
           New sequence
-        </button><br>
+        </button>
         <button v-on:click="launch_template_selector()"
                 class="add-button">
           <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
           From template
-        </button><br>
-        <button v-on:click="deleteSelected"
-                class="delete-button">
-          <img src="icons/feather/trash.svg" title="new sequence from template" width="20"/>
-          Delete selected
-        </button><br>
-        <!--
+        </button>
         <button v-on:click="splitSelected"
                 v-if="selected.length > 0"
                 class="split-button">
           <img src="icons/feather/scissors.svg" title="cut sequence at selected time" width="20"/>
           Split selection
         </button>
-        -->
+        <button v-on:click="deleteSelected"
+                v-if="selected.length > 0"
+                class="delete-button">
+          <img src="icons/feather/trash.svg" title="new sequence from template" width="20"/>
+          Delete selected
+        </button>
       </div>
+      <scene-template-selector ref="scene-template-selector"/>
     </div>
   `,
   props: ["player", "scenes"],
@@ -130,10 +131,8 @@ Vue.component('sequencer', {
       let time_offset = 0;
       if (erase) {
         this.sequences = [];
-      } else {
-        // If not erasing, add at end of last sequence
-        time_offset = this.player.get_total_duration();
       }
+
       this.player.sequences = this.sequences;
       for(let i = 0; i < data.length; i++){
         this.sequences.push({
@@ -155,7 +154,7 @@ Vue.component('sequencer', {
 
       for(let i in this.sequences){
         // Is this sequence selected?
-        if(this.selected.indexOf(this.sequences[i].id) == -1){
+        if(this.selected.indexOf(parseInt(i)) == -1){
           continue;
         }
         let sequence = this.sequences[i];
@@ -183,11 +182,15 @@ Vue.component('sequencer', {
         if(data[0] == null){
           continue;
         }
-        // Videos: add a trim
-        if("trimBefore" in data[0].effect){
-          let new_trim = time - sequence.from;
-          data[0].effect.trimBefore += new_trim;
+
+        if(data[0].effect != null){
+          // Videos: add a trim
+          if("trimBefore" in data[0].effect){
+            let new_trim = time - sequence.from;
+            data[0].effect.trimBefore += new_trim;
+          }
         }
+
         this.unserialize(JSON.parse(JSON.stringify(data)), false);
 
         // Finally, update initial sequence's end
@@ -454,7 +457,7 @@ Vue.component('sequencer', {
     },
     addSequenceAndDrag(){
       if(this.player != null && this.player.rendering) { return; }
-
+      let app = this;
       this.addSequence();
       let index = this.sequences.length - 1;
       window.addEventListener("mousemove", function(e){
@@ -592,7 +595,7 @@ Vue.component('sequencer', {
     this.$el.addEventListener("wheel", this.onWheel);
 
     // Select first sequence by default
-    this.selected = [0];
+    this.selected = [];
 
     allSequencesContainer.appendChild(allSequences);
 

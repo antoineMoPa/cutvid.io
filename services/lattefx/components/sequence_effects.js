@@ -235,6 +235,11 @@ Vue.component('sequence-effect', {
       });
     },
     launchEffectSelector(callback){
+      let app = this;
+      callback = callback || function(effectName){
+        app.changeEffect(effectName);
+      };
+
       this.$refs['effectSelector'].open(callback);
     },
     updateTexts(){
@@ -269,8 +274,7 @@ Vue.component('sequence-effect', {
       let effect = this.initialEffectGetter();
       this.unserialize(effect, false);
     } else {
-      // Default to a video sequence available for upload
-      // this.changeEffect("video");
+
     }
   }
 });

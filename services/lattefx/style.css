@@ -753,13 +753,13 @@ a:visited{
   opacity:1.0;
 }
 
-.sequencer .adder-container{
+.sequencer .sequencer-buttons-container{
   height:80px;
   display:inline-block;
-  position: fixed;
-  right: 25px;
-  bottom: 135px;
+  position: absolute;
+  right: 10px;
   z-index:20;
+  top:10px;
 }
 
 .sequencer .add-button,
@@ -802,7 +802,7 @@ a:visited{
 
 .sequencer .sequencer-loading p{
   color:#fff;
-  line-height: 130px;
+  line-height: 20px;
 }
 
 /* END SEQUENCER */

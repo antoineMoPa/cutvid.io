@@ -398,17 +398,18 @@ class ShaderProgram {
         checkReady();
       });
 
-      videoElement.currentTime = 0;
       videoElement.src = videoBlobURL;
       audioElement.src = videoBlobURL;
       videoElement.loop = true;
       videoElement.muted = true;
+
       videoElement.play().catch(function(error){
-        console.log(error);
+        console.error("ShaderProgram video error: " + error);
       });
       if(!autoplay){
         videoElement.pause();
       }
+
     } else if (isAudioOnly) {
       let audioBlobURL = window.URL.createObjectURL(options.audioFile);
 
@@ -419,7 +420,7 @@ class ShaderProgram {
       load();
 
       audioElement.play().catch(function(error){
-        console.log(error);
+        console.error("Shader program audio error:" + error);
       });
 
       if(!autoplay){

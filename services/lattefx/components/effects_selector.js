@@ -6,7 +6,7 @@ Vue.component('effects-selector', {
   </div>
   <h3>
     <img src="icons/feather-dark/image.svg" width="30"/>
-    Effects
+    Select and effect
   </h3>
   <div v-for="(effects, categoryName) in categories">
     <h4>{{ categoryName }}</h4>
@@ -64,7 +64,8 @@ Vue.component('effects-selector', {
       el.classList.add("hidden");
     });
 
-	fetch("plugins_list.json?v=0.0.2").then(function(resp){
+    let random = Math.random();
+	fetch("plugins_list.json?r="+random).then(function(resp){
 	  resp.json()
 		.then(function(data){
 		  app.categories = data;
