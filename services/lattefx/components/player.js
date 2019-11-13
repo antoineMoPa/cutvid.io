@@ -118,8 +118,8 @@ Vue.component('player', {
         v-on:renderHQ="makeHQ"
         v-on:renderLQ="makeLQ"
         v-on:cancelRender="onCancelRender"
-        v-on:saveProgress="onSaveProgress"
         v-bind:player="player"/>
+    <auth ref="auth" v-bind:settings="settings"/>
   </div>`,
   data(){
     return {
@@ -269,17 +269,6 @@ Vue.component('player', {
       this.player.cancel_render();
     },
     onSaveLatteFxFile(){
-      let data = JSON.stringify(this.serialize());
-      let a = document.createElement("a");
-      var blob = new Blob([data], {type : 'text/json'});
-      var url = URL.createObjectURL(blob);
-      a.href = url;
-      a.download = "videodata.lattefx";
-      document.body.appendChild(a);
-      a.click();
-      fetch("/stats/lattefx_save_file/");
-    },
-    onSaveProgress(){
       let data = JSON.stringify(this.serialize());
       let a = document.createElement("a");
       var blob = new Blob([data], {type : 'text/json'});

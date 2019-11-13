@@ -154,7 +154,24 @@ a:visited{
 
 .ui-button.button-save{
   background: #42935a;
+  display: inline-block;
+  position: static;
 }
+
+.ui-auth-container{
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  text-align: left;
+}
+
+.ui-auth-container .sign-out,
+.ui-auth-container .sign-in{
+  color:#fff;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
 
 .render-buy-info{
   position:absolute;
@@ -1092,3 +1109,15 @@ a:visited{
   left:100px;
   left:calc(50% - 400px);
 }
+
+/* BEGIN AUTH */
+
+
+.auth-iframe{
+  width: calc(100% - 80px);
+  height: 600px;
+  border: none;
+  margin-left: 40px;
+}
+
+/* END AUTH */

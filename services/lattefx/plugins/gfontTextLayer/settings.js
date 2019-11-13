@@ -36,6 +36,7 @@
         <button v-bind:class="(info.font == text.font ? 'current-font':'') + ' gfont-button'"
                 v-on:click="changeFont(index, info.font)">
           <img v-bind:data-fontName="info.font"
+               loading="lazy"
                v-bind:src="'/app/plugins/gfontTextLayer/font_previews/'+info.font+'.png'"
                v-bind:alt="info.font"/>
         </button><br>

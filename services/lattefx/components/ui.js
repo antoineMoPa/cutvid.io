@@ -3,13 +3,6 @@ Vue.component('ui', {
     <div class="ui-progress" v-bind:style="'width:' + progress_width + 'px'">
     </div>
     <div v-if="!player.rendering && player.sequences.length > 0">
-      <a class="ui-button buy-button button-left-1 button-save"
-         v-on:click="saveProgress">
-        <img class="play-icon feather-button"
-             src="icons/feather/save.svg"/>
-          Save progress
-        </a>
-      </a>
       <a class="ui-button play-button"
          v-on:click="play()"
          v-if="this.player.paused">
@@ -86,9 +79,6 @@ Vue.component('ui', {
     renderHQ(){
       this.$emit("renderHQ");
       fetch("/stats/lattefx_app_click_render_hq/");
-    },
-    saveProgress(){
-      this.$emit("saveProgress");
     },
     cancelRender(){
       this.$emit("cancelRender");

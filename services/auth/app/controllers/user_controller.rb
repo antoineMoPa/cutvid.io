@@ -1,5 +1,6 @@
 class UserController < ApplicationController
-  
+  skip_before_action :verify_authenticity_token, only: [:sign_out_current_user]
+
   def make_first_admin
     if current_user.nil?
       return redirect_to "/"
@@ -19,7 +20,7 @@ class UserController < ApplicationController
     if current_user.nil?
       return redirect_to "/"
     end
-    
+
     if not current_user.is_admin
       return redirect_to "/"
     end
@@ -31,7 +32,7 @@ class UserController < ApplicationController
     if current_user.nil?
       return redirect_to "/"
     end
-    
+
     if not current_user.is_admin
       return redirect_to "/"
     end
@@ -43,7 +44,7 @@ class UserController < ApplicationController
     if current_user.nil?
       return redirect_to "/"
     end
-    
+
     if not current_user.is_admin
       return redirect_to "/"
     end
@@ -56,7 +57,6 @@ class UserController < ApplicationController
     render 'edit'
   end
 
-  
   def current_user_info
     status = nil
 
@@ -74,12 +74,14 @@ class UserController < ApplicationController
 
       status = {
         status: "logged_in",
-        email_summary: email_summary,
-        seconds_per_month: current_user.seconds_per_month,
-        seconds_left_this_month: current_user.seconds_left_this_month
+        email_summary: email_summary
       }
     end
 
     render :json => status
+  end
+
+  def sign_out_current_user
+    sign_out @user
   end
 end
