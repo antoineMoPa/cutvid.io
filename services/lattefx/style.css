@@ -6,6 +6,18 @@ body{
   margin:0;
 }
 
+header{
+  height:30px;
+  background:linear-gradient(#333,#222);
+}
+
+.header-logo{
+  height:20px;
+  position:absolute;
+  top:4px;
+  left:25px;
+}
+
 h3{
   color:#333;
   padding:30px;
@@ -165,13 +177,16 @@ a:visited{
   text-align: left;
 }
 
-.ui-auth-container .sign-out,
-.ui-auth-container .sign-in{
+.header-auth-container .sign-out,
+.header-auth-container .sign-in{
+  position:absolute;
+  right:20px;
+  top:6px;
   color:#fff;
   cursor: pointer;
   margin-left: 10px;
+  font-size:13px;
 }
-
 
 .render-buy-info{
   position:absolute;
@@ -246,6 +261,11 @@ a:visited{
 
 /* PLAYER --------------- */
 
+.player{
+  margin-top: 0px;
+  position: relative;
+}
+
 #main-player canvas{
   width:100%;
   margin-top:20px;
@@ -286,11 +306,11 @@ a:visited{
   color:#eee;
   border-radius:3px;
   position:fixed;
-  top:20px;
+  top:50px;
   left:20px;
   width:340px;
   height:100%;
-  height:calc(100% - 100px);
+  height:calc(100% - 130px);
   text-align:left;
   padding-left:15px;
   border-top-right-radius:5px;

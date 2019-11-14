@@ -14,13 +14,15 @@ Vue.component('auth', {
      </h3>
      <iframe class="auth-iframe"></iframe>
      <div class="ui-auth-container">
-       <!-- This gets moved in mounted() -->
        <a class="ui-button buy-button button-left-1 button-save"
          v-on:click="save_video">
-        <img class="play-icon feather-button"
-             src="icons/feather/save.svg"/>
-          Save progress
+       <img class="play-icon feather-button"
+            src="icons/feather/save.svg"/>
+         Save progress
        </a>
+     </div>
+     <div class="header-auth-container">
+       <!-- This gets moved in mounted() -->
        <a v-if="logged_in" v-on:click="sign_out" class="sign-out">Sign out</a>
        <a v-else v-on:click="sign_in" class="sign-in">Sign in</a>
      </div>
@@ -50,11 +52,12 @@ Vue.component('auth', {
       iframe.src = "/users/sign_in";
     },
     async save_video(){
-      let data = JSON.stringify(window.player.serialize());
-      var blob = new Blob([data], {type : 'text/json'});
 
       // Verify sign in as it could have timed out
       if(this.is_signed_in()){
+        let data = JSON.stringify(window.player.serialize());
+        var blob = new Blob([data], {type : 'text/json'});
+
         // TODO: save video
       } else {
         this.show_login();
@@ -62,7 +65,6 @@ Vue.component('auth', {
     },
     on_window_message(){
       let app = this;
-      console.log("message");
       this.is_signed_in().then((result) => {
         app.logged_in = result;
       });
@@ -107,11 +109,13 @@ Vue.component('auth', {
 
     this.$nextTick(() => {
       // Move sign in/out buttons to their place
-      let sign_in_out = document.querySelectorAll(".ui-auth-container")[0];
+      let sign_in_out = document.querySelectorAll(".header-auth-container")[0];
+      let header = document.querySelectorAll("header")[0];
+      header.appendChild(sign_in_out);
+
+      let save_button = document.querySelectorAll(".ui-auth-container")[0];
       let ui = document.querySelectorAll(".ui")[0];
-      ui.appendChild(sign_in_out);
-
-
+      ui.appendChild(save_button);
     });
   }
 });
