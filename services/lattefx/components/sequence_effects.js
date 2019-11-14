@@ -2,7 +2,6 @@ Vue.component('sequence-effect', {
   template: `
   <div class="sequence-effect">
     <p class="effect" v-if="effect == null">
-      <br>
       Start by choosing an effect!
     </p>
     <div class="effect">

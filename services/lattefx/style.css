@@ -177,15 +177,21 @@ a:visited{
   text-align: left;
 }
 
-.header-auth-container .sign-out,
-.header-auth-container .sign-in{
-  position:absolute;
-  right:20px;
-  top:6px;
-  color:#fff;
+.header-user-links{
+  position: absolute;
+  right: 20px;
+  top: 7px;
+  margin: 0;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.header-user-links .sign-out,
+.header-user-links .sign-in{
   cursor: pointer;
   margin-left: 10px;
-  font-size:13px;
+  font-size: 13px;
+  color: #fff;
 }
 
 .render-buy-info{

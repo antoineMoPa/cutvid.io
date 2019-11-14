@@ -23,27 +23,32 @@ Vue.component('auth', {
      </div>
      <div class="header-auth-container">
        <!-- This gets moved in mounted() -->
-       <a v-if="logged_in" v-on:click="sign_out" class="sign-out">Sign out</a>
-       <a v-else v-on:click="sign_in" class="sign-in">Sign in</a>
+       <p class="header-user-links">
+         <span v-if="user_info != null">
+           signed in as {{user_info.email_summary}}
+         </span>
+         <a v-if="user_info != null" v-on:click="sign_out" class="sign-out">Sign out</a>
+         <a v-else v-on:click="sign_in" class="sign-in">Sign in</a>
+       </p>
      </div>
    </div>`,
   data(){
     return {
       auth_url: "",
-      logged_in: false
+      user_info: null
     }
   },
   props: ["settings"],
   methods: {
-    async is_signed_in(){
+    async get_user_info(){
       let auth_url = this.settings.auth;
       let resp = await fetch(auth_url + "/current_user");
       let json = await resp.json();
 
       if(json.status == "logged_out"){
-        return false;
+        return null;
       } else {
-        return true;
+        return json;
       }
     },
     show_login(){
@@ -54,7 +59,7 @@ Vue.component('auth', {
     async save_video(){
 
       // Verify sign in as it could have timed out
-      if(this.is_signed_in()){
+      if(this.get_user_info() != null){
         let data = JSON.stringify(window.player.serialize());
         var blob = new Blob([data], {type : 'text/json'});
 
@@ -65,8 +70,8 @@ Vue.component('auth', {
     },
     on_window_message(){
       let app = this;
-      this.is_signed_in().then((result) => {
-        app.logged_in = result;
+      this.get_user_info().then((result) => {
+        app.user_info = result;
       });
     },
     async sign_out(){
@@ -75,8 +80,8 @@ Vue.component('auth', {
       await fetch(auth_url + "/sign_out", {
         method: "DELETE"
       });
-      this.is_signed_in().then((result) => {
-        app.logged_in = result;
+      this.get_user_info().then((result) => {
+        app.user_info = result;
       });
     },
     sign_in(){
@@ -87,12 +92,12 @@ Vue.component('auth', {
     settings(){
       let app = this;
 
-      this.is_signed_in().then((result) => {
-        app.logged_in = result;
+      this.get_user_info().then((result) => {
+        app.user_info = result;
       });
     },
-    logged_in(){
-      if(this.logged_in){
+    user_info(){
+      if(this.user_info != null){
         this.$el.classList.add("hidden");
       }
     }
