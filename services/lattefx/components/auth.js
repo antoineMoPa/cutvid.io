@@ -57,7 +57,6 @@ Vue.component('auth', {
       iframe.src = "/users/sign_in";
     },
     async save_video(){
-
       // Verify sign in as it could have timed out
       if(this.get_user_info() != null){
         let data = JSON.stringify(window.player.serialize());

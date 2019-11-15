@@ -161,7 +161,7 @@ Vue.component('player', {
       let app = this;
       let left_panel_width = 315;
       let x_spacing = 60 + left_panel_width + 40; // left theme settings panel and margin
-      let y_spacing = 100 + 150 + 50; // 100: bottom ui, 250: sequencer, margin
+      let y_spacing = 100 + 150 + 70; // 100: bottom ui, 250: sequencer, margin
 
       let x_available_space = window.innerWidth;
       let y_available_space = window.innerHeight;
