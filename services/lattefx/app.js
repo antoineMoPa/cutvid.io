@@ -6,7 +6,9 @@ var app = new Vue({
   },
   template: `<div>
                <header>
-                 <img src="images/logo.png" class="header-logo" alt="Latte fx"/>
+                 <a href="https://lattefx.com/" target="_blank">
+                   <img src="images/logo.png" class="header-logo" alt="Latte fx"/>
+                 </a>
                </header>
                <player v-bind:settings="settings"></player>
                <div v-if="!navigator_supported" class="navigator-no-support">
