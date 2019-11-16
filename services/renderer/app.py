@@ -9,6 +9,8 @@ import shutil
 import string
 import random
 import time
+import requests
+import jwt
 
 app = Flask(__name__)
 
@@ -18,6 +20,11 @@ TMP_FOLDER=os.path.expanduser("~/tmp/")
 
 if not os.path.exists(TMP_FOLDER):
     os.mkdir(TMP_FOLDER)
+
+USERS_FOLDER=os.path.expanduser("~/lattefx-users/")
+
+if not os.path.exists(USERS_FOLDER):
+    os.mkdir(USERS_FOLDER)
 
 def id_generator(size=40):
     """
@@ -47,6 +54,50 @@ def mark_cache(vidid,  keep_delta=None):
           cache_time_file.close()
 
 
+def read_token(token):
+    """ Validate a jwt token with auth """
+
+    request = requests.get(url=settings['auth'] + "/validate_jwt_token", params={
+        "token": token
+    });
+
+    if request.text == "true":
+        # Verification is done in auth
+        return jwt.decode(token, verify=False, algorithms=['HS256'])
+    else:
+        return None
+
+@app.route("/upload_project/<project_id>", methods=['POST', 'OPTIONS'])
+def upload_project(project_id):
+    """
+    This could be optimized by using nginx direct uploading
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+
+    if token is None:
+        return "error 1 bad token"
+
+    project_file = request.form['lattefx_file.lattefx']
+    project_id = int(project_id)
+    user_id = int(token['user_id'])
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    os.makedirs(user_folder, exist_ok=True)
+
+    project_folder = user_folder + "project-" + str(project_id) + "/"
+    os.makedirs(project_folder, exist_ok=True)
+
+    project_file_path = project_folder + "lattefx_file.lattefx"
+
+    with open(project_file_path, "w") as f:
+        f.write(project_file)
+
+    return "success"
+
 def clean_old_cache():
     """ call this to delete old files in cache """
 
@@ -74,8 +125,9 @@ def validate_and_sanitize_vidid(vidid):
 
 @app.after_request
 def apply_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = settings['app']
-    response.headers["Access-Control-Allow-Credentials"] = "true"
+    response.headers['Access-Control-Allow-Origin'] = settings['app']
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Encoding'
     return response
 
 @app.route("/")
@@ -106,7 +158,7 @@ def upload_video(vidid):
     vidid = validate_and_sanitize_vidid(vidid)
 
     if vidid is None:
-        return "error 1 bad token"
+        return "error 1 bad id"
 
     video_file = request.files['video.vid']
     folder = TMP_FOLDER + "/lattefx-cache-" + vidid
@@ -133,7 +185,7 @@ def upload_frame(vidid, frame):
     vidid = validate_and_sanitize_vidid(vidid)
 
     if vidid is None:
-        return "error 1 bad token"
+        return "error 1 bad id"
 
     frame = int(frame)
 
@@ -166,7 +218,7 @@ def get_video_frame(vidid, fps, frame_time):
     vidid = validate_and_sanitize_vidid(vidid)
 
     if vidid is None:
-        return "error 1 bad token"
+        return "error 1 bad id"
 
     # Sorted is used for clamping here
     # I think it is really beautiful
@@ -246,7 +298,7 @@ def render_video(vidid, fps):
     vidid = validate_and_sanitize_vidid(vidid)
 
     if vidid is None:
-        return "error 1 bad token"
+        return "error 1 bad id"
 
     fps = sorted([0, int(fps), 100])[1]
 
@@ -276,7 +328,7 @@ def render_video(vidid, fps):
             return "error 4 incoherent sequence timing"
 
         if file_digest is None:
-            return "error 5 bad token in sub sequence"
+            return "error 5 bad id in sub sequence"
 
         media_file = make_audio_media(file_digest)
 
@@ -348,7 +400,7 @@ def rendered_video(vidid, desired_filename):
     vidid = validate_and_sanitize_vidid(vidid)
 
     if vidid is None:
-        return "error 1 bad token"
+        return "error 1 bad id"
 
     folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 
@@ -371,7 +423,7 @@ def rendered_video_preview(vidid):
     vidid = validate_and_sanitize_vidid(vidid)
 
     if vidid is None:
-        return "error 1 bad token"
+        return "error 1 bad id"
 
     folder = TMP_FOLDER + "/lattefx-cache-" + vidid
 

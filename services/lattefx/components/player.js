@@ -306,6 +306,8 @@ Vue.component('player', {
     },
     serialize(){
       let data = {};
+
+      data.project_id = 1;
       data.width = this.width;
       data.height = this.height;
       data.fps = this.fps;

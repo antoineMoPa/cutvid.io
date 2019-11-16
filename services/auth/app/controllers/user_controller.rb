@@ -1,3 +1,5 @@
+require 'jwt'
+
 class UserController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:sign_out_current_user]
 
@@ -55,6 +57,24 @@ class UserController < ApplicationController
     @user.save!
 
     render 'edit'
+  end
+
+  def jwt_token
+    if current_user.nil?
+      render :plain => ""
+    else
+      render :plain => current_user.get_jwt_token()
+    end
+  end
+
+  def validate_jwt_token
+    hmac_secret = Rails.application.credentials.jwt_hmac_secret
+    puts params[:token]
+    JWT.decode params[:token], hmac_secret
+
+    # Exceptions are thown before we get here in case of bad token
+
+    render :plain => "true"
   end
 
   def current_user_info

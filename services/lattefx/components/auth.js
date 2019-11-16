@@ -57,10 +57,27 @@ Vue.component('auth', {
       iframe.src = "/users/sign_in";
     },
     async save_video(){
+      let auth_url = this.settings.auth;
+      let token = await (await fetch(auth_url + "/jwt_token")).text();
+
       // Verify sign in as it could have timed out
       if(this.get_user_info() != null){
-        let data = JSON.stringify(window.player.serialize());
-        var blob = new Blob([data], {type : 'text/json'});
+        let renderer_url = this.settings.renderer;
+        let data = window.player.serialize();
+        let project_id = data.project_id;
+        data = JSON.stringify(data);
+
+        let form = new FormData();
+        form.append('lattefx_file.lattefx', data);
+
+        fetch(renderer_url + "/upload_project/" + project_id, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Encoding': 'multipart/form-data'
+          },
+          body: form
+        });
 
         // TODO: save video
       } else {
