@@ -15,7 +15,7 @@ header{
   height:30px;
   position:absolute;
   top:8px;
-  left:13px;
+  left:40px;
 }
 
 h3{
@@ -175,6 +175,26 @@ a:visited{
   left: 10px;
   bottom: 10px;
   text-align: left;
+}
+
+.project-links{
+  line-height: 50px;
+  margin:0;
+  position:absolute;
+  left:175px;
+  top:0;
+}
+
+.project-links a{
+  color: #aaa;
+  cursor: pointer;
+  padding: 0 20px;
+  display: inline-block;
+}
+
+.project-links a:hover{
+  color: #fff;
+  background:rgba(255,255,255,0.02);
 }
 
 .header-user-links{
@@ -1147,3 +1167,54 @@ a:visited{
 }
 
 /* END AUTH */
+
+/* BEGIN  PROJECTS */
+
+.projects .project{
+  display: block;
+  background:#f5f5f5;
+  margin:0 30px;
+  margin-bottom:20px;
+  padding:0 20px;
+  line-height:40px;
+  color:#333;
+  border-radius:3px;
+}
+
+.projects .project:hover{
+  color:#000;
+}
+
+.projects .project-name{
+  border:none;
+  background:transparent;
+  padding-left:10px;
+  margin-left:-10px;
+}
+
+.projects .project-name:focus,
+.projects .project-name:active{
+  background:#fff;
+}
+
+.projects .project-actions{
+  float:right;
+}
+
+.projects .project-actions a{
+  margin-left:20px;
+  cursor:pointer;
+}
+
+.projects .open-project{
+  background:#3af;
+  color:#fff;
+  border-radius:3px;
+  padding:5px 10px;
+}
+
+.projects .delete-project{
+  color:#f33;
+}
+
+/* END  PROJECTS */

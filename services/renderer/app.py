@@ -67,6 +67,38 @@ def read_token(token):
     else:
         return None
 
+@app.route("/list_projects", methods=['GET', 'OPTIONS'])
+def list_projects():
+    """
+    List a user's projects
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+
+    if token is None:
+        return "error 1 bad token"
+
+    user_id = int(token['user_id'])
+
+    project_meta_files = glob.glob(USERS_FOLDER + "user-" + str(user_id) + "/project-*/lattefx_project.meta")
+
+    project_metas = []
+
+    for project_meta_file in project_meta_files:
+        # Extract project id
+        project_id = int(project_meta_file.split("/")[-2].split("-")[1])
+
+        with open(project_meta_file, "r") as f:
+            project_meta = json.loads(f.read())
+            project_meta["id"] = project_id
+            project_metas.append(project_meta)
+
+    return json.dumps(project_metas)
+
+
 @app.route("/upload_project/<project_id>", methods=['POST', 'OPTIONS'])
 def upload_project(project_id):
     """
@@ -91,10 +123,16 @@ def upload_project(project_id):
     project_folder = user_folder + "project-" + str(project_id) + "/"
     os.makedirs(project_folder, exist_ok=True)
 
+    project_meta = json.dumps({"name": "Untitled Project"})
+
     project_file_path = project_folder + "lattefx_file.lattefx"
+    project_meta_path = project_folder + "lattefx_project.meta"
 
     with open(project_file_path, "w") as f:
         f.write(project_file)
+
+    with open(project_meta_path, "w") as f:
+        f.write(project_meta)
 
     return "success"
 

@@ -56,9 +56,15 @@ Vue.component('auth', {
       let iframe = this.$el.querySelectorAll("iframe")[0];
       iframe.src = "/users/sign_in";
     },
-    async save_video(){
+    async get_token(){
       let auth_url = this.settings.auth;
       let token = await (await fetch(auth_url + "/jwt_token")).text();
+
+      return token
+    },
+    async save_video(){
+      let auth_url = this.settings.auth;
+      let token = await this.get_token();
 
       // Verify sign in as it could have timed out
       if(this.get_user_info() != null){
@@ -138,5 +144,7 @@ Vue.component('auth', {
       let ui = document.querySelectorAll(".ui")[0];
       ui.appendChild(save_button);
     });
+
+    window.auth = this; // This is in the limited globals approval list
   }
 });

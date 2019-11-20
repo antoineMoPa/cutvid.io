@@ -1,6 +1,9 @@
 Vue.component('player', {
   template:
   `<div class="player">
+    <p class="project-links">
+      <a v-on:click="browse_projects">Projects</a>
+    </p>
     <div v-bind:class="'settings-panel rendering-info-panel ' +
                        (player == null || !player.rendering?
                        'settings-panel-hidden':
@@ -120,6 +123,7 @@ Vue.component('player', {
         v-on:cancelRender="onCancelRender"
         v-bind:player="player"/>
     <auth ref="auth" v-bind:settings="settings"/>
+    <projects ref="projects" v-bind:settings="settings"/>
   </div>`,
   data(){
     return {
@@ -326,6 +330,9 @@ Vue.component('player', {
     },
     launch_template_selector(){
       this.$refs['sequencer'].launch_template_selector();
+    },
+    browse_projects(){
+      this.$refs['projects'].open();
     }
   },
   watch: {
@@ -353,5 +360,12 @@ Vue.component('player', {
     this.switch_panel(0);
     this.$refs['panel-selector'].switch_to(0);
     this.pause();
+
+    this.$nextTick(() => {
+      // Move project link to header
+      let links = document.querySelectorAll(".project-links")[0];
+      let header = document.querySelectorAll("header")[0];
+      header.appendChild(links);
+    });
   },
 });
