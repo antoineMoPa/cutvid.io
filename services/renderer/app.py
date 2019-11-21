@@ -98,6 +98,36 @@ def list_projects():
 
     return json.dumps(project_metas)
 
+@app.route("/delete_project/<project_id>", methods=['DELETE', 'OPTIONS'])
+def delete_project(project_id):
+    """
+    Delete a project
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+
+    if token is None:
+        return "error 1 bad token"
+
+    project_id = int(project_id)
+    user_id = int(token['user_id'])
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    os.makedirs(user_folder, exist_ok=True)
+
+    project_folder = user_folder + "project-" + str(project_id) + "/"
+    os.makedirs(project_folder, exist_ok=True)
+
+    try:
+        shutil.rmtree(project_folder)
+    except:
+        return "error removing project " + str(project_id) + " of user " + str(user_id)
+
+    return "success"
+
 
 @app.route("/upload_project/<project_id>", methods=['POST', 'OPTIONS'])
 def upload_project(project_id):
@@ -165,6 +195,7 @@ def validate_and_sanitize_vidid(vidid):
 def apply_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = settings['app']
     response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, DELETE'
     response.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Encoding'
     return response
 

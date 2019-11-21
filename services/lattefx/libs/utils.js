@@ -190,3 +190,50 @@ utils.debounce = function(id, fn){
 
   utils.bounces[id].time = now;
 }
+
+utils.ask_confirm = Vue.component('ask-confirm', {
+  template:
+  `<div class="popup ask-confirm">
+     <div v-bind:class="container_class">
+       <h3>
+         {{message}}
+       </h3>
+       <button class="button-yes" v-on:click="on_yes_button">{{button_yes}}</button>
+       <button class="button-no" v-on:click="on_no_button">{{button_no}}</button>
+     </div>
+   </div>`,
+  data(){
+    return {
+      message: "Really?",
+      button_yes: "Yes",
+      button_no: "No",
+      on_yes: function(){},
+      on_no: function(){},
+      container_class: ""
+    }
+  },
+  props: ["settings"],
+  methods: {
+    on_yes_button(){
+      try{
+        this.on_yes();
+      } catch(e){
+        console.error(e);
+      }
+      this.destroy();
+    },
+    on_no_button(){
+      try{
+        this.on_no();
+      } catch(e){
+        console.error(e);
+      }
+      this.destroy();
+    },
+    destroy(){
+      this.$destroy;
+      this.$el.innerHTML = "";
+      document.body.removeChild(this.$el);
+    }
+  },
+});

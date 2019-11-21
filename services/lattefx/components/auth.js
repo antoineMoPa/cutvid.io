@@ -41,6 +41,9 @@ Vue.component('auth', {
   props: ["settings"],
   methods: {
     async get_user_info(){
+      if(this.settings == null){
+        return;
+      }
       let auth_url = this.settings.auth;
       let resp = await fetch(auth_url + "/current_user");
       let json = await resp.json();

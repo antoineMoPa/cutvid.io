@@ -1217,4 +1217,37 @@ a:visited{
   color:#f33;
 }
 
+.projects-no-project{
+  color:#333;
+  text-align:center;
+  font-size:16px;
+  margin-bottom:30px;
+}
+
 /* END  PROJECTS */
+
+/* ASK CONFIRM POPUP */
+
+.ask-confirm{
+  width:600px;
+  left:calc(50% - 300px);
+  top:150px;
+  text-align:center;
+  padding-bottom:30px;
+}
+
+.ask-confirm button{
+  border:none;
+  background:#eee;
+  border-radius:5px;
+  padding:10px;
+  margin:0 10px;
+  cursor:pointer;
+}
+
+.project-confirm-delete .button-yes{
+  background:#f33;
+  color:#fff;
+}
+
+/* END ASK CONFIRM POPUP */
