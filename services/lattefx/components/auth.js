@@ -15,10 +15,20 @@ Vue.component('auth', {
      <iframe class="auth-iframe"></iframe>
      <div class="ui-auth-container">
        <a class="ui-button buy-button button-left-1 button-save"
+         v-if="!saving"
          v-on:click="save_video">
        <img class="play-icon feather-button"
+            v-if="show_saved_message"
+            src="icons/feather/check.svg"/>
+       <img class="play-icon feather-button"
+            v-else
             src="icons/feather/save.svg"/>
-         Save progress
+         <span v-if="show_saved_message">
+           Saved!
+         </span>
+         <span v-else>
+           Save progress
+         </span>
        </a>
      </div>
      <div class="header-auth-container">
@@ -35,7 +45,9 @@ Vue.component('auth', {
   data(){
     return {
       auth_url: "",
-      user_info: null
+      user_info: null,
+      saving: false,
+      show_saved_message: false
     }
   },
   props: ["settings"],
@@ -66,8 +78,13 @@ Vue.component('auth', {
       return token
     },
     async save_video(){
+      let app = this;
       let auth_url = this.settings.auth;
       let token = await this.get_token();
+
+      app.saving = true;
+
+      await this.$nextTick();
 
       // Verify sign in as it could have timed out
       if(this.get_user_info() != null){
@@ -86,9 +103,14 @@ Vue.component('auth', {
             'Content-Encoding': 'multipart/form-data'
           },
           body: form
+        }).then(() => {
+          app.saving = false;
+          app.show_saved_message = true;
+          setTimeout(()=>{
+            app.show_saved_message = false;
+          }, 2000);
         });
 
-        // TODO: save video
       } else {
         this.show_login();
       }

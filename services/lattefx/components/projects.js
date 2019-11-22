@@ -9,7 +9,8 @@ Vue.component('projects', {
        Projects
      </h3>
      <div v-for="project in projects" class="project">
-       <input v-bind:value="project.name" class="project-name"/>
+       <input v-model="project.name" type="text" class="project-name" v-on:keyup="begin_renaming(project)"/>&nbsp;
+       <a v-if="project.renaming" v-on:click="rename_project(project)">Save</a>
        <div class="project-actions">
          <a class="open-project">Open</a>
          <a class="delete-project" v-on:click="delete_project(project)">Delete</a>
@@ -52,7 +53,13 @@ Vue.component('projects', {
         }
       });
 
-      return await req.json();
+      let projects = await req.json();
+
+      for(let i in projects){
+        projects[i].renaming = false;
+      }
+
+      return projects;
     },
     delete_project(project){
       /* Ask for a confirmation to delete the project  */
@@ -93,6 +100,37 @@ Vue.component('projects', {
 
       // Update project list
       this.projects = await this.fetch_projects();
+    },
+    async rename_project(project){
+      project.renaming = false;
+
+      let auth = window.auth;
+      let renderer_url = this.settings.renderer;
+
+      if(auth.user_info == null){
+        auth.show_login();
+        this.close();
+        return;
+      }
+
+      let form = new FormData();
+      form.append('name', project.name);
+
+      let token = await auth.get_token();
+      let req = await fetch(renderer_url + "/rename_project/" + project.id, {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Encoding': 'multipart/form-data'
+        },
+        body: form
+      });
+
+      // Update project list
+      this.projects = await this.fetch_projects();
+    },
+    begin_renaming(project){
+      project.renaming = true;
     }
   },
   watch: {

@@ -116,15 +116,57 @@ def delete_project(project_id):
     user_id = int(token['user_id'])
 
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    os.makedirs(user_folder, exist_ok=True)
-
     project_folder = user_folder + "project-" + str(project_id) + "/"
-    os.makedirs(project_folder, exist_ok=True)
+
+    if not os.path.exists(project_folder):
+        return "error 8 no project folder found"
 
     try:
         shutil.rmtree(project_folder)
     except:
         return "error removing project " + str(project_id) + " of user " + str(user_id)
+
+    return "success"
+
+
+@app.route("/rename_project/<project_id>", methods=['POST', 'OPTIONS'])
+def rename_project(project_id):
+    """
+    Rename a project
+
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+
+    if token is None:
+        return "error 1 bad token"
+
+    project_id = int(project_id)
+    user_id = int(token['user_id'])
+    new_name = request.form['name']
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    project_folder = user_folder + "project-" + str(project_id) + "/"
+
+    project_meta_path = project_folder + "lattefx_project.meta"
+
+    if not os.path.exists(project_meta_path):
+        return "error 7 no project meta found"
+
+    project_meta = None
+
+    with open(project_meta_path, "r") as f:
+        project_meta = json.loads(f.read())
+
+    project_meta['name'] = new_name
+
+    print(new_name)
+
+    with open(project_meta_path, "w") as f:
+        f.write(json.dumps(project_meta))
 
     return "success"
 
