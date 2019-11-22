@@ -1174,10 +1174,15 @@ a:visited{
 
 /* BEGIN  PROJECTS */
 
+.popup.projects{
+  max-width:500px;
+  left: calc(50% - 250px);
+}
+
 .projects .project{
   display: block;
   background:#ffffff;
-  margin:0 30px;
+  margin:0 10px;
   margin-bottom:20px;
   padding:0 20px;
   line-height:40px;

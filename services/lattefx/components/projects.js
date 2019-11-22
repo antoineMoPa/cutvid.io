@@ -19,6 +19,8 @@ Vue.component('projects', {
      <div v-if="projects.length == 0">
        <p class="projects-no-project">You currently have no saved project.<br> Start one by clicking save progress next time you edit a video!</p>
      </div>
+     <div class="storage">
+     </div>
    </div>`,
   data(){
     return {
