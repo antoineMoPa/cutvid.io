@@ -9,10 +9,10 @@ Vue.component('projects', {
        Projects
      </h3>
      <div v-for="project in projects" class="project">
+       <a class="open-project">Open</a>
        <input v-model="project.name" type="text" class="project-name" v-on:keyup="begin_renaming(project)"/>&nbsp;
        <a v-if="project.renaming" v-on:click="rename_project(project)">Save</a>
-       <div class="project-actions">
-         <a class="open-project">Open</a>
+       <div class="project-right">
          <a class="delete-project" v-on:click="delete_project(project)">Delete</a>
        </div>
      </div>

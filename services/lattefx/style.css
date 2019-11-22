@@ -1176,7 +1176,7 @@ a:visited{
 
 .projects .project{
   display: block;
-  background:#f5f5f5;
+  background:#ffffff;
   margin:0 30px;
   margin-bottom:20px;
   padding:0 20px;
@@ -1198,14 +1198,18 @@ a:visited{
 
 .projects .project-name:focus,
 .projects .project-name:active{
-  background:#fff;
+  border:1px solid #aaa;
 }
 
-.projects .project-actions{
+.projects .open-project{
+  margin-right: 10px;
+}
+
+.projects .project-right{
   float:right;
 }
 
-.projects .project-actions a{
+.projects .project-right a{
   margin-left:20px;
   cursor:pointer;
 }
