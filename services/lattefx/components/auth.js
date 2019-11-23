@@ -21,13 +21,19 @@ Vue.component('auth', {
             v-if="show_saved_message"
             src="icons/feather/check.svg"/>
        <img class="play-icon feather-button"
-            v-else
+            v-else-if="user_info != null"
             src="icons/feather/save.svg"/>
+       <img class="play-icon feather-button"
+            v-else
+            src="icons/feather/user.svg"/>
          <span v-if="show_saved_message">
            Saved!
          </span>
-         <span v-else>
+         <span v-else-if="user_info != null">
            Save progress
+         </span>
+         <span v-else>
+           Sign in
          </span>
        </a>
      </div>
@@ -85,12 +91,27 @@ Vue.component('auth', {
       app.saving = true;
 
       await this.$nextTick();
-
+      this.user_info = await this.get_user_info();
       // Verify sign in as it could have timed out
-      if(this.get_user_info() != null){
+      if(this.user_info == null){
+        this.show_login();
+        app.saving = false;
+      } else{
         let renderer_url = this.settings.renderer;
         let data = window.player.serialize();
         let project_id = data.project_id;
+
+        // New project - get a new project id
+        if(project_id == null){
+          let req = await fetch(renderer_url + "/get_a_new_project_id", {
+            headers: {
+              'Authorization': 'Bearer ' + token,
+            }
+          });
+          project_id = await req.text();
+          window.player.project_id = project_id;
+        }
+
         data = JSON.stringify(data);
 
         let form = new FormData();
@@ -110,9 +131,6 @@ Vue.component('auth', {
             app.show_saved_message = false;
           }, 2000);
         });
-
-      } else {
-        this.show_login();
       }
     },
     on_window_message(){

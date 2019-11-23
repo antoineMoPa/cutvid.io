@@ -38,6 +38,7 @@ def id_generator(size=40):
     return ''.join(random.choice(chars) for _ in range(size))
 
 def folder_size(path):
+    """ Get folder size in bytes """
     # Thanks stack overflow:
     # https://stackoverflow.com/questions/1392413/
     root_directory = Path(path)
@@ -45,6 +46,9 @@ def folder_size(path):
     byte_count = sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file())
 
     return byte_count
+
+def project_meta_path_to_project_id(project_meta_file_path):
+    return int(project_meta_file_path.split("/")[-2].split("-")[1])
 
 def mark_cache(vidid,  keep_delta=None):
     """ hit the cache so a video is not deleted now """
@@ -107,6 +111,37 @@ def get_storage_info():
 
     return json.dumps(response)
 
+@app.route("/get_a_new_project_id", methods=['GET', 'OPTIONS'])
+def get_a_new_project_id():
+    """
+    Get a project id that has not been used yet
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+
+    if token is None:
+        return "error 1 bad token"
+
+    user_id = int(token['user_id'])
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    project_meta_files = glob.glob(user_folder + "/project-*/lattefx_project.meta")
+
+    project_metas = []
+
+    id_getter = project_meta_path_to_project_id
+
+    ids = [id_getter(f) for f in project_meta_files]
+
+    if len(ids) == 0:
+        return str(1)
+    else:
+        return str(sorted(ids)[-1] + 1)
+
+
 @app.route("/list_projects", methods=['GET', 'OPTIONS'])
 def list_projects():
     """
@@ -130,7 +165,7 @@ def list_projects():
 
     for project_meta_file in project_meta_files:
         # Extract project id
-        project_id = int(project_meta_file.split("/")[-2].split("-")[1])
+        project_id = project_meta_path_to_project_id(project_meta_file)
 
         with open(project_meta_file, "r") as f:
             project_meta = json.loads(f.read())
@@ -268,16 +303,20 @@ def upload_project(project_id):
     project_folder = user_folder + "project-" + str(project_id) + "/"
     os.makedirs(project_folder, exist_ok=True)
 
-    project_meta = json.dumps({"name": "Untitled Project"})
 
     project_file_path = project_folder + "lattefx_file.lattefx"
-    project_meta_path = project_folder + "lattefx_project.meta"
 
     with open(project_file_path, "w") as f:
         f.write(project_file)
 
-    with open(project_meta_path, "w") as f:
-        f.write(project_meta)
+    project_meta_path = project_folder + "lattefx_project.meta"
+
+    if not os.path.exists(project_meta_path):
+        # Create project meta for new projects
+        project_meta = json.dumps({"name": "Untitled Project"})
+
+        with open(project_meta_path, "w") as f:
+            f.write(project_meta)
 
     return "success"
 

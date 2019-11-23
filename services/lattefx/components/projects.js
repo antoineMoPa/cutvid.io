@@ -77,6 +77,10 @@ Vue.component('projects', {
       let auth = window.auth;
       let renderer_url = this.settings.renderer;
 
+      if(typeof(auth) == "undefined"){
+        return;
+      }
+
       if(auth.user_info == null){
         auth.show_login();
         this.close();

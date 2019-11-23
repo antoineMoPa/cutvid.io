@@ -134,7 +134,8 @@ Vue.component('player', {
       user_token: null,
       expert_mode: true,
       fps: 30,
-      watermark: ""
+      watermark: "",
+      project_id: null
     };
   },
   props: ["settings"],
@@ -309,7 +310,7 @@ Vue.component('player', {
     serialize(){
       let data = {};
 
-      data.project_id = 1;
+      data.project_id = this.project_id;
       data.width = this.width;
       data.height = this.height;
       data.fps = this.fps;
@@ -336,6 +337,7 @@ Vue.component('player', {
       this.$refs['projects'].on_open_project = async (project) => {
         let auth = window.auth;
         let token = await auth.get_token();
+        app.project_id = project.id;
 
         let req = await fetch(renderer_url + "/project/" + project.id, {
           headers: {
