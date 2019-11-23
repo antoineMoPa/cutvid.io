@@ -20,13 +20,21 @@ Vue.component('projects', {
        <p class="projects-no-project">You currently have no saved project.<br> Start one by clicking save progress next time you edit a video!</p>
      </div>
      <div class="storage">
+       <p>You have used <span class="percentage">{{used_percent}}%</span> of your storage on Lattefx cloud.</p>
+       <div class="storage-indicator">
+         <div class="storage-indicator-inner">
+         </div>
+       </div>
      </div>
    </div>`,
   data(){
     return {
       auth_url: "",
       user_info: null,
-      projects: []
+      projects: [],
+      used_bytes: 0,
+      available_bytes: 0,
+      used_percent: 0
     }
   },
   props: ["settings"],
@@ -37,6 +45,23 @@ Vue.component('projects', {
     },
     close(){
       this.$el.classList.add("hidden");
+    },
+    async update_storage_info(token){
+      let renderer_url = this.settings.renderer;
+      let req = await fetch(renderer_url + "/get_storage_info", {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+        }
+      });
+
+      let resp = await req.json();
+
+      this.used_percent = parseInt(resp.used_percent);
+
+      // Update bar width
+      let indicator_inner = this.$el.querySelectorAll(".storage-indicator-inner")[0];
+      indicator_inner.style.width = this.used_percent + "%";
+
     },
     async fetch_projects(){
       let auth = window.auth;
@@ -60,6 +85,10 @@ Vue.component('projects', {
       for(let i in projects){
         projects[i].renaming = false;
       }
+
+      // It is probably a good time to update used storage
+      // (but no need to await for this)
+      this.update_storage_info(token);
 
       return projects;
     },

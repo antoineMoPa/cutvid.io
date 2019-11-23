@@ -1263,4 +1263,26 @@ a:visited{
   color:#fff;
 }
 
+.projects .storage{
+  text-align: center;
+}
+
+.projects .storage .percentage{
+  font-weight:600;
+}
+
+.projects .storage .storage-indicator{
+  border:1px solid #bbb;
+  border-radius:3px;
+  width:80%;
+  margin:auto;
+  margin-bottom:20px;
+}
+
+.projects .storage .storage-indicator-inner{
+  height:10px;
+  width:10%;
+  background:#ddd;
+}
+
 /* END ASK CONFIRM POPUP */

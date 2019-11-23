@@ -1,4 +1,5 @@
 from flask import Flask, request, send_file
+from pathlib import Path
 import os
 import re
 import json
@@ -66,6 +67,40 @@ def read_token(token):
         return jwt.decode(token, verify=False, algorithms=['HS256'])
     else:
         return None
+
+@app.route("/get_storage_info", methods=['GET', 'OPTIONS'])
+def get_storage_info():
+    """
+    Get quota and used storage info
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+
+    if token is None:
+        return "error 1 bad token"
+
+    user_id = int(token['user_id'])
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+
+    # Thanks stack overflow:
+    # https://stackoverflow.com/questions/1392413/
+    root_directory = Path(user_folder)
+
+    bytecount = sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file())
+
+    available_storage = 1e8
+
+    response = {
+        "bytes": bytecount,
+        "available": available_storage,
+        "used_percent": float(bytecount)/available_storage*100.0
+    }
+
+    return json.dumps(response)
 
 @app.route("/list_projects", methods=['GET', 'OPTIONS'])
 def list_projects():
