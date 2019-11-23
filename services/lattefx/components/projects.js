@@ -13,6 +13,7 @@ Vue.component('projects', {
        <input v-model="project.name" type="text" class="project-name" v-on:keyup="begin_renaming(project)"/>&nbsp;
        <a v-if="project.renaming" v-on:click="rename_project(project)">Save</a>
        <div class="project-right">
+         {{parseInt(project.bytecount / 1e6)}}MB
          <a class="delete-project" v-on:click="delete_project(project)">Delete</a>
        </div>
      </div>
@@ -25,6 +26,8 @@ Vue.component('projects', {
          <div class="storage-indicator-inner">
          </div>
        </div>
+       <p>Used space: {{parseInt(used_bytes / 1e6)}}MB<br>
+       Total space: {{parseInt(available_bytes / 1e6)}}MB</p>
      </div>
    </div>`,
   data(){
@@ -57,6 +60,8 @@ Vue.component('projects', {
       let resp = await req.json();
 
       this.used_percent = parseInt(resp.used_percent);
+      this.available_bytes = resp.available_bytes;
+      this.used_bytes = resp.used_bytes;
 
       // Update bar width
       let indicator_inner = this.$el.querySelectorAll(".storage-indicator-inner")[0];

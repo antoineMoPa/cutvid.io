@@ -37,6 +37,15 @@ def id_generator(size=40):
 
     return ''.join(random.choice(chars) for _ in range(size))
 
+def folder_size(path):
+    # Thanks stack overflow:
+    # https://stackoverflow.com/questions/1392413/
+    root_directory = Path(path)
+
+    byte_count = sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file())
+
+    return byte_count
+
 def mark_cache(vidid,  keep_delta=None):
     """ hit the cache so a video is not deleted now """
 
@@ -86,17 +95,13 @@ def get_storage_info():
 
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
 
-    # Thanks stack overflow:
-    # https://stackoverflow.com/questions/1392413/
-    root_directory = Path(user_folder)
+    bytecount = folder_size(user_folder)
 
-    bytecount = sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file())
-
-    available_storage = 1e8
+    available_storage = 100 * 1e6
 
     response = {
-        "bytes": bytecount,
-        "available": available_storage,
+        "used_bytes": bytecount,
+        "available_bytes": available_storage,
         "used_percent": float(bytecount)/available_storage*100.0
     }
 
@@ -118,7 +123,8 @@ def list_projects():
 
     user_id = int(token['user_id'])
 
-    project_meta_files = glob.glob(USERS_FOLDER + "user-" + str(user_id) + "/project-*/lattefx_project.meta")
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    project_meta_files = glob.glob(user_folder + "/project-*/lattefx_project.meta")
 
     project_metas = []
 
@@ -128,8 +134,13 @@ def list_projects():
 
         with open(project_meta_file, "r") as f:
             project_meta = json.loads(f.read())
-            project_meta["id"] = project_id
-            project_metas.append(project_meta)
+
+        # Populate project info with id and size
+        project_meta["id"] = project_id
+        project_folder = user_folder + "project-" + str(project_id) + "/"
+        project_meta["bytecount"] = folder_size(project_folder)
+
+        project_metas.append(project_meta)
 
     return json.dumps(project_metas)
 
