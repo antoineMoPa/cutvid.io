@@ -297,16 +297,14 @@ Vue.component('player', {
     loadLatteFxFile(url){
       let app = this;
 
-      // this.$refs['sequencer'].loading_scene = true;
+      this.$refs['sequencer'].loading_scene = true;
 
-      /*
       fetch(url).then((result) => {
         result.json().then((obj) => {
           app.unserialize(obj);
           this.$refs['sequencer'].loading_scene = false;
         })
       });
-      */
     },
     serialize(){
       let data = {};
@@ -332,7 +330,24 @@ Vue.component('player', {
       this.$refs['sequencer'].launch_template_selector();
     },
     browse_projects(){
+      let renderer_url = this.settings.renderer;
+      let app = this;
       this.$refs['projects'].open();
+      this.$refs['projects'].on_open_project = async (project) => {
+        let auth = window.auth;
+        let token = await auth.get_token();
+
+        let req = await fetch(renderer_url + "/project/" + project.id, {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+          }
+        });
+        let data = await req.json();
+
+        this.$refs['sequencer'].loading_scene = true;
+        app.unserialize(data);
+        this.$refs['sequencer'].loading_scene = false;
+      };
     }
   },
   watch: {

@@ -144,6 +144,33 @@ def list_projects():
 
     return json.dumps(project_metas)
 
+@app.route("/project/<project_id>", methods=['GET', 'OPTIONS'])
+def get_project(project_id):
+    """
+    Read a project
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+
+    if token is None:
+        return "error 1 bad token"
+
+    project_id = int(project_id)
+    user_id = int(token['user_id'])
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    project_folder = user_folder + "project-" + str(project_id) + "/"
+    project_file_path = project_folder + "lattefx_file.lattefx"
+
+    if not os.path.exists(project_file_path):
+        return "error 8 no project file found"
+
+    with open(project_file_path, "r") as f:
+        return f.read()
+
 @app.route("/delete_project/<project_id>", methods=['DELETE', 'OPTIONS'])
 def delete_project(project_id):
     """
