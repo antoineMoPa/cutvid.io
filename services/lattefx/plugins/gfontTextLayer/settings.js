@@ -19,29 +19,9 @@
     <br>
     <label><span>Color</span></label>
     <input v-model="text.color" type="color">
-    <h4>Font selection</h4>
+    <br/><br/>
+    <button v-on:click="browse_fonts(index)">Change font</button>
     <p class="info">Current font: {{text.font}}</p>
-    <div v-if="text.showFonts">
-      <button v-on:click="text.showFonts = false"
-              class="hide-fonts-button"
-        >Hide Fonts</button>
-    </div>
-    <div v-if="!text.showFonts">
-      <button v-on:click="text.showFonts = true">Browse Fonts</button>
-    </div>
-    <br><br>
-    <div class="gfont-scrollbox" v-if="text.showFonts">
-      <div v-for="info in fonts">
-        <span class="raw-fontname">{{info.font}}</span><br>
-        <button v-bind:class="(info.font == text.font ? 'current-font':'') + ' gfont-button'"
-                v-on:click="changeFont(index, info.font)">
-          <img v-bind:data-fontName="info.font"
-               loading="lazy"
-               v-bind:src="'/app/plugins/gfontTextLayer/font_previews/'+info.font+'.png'"
-               v-bind:alt="info.font"/>
-        </button><br>
-      </div>
-    </div>
     <textBox
            v-if="active"
            v-on:down="focusText"
@@ -64,7 +44,6 @@
         data: function(){
           return {
             serializeExclude: ["fonts", "showFonts"],
-            fonts: [],
             active: false,
             uniqueID: (Math.random() + "").substr(0,10),
             texts: [],
@@ -76,6 +55,17 @@
           };
         },
         methods: {
+          browse_fonts(index){
+            let app = this;
+            let picker = new utils.gfont_picker();
+            let container = document.createElement("div");
+            document.body.appendChild(container);
+            picker.$mount(container);
+            picker.on_font = (fontName) => {
+              app.changeFont(index, fontName);
+            };
+            picker.container_class = "gfont-plugin-font-picker";
+          },
           addBox(){
             this.texts.push({
               text: "Your text " + (this.texts.length+1) + "!",
@@ -207,6 +197,7 @@
             let app = this;
 
             for(let i = 0; i < this.texts.length; i++){
+              console.log("loading: " + this.texts[i].font);
               let promise = utils.load_gfont(
                 this.texts[i].font,
                 this.texts[i].size,
@@ -221,6 +212,7 @@
         watch: {
           texts: {
             handler: function () {
+              this.newFont();
               this.updateTexts();
             },
             deep: true
@@ -238,36 +230,12 @@
         },
         mounted(){
           let app = this;
-          let img = document.createElement("img");
-          let imgload = new Promise(function(resolve, reject) {
-            img.onload = function(){
-              resolve(null);
-            };
-          });
-          this.img = img;
 
           this.canvas = document.createElement("canvas");
 
           if(this.player != null){
             this.player.add_on_resize_listener(this.updateTexts.bind(this), this.uniqueID);
           }
-
-          img.src = "/app/plugins/gfontTextLayer/fonts.png";
-
-          Promise.all([
-            imgload,
-            fetch("/app/plugins/gfontTextLayer/fonts.json")
-          ]).then(function(values){
-            values[1].json()
-              .then(function(data){
-                app.fonts = data;
-                app.$nextTick(function(){
-                  // Load initial font
-                  app.newFont();
-                });
-              });
-          });
-
           document.fonts.ready.then(this.updateTexts);
         },
         beforeDestroy(){

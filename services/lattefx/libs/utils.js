@@ -237,3 +237,67 @@ utils.ask_confirm = Vue.component('ask-confirm', {
     }
   },
 });
+
+
+
+utils.gfont_picker = Vue.component('gfont-picker', {
+  template:
+  `<div class="popup gfont-picker">
+     <div v-bind:class="container_class">
+       <h3>
+         <img src="icons/feather-dark/edit-2.svg" width="30"/>
+         Pick a font
+       </h3>
+       <div v-for="info in fonts">
+         <span class="raw-fontname">{{info.font}}</span><br>
+         <button class="gfont-button"
+                v-on:click="on_font_button(info.font)">
+           <img v-bind:data-fontName="info.font"
+                v-bind:src="'/app/plugins/gfontTextLayer/font_previews/'+info.font+'.png'"
+                v-bind:alt="info.font"/>
+         </button><br>
+       </div>
+       <button v-on:click="load_more" class="load-more-button">
+         View more!
+       </button>
+     </div>
+   </div>`,
+  data(){
+    return {
+      fonts: [],
+      on_font: ()=>{},
+      container_class: ""
+    }
+  },
+  props: ["settings"],
+  methods: {
+    on_font_button(fontName){
+      try{
+        this.on_font(fontName);
+      } catch(e){
+        console.error(e);
+      }
+      this.destroy();
+    },
+    destroy(){
+      this.$destroy;
+      this.$el.innerHTML = "";
+      document.body.removeChild(this.$el);
+    },
+    load_more(){
+      for(let i = 0; i < 8; i++){
+        this.fonts.push(this.all_fonts[i]);
+      }
+      this.all_fonts = this.all_fonts.splice(15);
+    }
+  },
+  mounted(){
+    let app = this;
+    let req = fetch("/app/plugins/gfontTextLayer/fonts.json").then((resp) => {
+      resp.json().then((data) => {
+        app.all_fonts = data.splice(15);
+        app.fonts = app.all_fonts.splice(0,15)
+      });
+    });
+  }
+});
