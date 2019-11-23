@@ -563,7 +563,7 @@ a:visited{
 .time-spacer{
   position:absolute;
   top:5px;
-  height:80px;
+  height:150px;
 }
 
 .sequence-effects .info{
@@ -758,6 +758,15 @@ a:visited{
   -ms-user-select: none;
   overflow-x:auto;
   overflow-y:hidden;
+}
+
+.sequencer-scrollbox{
+  max-width: 100%;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  position: relative;
+  max-height: 155px;
+  height: 155px;
 }
 
 .sequencer .sequence{

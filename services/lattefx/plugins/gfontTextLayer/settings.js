@@ -197,7 +197,6 @@
             let app = this;
 
             for(let i = 0; i < this.texts.length; i++){
-              console.log("loading: " + this.texts[i].font);
               let promise = utils.load_gfont(
                 this.texts[i].font,
                 this.texts[i].size,

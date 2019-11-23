@@ -1,14 +1,13 @@
 Vue.component('sequencer', {
   template: `
-    <div class="sequencer"
-         v-on:click.self="clickSequencer">
+    <div class="sequencer">
       <div class="sequencer-loading"
            v-if="loading_scene">
         <p>
           loading scene
         </p>
       </div>
-      <div class="sequencer-scrollbox">
+      <div class="sequencer-scrollbox" v-on:click.self="clickSequencer">
         <div
           v-for="(sequence, index) in sequences"
           v-bind:class="'sequence ' + ((selected.indexOf(index) != -1)? 'selected': '')"
@@ -198,6 +197,12 @@ Vue.component('sequencer', {
       }
     },
     onWheel(e){
+      if(!e.shiftKey){
+        return;
+      } else {
+        e.stopPropagation();
+      }
+
       if(e.deltaY < 0){
         this.visibleDuration -= 10;
       } else {
@@ -533,6 +538,7 @@ Vue.component('sequencer', {
         if(e.key == "a"){
           if(e.ctrlKey){
             e.preventDefault();
+            e.stopPropagation();
             this.selected = [];
             for(let i = 0; i < this.sequences.length; i++){
               this.selected.push(i);
