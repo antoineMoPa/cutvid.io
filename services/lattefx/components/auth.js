@@ -74,8 +74,9 @@ Vue.component('auth', {
     },
     show_login(){
       this.$el.classList.remove("hidden");
+      let auth_url = this.settings.auth;
       let iframe = this.$el.querySelectorAll("iframe")[0];
-      iframe.src = "/users/sign_in";
+      iframe.src = auth_url + "/users/sign_in";
     },
     async get_token(){
       let auth_url = this.settings.auth;
