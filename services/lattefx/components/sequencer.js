@@ -49,7 +49,6 @@ Vue.component('sequencer', {
           <p v-else-if="selected.length == 0">
             Select a sequence to begin!
           </p>
-
         </div>
       </div>
 

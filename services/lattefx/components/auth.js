@@ -18,18 +18,18 @@ Vue.component('auth', {
        <!-- We repeat this node 2 times because we'll
             place it in many places to encourage saving
             and logging in -->
-       <a class="ui-button buy-button button-left-1 button-save"
+       <a class="ui-button button-left-1 button-save"
          v-if="!saving"
          v-on:click="save_video">
-       <img class="play-icon feather-button"
-            v-if="show_saved_message"
-            src="icons/feather/check.svg"/>
-       <img class="play-icon feather-button"
-            v-else-if="user_info != null"
-            src="icons/feather/save.svg"/>
-       <img class="play-icon feather-button"
-            v-else
-            src="icons/feather/user.svg"/>
+         <img class="play-icon feather-button"
+              v-if="show_saved_message"
+              src="icons/feather/check.svg"/>
+         <img class="play-icon feather-button"
+              v-else-if="user_info != null"
+              src="icons/feather/save.svg"/>
+         <img class="play-icon feather-button"
+              v-else
+              src="icons/feather/user.svg"/>
          <span v-if="show_saved_message">
            Saved!
          </span>
@@ -40,6 +40,9 @@ Vue.component('auth', {
            Sign in
          </span>
        </a>
+       <button v-else class="ui-button saving-video">
+         Saving video...
+       </button>
      </div>
      <div class="header-auth-container">
        <!-- This gets moved in mounted() -->
