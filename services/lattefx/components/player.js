@@ -304,11 +304,13 @@ Vue.component('player', {
 
       this.$refs['sequencer'].loading_scene = true;
 
-      fetch(url).then((result) => {
-        result.json().then((obj) => {
-          app.unserialize(obj);
-          this.$refs['sequencer'].loading_scene = false;
-        })
+      this.$nextTick(() => {
+        fetch(url).then((result) => {
+          result.json().then((obj) => {
+            app.unserialize(obj);
+            app.$refs['sequencer'].loading_scene = false;
+          })
+        });
       });
     },
     serialize(){
@@ -342,6 +344,10 @@ Vue.component('player', {
         let auth = window.auth;
         let token = await auth.get_token();
         app.project_id = project.id;
+
+        this.$refs['sequencer'].loading_scene = true;
+
+        await this.$nextTick();
 
         let req = await fetch(renderer_url + "/project/" + project.id, {
           headers: {

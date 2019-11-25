@@ -885,11 +885,16 @@ a:visited{
 
 .sequencer .sequencer-loading p{
   color:#fff;
-  line-height: 20px;
   position: absolute;
   left: 50%;
-  top: calc(50% - 30px);
+  top: calc(50% - 60px);
   color: #999;
+  background: #333;
+  height:60px;
+  padding: 0 20px;
+  line-height:60px;
+  z-index:200;
+  border-radius:5px;
 }
 
 /* END SEQUENCER */
