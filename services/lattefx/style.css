@@ -155,6 +155,10 @@ a:visited{
   margin-bottom: -7px;
 }
 
+.settings-panel .button-save{
+  color: #fff;
+}
+
 .saving-video{
   display: inline-block;
   background:#555;
