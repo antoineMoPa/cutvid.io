@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   root to: "home#index"
 
   scope "/auth" do
-    root to: "home#index"
+    # :as => :user_root is for proper redirection in devise
+    # (else we get redirected to home)
+    root to: "home#index", :as => :user_root
 
     devise_for :users
 
