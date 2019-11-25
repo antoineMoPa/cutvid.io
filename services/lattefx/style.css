@@ -84,6 +84,15 @@ a:visited{
 
 /* END HELPERS --------------*/
 
+/* PROPERTIES */
+
+.props-auth-placeholder{
+  text-align: center;
+  margin-left:-10px;
+}
+
+/* END PROPERTIES */
+
 /* UI -------------- */
 
 .ui{
@@ -112,12 +121,24 @@ a:visited{
   text-decoration:none;
   font-size:14px;
   line-height:24px;
+  margin-left:10px;
 }
 
-.ui .ui-button{
+.ui .ui-buttons-right{
   position:absolute;
   bottom:12px;
-  right:200px;
+  right:10px;
+}
+
+.ui-button.play-button,
+.ui-button.pause-button{
+  position:absolute;
+  bottom:12px;
+}
+
+.ui .ui-buttons-right .ui-button,
+.ui .ui-buttons-right .ui-auth-container{
+  display: inline-block;
 }
 
 .ui .feather-button{
@@ -156,29 +177,10 @@ a:visited{
   font-weight: 600;
 }
 
-.ui-button.button-1{
-  right:20px;
-}
-.ui-button.button-2{
-  right:200px;
-}
-
-.ui-button.button-left-1{
-  left:10px;
-  right:auto;
-}
-
 .ui-button.button-save{
   background: #42935a;
   display: inline-block;
   position: static;
-}
-
-.ui-auth-container{
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  text-align: left;
 }
 
 .project-links{
@@ -884,6 +886,10 @@ a:visited{
 .sequencer .sequencer-loading p{
   color:#fff;
   line-height: 20px;
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 30px);
+  color: #999;
 }
 
 /* END SEQUENCER */

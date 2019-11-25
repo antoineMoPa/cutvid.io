@@ -61,6 +61,10 @@ Vue.component('player', {
         <!-- sequencer puts stuff here -->
       </div>
       <div class="switchable-panel">
+        <h4>Save to Lattefx cloud</h4>
+        <p>Save project in our cloud to access it from any computer.</p>
+        <div class="props-auth-placeholder"/>
+        <br/>
         <h4>Save a .lattefx project</h4>
         <p>Download a working copy to modify your video later.</p>
         <label>

@@ -13,7 +13,11 @@ Vue.component('auth', {
        Lattefx cloud
      </h3>
      <iframe class="auth-iframe"></iframe>
-     <div class="ui-auth-container">
+     <div v-bind:class="class_name"
+          v-for="class_name in ['ui-auth-container', 'props-auth-container']">
+       <!-- We repeat this node 2 times because we'll
+            place it in many places to encourage saving
+            and logging in -->
        <a class="ui-button buy-button button-left-1 button-save"
          v-if="!saving"
          v-on:click="save_video">
@@ -184,9 +188,13 @@ Vue.component('auth', {
       let header = document.querySelectorAll("header")[0];
       header.appendChild(sign_in_out);
 
-      let save_button = document.querySelectorAll(".ui-auth-container")[0];
-      let ui = document.querySelectorAll(".ui")[0];
-      ui.appendChild(save_button);
+      let container = document.querySelectorAll(".ui-auth-container")[0];
+      let ui = document.querySelectorAll(".ui .ui-buttons-right")[0];
+      ui.appendChild(container);
+
+      let container_for_props = this.$el.querySelectorAll(".props-auth-container")[0];
+      let props = document.querySelectorAll(".props-auth-placeholder")[0];
+      props.appendChild(container_for_props);
     });
 
     window.auth = this; // This is in the limited globals approval list
