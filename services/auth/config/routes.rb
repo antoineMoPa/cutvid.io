@@ -12,8 +12,6 @@ Rails.application.routes.draw do
 
     get '/simple_order', to: 'simple_order#index'
 
-    get '/iframe/save_project', to: 'iframe#save_project'
-
     delete '/sign_out', to: 'user#sign_out_current_user'
   end
 

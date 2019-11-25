@@ -5,26 +5,26 @@ class UserController < ApplicationController
 
   def make_first_admin
     if current_user.nil?
-      return redirect_to "/"
+      return redirect_to "/auth/"
     end
 
     if current_user.id == 1
       current_user.is_admin = true
       current_user.save!
-      return redirect_to "/"
+      return redirect_to "/auth/"
     end
 
-    return redirect_to "/"
+    return redirect_to "/auth/"
   end
 
   # User list
   def index
     if current_user.nil?
-      return redirect_to "/"
+      return redirect_to "/auth/"
     end
 
     if not current_user.is_admin
-      return redirect_to "/"
+      return redirect_to "/auth/"
     end
 
     @users = User.all()
@@ -32,11 +32,11 @@ class UserController < ApplicationController
 
   def edit
     if current_user.nil?
-      return redirect_to "/"
+      return redirect_to "/auth/"
     end
 
     if not current_user.is_admin
-      return redirect_to "/"
+      return redirect_to "/auth/"
     end
 
     @user = User.find(params[:userid])
@@ -44,11 +44,11 @@ class UserController < ApplicationController
 
   def save
     if current_user.nil?
-      return redirect_to "/"
+      return redirect_to "/auth/"
     end
 
     if not current_user.is_admin
-      return redirect_to "/"
+      return redirect_to "/auth/"
     end
 
     @user = User.find(params[:userid])
