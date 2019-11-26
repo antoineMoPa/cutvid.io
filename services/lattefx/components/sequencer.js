@@ -8,6 +8,11 @@ Vue.component('sequencer', {
         </p>
       </div>
       <div class="sequencer-scrollbox" v-on:click.self="clickSequencer">
+        <button class="video-suggestion"
+                v-on:click="add_video">
+          <img src="icons/feather/plus.svg" class="feather-icon" width="20"/>
+          Add video
+        </button>
         <div
           v-for="(sequence, index) in sequences"
           v-bind:class="'sequence ' + ((selected.indexOf(index) != -1)? 'selected': '')"
@@ -41,6 +46,7 @@ Vue.component('sequencer', {
           v-bind:index='sequenceIndex'
           v-on:ready="effectSettingsReady(sequenceIndex)"
           v-bind:initialEffectGetter="sequence.initialEffectGetter"
+          v-bind:initialEffectName="sequence.initialEffectName"
           v-bind:player="player"
           v-on:duration="onDuration"/>
           <p v-if="sequences.length == 0">
@@ -97,6 +103,21 @@ Vue.component('sequencer', {
     };
   },
   methods: {
+    async add_video(){
+      // Add at minimum 0
+      // Else add after last video, but with some overlap to
+      // create room for a transition
+      let add_at = Math.max(this.get_total_duration() - 0.5, 0.0);
+      this.addSequence("video", add_at);
+
+      await this.$nextTick();
+
+      // Go to sequence begin
+      let index = this.sequences.length - 1;
+      this.time.time = this.sequences[index].from;
+      // Select it
+      this.selected = [index];
+    },
     serialize(only_indexes){
       /*
          Serialize sequences
@@ -312,7 +333,7 @@ Vue.component('sequencer', {
       let y_prime = e.clientY - parseInt(this.$el.style.top);
       let h = parseInt(this.$el.clientHeight);
       let y = h - y_prime;
-      let layer = Math.floor(y / scale.layerScale);
+      let layer = Math.floor(y / scale.layerScale + 1.0);
       let time = x / scale.timeScale;
 
       return [x,y,time,layer,seq,duration,scale];
@@ -422,6 +443,16 @@ Vue.component('sequencer', {
 
       return {totalDuration, timeScale, layerScale};
     },
+    get_total_duration(){
+      let maxTo = 0.0;
+      for(let i = 0; i < this.sequences.length; i++){
+        let seq = this.sequences[i];
+        if(seq.to > maxTo){
+          maxTo = seq.to;
+        }
+      }
+      return maxTo;
+    },
     repositionSequences(){
       let scale = this.getScale();
       let maxTo = 0.0;
@@ -443,6 +474,11 @@ Vue.component('sequencer', {
       // Make scroll available until 1/3 later than the last sequence
       let timeSpacer = this.$refs["time-spacer"];
       timeSpacer.style.left = (maxTo * scale.timeScale * 1.33) + "px"
+
+      let vid_suggestion = this.$el.querySelectorAll(".video-suggestion")[0];
+      // Put video suggestion at end of video
+      vid_suggestion.style.left = (maxTo * scale.timeScale + 10) + "px";
+      vid_suggestion.style.bottom = (5 + 0 * scale.layerScale) + "px";
     },
     launch_template_selector(){
       if(this.player != null && this.player.rendering) { return; }
@@ -472,18 +508,20 @@ Vue.component('sequencer', {
       });
       fetch("/stats/lattefx_app_add_sequence/");
     },
-    addSequence(){
+    addSequence(effectName, from){
       if(this.player != null && this.player.rendering) { return; }
-
+      effectName = effectName || null;
+      from = from || 0.0;
       let id = utils.increment_unique_counter("sequence");
       let layer = id % 3; // Alternate layer to avoid overlapping
 
       this.sequences.push({
         id: id,
         layer: layer,
-        from: 0,
-        to: this.visibleDuration * 0.2,
-        effect: null,
+        from: from,
+        to: from + this.visibleDuration * 0.2,
+        initialEffectName: effectName,
+        effect: null
       });
 
       this.$nextTick(this.repositionSequences);
@@ -605,5 +643,6 @@ Vue.component('sequencer', {
     allSequencesContainer.appendChild(allSequences);
 
     this.bindShortcuts();
+    this.repositionSequences();
   }
 });

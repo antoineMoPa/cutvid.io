@@ -32,7 +32,7 @@ Vue.component('sequence-effect', {
       moving: false
     };
   },
-  props: ["player", "active", "index", "initialEffectGetter"],
+  props: ["player", "active", "index", "initialEffectGetter", "initialEffectName"],
   methods: {
     loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
@@ -268,12 +268,11 @@ Vue.component('sequence-effect', {
     },
   },
   mounted(){
-
     if(this.initialEffectGetter != undefined){
       let effect = this.initialEffectGetter();
       this.unserialize(effect, false);
-    } else {
-
+    } else if (this.initialEffectName != undefined){
+      this.changeEffect(this.initialEffectName);
     }
   }
 });

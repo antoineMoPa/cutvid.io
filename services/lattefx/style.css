@@ -781,6 +781,7 @@ a:visited{
   height: 155px;
 }
 
+.sequencer .video-suggestion,
 .sequencer .sequence{
   position:absolute;
   height:20px;
@@ -790,6 +791,24 @@ a:visited{
   overflow:hidden;
   z-index:10;
   opacity:0.9;
+}
+
+.sequencer .video-suggestion .feather-icon{
+  vertical-align:middle;
+  margin-top: -2px;
+}
+
+.sequencer .video-suggestion{
+  border:none;
+  color:#fff;
+  bottom:0;
+  line-height:24px;
+  height:24px;
+  font-size:11px;
+  cursor:pointer;
+  width:220px;
+  background:rgba(255,255,255,0.3);
+  opacity:0.8;
 }
 
 .sequencer .sequence.selected{
