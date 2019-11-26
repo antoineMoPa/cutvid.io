@@ -274,5 +274,8 @@ Vue.component('sequence-effect', {
     } else if (this.initialEffectName != undefined){
       this.changeEffect(this.initialEffectName);
     }
+  },
+  beforeDestroy(){
+    this.last_plugin.$destroy();
   }
 });

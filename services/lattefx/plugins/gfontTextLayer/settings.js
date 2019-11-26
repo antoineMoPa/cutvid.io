@@ -236,11 +236,14 @@
             this.player.add_on_resize_listener(this.updateTexts.bind(this), this.uniqueID);
           }
           document.fonts.ready.then(this.updateTexts);
+
+          // Add text if none exist
+          if(this.texts.length == 0){
+            this.addBox();
+          }
         },
         beforeDestroy(){
           this.player.delete_on_resize_listener(this.uniqueID);
-          alert("destroy");
-
         }
       }
     };
