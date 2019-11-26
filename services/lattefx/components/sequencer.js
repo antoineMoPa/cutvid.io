@@ -93,7 +93,7 @@ Vue.component('sequencer', {
       <div class="sequencer-buttons-container" v-if="dragging == null">
         <button v-on:click="addSequenceAndDrag"
                 class="add-button">
-          <img src="icons/feather/plus.svg" title="new sequence" width="20"/>
+          <img src="icons/feather/plus.svg" title="new blank sequence" width="20"/>
           New sequence
         </button>
         <button v-on:click="launch_template_selector()"
@@ -110,15 +110,15 @@ Vue.component('sequencer', {
         <button v-on:click="deleteSelected"
                 v-if="selected.length > 0"
                 class="delete-button">
-          <img src="icons/feather/trash.svg" title="new sequence from template" width="20"/>
+          <img src="icons/feather/trash.svg" width="20"/>
           Delete selected
         </button>
-        <button v-on:click="zoom_in()" class="tool-button">
-          <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
+        <button v-on:click="zoom_in()" class="tool-button" title="shortcut: Shift + Mousewheel">
+          <img src="icons/feather/plus.svg" width="20"/>
           Zoom in
         </button>
-        <button v-on:click="zoom_out()" class="tool-button">
-          <img src="icons/feather/minus.svg" title="new sequence from template" width="20"/>
+        <button v-on:click="zoom_out()" class="tool-button" title="shortcut: Shift + Mousewheel">
+          <img src="icons/feather/minus.svg" width="20"/>
           Zoom out
         </button>
       </div>
@@ -234,9 +234,9 @@ Vue.component('sequencer', {
 
         // If timebar is between from and to,
         // split at timebar position
-        // else split in half
+        // else skip
         if(time < from || time > to){
-          time = from + (to - from) * 0.5;
+          continue;
         }
 
         if(time == 0){
@@ -291,9 +291,9 @@ Vue.component('sequencer', {
       }
 
       if(e.deltaY < 0){
-        this.zoom_out();
-      } else {
         this.zoom_in();
+      } else {
+        this.zoom_out();
       }
     },
     clickSequencer(e){
