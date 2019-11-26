@@ -549,10 +549,13 @@ class ShaderPlayerWebGL {
         for (let tex_index in pass.textures) {
           let t = pass.textures[tex_index];
           if (t.isVideo) {
+            t.audioElement.time = 0;
+            t.videoElement.time = 0;
             t.audioElement.pause();
             t.videoElement.pause();
           } else if (t.isAudio) {
             t.audioElement.pause();
+            t.audioElement.time = 0;
           }
         }
       }
@@ -644,6 +647,7 @@ class ShaderPlayerWebGL {
 
     let passCounter = 0;
     let layerCounter = 0;
+
     for (let layer = 0; layer < sequencesByLayer.length; layer++) {
       let sequences = sequencesByLayer[layer];
 
@@ -831,6 +835,11 @@ class ShaderPlayerWebGL {
         gl.viewport(0, 0, this.width, this.height);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
+    }
+
+    // Clear if there is nothing at all
+    if(!has_cleared && layerCounter == 0){
+      this.clear();
     }
 
     if (this.rendering) {

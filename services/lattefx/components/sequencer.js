@@ -70,8 +70,8 @@ Vue.component('sequencer', {
       <div class="all-sequences">
         <sequence-effect
           v-for="(sequence, sequenceIndex) in sequences"
-          v-bind:active="selected.length > 0 && selected[selected.length-1] == sequenceIndex"
-          v-bind:class="(selected.length > 0 && selected[selected.length-1] == sequenceIndex)? '': 'sequence-effects-hidden'"
+          v-bind:active="selected.length > 0 && selected[selected.length-1] == sequenceIndex && sequence.from < time.time && sequence.to > time.time"
+          v-bind:class="(selected.length > 0 && selected[selected.length-1] == sequenceIndex && sequence.from < time.time && sequence.to > time.time)? '': 'sequence-effects-hidden'"
           v-bind:key="'sequence-' + sequence.id"
           v-bind:ref="'sequence-effect-' + sequence.id"
           v-on:register='registerSequenceEffect'
