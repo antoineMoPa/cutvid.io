@@ -78,8 +78,8 @@ Vue.component('textBox', {
       w -= 5;
 
       box.style.color = this.text.color;
-      box.style.top = (-10+top)+"px";
-      box.style.left = left+"px";
+      box.style.top = (top-7)+"px";
+      box.style.left = (left+2)+"px";
       box.style.width = w+"px";
       box.style.maxWidth = w+"px";
       box.style.height = h+"px"
