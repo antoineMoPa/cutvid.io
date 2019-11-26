@@ -781,7 +781,7 @@ a:visited{
   height: 155px;
 }
 
-.sequencer .video-suggestion,
+.sequencer .suggestion,
 .sequencer .sequence{
   position:absolute;
   height:20px;
@@ -793,15 +793,22 @@ a:visited{
   opacity:0.9;
 }
 
-.sequencer .video-suggestion .feather-icon{
+.sequencer .suggestion .feather-icon{
   vertical-align:middle;
   margin-top: -2px;
 }
 
-.sequencer .video-suggestion{
+.sequencer .add-menu{
+  position: absolute;
+  bottom: 0;
+  width:800px;
+  text-align:left;
+}
+
+.sequencer .suggestion{
+  position:static;
   border:1px dashed #fff;
   color:#fff;
-  bottom:0;
   line-height:24px;
   height:24px;
   font-size:11px;
@@ -809,6 +816,10 @@ a:visited{
   width:220px;
   background:rgba(255,255,255,0.1);
   opacity:0.4;
+}
+
+.sequencer .more-suggestion{
+  width:100px;
 }
 
 .sequencer .sequence.selected{
@@ -875,6 +886,7 @@ a:visited{
   border-top-left-radius: 5px;
 }
 
+.sequencer .tool-button,
 .sequencer .add-button,
 .sequencer .delete-button,
 .sequencer .split-button{
@@ -894,6 +906,7 @@ a:visited{
   color:#fff;
 }
 
+.sequencer .tool-button img,
 .sequencer .split-button img,
 .sequencer .delete-button img,
 .sequencer .add-button img{

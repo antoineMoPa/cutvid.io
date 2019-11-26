@@ -8,11 +8,43 @@ Vue.component('sequencer', {
         </p>
       </div>
       <div class="sequencer-scrollbox" v-on:click.self="clickSequencer">
-        <button class="video-suggestion"
-                v-on:click="add_video">
-          <img src="icons/feather/plus.svg" class="feather-icon" width="20"/>
-          Add video
-        </button>
+        <div class="add-menu">
+          <button class="video-suggestion suggestion"
+                v-on:click="quick_add_sequence('video')">
+            <img src="icons/feather/film.svg" class="feather-icon" width="20"/>
+            Add video
+          </button>
+          <button class="more-suggestion suggestion"
+                  v-if="!add_menu_open"
+                  v-on:click="add_menu_open = true">
+            <img src="icons/feather/plus.svg" class="feather-icon" width="20"/>
+            More
+          </button>
+          <button class="more-suggestion suggestion"
+                  v-else
+                  v-on:click="add_menu_open = false">
+            <img src="icons/feather/minus.svg" class="feather-icon" width="20"/>
+            Less
+          </button>
+          <button class="more-suggestion suggestion"
+                  v-if="add_menu_open"
+                  v-on:click="quick_add_sequence('audio')">
+            <img src="icons/feather/music.svg" class="feather-icon" width="20"/>
+            Audio
+          </button>
+          <button class="more-suggestion suggestion"
+                  v-if="add_menu_open"
+                  v-on:click="quick_add_sequence('image')">
+            <img src="icons/feather/image.svg" class="feather-icon" width="20"/>
+            Image
+          </button>
+          <button class="more-suggestion suggestion"
+                  v-if="add_menu_open"
+                  v-on:click="quick_add_sequence('gfontTextLayer')">
+            <img src="icons/feather/type.svg" class="feather-icon" width="20"/>
+            Text
+          </button>
+        </div>
         <div
           v-for="(sequence, index) in sequences"
           v-bind:class="'sequence ' + ((selected.indexOf(index) != -1)? 'selected': '')"
@@ -81,6 +113,14 @@ Vue.component('sequencer', {
           <img src="icons/feather/trash.svg" title="new sequence from template" width="20"/>
           Delete selected
         </button>
+        <button v-on:click="zoom_in()" class="tool-button">
+          <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
+          Zoom in
+        </button>
+        <button v-on:click="zoom_out()" class="tool-button">
+          <img src="icons/feather/minus.svg" title="new sequence from template" width="20"/>
+          Zoom out
+        </button>
       </div>
       <scene-template-selector ref="scene-template-selector"/>
     </div>
@@ -99,16 +139,25 @@ Vue.component('sequencer', {
       draggingRight: null,
       draggingTimeFrom: null,
       loading_scene: false,
+      add_menu_open: false,
       sequences: []
     };
   },
   methods: {
-    async add_video(){
+    async quick_add_sequence(type){
       // Add at minimum 0
       // Else add after last video, but with some overlap to
       // create room for a transition
       let add_at = Math.max(this.get_total_duration() - 0.5, 0.0);
-      this.addSequence("video", add_at);
+      let add_layer = 0;
+
+      if(type == 'audio'){
+        // Add audio above current things
+        add_at = 0;
+        add_layer = 3;
+      }
+
+      this.addSequence(type, add_at, add_layer);
 
       await this.$nextTick();
 
@@ -117,6 +166,8 @@ Vue.component('sequencer', {
       this.time.time = this.sequences[index].from;
       // Select it
       this.selected = [index];
+
+      this.add_menu_open = false;
     },
     serialize(only_indexes){
       /*
@@ -216,6 +267,22 @@ Vue.component('sequencer', {
         sequence.to = time;
       }
     },
+    zoom_in(){
+      this.visibleDuration -= 10;
+      this.time.time = this.time.time + 0.001; // hack to update the timebar
+
+      if(this.visibleDuration < 1){
+        this.visibleDuration = 1;
+      }
+
+      this.repositionSequences();
+    },
+    zoom_out(){
+      this.visibleDuration += 10;
+      this.time.time = this.time.time + 0.001; // hack to update the timebar
+
+      this.repositionSequences();
+    },
     onWheel(e){
       if(!e.shiftKey){
         return;
@@ -224,17 +291,10 @@ Vue.component('sequencer', {
       }
 
       if(e.deltaY < 0){
-        this.visibleDuration -= 10;
+        this.zoom_out();
       } else {
-        this.visibleDuration += 10;
+        this.zoom_in();
       }
-
-      if(this.visibleDuration < 4){
-        this.visibleDuration = 4;
-      }
-
-      this.time.time = this.time.time + 0.001; // hack to update the timebar
-      this.repositionSequences();
     },
     clickSequencer(e){
       let info = this.mouseEventInfo(e);
@@ -475,10 +535,9 @@ Vue.component('sequencer', {
       let timeSpacer = this.$refs["time-spacer"];
       timeSpacer.style.left = (maxTo * scale.timeScale * 1.33) + "px"
 
-      let vid_suggestion = this.$el.querySelectorAll(".video-suggestion")[0];
-      // Put video suggestion at end of video
-      vid_suggestion.style.left = (maxTo * scale.timeScale + 10) + "px";
-      vid_suggestion.style.bottom = (5 + 0 * scale.layerScale) + "px";
+      let add_menu = this.$el.querySelectorAll(".add-menu")[0];
+      add_menu.style.left = (maxTo * scale.timeScale + 10) + "px";
+      add_menu.style.bottom = (5 + 0 * scale.layerScale) + "px";
     },
     launch_template_selector(){
       if(this.player != null && this.player.rendering) { return; }
@@ -508,12 +567,12 @@ Vue.component('sequencer', {
       });
       fetch("/stats/lattefx_app_add_sequence/");
     },
-    addSequence(effectName, from){
+    addSequence(effectName, from, layer){
       if(this.player != null && this.player.rendering) { return; }
       effectName = effectName || null;
       from = from || 0.0;
       let id = utils.increment_unique_counter("sequence");
-      let layer = id % 3; // Alternate layer to avoid overlapping
+      layer = layer || id % 3; // Alternate layer to avoid overlapping
 
       this.sequences.push({
         id: id,
@@ -590,7 +649,10 @@ Vue.component('sequencer', {
           app.time.time += 0.008 * app.visibleDuration;
         }
         if(e.key == "Delete"){
-          app.deleteSelected();
+          // We have to find a better solution for this
+          // because if we hit "delete" while editing text,
+          // it erases selected sequences.
+          // app.deleteSelected();
         }
       });
     }
