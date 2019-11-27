@@ -105,14 +105,16 @@ Vue.component('buy-video-lq', {
       this.previewURL = url;
       this.videoURL = url;
 
-      this.$el.querySelectorAll("video")[0].addEventListener(
-        "loadeddata",
-        function(){
-          this.previewReady = true;
-        }.bind(this),
-        {once: true}
-      );
-
+      let videos = this.$el.querySelectorAll("video");
+      if(videos.length > 0){
+        videos[0].addEventListener(
+          "loadeddata",
+          function(){
+            this.previewReady = true;
+          }.bind(this),
+          {once: true}
+        );
+      }
     },
     setVideoID(_id){
       this.videoID = _id;

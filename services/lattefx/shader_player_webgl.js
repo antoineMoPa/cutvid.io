@@ -241,15 +241,24 @@ class ShaderPlayerWebGL {
 
   render_lq(callback) {
     let app = this;
-    let video_stream = app.canvas.captureStream(app.fps).getTracks()[0];
+    let video_stream = app.canvas.captureStream(app.fps);
     let all_streams = app.get_all_audio_streams();
 
-    // Browser limitations:
-    // We can only record 1 audio track at the time
-    all_streams = [all_streams[0]];
-    all_streams.push(video_stream);
+    // https://stackoverflow.com/questions/42138545
+    let audio_context = new AudioContext();
+    let sources = all_streams.map((s) => {
+      return audio_context.createMediaStreamSource(new MediaStream([s]))
+    });
 
-    let stream = new MediaStream(all_streams);
+    let audio_dest = audio_context.createMediaStreamDestination();
+    sources.forEach((s) => {
+      s.connect(audio_dest)
+    });
+
+    let stream = new MediaStream([
+      video_stream.getTracks()[0],
+      audio_dest.stream.getTracks()[0]
+    ]);
 
     app.capture_stream = stream;
     app.media_recorder_chunks = [];
@@ -411,8 +420,10 @@ class ShaderPlayerWebGL {
   cancel_render() {
     if(this.rendering){
       if(this.renderMode == "LQ"){
-        this.media_recorder.onstop = null;
-        this.media_recorder.stop();
+        if(this.media_recorder != undefined){
+          this.media_recorder.onstop = null;
+          this.media_recorder.stop();
+        }
         this.time.time = 0;
         this.pause();
         this.rendering = false;

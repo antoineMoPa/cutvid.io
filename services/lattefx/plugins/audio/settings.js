@@ -74,9 +74,12 @@
               }
               app.audioFile = file;
               app.audio = window.URL.createObjectURL(file);
-              utils.file_to_base64(file).then((result)=>{
-                app.audioFileB64 = result;
-              });
+
+              if(app.audioFileB64 == null){
+                utils.file_to_base64(file).then((result)=>{
+                  app.audioFileB64 = result;
+                });
+              }
             } catch (e) {
               // Well I guess you are using a dumb browser
               console.error(e);

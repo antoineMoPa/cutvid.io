@@ -109,9 +109,12 @@
               }
               app.videoFile = file;
               app.video = window.URL.createObjectURL(file);
-              utils.file_to_base64(file).then((result)=>{
-                app.videoFileB64 = result;
-              });
+
+              if(app.videoFileB64 == null){
+                utils.file_to_base64(file).then((result)=>{
+                  app.videoFileB64 = result;
+                });
+              }
             } catch (e) {
               // Well I guess you are using a dumb browser
               console.error(e);
