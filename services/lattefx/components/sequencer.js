@@ -101,11 +101,10 @@ Vue.component('sequencer', {
           <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
           From template
         </button>
-        <button v-on:click="splitSelected"
-                v-if="selected.length > 0"
+        <button v-on:click="split_at_cursor"
                 class="split-button">
           <img src="icons/feather/scissors.svg" title="cut sequence at selected time" width="20"/>
-          Split selection
+          Split at cursor
         </button>
         <button v-on:click="deleteSelected"
                 v-if="selected.length > 0"
@@ -140,6 +139,7 @@ Vue.component('sequencer', {
       draggingTimeFrom: null,
       loading_scene: false,
       add_menu_open: false,
+      dragging_selected: null,
       sequences: []
     };
   },
@@ -219,14 +219,10 @@ Vue.component('sequencer', {
 
       this.$nextTick(this.repositionSequences);
     },
-    splitSelected(){
+    split_at_cursor(){
       let new_sequences = [];
 
       for(let i in this.sequences){
-        // Is this sequence selected?
-        if(this.selected.indexOf(parseInt(i)) == -1){
-          continue;
-        }
         let sequence = this.sequences[i];
         let from = sequence.from;
         let to = sequence.to;
@@ -307,6 +303,9 @@ Vue.component('sequencer', {
       this.has_moved = false;
       this.dragging = index;
 
+      this.dragging = index;
+      this.dragging_selected = this.selected.slice();
+
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
 
       if(this.selected.indexOf(index) != -1){
@@ -376,15 +375,20 @@ Vue.component('sequencer', {
       this.draggingLeft = false;
       this.draggingRight = false;
       this.dragging = null;
+
+      if(this.dragging_selected != null && this.has_moved){
+        this.selected  = this.dragging_selected.slice();
+        this.dragging_selected = null;
+      }
     },
     mouseEventInfo(e){
       if(this.player != null && this.player.rendering) { return; }
 
       let scale = this.getScale();
-      let seq = null;
+      let seq = null; // Single sequence
       let duration = null;
 
-      if(this.dragging != null){
+      if (this.dragging != null){
         seq = this.sequences[this.dragging];
         duration = seq.to - seq.from;
       }
@@ -482,17 +486,27 @@ Vue.component('sequencer', {
       }
 
       if(this.draggingBody){
-        let newFrom = time - this.draggingTimeFrom;
-        let snap = this.findSnap(seq.from);
-        let diff = 0;
+        let diff = time - seq.from - this.draggingTimeFrom;
+        let layer_diff = layer - seq.layer;
+        let seqs = this.dragging_selected;
+        let snap = this.findSnap(seq.from + diff);
 
         if(snap != null){
           diff = snap - seq.from;
         }
 
-        seq.from = newFrom + diff;
-        seq.to = newFrom + duration + diff;
-        seq.layer = layer;
+        if(seqs.indexOf(this.dragging) == -1){
+          seqs.push(this.dragging);
+        }
+
+        for(let i in seqs){
+          let s = this.sequences[seqs[i]];
+
+          s.from = s.from + diff;
+          s.to = s.to + diff;
+          s.layer = s.layer + layer_diff;
+        }
+
         this.repositionSequences();
       }
     },
@@ -609,6 +623,7 @@ Vue.component('sequencer', {
       this.player.sequences = this.sequences;
       this.player.clear_transparent();
       this.$nextTick(this.repositionSequences);
+      this.selected = [];
       fetch("/stats/lattefx_app_delete_sequence/");
     },
     registerSequenceEffect(index, effect){
