@@ -139,7 +139,10 @@ Vue.component('buy-video-lq', {
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
       window.player.player.rendering = false;
-      el.querySelectorAll("video")[0].pause();
+      let videos = el.querySelectorAll("video");
+      if(videos.length > 0){
+        videos[0].pause();
+      }
       fetch("/stats/lattefx_app_hit_close/");
     });
 

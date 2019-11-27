@@ -243,7 +243,12 @@ class ShaderPlayerWebGL {
     let app = this;
     let video_stream = app.canvas.captureStream(app.fps).getTracks()[0];
     let all_streams = app.get_all_audio_streams();
+
+    // Browser limitations:
+    // We can only record 1 audio track at the time
+    all_streams = [all_streams[0]];
     all_streams.push(video_stream);
+
     let stream = new MediaStream(all_streams);
 
     app.capture_stream = stream;
