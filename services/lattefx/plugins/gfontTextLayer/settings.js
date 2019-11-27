@@ -237,10 +237,13 @@
           }
           document.fonts.ready.then(this.updateTexts);
 
-          // Add text if none exist
-          if(this.texts.length == 0){
-            this.addBox();
-          }
+          // Hack to wait until font are set externally
+          setTimeout(()=>{
+            // Add text if none exist
+            if(app.texts.length == 0){
+              app.addBox();
+            }
+          }, 1000);
         },
         beforeDestroy(){
           this.player.delete_on_resize_listener(this.uniqueID);
