@@ -759,12 +759,14 @@ class ShaderPlayerWebGL {
               let mediaElements = [];
               if(tex.isVideo){
                 mediaElements.push(tex.videoElement);
+                mediaElements.push(tex.audioElement);
               } else if (tex.isAudio) {
                 mediaElements.push(tex.audioElement);
               }
 
               for (let element of mediaElements){
                 let currTime = element.currentTime;
+
                 // Attempt: dont sync while rendering
                 if (Math.abs(shouldBeTime - currTime) > 2.0) {
                   element.pause();
@@ -780,7 +782,12 @@ class ShaderPlayerWebGL {
 
               if(tex.isVideo){
                 tex.videoElement.muted = true;
-                tex.audioElement.muted = false;
+
+                if(seq.effect.muted){
+                  tex.audioElement.muted = true;
+                } else {
+                  tex.audioElement.muted = false;
+                }
                 texSuccess &= tex.updateVideo();
               }
             }

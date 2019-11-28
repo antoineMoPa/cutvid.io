@@ -26,6 +26,10 @@
     <input v-model="trimBefore" step="any" min="0" type="number">
   </label>
 
+  <label>Mute sound
+    <input v-model="muted" type="checkbox">
+  </label>
+
 </div>`,
         data: function(){
           return {
@@ -41,6 +45,7 @@
             player: null,
             effect: null,
             shaderProgram: null,
+            muted: false,
             uniforms: {
               videoWidth: {
                 type: "f",
@@ -133,6 +138,12 @@
           },
           videoFile(){
             this.effect.videoFile = this.videoFile;
+          },
+          muted(m){
+            this.effect.muted = m;
+          },
+          effect(){
+            this.effect.muted = this.muted;
           },
           videoFileB64(){
             let app = this;
