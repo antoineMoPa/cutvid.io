@@ -23,10 +23,10 @@ Vue.component('textBox', {
     <div class="handle bottom-right-handle"
          v-on:mousedown="bottomRightDown"
     />
-    <div class="editable-text" contenteditable
+    <textarea class="editable-text"
+         v-model="text.text"
          v-on:mousedown.self="textBoxDown"
-         v-on:input="change">
-    </div>
+         v-on:input="change"/>
   </div>
 </div>
 `,
@@ -68,8 +68,9 @@ Vue.component('textBox', {
         left = _left * scaleFactor;
       }
 
+      let num_lines = this.text.text.split("\n").length;
       let w = (_w || this.text.width) * scaleFactor;
-      let h = (_h || this.text.size) * scaleFactor;
+      let h = (_h || this.text.size) * scaleFactor * num_lines;
 
       let box = this.$el.querySelectorAll(".text-box")[0];
       let editableText = this.$el.querySelectorAll(".editable-text")[0];
@@ -86,14 +87,15 @@ Vue.component('textBox', {
       box.style.maxHeight = h+"px"
       if(editableText != undefined){
         editableText.style.height = h+"px";
+        editableText.style.maxHeight = h+"px";
         editableText.style.maxWidth = w+"px";
-        editableText.style.lineHeight = h + "px";
+        editableText.style.width = w+"px";
+        editableText.style.lineHeight = h/num_lines + "px";
         editableText.style.textAlign = this.text.align;
+        editableText.style.textAlign = this.text.align;
+        editableText.style.fontSize = this.text.size * scaleFactor + "px";
+        editableText.style.fontFamily = this.text.font;
       }
-      box.style.textAlign = this.text.align;
-      box.style.fontSize = this.text.size * scaleFactor + "px";
-
-      box.style.fontFamily = this.text.font;
     },
     remove(){
       this.$emit("remove", this.index);
@@ -143,10 +145,6 @@ Vue.component('textBox', {
     },
     change(){
       let editableText = this.$el.querySelectorAll(".editable-text")[0];
-
-      //editableText.innerText = editableText.innerText.replace("\n", "");
-
-      this.$emit("input", this.index, editableText.innerText);
     },
     mouseUp(e){
       this.$el.classList.remove("dragging");
@@ -174,8 +172,9 @@ Vue.component('textBox', {
           h
         );
       } else if (this.draggingBottomRight) {
+        let num_lines = this.text.text.split("\n").length;
         w = w + (p.x - this.beginP.x) * canvasScaleFactor;
-        h = h + (p.y - this.beginP.y) * canvasScaleFactor;
+        h = h + (p.y - this.beginP.y) * canvasScaleFactor / num_lines;
 
         this.$emit("move", this.index, null, null, w, h);
         this.buildStyle();
@@ -227,8 +226,9 @@ Vue.component('textBox', {
       if(this.draggingBox){
         this.buildStyle(left, top, w, h);
       } else if (this.draggingBottomRight) {
+        let num_lines = this.text.text.split("\n").length;
         w = w + (p.x - this.beginP.x) * canvasScaleFactor;
-        h = h + (p.y - this.beginP.y) * canvasScaleFactor;
+        h = h + (p.y - this.beginP.y) * canvasScaleFactor / num_lines;
         this.buildStyle(null, null, w, h);
       }
     },

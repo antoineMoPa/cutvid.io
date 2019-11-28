@@ -103,6 +103,7 @@
               this.texts[index].offsetTop = y;
             }
             if(h != null){
+              let num_lines = this.texts[index].text.split("\n").length;
               this.texts[index].size = h;
             }
             if(w != null){
@@ -140,52 +141,45 @@
             let size = this.player.width;
             let scaleFactor = this.player.width / 1920.0;
 
-
             for(let i = 0; i < this.texts.length; i++){
               let t = this.texts[i];
+              let lines = this.texts[i].text.split("\n");
 
-              ctx.textAlign = t.align;
+              for(let j = 0; j < lines.length; j++){
+                let line = lines[j];
 
-              // Set font size & style
-              var tsize = t.size * scaleFactor;
+                ctx.textAlign = t.align;
 
-              ctx.fillStyle = t.color;
-              ctx.textBaseline = "middle";
-              ctx.font = tsize + "px " + t.font;
+                // Set font size & style
+                var tsize = t.size * scaleFactor;
 
-              let left = t.offsetLeft;
-              let top = t.offsetTop;
+                ctx.fillStyle = t.color;
+                ctx.textBaseline = "middle";
+                ctx.font = tsize + "px " + t.font;
 
-              // Translate, rotate and render
-              ctx.save();
-              // Adapt width if too small
+                let left = t.offsetLeft;
+                let top = t.offsetTop + j * tsize;
 
-              let measure = ctx.measureText(t.text);
+                // Translate, rotate and render
+                ctx.save();
+                // Adapt width if too small
 
-              /*
-                 Beware infine calls to the vuejs
-                 vue watcher here, because we are mutating
-                 text in a watcher.
-               */
-              if(t.width < measure.width){
-                if (measure.width < this.player.width) {
-                  t.width = measure.width + 1;
+                let measure = ctx.measureText(line);
+
+                let x = 0;
+                let y = (top + t.size * 0.6) * scaleFactor;
+
+                if(t.align == "center"){
+                  x  = (left + t.width/2) * scaleFactor;
+                } else if (t.align == "left"){
+                  x  = left * scaleFactor;
+                } else {
+                  x = (left + t.width) * scaleFactor;
                 }
+
+                ctx.fillText(line, x, y);
+                ctx.restore();
               }
-
-              let x = 0;
-              let y = (top + t.size * 0.6) * scaleFactor;
-
-              if(t.align == "center"){
-                x  = (left + t.width/2) * scaleFactor;
-              } else if (t.align == "left"){
-                x  = left * scaleFactor;
-              } else {
-                x = (left + t.width) * scaleFactor;
-              }
-
-              ctx.fillText(t.text, x, y);
-              ctx.restore();
             }
             this.shaderProgram.set_texture(
               "texture0",

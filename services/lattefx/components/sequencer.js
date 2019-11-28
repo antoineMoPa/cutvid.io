@@ -7,7 +7,10 @@ Vue.component('sequencer', {
           loading scene
         </p>
       </div>
-      <div class="sequencer-scrollbox" v-on:click.self="clickSequencer">
+      <div class="sequencer-scrollbox"
+        v-on:click.self="clickSequencer"
+        v-on:mouseenter="mouseover = true"
+        v-on:mouseleave="mouseover = false">
         <div class="add-menu">
           <button class="video-suggestion suggestion"
                 v-on:click="quick_add_sequence('video')">
@@ -130,6 +133,7 @@ Vue.component('sequencer', {
       time: {time: 0.0},
       selected: [],
       visibleDuration: 10,
+      mouseover: false,
       has_moved: false,                /* Used to detect if mouse has moved
                                           after clicking body */
       dragging: null,
@@ -671,6 +675,10 @@ Vue.component('sequencer', {
     bindShortcuts(){
       let app = this;
       window.addEventListener("keydown", (e) => {
+        if(!app.mouseover){
+          return;
+        }
+
         if(app.player != null && app.player.rendering) { return; }
 
         if(e.key == "a"){
@@ -703,6 +711,9 @@ Vue.component('sequencer', {
         }
         if(e.key == "v"){
           if(e.ctrlKey){
+            if(!app.mouseover){
+              return;
+            }
             app.paste();
           }
         }
