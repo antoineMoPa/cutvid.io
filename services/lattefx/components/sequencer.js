@@ -137,6 +137,7 @@ Vue.component('sequencer', {
       draggingLeft: null,
       draggingRight: null,
       draggingTimeFrom: null,
+      offset_y: 0,
       loading_scene: false,
       add_menu_open: false,
       dragging_selected: null,
@@ -280,16 +281,21 @@ Vue.component('sequencer', {
       this.repositionSequences();
     },
     onWheel(e){
+      e.stopPropagation();
       if(!e.shiftKey){
-        return;
+        if(e.deltaY < 0){
+          this.offset_y -= 10;
+        } else {
+          this.offset_y += 10;
+        }
+        this.repositionSequences();
       } else {
         e.stopPropagation();
-      }
-
-      if(e.deltaY < 0){
-        this.zoom_in();
-      } else {
-        this.zoom_out();
+        if(e.deltaY < 0){
+          this.zoom_in();
+        } else {
+          this.zoom_out();
+        }
       }
     },
     clickSequencer(e){
@@ -396,7 +402,7 @@ Vue.component('sequencer', {
       let x = e.clientX + this.$el.scrollLeft - parseInt(this.$el.style.left);
       let y_prime = e.clientY - parseInt(this.$el.style.top);
       let h = parseInt(this.$el.clientHeight);
-      let y = h - y_prime;
+      let y = h - y_prime - this.offset_y;
       let layer = Math.floor(y / scale.layerScale + 1.0);
       let time = x / scale.timeScale;
 
@@ -448,8 +454,8 @@ Vue.component('sequencer', {
 
       let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
 
-      // Limit to 6 (including 0)
-      layer = Math.min(layer, 5);
+      // Limit to 21 (including 0)
+      layer = Math.min(layer, 20);
       layer = Math.max(layer, 0);
 
       if(this.draggingLeft){
@@ -539,7 +545,7 @@ Vue.component('sequencer', {
         let el = els[0];
         el.style.left = (seq.from * scale.timeScale) + "px";
         el.style.width = ((seq.to - seq.from) * scale.timeScale) + "px";
-        el.style.bottom = (5 + (seq.layer) * scale.layerScale) + "px";
+        el.style.bottom = (5 + (seq.layer) * scale.layerScale + this.offset_y) + "px";
 
         if(seq.to > maxTo){
           maxTo = seq.to;
@@ -551,7 +557,7 @@ Vue.component('sequencer', {
 
       let add_menu = this.$el.querySelectorAll(".add-menu")[0];
       add_menu.style.left = (maxTo * scale.timeScale + 10) + "px";
-      add_menu.style.bottom = (5 + 0 * scale.layerScale) + "px";
+      add_menu.style.bottom = (5 + 0 * scale.layerScale + this.offset_y) + "px";
     },
     launch_template_selector(){
       if(this.player != null && this.player.rendering) { return; }
