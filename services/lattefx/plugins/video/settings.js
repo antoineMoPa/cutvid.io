@@ -10,7 +10,7 @@
         template: `
 <div>
   <label>Your Video</label>
-  <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg" class="video-file-input" v-on:change="onVideo()">
+  <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid" class="video-file-input" v-on:change="onVideo()">
   <div v-if="video != null">
     <label>Download source video to computer</label>
     <a class="button" v-bind:href="video" download><button>Download</button></a>
