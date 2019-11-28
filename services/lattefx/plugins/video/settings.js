@@ -11,6 +11,10 @@
 <div>
   <label>Your Video</label>
   <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg" class="video-file-input" v-on:change="onVideo()">
+  <div v-if="video != null">
+    <label>Download source video to computer</label>
+    <a class="button" v-bind:href="video" download><button>Download</button></a>
+  </div>
   <p v-if="error">ERROR: Your browser does not seem to support this video file encoding.<br>
   You can try converting it to .ogv at:<br>
     <a href="https://video.online-convert.com/convert-to-ogv"
