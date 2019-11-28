@@ -590,9 +590,10 @@ class ShaderPlayerWebGL {
 
     let maxLayer = 0;
 
-    let sequencesByLayer = [
-      [],[],[],[],[],[],
-    ];
+    let sequencesByLayer = [];
+    for(let i = 0; i <= 20; i++){
+      sequencesByLayer.push([]);
+    }
 
     for(let i = 0; i < this.sequences.length; i++){
       let seq = this.sequences[i];

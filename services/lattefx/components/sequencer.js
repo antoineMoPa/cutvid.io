@@ -418,7 +418,9 @@ Vue.component('sequencer', {
         duration = seq.to - seq.from;
       }
 
-      let x = e.clientX + this.$el.scrollLeft - parseInt(this.$el.style.left);
+      let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
+
+      let x = e.clientX + scrollbox.scrollLeft - parseInt(this.$el.style.left);
       let y_prime = e.clientY - parseInt(this.$el.style.top);
       let h = parseInt(this.$el.clientHeight);
       let y = h - y_prime - this.offset_y;
