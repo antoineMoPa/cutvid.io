@@ -137,6 +137,7 @@ Vue.component('sequencer', {
       draggingLeft: null,
       draggingRight: null,
       draggingTimeFrom: null,
+      clipboard: null,
       offset_y: 0,
       loading_scene: false,
       add_menu_open: false,
@@ -169,6 +170,24 @@ Vue.component('sequencer', {
       this.selected = [index];
 
       this.add_menu_open = false;
+    },
+    copy(){
+      this.clipboard = this.serialize(this.selected);
+
+      for(let i in this.clipboard){
+        this.clipboard[i].layer += 1;
+      }
+
+      // Erase after some time
+      setTimeout(function(){
+        this.clipboard = null;
+      }.bind(this), 20000);
+    },
+    paste(){
+      if(this.clipboard != null){
+        this.unserialize(this.clipboard, false);
+      }
+
     },
     serialize(only_indexes){
       /*
@@ -674,6 +693,16 @@ Vue.component('sequencer', {
           // because if we hit "delete" while editing text,
           // it erases selected sequences.
           // app.deleteSelected();
+        }
+        if(e.key == "c"){
+          if(e.ctrlKey){
+            app.copy();
+          }
+        }
+        if(e.key == "v"){
+          if(e.ctrlKey){
+            app.paste();
+          }
         }
       });
     }
