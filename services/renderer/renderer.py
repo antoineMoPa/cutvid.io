@@ -12,8 +12,13 @@ import random
 import time
 import requests
 import jwt
+from utils import *
+
+from projects import projects
 
 app = Flask(__name__)
+
+app.register_blueprint(projects)
 
 settings = json.load(open('../lattefx/settings.json'))
 
@@ -27,59 +32,6 @@ USERS_FOLDER=os.path.expanduser("~/lattefx-users/")
 if not os.path.exists(USERS_FOLDER):
     os.mkdir(USERS_FOLDER)
 
-def id_generator(size=40):
-    """
-    video id generator
-    """
-    chars = string.ascii_uppercase
-    chars += string.ascii_lowercase
-    chars += string.digits
-
-    return ''.join(random.choice(chars) for _ in range(size))
-
-def folder_size(path):
-    """ Get folder size in bytes """
-    # Thanks stack overflow:
-    # https://stackoverflow.com/questions/1392413/
-    root_directory = Path(path)
-
-    byte_count = sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file())
-
-    return byte_count
-
-def project_meta_path_to_project_id(project_meta_file_path):
-    return int(project_meta_file_path.split("/")[-2].split("-")[1])
-
-def mark_cache(vidid,  keep_delta=None):
-    """ hit the cache so a video is not deleted now """
-
-    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
-
-    if keep_delta is None:
-        timestamp = datetime.datetime.now().timestamp()
-    else:
-        timestamp = (datetime.datetime.now() + keep_delta).timestamp()
-
-    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
-
-    if os.path.exists(folder):
-        with open(folder + "/cache.time", "w") as cache_time_file:
-          cache_time_file.write(str(timestamp))
-          cache_time_file.close()
-
-
-def read_token(token):
-    """ Validate a jwt token with auth """
-
-    request = requests.get(url=settings['auth'] + "/validate_jwt_token", params={
-        "token": token
-    });
-
-    if request.text == "true":
-        # Verification is done in auth
-        return jwt.decode(token, verify=False, algorithms=['HS256'])
-    else:
-        return None
 
 @app.route("/get_storage_info", methods=['GET', 'OPTIONS'])
 def get_storage_info():
@@ -141,184 +93,6 @@ def get_a_new_project_id():
     else:
         return str(sorted(ids)[-1] + 1)
 
-
-@app.route("/list_projects", methods=['GET', 'OPTIONS'])
-def list_projects():
-    """
-    List a user's projects
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
-
-    if token is None:
-        return "error 1 bad token"
-
-    user_id = int(token['user_id'])
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    project_meta_files = glob.glob(user_folder + "/project-*/lattefx_project.meta")
-
-    project_metas = []
-
-    for project_meta_file in project_meta_files:
-        # Extract project id
-        project_id = project_meta_path_to_project_id(project_meta_file)
-
-        with open(project_meta_file, "r") as f:
-            project_meta = json.loads(f.read())
-
-        # Populate project info with id and size
-        project_meta["id"] = project_id
-        project_folder = user_folder + "project-" + str(project_id) + "/"
-        project_meta["bytecount"] = folder_size(project_folder)
-
-        project_metas.append(project_meta)
-
-    return json.dumps(project_metas)
-
-@app.route("/project/<project_id>", methods=['GET', 'OPTIONS'])
-def get_project(project_id):
-    """
-    Read a project
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
-
-    if token is None:
-        return "error 1 bad token"
-
-    project_id = int(project_id)
-    user_id = int(token['user_id'])
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    project_folder = user_folder + "project-" + str(project_id) + "/"
-    project_file_path = project_folder + "lattefx_file.lattefx"
-
-    if not os.path.exists(project_file_path):
-        return "error 8 no project file found"
-
-    with open(project_file_path, "r") as f:
-        return f.read()
-
-@app.route("/delete_project/<project_id>", methods=['DELETE', 'OPTIONS'])
-def delete_project(project_id):
-    """
-    Delete a project
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
-
-    if token is None:
-        return "error 1 bad token"
-
-    project_id = int(project_id)
-    user_id = int(token['user_id'])
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    project_folder = user_folder + "project-" + str(project_id) + "/"
-
-    if not os.path.exists(project_folder):
-        return "error 8 no project folder found"
-
-    try:
-        shutil.rmtree(project_folder)
-    except:
-        return "error removing project " + str(project_id) + " of user " + str(user_id)
-
-    return "success"
-
-
-@app.route("/rename_project/<project_id>", methods=['POST', 'OPTIONS'])
-def rename_project(project_id):
-    """
-    Rename a project
-
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
-
-    if token is None:
-        return "error 1 bad token"
-
-    project_id = int(project_id)
-    user_id = int(token['user_id'])
-    new_name = request.form['name']
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    project_folder = user_folder + "project-" + str(project_id) + "/"
-
-    project_meta_path = project_folder + "lattefx_project.meta"
-
-    if not os.path.exists(project_meta_path):
-        return "error 7 no project meta found"
-
-    project_meta = None
-
-    with open(project_meta_path, "r") as f:
-        project_meta = json.loads(f.read())
-
-    project_meta['name'] = new_name
-
-    print(new_name)
-
-    with open(project_meta_path, "w") as f:
-        f.write(json.dumps(project_meta))
-
-    return "success"
-
-
-@app.route("/upload_project/<project_id>", methods=['POST', 'OPTIONS'])
-def upload_project(project_id):
-    """
-    This could be optimized by using nginx direct uploading
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
-
-    if token is None:
-        return "error 1 bad token"
-
-    project_file = request.form['lattefx_file.lattefx']
-    project_id = int(project_id)
-    user_id = int(token['user_id'])
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    os.makedirs(user_folder, exist_ok=True)
-
-    project_folder = user_folder + "project-" + str(project_id) + "/"
-    os.makedirs(project_folder, exist_ok=True)
-
-
-    project_file_path = project_folder + "lattefx_file.lattefx"
-
-    with open(project_file_path, "w") as f:
-        f.write(project_file)
-
-    project_meta_path = project_folder + "lattefx_project.meta"
-
-    if not os.path.exists(project_meta_path):
-        # Create project meta for new projects
-        project_meta = json.dumps({"name": "Untitled Project"})
-
-        with open(project_meta_path, "w") as f:
-            f.write(project_meta)
-
-    return "success"
 
 def clean_old_cache():
     """ call this to delete old files in cache """
