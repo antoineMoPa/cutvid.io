@@ -75,3 +75,11 @@ def read_token(token):
         return jwt.decode(token, verify=False, algorithms=['HS256'])
     else:
         return None
+
+def validate_and_sanitize_id(vidid):
+    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
+
+    if len(vidid) != 40:
+        return None
+
+    return vidid

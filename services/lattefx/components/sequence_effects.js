@@ -53,22 +53,22 @@ Vue.component('sequence-effect', {
 
       // Random makes sure cache is not using an old version
       // (Ok I maybe once every 200 years this will not work...)
-      let rand = Math.random();
+      let rand = utils.randurl_param;
 
       if(pass_count == 1){
         fileLoadPromises.push(fetch(
-          "plugins/" + name + "/vertex.glsl?" + rand
+          "plugins/" + name + "/vertex.glsl" + rand
         ));
         fileLoadPromises.push(fetch(
-          "plugins/" + name + "/fragment.glsl?" + rand
+          "plugins/" + name + "/fragment.glsl" + rand
         ));
       } else {
         for(let i = 1; i <= pass_count; i++){
           fileLoadPromises.push(fetch(
-            "plugins/" + name + "/vertex"+i+".glsl?" + rand
+            "plugins/" + name + "/vertex"+i+".glsl" + rand
           ));
           fileLoadPromises.push(fetch(
-            "plugins/" + name + "/fragment"+i+".glsl?" + rand
+            "plugins/" + name + "/fragment"+i+".glsl" + rand
           ));
         }
       }

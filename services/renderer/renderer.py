@@ -15,10 +15,13 @@ import jwt
 from utils import *
 
 from projects import projects
+from media import media
 
 app = Flask(__name__)
 
 app.register_blueprint(projects)
+app.register_blueprint(media)
+
 
 settings = json.load(open('../lattefx/settings.json'))
 
@@ -111,14 +114,6 @@ def clean_old_cache():
             if date_modified < limit:
                 shutil.rmtree(folder)
 
-def validate_and_sanitize_vidid(vidid):
-    vidid = re.sub(r"[^0-9a-zA-Z]", "", vidid)
-
-    if len(vidid) != 40:
-        return None
-
-    return vidid
-
 @app.after_request
 def apply_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = settings['app']
@@ -152,7 +147,7 @@ def upload_video(vidid):
     """
     This could be optimized by using nginx direct uploading
     """
-    vidid = validate_and_sanitize_vidid(vidid)
+    vidid = validate_and_sanitize_id(vidid)
 
     if vidid is None:
         return "error 1 bad id"
@@ -179,7 +174,7 @@ def upload_frame(vidid, frame):
     """
     This could be optimized by using nginx direct uploading
     """
-    vidid = validate_and_sanitize_vidid(vidid)
+    vidid = validate_and_sanitize_id(vidid)
 
     if vidid is None:
         return "error 1 bad id"
@@ -212,7 +207,7 @@ def get_video_frame(vidid, fps, frame_time):
     Then return selected frame
 
     """
-    vidid = validate_and_sanitize_vidid(vidid)
+    vidid = validate_and_sanitize_id(vidid)
 
     if vidid is None:
         return "error 1 bad id"
@@ -292,7 +287,7 @@ def render_video(vidid, fps):
 
     returns generated video id
     """
-    vidid = validate_and_sanitize_vidid(vidid)
+    vidid = validate_and_sanitize_id(vidid)
 
     if vidid is None:
         return "error 1 bad id"
@@ -313,7 +308,7 @@ def render_video(vidid, fps):
         time_from = float(sequence['from'])
         time_to = float(sequence['to'])
         trim_before = float(sequence['trimBefore'])
-        file_digest = validate_and_sanitize_vidid(sequence['digest'])
+        file_digest = validate_and_sanitize_id(sequence['digest'])
 
         if time_from < 0:
             # Trim part before 0
@@ -394,7 +389,7 @@ def rendered_video(vidid, desired_filename):
 
     Desired filename is arbitray and not used here
     """
-    vidid = validate_and_sanitize_vidid(vidid)
+    vidid = validate_and_sanitize_id(vidid)
 
     if vidid is None:
         return "error 1 bad id"
@@ -417,7 +412,7 @@ def rendered_video_preview(vidid):
     """
     Get a rendered video preview from cache
     """
-    vidid = validate_and_sanitize_vidid(vidid)
+    vidid = validate_and_sanitize_id(vidid)
 
     if vidid is None:
         return "error 1 bad id"

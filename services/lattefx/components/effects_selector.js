@@ -40,6 +40,15 @@ Vue.component('effects-selector', {
     open(callback) {
       this.callback = callback;
       this.$el.classList.toggle("hidden");
+
+      let random = Math.random();
+
+	  fetch("plugins_list.json?r="+random).then(function(resp){
+	    resp.json()
+		  .then(function(data){
+		    app.categories = data;
+		  });
+	  });
     },
     is_date_new(_date){
       let date = new Date(_date).getTime();
@@ -63,13 +72,5 @@ Vue.component('effects-selector', {
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
     });
-
-    let random = Math.random();
-	fetch("plugins_list.json?r="+random).then(function(resp){
-	  resp.json()
-		.then(function(data){
-		  app.categories = data;
-		});
-	});
   }
 });

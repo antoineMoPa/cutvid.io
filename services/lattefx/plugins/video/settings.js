@@ -41,6 +41,7 @@
             video: null,
             videoFile: null,
             videoFileB64: null,
+            video_media_id: null,
             videoName: "",
             error: false,
             backgroundColor: "#000000",
@@ -86,6 +87,8 @@
             this.shaderProgram.set_texture('video', '', function(){}, {
               video: this.video,
               videoFile: this.videoFile,
+              video_media_getter: this.media_getter,
+              video_media_id: this.video_media_id,
               autoplay: !this.player.paused,
               onerror: function(){
                 app.error = true;
@@ -131,6 +134,28 @@
           },
           onTrimLeft(diff){
             this.trimBefore += diff;
+          },
+          async media_getter(){
+            if(this.video_media_id == null){
+              return window.URL.createObjectURL(options.videoFile);
+            } else {
+              let settings = window.lattefx_settings;
+              let renderer_url = settings.renderer;
+              let auth = window.auth;
+              let token = await auth.get_token();
+              let project_id = window.player.project_id;
+              let project_media_url = renderer_url + "/media/" + project_id + "/";
+              let req = await fetch(project_media_url + this.video_media_id, {
+                headers: {
+                  'Authorization': 'Bearer ' + token,
+                }
+              });
+
+              let blob = await req.blob();
+              let url = window.URL.createObjectURL(blob);
+
+              return url;
+            }
           }
         },
         watch: {
@@ -152,6 +177,10 @@
           videoFileB64(){
             let app = this;
 
+            if(this.videoFileB64 == ""){
+              return;
+            }
+
             let ask_interact = new utils.ask_interact();
             ask_interact.on_interact = () => {
               fetch(app.videoFileB64).then((result) => {
@@ -165,10 +194,12 @@
             let container = document.createElement("div");
             document.body.appendChild(container);
             ask_interact.$mount(container);
+          },
+          video_media_id(media_id){
+            this.loadVideo();
           }
         },
         mounted(){
-
         },
         beforeDestroy(){
           this.shaderProgram.delete_texture('video');

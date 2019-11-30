@@ -54,6 +54,7 @@ utils.load_gfont = function(name_in, size, text){
 // Tool for dynamic script loading
 
 utils.scripts = [];
+utils.randurl_param = "?" + Math.random();
 
 utils.load_script = function(url, callback){
   // Already loaded?
@@ -76,7 +77,7 @@ utils.load_script = function(url, callback){
     let cbs = utils.scripts[url].callbacks;
     cbs.forEach((cb) => {cb()});
   };
-  script.src = url + "?" + Math.random();
+  script.src = url + utils.randurl_param;
   document.body.appendChild(script);
 }
 

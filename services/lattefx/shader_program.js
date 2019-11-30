@@ -32,7 +32,6 @@ async function file_to_arraybuffer(file){
   });
 }
 
-
 class ShaderProgram {
   constructor(gl){
     this.gl = gl;
@@ -204,7 +203,7 @@ class ShaderProgram {
   // Initialize a texture and load an image.
   // When the image finished loading copy it into the texture.
   //
-  set_texture(name, url, ready, options) {
+  async set_texture(name, url, ready, options) {
     let app = this;
     ready = ready || (() => {});
     options = options || {};
@@ -216,13 +215,14 @@ class ShaderProgram {
     let audioElement = null;
     let autoplay = options.autoplay;
 
-    if(options.videoFile != undefined){
+    if(options.videoFile != undefined || options.video_media_getter != undefined){
       isVideo = true;
       isAudio = true;
       videoElement = document.createElement("video");
     }
 
-    if(isVideo || options.audioFile != undefined){
+    if(isVideo || options.audioFile != undefined ||
+       options.audio_media_getter != undefined){
       // Video also have an audio element for rendering purposes
       isAudio = true;
       audioElement = document.createElement("audio");
@@ -346,7 +346,11 @@ class ShaderProgram {
         updateVideoHQ: updateVideoHQ,
       };
 
-      if (isVideo) {
+      if(options.video_media_id != null) {
+        app.textures[name].videoDigest = options.video_media_id;
+      } else if (options.audio_media_id != null) {
+        app.textures[name].audioDigest = options.audio_media_id;
+      } else if (isVideo) {
         await app.get_file_digest(options.videoFile).then((digest) => {
           app.textures[name].videoDigest = digest;
           app.textures[name].videoFile = options.videoFile;
@@ -385,9 +389,10 @@ class ShaderProgram {
         canplay = false;
       }
     }
+
     // Handle videos/canvas texture
     if(isVideo){
-      let videoBlobURL = window.URL.createObjectURL(options.videoFile);
+      let video_blob_url = await options.video_media_getter();
 
       videoElement.addEventListener("timeupdate", function(){
         timeUpdate = true;
@@ -398,8 +403,8 @@ class ShaderProgram {
         checkReady();
       });
 
-      videoElement.src = videoBlobURL;
-      audioElement.src = videoBlobURL;
+      videoElement.src = video_blob_url;
+      audioElement.src = video_blob_url;
       videoElement.loop = true;
       videoElement.muted = true;
 
@@ -411,7 +416,7 @@ class ShaderProgram {
       }
 
     } else if (isAudioOnly) {
-      let audioBlobURL = window.URL.createObjectURL(options.audioFile);
+      let audio_blob_url = await options.audio_media_getter();
 
       audioElement.addEventListener("canplay", function(){
         options.ready.bind(audioElement)();
@@ -427,7 +432,7 @@ class ShaderProgram {
         audioElement.pause();
       }
 
-      audioElement.src = audioBlobURL;
+      audioElement.src = audio_blob_url;
 
       load();
     } else if(url.tagName != undefined && url.tagName == "CANVAS"){

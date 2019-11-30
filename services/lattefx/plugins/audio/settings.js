@@ -23,6 +23,7 @@
             audio: null,
             audioFile: null,
             audioFileB64: null,
+            audio_media_id: null,
             audioName: "",
             error: false,
             backgroundColor: "#000000",
@@ -31,8 +32,7 @@
             player: null,
             effect: null,
             shaderProgram: null,
-            uniforms: {
-            }
+            uniforms: {}
           };
         },
         methods: {
@@ -44,6 +44,8 @@
               audio: this.audio,
               audioFile: this.audioFile,
               autoplay: !this.player.paused,
+              audio_media_getter: this.media_getter,
+              audio_media_id: this.audio_media_id,
               onerror: function(){
                 app.error = true;
                 fetch("/stats/lattefx_app_audio_has_error/");
@@ -85,8 +87,32 @@
               console.error(e);
             }
           },
+          async media_getter(){
+            if(this.audio_media_id == null){
+              return window.URL.createObjectURL(options.audioFile);
+            } else {
+              let settings = window.lattefx_settings;
+              let renderer_url = settings.renderer;
+              let auth = window.auth;
+              let token = await auth.get_token();
+              let project_id = window.player.project_id;
+              let project_media_url = renderer_url + "/media/" + project_id + "/";
+              let req = await fetch(project_media_url + this.audio_media_id, {
+                headers: {
+                  'Authorization': 'Bearer ' + token,
+                }
+              });
+
+              let blob = await req.blob();
+              let url = window.URL.createObjectURL(blob);
+
+              return url;
+            }
+          },
           onTrimLeft(diff){
             this.trimBefore += diff;
+            // Don't trim negatively:
+            this.trimBefore = Math.max(this.trimBefore, 0.0);
           }
         },
         watch: {
@@ -101,6 +127,11 @@
           },
           audioFileB64(){
             let app = this;
+
+            if(this.audioFileB64 == ""){
+              return;
+            }
+
             fetch(this.audioFileB64).then((result) => {
               result.blob().then((result) => {
                 let file = new File([result], "audio.vid");
