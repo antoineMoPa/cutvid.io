@@ -301,3 +301,38 @@ utils.gfont_picker = Vue.component('gfont-picker', {
     });
   }
 });
+
+utils.ask_interact = Vue.component('ask-interaction', {
+  template:
+  `<div class="popup ask-interaction">
+     <div v-bind:class="container_class">
+       <h3>
+         You need to interact so we can load a video!
+       </h3>
+       <button class="button-interact" v-on:click="on_interact_button">Interact!</button>
+       <br/></br>
+     </div>
+   </div>`,
+  data(){
+    return {
+      on_interact: function(){},
+      container_class: ""
+    }
+  },
+  props: ["settings"],
+  methods: {
+    on_interact_button(){
+      try{
+        this.on_interact();
+      } catch(e){
+        console.error(e);
+      }
+      this.destroy();
+    },
+    destroy(){
+      this.$destroy;
+      this.$el.innerHTML = "";
+      document.body.removeChild(this.$el);
+    }
+  },
+});
