@@ -555,7 +555,7 @@ def render_video(vidid, fps):
 
         media_file = make_audio_media(file_digest)
 
-        if not os.path.exists(media_file):
+        if media_file is None or not os.path.exists(media_file):
             # Some files do not have audio
             continue
 
