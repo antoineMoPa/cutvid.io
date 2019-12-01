@@ -2,7 +2,7 @@
 
 cd services
 
-cd renderer
+cd cloud
 python3 serve.py &
 cd ..
 
