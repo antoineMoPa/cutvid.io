@@ -78,10 +78,10 @@ Vue.component('buy-video', {
     show(vidid){
       this.$el.classList.remove("hidden");
       this.previewReady = false;
-      this.previewURL = window.lattefx_settings.renderer +
+      this.previewURL = window.lattefx_settings.cloud +
         "/rendered_video_preview/" +
         vidid;
-      this.videoURL = window.lattefx_settings.renderer +
+      this.videoURL = window.lattefx_settings.cloud +
         "/rendered_video/" + vidid + "/lattefx-hq-video.avi";
 
       this.$el.querySelectorAll("video")[0].addEventListener(

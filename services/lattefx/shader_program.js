@@ -97,7 +97,7 @@ class ShaderProgram {
 
   async get_video_frame_at_time(texture, fps, trimBefore, from, video_time) {
     let digest = texture.videoDigest;
-    let base_path = window.lattefx_settings.renderer;
+    let base_path = window.lattefx_settings.cloud;
     let has_video = false;
     if(this.has_vid_in_cache == false){
       // Verify if server has file

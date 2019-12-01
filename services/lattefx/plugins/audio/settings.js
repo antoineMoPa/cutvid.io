@@ -92,11 +92,11 @@
               return window.URL.createObjectURL(options.audioFile);
             } else {
               let settings = window.lattefx_settings;
-              let renderer_url = settings.renderer;
+              let cloud_url = settings.cloud;
               let auth = window.auth;
               let token = await auth.get_token();
               let project_id = window.player.project_id;
-              let project_media_url = renderer_url + "/media/" + project_id + "/";
+              let project_media_url = cloud_url + "/media/" + project_id + "/";
               let req = await fetch(project_media_url + this.audio_media_id, {
                 headers: {
                   'Authorization': 'Bearer ' + token,

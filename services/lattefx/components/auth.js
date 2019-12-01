@@ -105,13 +105,13 @@ Vue.component('auth', {
         this.show_login();
         app.saving = false;
       } else{
-        let renderer_url = this.settings.renderer;
+        let cloud_url = this.settings.cloud;
         let data = window.player.serialize();
         let project_id = data.project_id;
 
         // New project - get a new project id
         if(project_id == null){
-          let req = await fetch(renderer_url + "/get_a_new_project_id", {
+          let req = await fetch(cloud_url + "/get_a_new_project_id", {
             headers: {
               'Authorization': 'Bearer ' + token,
             }
@@ -125,7 +125,7 @@ Vue.component('auth', {
         let form = new FormData();
         form.append('lattefx_file.lattefx', data);
 
-        fetch(renderer_url + "/upload_project/" + project_id, {
+        fetch(cloud_url + "/upload_project/" + project_id, {
           method: 'POST',
           headers: {
             'Authorization': 'Bearer ' + token,

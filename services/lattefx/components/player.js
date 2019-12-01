@@ -337,7 +337,7 @@ Vue.component('player', {
       this.$refs['sequencer'].launch_template_selector();
     },
     browse_projects(){
-      let renderer_url = this.settings.renderer;
+      let cloud_url = this.settings.cloud;
       let app = this;
       this.$refs['projects'].open();
       this.$refs['projects'].on_open_project = async (project) => {
@@ -349,7 +349,7 @@ Vue.component('player', {
 
         await this.$nextTick();
 
-        let req = await fetch(renderer_url + "/project/" + project.id, {
+        let req = await fetch(cloud_url + "/project/" + project.id, {
           headers: {
             'Authorization': 'Bearer ' + token,
           }

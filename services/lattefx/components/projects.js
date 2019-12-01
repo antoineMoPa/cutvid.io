@@ -55,8 +55,8 @@ Vue.component('projects', {
       this.$el.classList.add("hidden");
     },
     async update_storage_info(token){
-      let renderer_url = this.settings.renderer;
-      let req = await fetch(renderer_url + "/get_storage_info", {
+      let cloud_url = this.settings.cloud;
+      let req = await fetch(cloud_url + "/get_storage_info", {
         headers: {
           'Authorization': 'Bearer ' + token,
         }
@@ -75,7 +75,7 @@ Vue.component('projects', {
     },
     async fetch_projects(){
       let auth = window.auth;
-      let renderer_url = this.settings.renderer;
+      let cloud_url = this.settings.cloud;
 
       if(typeof(auth) == "undefined"){
         return;
@@ -88,7 +88,7 @@ Vue.component('projects', {
       }
 
       let token = await auth.get_token();
-      let req = await fetch(renderer_url + "/list_projects", {
+      let req = await fetch(cloud_url + "/list_projects", {
         headers: {
           'Authorization': 'Bearer ' + token,
         }
@@ -127,7 +127,7 @@ Vue.component('projects', {
     },
     async really_delete_project(project){
       let auth = window.auth;
-      let renderer_url = this.settings.renderer;
+      let cloud_url = this.settings.cloud;
 
       if(auth.user_info == null){
         auth.show_login();
@@ -136,7 +136,7 @@ Vue.component('projects', {
       }
 
       let token = await auth.get_token();
-      let req = await fetch(renderer_url + "/delete_project/" + project.id, {
+      let req = await fetch(cloud_url + "/delete_project/" + project.id, {
         method: "DELETE",
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -150,7 +150,7 @@ Vue.component('projects', {
       project.renaming = false;
 
       let auth = window.auth;
-      let renderer_url = this.settings.renderer;
+      let cloud_url = this.settings.cloud;
 
       if(auth.user_info == null){
         auth.show_login();
@@ -162,7 +162,7 @@ Vue.component('projects', {
       form.append('name', project.name);
 
       let token = await auth.get_token();
-      let req = await fetch(renderer_url + "/rename_project/" + project.id, {
+      let req = await fetch(cloud_url + "/rename_project/" + project.id, {
         method: "POST",
         headers: {
           'Authorization': 'Bearer ' + token,

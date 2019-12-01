@@ -330,7 +330,7 @@ class ShaderPlayerWebGL {
     let fps = this.fps;
     let total_frames = fps * duration;
     let vid_id = this.gen_vid_id();
-    let base_path = window.lattefx_settings.renderer;
+    let base_path = window.lattefx_settings.cloud;
 
     for(let frame = 0; frame < total_frames; frame++){
       if(app.cancel_hq_render){
