@@ -38,6 +38,7 @@ Vue.component('effects-selector', {
       }
     },
     open(callback) {
+      let app = this;
       this.callback = callback;
       this.$el.classList.toggle("hidden");
 
