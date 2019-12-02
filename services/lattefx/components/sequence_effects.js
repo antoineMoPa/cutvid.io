@@ -161,6 +161,8 @@ Vue.component('sequence-effect', {
             app.last_plugin = plugin;
             app.last_el = container;
 
+            // Some of these might not be needed anymore
+            // that could be some phd thesis work to figure out which
             plugin.effect = settings;
             plugin.effect.uniforms = plugin.uniforms;
             plugin.player = app.player;
