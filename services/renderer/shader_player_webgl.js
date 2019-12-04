@@ -854,8 +854,6 @@ class ShaderPlayerWebGL {
           }
 
           gl.uniform1i(att, i);
-          var att = gl.getUniformLocation(program, "potato");
-          gl.uniform1f(att, 0);
           i++;
         }
 
