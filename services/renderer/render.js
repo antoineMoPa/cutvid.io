@@ -3,7 +3,8 @@ const fs = require('fs');
 let ShaderPlayerWebGL = require('./shader_player_webgl.js');
 let ShaderProgram = require('./shader_program.js');
 
-PNG = require('pngjs').PNG;
+let PNG = require('pngjs').PNG;
+let jpeg = require('jpeg-js');
 
 let plugins_list = JSON.parse(fs.readFileSync('plugins_list.json'));
 let plugins_list_flat = {};
@@ -40,7 +41,7 @@ function compile_program(gl, vertex, fragment){
 }
 
 
-function attach_passes(gl, sequences){
+async function attach_passes(gl, sequences){
 
   for(let i in sequences){
     let programs = [];
@@ -56,12 +57,47 @@ function attach_passes(gl, sequences){
     let fragment = fs.readFileSync("./plugins/"+effect_name+"/fragment.glsl");
     let program = compile_program(gl, vertex, fragment);
 
+    // This file can contain plugin-specific render code
+    // (e.g: attach textures)
+    let plugin_renderer_path = "./plugins/"+effect_name+"/render.js";
+
+    if(fs.existsSync(plugin_renderer_path)){
+      let plugin = require(plugin_renderer_path);
+
+      await plugin(program, seq, {
+        fs: fs,
+        PNG: PNG,
+        execSync: require('child_process').execSync
+      });
+    }
+
+    // Attach textures
+    for(let t in seq.texture_urls){
+      let url = seq.texture_urls[t];
+
+      var get_pixels = require("get-pixels")
+
+      await new Promise(function(resolve, reject){
+        get_pixels(url, function(err, pixels) {
+          if(err) {
+            reject();
+            return;
+          }
+
+          program.set_texture_raw(t, {
+            width: pixels.shape[0],
+            height: pixels.shape[1],
+            data: pixels.data
+          });
+
+          resolve();
+        })
+      });
+    }
+
     seq.effect.shaderProgram = program;
   }
 }
-
-
-attach_passes(gl, player.sequences);
 
 function zero_pad(num){
   let out = "";
@@ -94,12 +130,15 @@ player.image_saver = (frame, width, height) => {
       image.data[idx+3] = pixels[idx+3];
     }
   }
+
   let path = "./image-" + zero_pad(frame) + ".png";
   fs.writeFileSync(path, PNG.sync.write(image));
 
 };
 
-player.render_hq(()=>{
-  var ext = gl.getExtension('STACKGL_destroy_context');
-  ext.destroy();
-});
+attach_passes(gl, player.sequences).then(function(){
+  player.render_hq(()=>{
+    var ext = gl.getExtension('STACKGL_destroy_context');
+    ext.destroy();
+  });
+})

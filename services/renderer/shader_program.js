@@ -199,12 +199,44 @@ class ShaderProgram {
     this.gl.useProgram(this.program);
   }
 
-  // Took from MDN:
-  // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
-  // Initialize a texture and load an image.
-  // When the image finished loading copy it into the texture.
-  //
-  async set_texture(name, url, ready, options) {
+  set_texture_raw(name, data) {
+    let gl = this.gl;
+    let level = 0;
+    let internalFormat = gl.RGBA;
+    let width = 1;
+    let height = 1;
+    let srcFormat = gl.RGBA;
+    let srcType = gl.UNSIGNED_BYTE;
+    let texture =  gl.createTexture();
+
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    this.textures[name] = {texture};
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    gl.texImage2D(
+      gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, data.data
+    );
+
+  }
+
+  /*
+   Initialize a texture and load an image.
+   When the image finished loading copy it into the texture.
+
+   In LatteFX's player, to simplify playback, audio elements are textures.
+
+   @param source can be a dataurl or a canvas (but no videos and audio)
+   @param options will contain videoElement, audioElement and other settings
+
+   For history, this was originaly took from MDN:
+   https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
+  */
+  async set_texture(name, source, ready, options) {
     let app = this;
     ready = ready || (() => {});
     options = options || {};
@@ -262,7 +294,6 @@ class ShaderProgram {
     var internalFormat = gl.RGBA;
     var width = 1;
     var height = 1;
-    var border = 0;
     var srcFormat = gl.RGBA;
     var srcType = gl.UNSIGNED_BYTE;
     var pixel = new Uint8Array([0, 0, 0, 0]);
@@ -337,6 +368,12 @@ class ShaderProgram {
         gl.bindTexture(gl.TEXTURE_2D, texture);
       }
 
+      let url = source;
+
+      if (source.tagName != undefined && source.tagName == "CANVAS") {
+        url = source.toDataURL();
+      }
+
       app.textures[name] = {
         texture,
         isVideo,
@@ -345,6 +382,7 @@ class ShaderProgram {
         audioElement: audioElement,
         updateVideo: updateVideo,
         updateVideoHQ: updateVideoHQ,
+        url
       };
 
       if(options.video_media_id != null) {
@@ -436,12 +474,12 @@ class ShaderProgram {
       audioElement.src = audio_blob_url;
 
       load();
-    } else if(url.tagName != undefined && url.tagName == "CANVAS"){
-      image = url;
+    } else if (source.tagName != undefined && source.tagName == "CANVAS"){
+      image = source;
       load();
     } else {
       image.addEventListener("load", load);
-      image.src = url;
+      image.src = source;
     }
   }
 

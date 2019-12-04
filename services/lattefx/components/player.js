@@ -279,6 +279,7 @@ Vue.component('player', {
     },
     onSaveLatteFxFile(){
       let data = JSON.stringify(this.serialize());
+
       let a = document.createElement("a");
       var blob = new Blob([data], {type : 'text/json'});
       var url = URL.createObjectURL(blob);
@@ -315,6 +316,10 @@ Vue.component('player', {
     },
     serialize(){
       let data = {};
+
+      // Attached current textures so we don't
+      // have to render them on the server
+      this.player.attach_textures();
 
       data.project_id = this.project_id;
       data.width = this.width;

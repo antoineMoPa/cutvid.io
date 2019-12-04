@@ -137,7 +137,7 @@
           },
           async media_getter(){
             if(this.video_media_id == null){
-              return window.URL.createObjectURL(options.videoFile);
+              return window.URL.createObjectURL(this.videoFile);
             } else {
               let settings = window.lattefx_settings;
               let cloud_url = settings.cloud;

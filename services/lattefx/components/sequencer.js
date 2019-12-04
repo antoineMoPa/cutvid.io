@@ -215,7 +215,8 @@ Vue.component('sequencer', {
           effect: component.serialize(),
           layer: seq.layer,
           from: seq.from,
-          to: seq.to
+          to: seq.to,
+          texture_urls: seq.texture_urls
         });
       }
 

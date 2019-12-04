@@ -444,6 +444,31 @@ class ShaderPlayerWebGL {
     return sequences;
   }
 
+  attach_textures(){
+    // Attaches textures as data URLS
+    for(let s in this.sequences){
+      let seq = this.sequences[s];
+
+      if(seq.effect == undefined || seq.effect.shaderProgram == undefined){
+        return;
+      }
+
+      let pass = seq.effect.shaderProgram;
+
+      seq.texture_urls = {};
+
+      for(let t in pass.textures){
+        let tex = pass.textures[t];
+
+        if(tex.url == undefined){
+          continue;
+        }
+
+        seq.texture_urls[t] = tex.url;
+      }
+    }
+  }
+
   cancel_render() {
     if(this.rendering){
       if(this.renderMode == "LQ"){
@@ -762,6 +787,7 @@ class ShaderPlayerWebGL {
           let tex = shaderProgram.textures[name];
           gl.activeTexture(gl.TEXTURE0 + i);
           var att = gl.getUniformLocation(program, name);
+
           if(tex.isVideo || tex.isAudio){
             // Seek to right time
             let trimBefore = parseFloat(seq.trimBefore);
@@ -826,7 +852,10 @@ class ShaderPlayerWebGL {
           } else {
             gl.bindTexture(gl.TEXTURE_2D, tex.texture);
           }
+
           gl.uniform1i(att, i);
+          var att = gl.getUniformLocation(program, "potato");
+          gl.uniform1f(att, 0);
           i++;
         }
 
