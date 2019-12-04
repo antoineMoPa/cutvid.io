@@ -219,7 +219,7 @@ class ShaderProgram {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
     gl.texImage2D(
-      gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, data.data
+      gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, data
     );
 
   }

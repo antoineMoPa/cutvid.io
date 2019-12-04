@@ -2,12 +2,13 @@
 precision highp float;
 
 varying vec2 UV;
-varying  vec2 lastUV;
+varying vec2 lastUV;
 uniform sampler2D in_tex;
 uniform vec2 mouse;
 uniform float ratio, time;
 uniform float imageWidth, imageHeight, imageScale, offsetTop, offsetLeft;
 uniform sampler2D image;
+uniform float flip_tex;
 
 void main(void){
     float x = UV.x * ratio;
@@ -18,6 +19,11 @@ void main(void){
     float imageRatio = imageHeight / imageWidth * ratio;
     // Apply aspect ratio
     imageUV.x *= imageRatio;
+
+	if(flip_tex > 0.5){
+	  imageUV.y *= -1.0;
+	  imageUV.y += 1.0;
+	}
 
     // Apply scale
     imageUV.x -= offsetLeft;

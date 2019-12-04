@@ -855,6 +855,15 @@ class ShaderPlayerWebGL {
 
           gl.uniform1i(att, i);
           i++;
+
+          att = gl.getUniformLocation(program, "flip_tex");
+
+          if(this.headless){
+            gl.uniform1f(att, 1.0);
+          } else {
+            gl.uniform1f(att, 0.0);
+          }
+
         }
 
         gl.uniform2fv(
