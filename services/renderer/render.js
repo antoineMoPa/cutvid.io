@@ -64,10 +64,14 @@ async function attach_passes(gl, sequences){
     if(fs.existsSync(plugin_renderer_path)){
       let plugin = require(plugin_renderer_path);
 
-      await plugin(program, seq, {
+      await plugin({
+        gl: gl,
+        shader_program: program,
+        sequence: seq,
         fs: fs,
         PNG: PNG,
-        execSync: require('child_process').execSync
+        exec_sync: require('child_process').execSync,
+        get_pixels: require('get-pixels')
       });
     }
 
@@ -75,9 +79,14 @@ async function attach_passes(gl, sequences){
     for(let t in seq.texture_urls){
       let url = seq.texture_urls[t];
 
-      var get_pixels = require("get-pixels")
+      if(url == ""){
+        continue;
+      }
+
+      var get_pixels = require("get-pixels");
 
       await new Promise(function(resolve, reject){
+
         get_pixels(url, function(err, pixels) {
           if(err) {
             reject();
@@ -91,7 +100,7 @@ async function attach_passes(gl, sequences){
           });
 
           resolve();
-        })
+        });
       });
     }
 

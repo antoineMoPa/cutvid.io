@@ -181,16 +181,14 @@
               return;
             }
 
-            let ask_interact = new utils.ask_interact();
-            ask_interact.on_interact = () => {
-              fetch(app.videoFileB64).then((result) => {
-                result.blob().then((result) => {
-                  let file = new File([result], "video.vid");
-                  app.durationInitialized = true;
-                  app.onVideo(file);
-                });
+            fetch(app.videoFileB64).then((result) => {
+              result.blob().then((result) => {
+                let file = new File([result], "video.vid");
+                app.durationInitialized = true;
+                app.onVideo(file);
               });
-            };
+            });
+
             let container = document.createElement("div");
             document.body.appendChild(container);
             ask_interact.$mount(container);

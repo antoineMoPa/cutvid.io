@@ -8,6 +8,7 @@ uniform vec2 mouse;
 uniform float ratio, time;
 uniform float videoWidth, videoHeight, videoScale, offsetTop, offsetLeft;
 uniform sampler2D video;
+uniform float flip_tex;
 
 void main(void){
     float x = UV.x * ratio;
@@ -18,6 +19,12 @@ void main(void){
     float videoRatio = videoHeight / videoWidth * ratio;
     // Apply aspect ratio
     videoUV.x *= videoRatio;
+
+	// Flip for headless render
+	if(flip_tex > 0.5){
+	  videoUV.y *= -1.0;
+	  videoUV.y += 1.0;
+	}
 
     // Apply scale
     videoUV.x -= offsetLeft;
@@ -35,6 +42,6 @@ void main(void){
     vec4 last = texture2D(in_tex, lastUV);
     //vec4 col = (1.0 - video.a) * last + video.a * video;
     vec4 col = video + (1.0 - video.a) * last;
-	col.a = 1.0;
+
     gl_FragColor = col;
 }

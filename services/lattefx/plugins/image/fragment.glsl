@@ -20,6 +20,7 @@ void main(void){
     // Apply aspect ratio
     imageUV.x *= imageRatio;
 
+	// Flip for headless render
 	if(flip_tex > 0.5){
 	  imageUV.y *= -1.0;
 	  imageUV.y += 1.0;

@@ -794,7 +794,14 @@ class ShaderPlayerWebGL {
             let timeFrom = parseFloat(seq.from);
             let shouldBeTime = time - timeFrom + trimBefore;
 
-            if (this.rendering && this.renderMode == "HQ") {
+            if(this.headless){
+              await tex.updateVideo(
+                this.fps,
+                trimBefore,
+                timeFrom-trimBefore,
+                shouldBeTime
+              );
+            } else if (this.rendering && this.renderMode == "HQ") {
               let timeTo = parseFloat(seq.to);
               // Get exact frame
               if(tex.isVideo){
@@ -846,6 +853,7 @@ class ShaderPlayerWebGL {
                 } else {
                   tex.audioElement.muted = false;
                 }
+
                 texSuccess &= tex.updateVideo();
               }
             }

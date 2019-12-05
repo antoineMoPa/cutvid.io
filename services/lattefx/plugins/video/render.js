@@ -1,16 +1,49 @@
-module.exports = async function(shader_program, sequence, libs){
+module.exports = async function(api){
   let promise = new Promise(function(resolve, reject){
-    const fs = libs.fs;
-    const PNG = libs.PNG
-    const execSync = libs.execSync;
+    let shader_program = api.shader_program;
+    let gl = api.gl;
+    let sequence = api.sequence;
+    const fs = api.fs;
+    const PNG = api.PNG
+    const exec_sync = api.exec_sync;
+    const get_pixels = api.get_pixels;
 
-    fs.createReadStream('./images/image-000001.png')
-      .pipe(new PNG())
-      .on('parsed', function() {
-        console.log("setting tex");
-        shader_program.set_texture_raw("video", this);
-        resolve();
+    async function load_image(file, fps, trimBefore, from, video_time){
+      let promise = new Promise(function(resolve, reject){
+        get_pixels(file, function(err, pixels) {
+          if(err) {
+            reject();
+            return;
+          }
+
+          gl.bindTexture(gl.TEXTURE_2D, shader_program.textures.video.texture);
+
+          shader_program.set_texture_raw("video", {
+            width: pixels.shape[0],
+            height: pixels.shape[1],
+            data: pixels.data
+          });
+
+          resolve();
+        })
       });
+
+      return promise;
+    }
+
+    let file = './images/image-000001.png';
+
+    let update_video = async function (fps, trimBefore, from, video_time) {
+      return load_image(file, fps, trimBefore, from, video_time);
+    };
+    // Initialize texture
+    shader_program.set_texture_raw("video", null);
+
+    // Bind texture updater
+    shader_program.textures.video.isVideo = true;
+    shader_program.textures.video.updateVideo = update_video;
+
+    resolve();
   });
 
   return promise;
