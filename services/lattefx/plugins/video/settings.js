@@ -37,7 +37,7 @@
 </div>`,
         data: function(){
           return {
-            serializeExclude: ["video", "videoFile"],
+            serializeExclude: ["video", "videoFile", "effect"],
             video: null,
             videoFile: null,
             videoFileB64: null,

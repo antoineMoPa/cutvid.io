@@ -19,7 +19,7 @@
 </div>`,
         data: function(){
           return {
-            serializeExclude: ["audio", "audioFile"],
+            serializeExclude: ["audio", "audioFile", "effect"],
             audio: null,
             audioFile: null,
             audioFileB64: null,

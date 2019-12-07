@@ -9,6 +9,7 @@ import random
 import time
 import requests
 import jwt
+import shutil
 
 settings = json.load(open('../lattefx/settings.json'))
 
@@ -83,3 +84,66 @@ def validate_and_sanitize_id(vidid):
         return None
 
     return vidid
+
+def extract_media(project_folder):
+    """ Takes out most big media parts out of lattefx files
+    """
+    project_file_path = project_folder + "lattefx_file.lattefx"
+
+    with open(project_file_path, "r") as f:
+        project = json.loads(f.read())
+        f.close()
+
+    project_media_folder = project_folder + "media/"
+    os.makedirs(project_media_folder, exist_ok=True)
+
+    for media_type in ('video', 'audio'):
+      for scene in project["scenes"]:
+          if "effect" not in scene:
+              continue
+
+          effect = scene["effect"]
+
+          if media_type + "FileB64" not in effect:
+              continue
+
+          video_dataurl = effect[media_type+"FileB64"]
+
+          if video_dataurl == "":
+              # Video already extracted
+              continue
+
+          video_B64 = video_dataurl.split(",")[1]
+          video_file = b64decode(video_B64)
+
+          media_name = id_generator()
+          media_path = project_media_folder + media_name
+
+          with open(media_path, "wb") as f:
+              f.write(video_file)
+              f.close()
+
+          effect[media_type+"FileB64"] = ""
+          effect[media_type] = ""
+          effect[media_type + "_media_id"] = media_name
+
+    with open(project_file_path, "w") as f:
+        f.write(json.dumps(project))
+
+def copy_medias(user_id, project_id, dest_folder):
+    """
+    Copies media files to a folder
+    """
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    project_folder = user_folder + "project-" + str(project_id) + "/"
+    medias_folder = project_folder + "media/"
+    directory = Path(medias_folder)
+
+    for filename in directory.glob("*"):
+        media_id = str(filename).split("/")[-1]
+        if validate_and_sanitize_id(media_id) is None:
+            continue
+
+        media_path = medias_folder + media_id
+        shutil.copyfile(media_path, dest_folder + media_id)

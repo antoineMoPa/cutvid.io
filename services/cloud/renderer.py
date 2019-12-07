@@ -278,109 +278,94 @@ def make_audio_media(vidid):
 
     return folder + "/audio.mp4"
 
-@app.route("/render_video/<vidid>/<fps>", methods=['POST'])
-def render_video(vidid, fps):
+
+@projects.route("/upload_project/<project_id>", methods=['POST', 'OPTIONS'])
+def upload_project(project_id):
     """
-    Render a video from the frames we have
+    This could be optimized by using nginx direct uploading
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+
+    if token is None:
+        return "error 1 bad token"
+
+    project_file = request.form['lattefx_file.lattefx']
+    project_id = int(project_id)
+    user_id = int(token['user_id'])
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    os.makedirs(user_folder, exist_ok=True)
+
+    project_folder = user_folder + "project-" + str(project_id) + "/"
+    os.makedirs(project_folder, exist_ok=True)
+
+
+    project_file_path = project_folder + "lattefx_file.lattefx"
+
+    with open(project_file_path, "w") as f:
+        f.write(project_file)
+
+    project_meta_path = project_folder + "lattefx_project.meta"
+
+    if not os.path.exists(project_meta_path):
+        # Create project meta for new projects
+        project_meta = json.dumps({"name": "Untitled Project"})
+
+        with open(project_meta_path, "w") as f:
+            f.write(project_meta)
+
+    return "success"
+
+
+@app.route("/render_video/", methods=['POST', 'OPTIONS'])
+def render_video():
+    """
+    Render a video
 
     Put audio at places indicated by sequence.lattefx
 
     returns generated video id
     """
-    vidid = validate_and_sanitize_id(vidid)
 
-    if vidid is None:
-        return "error 1 bad id"
+    if request.method == 'OPTIONS':
+        return ""
 
-    fps = sorted([0, int(fps), 100])[1]
+    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
 
-    audio_sequences = request.form['audio-sequences']
-    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
+    if token is None:
+        return "error 1 bad token"
 
-    audio_sequences = json.loads(audio_sequences)
+    project_file = request.form['lattefx_file.lattefx']
+    render_id = id_generator()
+    user_id = int(token['user_id'])
 
-    audio_args = []
-    audio_map_args = []
+    render_folder = TMP_FOLDER + "lattefx-render-" + render_id + "/"
+    project_file_path = render_folder + "lattefx_file.lattefx"
 
-    audio_index = 1
+    os.makedirs(render_folder, exist_ok=True)
 
-    for sequence in audio_sequences:
-        time_from = float(sequence['from'])
-        time_to = float(sequence['to'])
-        trim_before = float(sequence['trimBefore'])
-        file_digest = validate_and_sanitize_id(sequence['digest'])
+    with open(project_file_path, "w") as f:
+        f.write(project_file)
 
-        if time_from < 0:
-            # Trim part before 0
-            trim_before -= time_from
-            time_to -= time_from
-            time_from = 0
+    extract_media(render_folder)
 
-        if time_from > time_to:
-            return "error 4 incoherent sequence timing"
+    with open(project_file_path, "r") as f:
+        project_file = json.loads(f.read())
 
-        if file_digest is None:
-            return "error 5 bad id in sub sequence"
+    project_id = project_file["project_id"]
+    copy_medias(user_id, project_id, render_folder + "media/")
 
-        media_file = make_audio_media(file_digest)
-
-        if media_file is None or not os.path.exists(media_file):
-            # Some files do not have audio
-            continue
-
-        audio_args += [
-            "-ss", str(trim_before),
-            "-itsoffset", str(time_from),
-            "-t", str(time_to),
-            "-i", media_file
-        ]
-        audio_map_args += ["-map", str(audio_index)]
-        audio_index += 1
+    render_preview = subprocess.Popen([
+        "node", os.getcwd() + "/../renderer/render.js", "lattefx_file.lattefx"
+    ], cwd=render_folder)
 
 
-    os.makedirs(folder, exist_ok=True)
+    return json.dumps({"status": "ok", "render_id": render_id})
 
-    mark_cache(vidid)
-
-    # Poor man's cron: delete old files before
-    # Make sure to put somewhere else if you delete this
-    clean_old_cache()
-
-    vid_format = "avi"
-
-    command_line = ["ffmpeg",
-            "-r", str(fps),
-            "-i", "image-%06d.png"] + audio_args + [
-            "-nostdin",
-            "-y",
-            "-r", str(fps),
-            "-vb", "20M", # HQ
-            "-map", "0"
-        ] + audio_map_args + [
-            "video." + vid_format
-        ]
-
-    # Pro tip: debug command line with:
-    # print(" ".join(command_line))
-
-    render_vid = subprocess.Popen(
-        command_line,
-        cwd=folder)
-    render_vid.wait()
-
-    downloadable_id = id_generator()
-    downloadable_folder = TMP_FOLDER + "/lattefx-cache-" + downloadable_id
-    os.mkdir(downloadable_folder)
-    mark_cache(downloadable_id, datetime.timedelta(days=1))
-
-    filename = "lattefx-hq-video." + vid_format
-    move_vid = subprocess.Popen(
-        ["mv", "video." + vid_format,
-         downloadable_folder + "/" + filename
-    ], cwd=folder)
-    move_vid.wait()
-
-    return downloadable_id
 
 @app.route("/rendered_video/<vidid>/<desired_filename>", methods=['GET'])
 def rendered_video(vidid, desired_filename):
@@ -405,7 +390,6 @@ def rendered_video(vidid, desired_filename):
     filename = "lattefx-hq-video." + vid_format
 
     return send_file(folder + "/" + filename)
-
 
 @app.route("/rendered_video_preview/<vidid>", methods=['GET'])
 def rendered_video_preview(vidid):

@@ -57,50 +57,6 @@ def list_projects():
 
     return json.dumps(project_metas)
 
-def extract_media(project_folder):
-    project_file_path = project_folder + "lattefx_file.lattefx"
-
-    with open(project_file_path, "r") as f:
-        project = json.loads(f.read())
-        f.close()
-
-    project_media_folder = project_folder + "media/"
-    os.makedirs(project_media_folder, exist_ok=True)
-
-    for media_type in ('video', 'audio'):
-      for scene in project["scenes"]:
-          if "effect" not in scene:
-              continue
-
-          effect = scene["effect"]
-
-          if media_type + "FileB64" not in effect:
-              continue
-
-          video_dataurl = effect[media_type+"FileB64"]
-
-          if video_dataurl == "":
-              # Video already extracted
-              continue
-
-          video_B64 = video_dataurl.split(",")[1]
-          video_file = b64decode(video_B64)
-
-          media_name = id_generator()
-          media_path = project_media_folder + media_name
-
-          with open(media_path, "wb") as f:
-              f.write(video_file)
-              f.close()
-
-          effect[media_type+"FileB64"] = ""
-          effect[media_type] = ""
-          effect[media_type + "_media_id"] = media_name
-
-    with open(project_file_path, "w") as f:
-        f.write(json.dumps(project))
-
-
 @projects.route("/project/<project_id>", methods=['GET', 'OPTIONS'])
 def get_project(project_id):
     """

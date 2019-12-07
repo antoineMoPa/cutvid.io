@@ -6,10 +6,6 @@ cd cloud
 python3 serve.py &
 cd ..
 
-cd downloadables
-./start.bash &
-cd ..
-
 cd auth
 bundle exec rails s -p 8000 &
 cd ..

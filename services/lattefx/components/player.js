@@ -257,22 +257,35 @@ Vue.component('player', {
 
       fetch("/stats/lattefx_app_lq_initiate_download/");
     },
-    makeHQ(){
-      // Hybrid render High Quality
-      if (this.player.rendering) {
-        return;
-      }
+    async makeHQ(){
+      let project = this.serialize();
 
-      this.player.rendering = true;
+      let token = await this.$refs.auth.get_token();
+      let cloud_url = this.settings.cloud;
+      let data = this.serialize();
+      let project_id = data.project_id;
 
-      this.$refs.ui.set_progress(0.0);
+      data = JSON.stringify(data);
 
-      this.render("HQ", function(vidid){
-        this.$refs.buyVideo.show(vidid);
-        fetch("/stats/lattefx_app_render_done/");
-      }.bind(this));
+      let form = new FormData();
+      form.append('lattefx_file.lattefx', data);
 
-      fetch("/stats/lattefx_app_initiate_buy/");
+      fetch(cloud_url + "/render_video/", {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Encoding': 'multipart/form-data'
+        },
+        body: form
+      }).then(() => {
+        app.saving = false;
+        app.show_saved_message = true;
+        setTimeout(()=>{
+          app.show_saved_message = false;
+        }, 2000);
+      });
+
+      fetch("/stats/lattefx_app_initiate_render_hq/");
     },
     onCancelRender(){
       this.player.cancel_render();

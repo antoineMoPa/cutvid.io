@@ -1,12 +1,13 @@
 const fs = require('fs');
 
-let ShaderPlayerWebGL = require('./shader_player_webgl.js');
-let ShaderProgram = require('./shader_program.js');
+let code_folder = __dirname;
+let ShaderPlayerWebGL = require(code_folder + '/shader_player_webgl.js');
+let ShaderProgram = require(code_folder + '/shader_program.js');
 
 let PNG = require('pngjs').PNG;
 let jpeg = require('jpeg-js');
 
-let plugins_list = JSON.parse(fs.readFileSync('plugins_list.json'));
+let plugins_list = JSON.parse(fs.readFileSync(code_folder + '/plugins_list.json'));
 let plugins_list_flat = {};
 
 // Flatten plugins list
@@ -53,13 +54,13 @@ async function attach_passes(gl, sequences){
       continue;
     }
 
-    let vertex = fs.readFileSync("./plugins/"+effect_name+"/vertex.glsl");
-    let fragment = fs.readFileSync("./plugins/"+effect_name+"/fragment.glsl");
+    let vertex = fs.readFileSync(code_folder + "/plugins/"+effect_name+"/vertex.glsl");
+    let fragment = fs.readFileSync(code_folder + "/plugins/"+effect_name+"/fragment.glsl");
     let program = compile_program(gl, vertex, fragment);
 
     // This file can contain plugin-specific render code
     // (e.g: attach textures)
-    let plugin_renderer_path = "./plugins/"+effect_name+"/render.js";
+    let plugin_renderer_path = code_folder + "/plugins/"+effect_name+"/render.js";
 
     if(fs.existsSync(plugin_renderer_path)){
       let plugin = require(plugin_renderer_path);
