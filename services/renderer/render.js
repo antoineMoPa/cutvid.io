@@ -1,35 +1,18 @@
-const fs = require('fs');
+function flatten_plugin_list(plugins_list){
+  let plugins_list_flat = {};
 
-let code_folder = __dirname;
-let ShaderPlayerWebGL = require(code_folder + '/shader_player_webgl.js');
-let ShaderProgram = require(code_folder + '/shader_program.js');
-
-let PNG = require('pngjs').PNG;
-let jpeg = require('jpeg-js');
-
-let plugins_list = JSON.parse(fs.readFileSync(code_folder + '/plugins_list.json'));
-let plugins_list_flat = {};
-
-// Flatten plugins list
-for(let i in plugins_list){
-  for(let j in plugins_list[i]){
-    plugins_list_flat[j] = true;
+  // Flatten plugins list
+  for(let i in plugins_list){
+    for(let j in plugins_list[i]){
+      plugins_list_flat[j] = true;
+    }
   }
+  return plugins_list_flat
 }
 
-plugins_list = plugins_list_flat;
-
-let project = JSON.parse(fs.readFileSync(process.argv[2]));
-
-let gl = require('gl')(project.width, project.height, {preserveDrawingBuffer: true, premultipliedAlpha: false});
-let player = new ShaderPlayerWebGL(null, gl);
-
-player.sequences = project.scenes;
-player.width = project.width;
-player.height = project.height;
-player.fps = project.fps;
-
 function compile_program(gl, vertex, fragment){
+  let code_folder = __dirname;
+  let ShaderProgram = require(code_folder + '/shader_program.js');
   let pass = new ShaderProgram(gl, true);
 
   try{
@@ -41,8 +24,11 @@ function compile_program(gl, vertex, fragment){
   return pass;
 }
 
-
 async function attach_passes(gl, sequences){
+  let code_folder = __dirname;
+  const fs = require('fs');
+  let plugins_list = JSON.parse(fs.readFileSync(code_folder + '/plugins_list.json'));
+  plugins_list = flatten_plugin_list(plugins_list);
 
   for(let i in sequences){
     let programs = [];
@@ -62,17 +48,22 @@ async function attach_passes(gl, sequences){
     // (e.g: attach textures)
     let plugin_renderer_path = code_folder + "/plugins/"+effect_name+"/render.js";
 
+    let fps = parseInt(player.fps);
+
     if(fs.existsSync(plugin_renderer_path)){
       let plugin = require(plugin_renderer_path);
 
       await plugin({
         gl: gl,
         shader_program: program,
-        sequence: seq,
+        sequence: seq, // The values in sequence should never be trusted
         fs: fs,
-        PNG: PNG,
+        PNG: require('pngjs').PNG,
         exec_sync: require('child_process').execSync,
-        get_pixels: require('get-pixels')
+        get_pixels: require('get-pixels'),
+        fps: fps
+      }).catch((e) => {
+        console.log("Error in plugin init:" + e)
       });
     }
 
@@ -102,6 +93,8 @@ async function attach_passes(gl, sequences){
 
           resolve();
         });
+      }).catch((e) => {
+        console.log("Error attaching texture: " + e)
       });
     }
 
@@ -120,35 +113,124 @@ function zero_pad(num){
   return out + num;
 }
 
-player.image_saver = (frame, width, height) => {
-  let pixels = new Uint8Array(width * height * 4);
+function bind_image_saver(player) {
+  let saved_count = 0;
+  const fs = require('fs');
+  let PNG = require('pngjs').PNG;
 
-  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+  let width = parseInt(player.width);
+  let height = parseInt(player.height);
+  let fps = parseInt(player.fps);
+  let duration = this.player.get_total_duration();
+  let total_count = parseInt(Math.ceil(fps * duration));
 
-  let image = new PNG({
-    width: width,
-    height: height,
-    filterType: -1
+  return new Promise(function(resolve, reject){
+
+    player.image_saver = (frame) => {
+      console.log("begin save");
+      let pixels = new Uint8Array(width * height * 4);
+      gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+
+      let image = new PNG({
+        width: width,
+        height: height,
+        filterType: -1
+      });
+
+      image.data = pixels;
+
+      let path = "./image-" + zero_pad(frame) + ".png";
+      let ws = fs.createWriteStream(path)
+
+
+      image.pack().pipe(ws);
+
+      ws.on('finish',()=>{
+        console.log("end save");
+        saved_count++;
+        if(saved_count == total_count){
+          resolve();
+        }
+      });
+
+      console.log("end writefile call");
+    };
   });
+}
 
-  for (var y = 0; y < image.height; y++) {
-    for (var x = 0; x < image.width; x++) {
-      var idx = (image.width * y + x) << 2;
-      image.data[idx] = pixels[idx];
-      image.data[idx+1] = pixels[idx+1];
-      image.data[idx+2] = pixels[idx+2];
-      image.data[idx+3] = pixels[idx+3];
-    }
-  }
+function init_player(project_file_content){
+  let code_folder = __dirname;
+  let project = JSON.parse(project_file_content);
 
-  let path = "./image-" + zero_pad(frame) + ".png";
-  fs.writeFileSync(path, PNG.sync.write(image));
+  let gl = require('gl')(project.width, project.height, {preserveDrawingBuffer: true, premultipliedAlpha: false});
+  let ShaderPlayerWebGL = require(code_folder + '/shader_player_webgl.js');
+  let player = new ShaderPlayerWebGL(null, gl);
 
-};
+  player.sequences = project.scenes;
+  player.width = project.width;
+  player.height = project.height;
+  player.fps = project.fps;
 
-attach_passes(gl, player.sequences).then(function(){
-  player.render_hq(()=>{
-    var ext = gl.getExtension('STACKGL_destroy_context');
-    ext.destroy();
+  return [gl, player];
+}
+
+function render_frames(gl, player){
+  return new Promise(function(resolve, reject){
+    player.render_hq(()=>{
+      var ext = gl.getExtension('STACKGL_destroy_context');
+      ext.destroy();
+      resolve();
+    });
   });
-})
+}
+
+function assemble_video(fps){
+  return new Promise(function(resolve, reject){
+    let exec_sync = require('child_process').execSync;
+
+    console.log("Assembling video")
+
+    let command = [
+      "ffmpeg",
+      "-r " + fps,
+      "-i image-%06d.png",
+      "-nostdin",
+      "-y",
+      "-r " + fps,
+      "-vb", "20M",
+      "./video.avi"];
+
+    const child = exec_sync(
+      command.join(" "),
+      (error, stdout, stderr) => {
+        console.log(`stdout: ${stdout}`);
+        console.log(`stderr: ${stderr}`);
+        if (error !== null) {
+          console.log(`exec error: ${error}`);
+        }
+      });
+
+    resolve();
+  });
+}
+
+async function render(gl, player){
+  let fps = parseInt(player.fps);
+  let all_saved_promise = bind_image_saver(player);
+
+  await attach_passes(gl, player.sequences).catch((e) => {
+    console.error("Error attaching passes: " + e);
+  });
+  await render_frames(gl, player).catch((e) => {
+    console.error("Error rendering frames: " + e);
+  });
+  await all_saved_promise;
+  await assemble_video(fps).catch((e) => {
+    console.error("Error assembling video: " + e);
+  });
+}
+
+const fs = require('fs');
+[gl, player] = init_player(fs.readFileSync(process.argv[2]))
+
+render(gl, player);

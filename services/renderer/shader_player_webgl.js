@@ -170,6 +170,11 @@ class ShaderPlayerWebGL {
 
   pause(){
     this.paused = true;
+
+    if(this.headless){
+      return;
+    }
+
     this.for_each_textures((t,s) => {
       if (t.isVideo){
         t.audioElement.pause();
@@ -356,7 +361,7 @@ class ShaderPlayerWebGL {
       }
 
       let time = frame / fps;
-      this.update_render_status("Rendering a frame");
+      this.update_render_status("Rendering frame " + frame + " of " + total_frames);
 
       if(this.headless){
         await this.draw_gl(time);
@@ -382,6 +387,7 @@ class ShaderPlayerWebGL {
     this.pause();
 
     if(this.headless){
+      callback();
       // We are done
       return;
     }
@@ -800,7 +806,9 @@ class ShaderPlayerWebGL {
                 trimBefore,
                 timeFrom-trimBefore,
                 shouldBeTime
-              );
+              ).catch((e) => {
+                console.log("Error in video update: " + e)
+              });
             } else if (this.rendering && this.renderMode == "HQ") {
               let timeTo = parseFloat(seq.to);
               // Get exact frame

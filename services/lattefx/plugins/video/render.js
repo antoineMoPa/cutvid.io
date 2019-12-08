@@ -1,5 +1,16 @@
 module.exports = async function(api){
 
+  function zero_pad(num){
+    let out = "";
+    let pad = 6;
+
+    for(let i = 0; i < pad - (num+'').length; i++){
+      out += '0';
+    }
+
+    return out + num;
+  }
+
   function validate_media_id(video_media_id){
     return video_media_id.replace(/[^A-Za-z0-9]/g, "");
   }
@@ -8,6 +19,7 @@ module.exports = async function(api){
     let shader_program = api.shader_program;
     let gl = api.gl;
     let sequence = api.sequence;
+    let effect = sequence.effect;
     const fs = api.fs;
     const PNG = api.PNG
     const exec_sync = api.exec_sync;
@@ -15,34 +27,42 @@ module.exports = async function(api){
 
     let video_media_id = validate_media_id(sequence.effect.video_media_id);
 
-    if (!fs.existsSync("./images")){
-      fs.mkdirSync("./images");
+    if (!fs.existsSync("./images-"+video_media_id)){
+      fs.mkdirSync("./images-"+video_media_id);
     }
 
+    let trim_before = parseFloat(effect.trimBefore);
+    let time_from = parseFloat(sequence.from);
+    let time_to = parseFloat(sequence.to);
+    let duration = time_to - time_from;
+    let fps = api.fps;
+
     let command = [
-      "ffmpeg -ss 0.0 -i ",
-      "./media/" + video_media_id,
-      " -nostdin -y",
+      "ffmpeg",
+      "-ss " + trim_before,
+      "-i ./media/" + video_media_id,
+      "-nostdin",
+      "-y",
       "-start_number 0",
-      "-frames:v 1",
-      "-r 30",
+      "-frames:v " + parseInt(Math.ceil(fps * duration)),
+      "-r " + fps,
       "-compression_level 100",
-      " images/image-%06d.png"];
+      "./images-" + video_media_id + "/image-%06d.png"];
 
     const child = exec_sync(command.join(" "),
-                           (error, stdout, stderr) => {
+                            (error, stdout, stderr) => {
                              console.log(`stdout: ${stdout}`);
-                             console.log(`stderr: ${stderr}`);
-                             if (error !== null) {
-                               console.log(`exec error: ${error}`);
-                             }
-                             });
+                              console.log(`stderr: ${stderr}`);
+                              if (error !== null) {
+                                console.log(`exec error: ${error}`);
+                              }
+                            });
 
-    async function load_image(file, fps, trimBefore, from, video_time){
+    async function load_image(file){
       let promise = new Promise(function(resolve, reject){
         get_pixels(file, function(err, pixels) {
           if(err) {
-            reject();
+            reject(err);
             return;
           }
 
@@ -61,11 +81,15 @@ module.exports = async function(api){
       return promise;
     }
 
-    let file = './images/image-000000.png';
 
-    let update_video = async function (fps, trimBefore, from, video_time) {
-      return load_image(file, fps, trimBefore, from, video_time);
+    let update_video = async function (fps, _, _, video_time) {
+      let frame_id = parseInt((video_time - trim_before) * fps);
+      let file_folder = './images-' + video_media_id + '/';
+      let file = file_folder + 'image-' + zero_pad(frame_id) + '.png';
+
+      return load_image(file);
     };
+
     // Initialize texture
     shader_program.set_texture_raw("video", null);
 
