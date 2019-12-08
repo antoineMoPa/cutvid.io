@@ -748,8 +748,10 @@ class ShaderPlayerWebGL {
 
     for (let layer = 0; layer < sequencesByLayer.length; layer++) {
       let sequences = sequencesByLayer[layer];
-
       for (let sequenceIndex = 0; sequenceIndex < sequences.length; sequenceIndex++) {
+
+
+
         let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
         let shaderProgram = seq.pass;
@@ -765,6 +767,7 @@ class ShaderPlayerWebGL {
         if(shaderProgram == undefined){
           continue;
         }
+
         shaderProgram.use();
         let program = shaderProgram.program;
 

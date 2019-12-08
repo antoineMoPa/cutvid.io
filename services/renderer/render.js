@@ -135,21 +135,14 @@ function bind_image_saver(player) {
   let duration = this.player.get_total_duration();
   let total_count = parseInt(Math.ceil(fps * duration));
 
-  let read_pixels_mutex = null;
-
   return new Promise(function(resolve, reject){
 
     player.image_saver = async function(frame) {
       let pixels = new Uint8Array(width * height * 4);
 
-      if(read_pixels_mutex != null){
-        await read_pixels_mutex;
-      }
-
-      read_pixels_mutex = new Promise(function(resolve, reject){
+      await new Promise(function(resolve, reject){
         gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
         resolve();
-        read_pixels_mutex = null;
       });
 
       let image = new PNG({
