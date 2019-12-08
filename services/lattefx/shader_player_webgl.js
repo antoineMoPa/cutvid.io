@@ -6,7 +6,7 @@
 /* Note 2: This should be renamed engine or something */
 
 class ShaderPlayerWebGL {
-  constructor(canvas, gl) {
+  constructor(canvas, gl, width, height) {
     this.fps = 30;
 
     this.headless = false;
@@ -32,9 +32,8 @@ class ShaderPlayerWebGL {
     this.shaderProgram = null;
     this.last_frame_time = new Date().getTime();
 
-    // TODO: synchronize with vue
-    this.width = 540;
-    this.height = 540;
+    this.width = width || 540;
+    this.height = height || 540;
     this.rendering = false;
     this.mouse = [0, 0];
 
@@ -170,6 +169,11 @@ class ShaderPlayerWebGL {
 
   pause(){
     this.paused = true;
+
+    if(this.headless){
+      return;
+    }
+
     this.for_each_textures((t,s) => {
       if (t.isVideo){
         t.audioElement.pause();
@@ -356,7 +360,7 @@ class ShaderPlayerWebGL {
       }
 
       let time = frame / fps;
-      this.update_render_status("Rendering a frame");
+      this.update_render_status("Rendering frame " + frame + " of " + total_frames);
 
       if(this.headless){
         await this.draw_gl(time);
@@ -382,6 +386,7 @@ class ShaderPlayerWebGL {
     this.pause();
 
     if(this.headless){
+      callback();
       // We are done
       return;
     }
@@ -445,7 +450,8 @@ class ShaderPlayerWebGL {
   }
 
   attach_textures(){
-    // Attaches textures as data URLS
+    /* saves textures as data URLS
+       useful for headless render */
     for(let s in this.sequences){
       let seq = this.sequences[s];
 
@@ -466,6 +472,20 @@ class ShaderPlayerWebGL {
 
         seq.texture_urls[t] = tex.url;
       }
+    }
+  }
+
+  attach_uniforms(){
+    /* Saves current uniforms
+       useful for headless render */
+
+    for(let s in this.sequences){
+      let seq = this.sequences[s];
+
+      if(seq.effect == undefined || seq.effect.uniforms == undefined){
+        return;
+      }
+      seq.saved_uniforms = JSON.parse(JSON.stringify(seq.effect.uniforms));
     }
   }
 
@@ -560,7 +580,7 @@ class ShaderPlayerWebGL {
     this.clear();
 
     // Triangle strip for whole screen square
-    const vertices = [
+    let vertices = [
       -1, -1, 0,
       -1, 1, 0,
       1, -1, 0,
@@ -604,6 +624,11 @@ class ShaderPlayerWebGL {
 
   pause_non_current_media(){
     let time = this.time.time;
+
+    if(this.headless){
+      return;
+    }
+
     for (let i = 0; i < this.sequences.length; i++) {
       let seq = this.sequences[i];
       if(seq.effect == undefined){
@@ -794,7 +819,16 @@ class ShaderPlayerWebGL {
             let timeFrom = parseFloat(seq.from);
             let shouldBeTime = time - timeFrom + trimBefore;
 
-            if (this.rendering && this.renderMode == "HQ") {
+            if(this.headless){
+              await tex.updateVideo(
+                this.fps,
+                trimBefore,
+                timeFrom-trimBefore,
+                shouldBeTime
+              ).catch((e) => {
+                console.log("Error in video update: " + e)
+              });
+            } else if (this.rendering && this.renderMode == "HQ") {
               let timeTo = parseFloat(seq.to);
               // Get exact frame
               if(tex.isVideo){
@@ -846,6 +880,7 @@ class ShaderPlayerWebGL {
                 } else {
                   tex.audioElement.muted = false;
                 }
+
                 texSuccess &= tex.updateVideo();
               }
             }
@@ -854,9 +889,16 @@ class ShaderPlayerWebGL {
           }
 
           gl.uniform1i(att, i);
-          var att = gl.getUniformLocation(program, "potato");
-          gl.uniform1f(att, 0);
           i++;
+
+          att = gl.getUniformLocation(program, "flip_tex");
+
+          if(this.headless){
+            gl.uniform1f(att, 1.0);
+          } else {
+            gl.uniform1f(att, 0.0);
+          }
+
         }
 
         gl.uniform2fv(
@@ -915,7 +957,6 @@ class ShaderPlayerWebGL {
             gl.uniform1f(attribute, parseFloat(uni.value));
           }
         }
-
         gl.viewport(0, 0, this.width, this.height);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }

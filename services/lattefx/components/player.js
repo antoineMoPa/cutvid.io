@@ -333,6 +333,8 @@ Vue.component('player', {
       // Attached current textures so we don't
       // have to render them on the server
       this.player.attach_textures();
+      // Attach current uniform values
+      this.player.attach_uniforms();
 
       data.project_id = this.project_id;
       data.width = this.width;

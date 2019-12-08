@@ -216,7 +216,8 @@ Vue.component('sequencer', {
           layer: seq.layer,
           from: seq.from,
           to: seq.to,
-          texture_urls: seq.texture_urls
+          texture_urls: seq.texture_urls,
+          saved_uniforms: seq.saved_uniforms
         });
       }
 

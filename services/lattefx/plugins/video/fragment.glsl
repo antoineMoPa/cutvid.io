@@ -2,13 +2,12 @@
 precision highp float;
 
 varying vec2 UV;
-varying  vec2 lastUV;
+varying vec2 lastUV;
 uniform sampler2D in_tex;
 uniform vec2 mouse;
 uniform float ratio, time;
 uniform float videoWidth, videoHeight, videoScale, offsetTop, offsetLeft;
 uniform sampler2D video;
-uniform float flip_tex;
 
 void main(void){
     float x = UV.x * ratio;
@@ -20,11 +19,6 @@ void main(void){
     // Apply aspect ratio
     videoUV.x *= videoRatio;
 
-	// Flip for headless render
-	if(flip_tex > 0.5){
-	  videoUV.y *= -1.0;
-	  videoUV.y += 1.0;
-	}
 
     // Apply scale
     videoUV.x -= offsetLeft;

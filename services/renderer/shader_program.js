@@ -203,8 +203,6 @@ class ShaderProgram {
     let gl = this.gl;
     let level = 0;
     let internalFormat = gl.RGBA;
-    let width = 1;
-    let height = 1;
     let srcFormat = gl.RGBA;
     let srcType = gl.UNSIGNED_BYTE;
 
