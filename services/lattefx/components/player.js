@@ -327,14 +327,22 @@ Vue.component('player', {
         });
       });
     },
-    serialize(){
+    serialize(minimal){
+      /*
+        Minimal will be useful for multi-user sync
+       */
       let data = {};
+      let minimal = minimal || false;
 
-      // Attached current textures so we don't
-      // have to render them on the server
-      this.player.attach_textures();
-      // Attach current uniform values
-      this.player.attach_uniforms();
+      if(!minimal){
+        // Attached current textures so we don't
+        // have to render them on the server
+        this.player.attach_textures();
+        // Attach current uniform values
+        this.player.attach_uniforms();
+        // Attach current audio seqences
+        data.saved_audio_sequences = this.player.export_audio_sequences();
+      }
 
       data.project_id = this.project_id;
       data.width = this.width;

@@ -161,8 +161,6 @@ function bind_image_saver(player) {
       ws.on('finish',()=>{
         saved_count++;
         if(saved_count == total_count){
-          var ext = gl.getExtension('STACKGL_destroy_context');
-          ext.destroy();
           resolve();
         }
       });
@@ -179,6 +177,7 @@ function init_player(project_file_content){
   let player = new ShaderPlayerWebGL(null, gl, project.width, project.height);
 
   player.sequences = project.scenes;
+  player.saved_audio_sequences = project.saved_audio_sequences;
   player.fps = project.fps;
 
   return [gl, player];
@@ -192,22 +191,117 @@ function render_frames(gl, player){
   });
 }
 
-function assemble_video(fps){
+function assemble_video(fps, player){
+  function validate_media_id(video_media_id){
+    return video_media_id.replace(/[^A-Za-z0-9]/g, "");
+  }
+
   return new Promise(function(resolve, reject){
     let exec_sync = require('child_process').execSync;
 
     console.log("Assembling video")
 
+    let audio_args = "";
+    let audio_index = 0;
+
+    let audio_sequences = player.saved_audio_sequences;
+    let audio_mix = "";
+    let audio_filter_args = "-filter_complex \"";
+
+    for(let i in audio_sequences){
+      let sequence = audio_sequences[i];
+      let time_from = parseFloat(sequence['from']);
+      let time_to = parseFloat(sequence['to']);
+      let trim_before = parseFloat(sequence['trimBefore']);
+
+
+      if(sequence['digest'] == undefined){
+        continue;
+      }
+
+      let file_digest = validate_media_id(sequence['digest']);
+      let file_path = "./media/" + file_digest;
+
+      if(!fs.existsSync(file_path)){
+        console.error("file does not exist : " + file_path);
+        continue;
+      }
+
+      let verify_audio_command = "ffprobe -i ./media/" + file_digest + " -show_streams -select_streams a -loglevel fatal";
+
+      let has_audio = false;
+
+      let out = exec_sync(verify_audio_command);
+
+      has_audio = out.indexOf("index=") != -1;
+
+      if(!has_audio){
+        continue;
+      }
+
+      if(time_from < 0){
+        // Trim part before 0
+        trim_before -= time_from;
+        time_to -= time_from;
+        time_from = 0;
+      }
+
+      audio_args += [
+        "-i", file_path + " "
+      ].join(" ");
+
+      let adelay = "";
+
+      if(time_from > 0.1){
+        adelay = "adelay="+parseInt(time_from*1000)+"";
+      }
+
+      let atrim = "start=" + (trim_before) + ":";
+      atrim += "duration=" + (time_to - time_from);
+
+      audio_index += 1;
+
+      audio_filter_args += "[" + audio_index + "]";
+      audio_filter_args += "volume=1.0[v"+audio_index+"],";
+
+      if(adelay == ""){
+        audio_mix += "[v" + audio_index + "]";
+      } else {
+        // TODO: trim
+        //audio_filter_args += "[v"+audio_index+"]atrim="+atrim+"[t"+audio_index+"],";
+        audio_filter_args += "[v"+audio_index+"]" + adelay + "[d"+audio_index+"],";
+        audio_mix += "[d" + audio_index + "]";
+      }
+
+
+    }
+
+    audio_filter_args += audio_mix + "amix=inputs=" + audio_index + "[a]\"";
+
+    let map_args = "-map 0:v -map \"[a]\"";
+
+    if(audio_index == 0){
+      audio_args = "";
+      audio_filter_args = "";
+      map_args = "";
+    }
+
     let command = [
       "ffmpeg",
       "-r " + fps,
       "-i image-%06d.png",
+      audio_args,
+      audio_filter_args,
       "-nostdin",
       "-y",
       "-r " + fps,
       "-vf \'vflip\'",
       "-vb", "20M",
+      "-ac 2",
+      map_args,
       "./video.avi"];
+
+    console.log("running: " + command.join(" "));
 
     const child = exec_sync(
       command.join(" "),
@@ -224,22 +318,33 @@ function assemble_video(fps){
 }
 
 async function render(gl, player){
+  let start = new Date();
   let fps = parseInt(player.fps);
   let all_saved_promise = bind_image_saver(player);
 
+  /*
   await attach_passes(gl, player.sequences).catch((e) => {
     console.error("Error attaching passes: " + e);
   });
+  */
 
   attach_uniforms(player.sequences);
 
+  /*
   await render_frames(gl, player).catch((e) => {
     console.error("Error rendering frames: " + e);
   });
-  await all_saved_promise;
-  await assemble_video(fps).catch((e) => {
+  */
+  var ext = gl.getExtension('STACKGL_destroy_context');
+  ext.destroy();
+
+  //await all_saved_promise;
+  await assemble_video(fps, player).catch((e) => {
     console.error("Error assembling video: " + e);
   });
+
+  let end = new Date() - start;
+  console.log('Video render time: %dms', end)
 }
 
 const fs = require('fs');
