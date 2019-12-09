@@ -191,103 +191,113 @@ function render_frames(gl, player){
   });
 }
 
-function assemble_video(fps, player){
-  function validate_media_id(video_media_id){
-    return video_media_id.replace(/[^A-Za-z0-9]/g, "");
+function validate_file_has_audio(file_path){
+  if(!fs.existsSync(file_path)){
+    console.error("file does not exist : " + file_path);
+    return false;
   }
 
-  return new Promise(function(resolve, reject){
-    let exec_sync = require('child_process').execSync;
+  let exec_sync = require('child_process').execSync;
 
-    console.log("Assembling video")
+  let verify_audio_command = "ffprobe -i " + file_path + " -show_streams -select_streams a -loglevel fatal";
 
-    let audio_args = "";
-    let audio_index = 0;
+  let has_audio = false;
 
-    let audio_sequences = player.saved_audio_sequences;
-    let audio_mix = "";
-    let audio_filter_args = "-filter_complex \"";
+  let out = exec_sync(verify_audio_command);
 
-    for(let i in audio_sequences){
-      let sequence = audio_sequences[i];
-      let time_from = parseFloat(sequence['from']);
-      let time_to = parseFloat(sequence['to']);
-      let trim_before = parseFloat(sequence['trimBefore']);
+  if(out.indexOf("index=") != -1){
+    return true;
+  }
 
+  return false;
+}
 
-      if(sequence['digest'] == undefined){
-        continue;
-      }
+function validate_media_id(video_media_id){
+  return video_media_id.replace(/[^A-Za-z0-9]/g, "");
+}
 
-      let file_digest = validate_media_id(sequence['digest']);
-      let file_path = "./media/" + file_digest;
+function build_ffmpeg_audio_args(player){
+  let audio_args = "";
+  let audio_index = 0;
 
-      if(!fs.existsSync(file_path)){
-        console.error("file does not exist : " + file_path);
-        continue;
-      }
+  let audio_sequences = player.saved_audio_sequences;
+  let audio_mix = "";
+  let audio_filter_args = "-filter_complex \"";
 
-      let verify_audio_command = "ffprobe -i ./media/" + file_digest + " -show_streams -select_streams a -loglevel fatal";
+  for(let i in audio_sequences){
+    let sequence = audio_sequences[i];
+    let time_from = parseFloat(sequence['from']);
+    let time_to = parseFloat(sequence['to']);
+    let trim_before = parseFloat(sequence['trimBefore']);
 
-      let has_audio = false;
-
-      let out = exec_sync(verify_audio_command);
-
-      has_audio = out.indexOf("index=") != -1;
-
-      if(!has_audio){
-        continue;
-      }
-
-      if(time_from < 0){
-        // Trim part before 0
-        trim_before -= time_from;
-        time_to -= time_from;
-        time_from = 0;
-      }
-
-      audio_args += [
-        "-i", file_path + " "
-      ].join(" ");
-
-      let adelay = "";
-
-      if(time_from > 0.1){
-        adelay = "adelay="+parseInt(time_from*1000)+"";
-      }
-
-      let atrim = "start=" + (trim_before) + ":";
-      atrim += "duration=" + (time_to - time_from);
-
-      audio_index += 1;
-
-      audio_filter_args += "[" + audio_index + "]";
-      audio_filter_args += "volume=1.0[v"+audio_index+"],";
-
-      if(adelay == ""){
-        audio_mix += "[v" + audio_index + "]";
-      } else {
-        // TODO: trim
-        //audio_filter_args += "[v"+audio_index+"]atrim="+atrim+"[t"+audio_index+"],";
-        audio_filter_args += "[v"+audio_index+"]" + adelay + "[d"+audio_index+"],";
-        audio_mix += "[d" + audio_index + "]";
-      }
-
-
+    if(sequence['digest'] == undefined){
+      continue;
     }
 
-    audio_filter_args += audio_mix + "amix=inputs=" + audio_index + "[a]\"";
+    let file_digest = validate_media_id(sequence['digest']);
+    let file_path = "./media/" + file_digest;
 
-    let map_args = "-map 0:v -map \"[a]\"";
+    let has_audio = validate_file_has_audio(file_path);
 
-    if(audio_index == 0){
-      audio_args = "";
-      audio_filter_args = "";
-      map_args = "";
+    if(!has_audio){
+      continue;
     }
 
-    let command = [
-      "ffmpeg",
+    if(time_from < 0){
+      // Trim part before 0
+      trim_before -= time_from;
+      time_to -= time_from;
+      time_from = 0;
+    }
+
+    audio_args += [
+      "-i", file_path + " "
+    ].join(" ");
+
+    let adelay = "";
+
+    if(time_from > 0.1){
+      adelay = "adelay="+parseInt(time_from*1000)+"";
+    }
+
+    let atrim = "start=" + (trim_before) + ":";
+    atrim += "duration=" + (time_to - time_from);
+
+    audio_index += 1;
+
+    audio_filter_args += "[" + audio_index + "]";
+    audio_filter_args += "volume=1.0[v"+audio_index+"],";
+
+    if(adelay == ""){
+      audio_mix += "[v" + audio_index + "]";
+    } else {
+      // TODO: trim
+      //audio_filter_args += "[v"+audio_index+"]atrim="+atrim+"[t"+audio_index+"],";
+      audio_filter_args += "[v"+audio_index+"]" + adelay + "[d"+audio_index+"],";
+      audio_mix += "[d" + audio_index + "]";
+    }
+
+
+  }
+
+  audio_filter_args += audio_mix + "amix=inputs=" + audio_index + "[a]\"";
+
+  let map_args = "-map 0:v -map \"[a]\"";
+
+  if(audio_index == 0){
+    audio_args = "";
+    audio_filter_args = "";
+    map_args = "";
+  }
+
+  return [audio_args, audio_filter_args, map_args];
+}
+
+
+
+function build_ffmpeg_args(fps, audio_args, audio_filter_args, map_args){
+
+  let command = [
       "-r " + fps,
       "-i image-%06d.png",
       audio_args,
@@ -301,10 +311,25 @@ function assemble_video(fps, player){
       map_args,
       "./video.avi"];
 
-    console.log("running: " + command.join(" "));
+  return command;
+}
+
+function assemble_video(fps, player){
+
+  return new Promise(function(resolve, reject){
+    let exec_sync = require('child_process').execSync;
+
+    console.log("Assembling video");
+
+    let fps = parseInt(player.fps);
+    let [audio_args, audio_filter_args, map_args] = build_ffmpeg_audio_args(player);
+    let ffmpeg_args = build_ffmpeg_args(fps, audio_args, audio_filter_args, map_args).join(" ");
+    let command = "ffmpeg " + ffmpeg_args;
+
+    console.log("running: " + command);
 
     const child = exec_sync(
-      command.join(" "),
+      command,
       (error, stdout, stderr) => {
         console.log(`stdout: ${stdout}`);
         console.log(`stderr: ${stderr}`);
