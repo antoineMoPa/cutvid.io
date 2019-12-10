@@ -217,12 +217,23 @@ function validate_media_id(video_media_id){
 }
 
 function build_ffmpeg_audio_args(player){
+  /*
+    Build ffmpeg audio handling:
+
+    - detect audio tracks
+    - set volume of tracks
+    - apply delay
+    - trim to right duration
+    - mix all tracks together
+
+  */
+
   let audio_args = "";
   let audio_index = 0;
 
   let audio_sequences = player.saved_audio_sequences;
   let audio_mix = "";
-  let audio_filter_args = "-filter_complex \"";
+  let audio_filter_graph = "";
 
   for(let i in audio_sequences){
     let sequence = audio_sequences[i];
@@ -250,58 +261,77 @@ function build_ffmpeg_audio_args(player){
       time_from = 0;
     }
 
+    let adelay = "";
+
     audio_args += [
       "-i", file_path + " "
     ].join(" ");
 
-    let adelay = "";
+    let delay = parseInt((time_from)*1000);
 
-    if(time_from > 0.1){
-      adelay = "adelay="+parseInt(time_from*1000)+"";
+    if(delay > 1){
+      // This will have to be adapted for mono/5.1
+      // the all=1 option could help but did not work
+      // with my ffmpeg version
+      adelay = "adelay=delays="+delay+"|"+delay;
     }
 
-    let atrim = "start=" + (trim_before) + ":";
-    atrim += "duration=" + (time_to - time_from);
+    // atrim is in seconds
+    let duration = time_to - time_from;
+
+    let atrim = "";
+
+    atrim += "start=" + (trim_before) + ":";
+    atrim += "end=" + (duration + trim_before);
 
     audio_index += 1;
 
-    audio_filter_args += "[" + audio_index + "]";
-    audio_filter_args += "volume=1.0[v"+audio_index+"],";
+    audio_filter_graph += "[" + audio_index + ":a]";
+    audio_filter_graph += "volume=1.0:eval=frame";
 
-    if(adelay == ""){
-      audio_mix += "[v" + audio_index + "]";
-    } else {
-      // TODO: trim
-      //audio_filter_args += "[v"+audio_index+"]atrim="+atrim+"[t"+audio_index+"],";
-      audio_filter_args += "[v"+audio_index+"]" + adelay + "[d"+audio_index+"],";
-      audio_mix += "[d" + audio_index + "]";
+
+    if(atrim != ""){
+      audio_filter_graph += ",";
+      audio_filter_graph += "atrim="+atrim;
     }
 
+    if(adelay != ""){
+      audio_filter_graph += "[t" + audio_index + "]";
+      audio_filter_graph += ";[t" + audio_index + "]";
+      audio_filter_graph += adelay;
+    }
 
+    audio_filter_graph += "[o"+audio_index+"];";
+
+    audio_mix += "[o" + audio_index + "]";
   }
 
-  audio_filter_args += audio_mix + "amix=inputs=" + audio_index + "[a]\"";
+  audio_filter_graph +=  audio_mix + "amix=inputs=" + audio_index + ":duration=longest[a]";
+
+  console.log("\nAUDIO FILTER GRAPH:");
+  console.log(audio_filter_graph);
+  console.log("\n");
 
   let map_args = "-map 0:v -map \"[a]\"";
 
   if(audio_index == 0){
     audio_args = "";
-    audio_filter_args = "";
+    audio_filter_graph = "";
     map_args = "";
   }
 
-  return [audio_args, audio_filter_args, map_args];
+  return [audio_args, audio_filter_graph, map_args];
 }
 
 
 
-function build_ffmpeg_args(fps, audio_args, audio_filter_args, map_args){
+function build_ffmpeg_args(fps, audio_args, audio_filter_graph, map_args){
 
   let command = [
       "-r " + fps,
       "-i image-%06d.png",
       audio_args,
-      audio_filter_args,
+      audio_filter_graph,
       "-nostdin",
       "-y",
       "-r " + fps,
@@ -322,8 +352,11 @@ function assemble_video(fps, player){
     console.log("Assembling video");
 
     let fps = parseInt(player.fps);
-    let [audio_args, audio_filter_args, map_args] = build_ffmpeg_audio_args(player);
-    let ffmpeg_args = build_ffmpeg_args(fps, audio_args, audio_filter_args, map_args).join(" ");
+    let [audio_args, audio_filter_graph, map_args] = build_ffmpeg_audio_args(player);
+
+    let audio_filter = "-filter_complex \"" + audio_filter_graph + "\"";
+
+    let ffmpeg_args = build_ffmpeg_args(fps, audio_args, audio_filter, map_args).join(" ");
     let command = "ffmpeg " + ffmpeg_args;
 
     console.log("running: " + command);
