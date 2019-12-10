@@ -380,19 +380,16 @@ async function render(gl, player){
   let fps = parseInt(player.fps);
   let all_saved_promise = bind_image_saver(player);
 
-  /*
   await attach_passes(gl, player.sequences).catch((e) => {
     console.error("Error attaching passes: " + e);
   });
-  */
 
   attach_uniforms(player.sequences);
 
-  /*
   await render_frames(gl, player).catch((e) => {
     console.error("Error rendering frames: " + e);
   });
-  */
+
   var ext = gl.getExtension('STACKGL_destroy_context');
   ext.destroy();
 
