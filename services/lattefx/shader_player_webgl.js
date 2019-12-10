@@ -278,7 +278,7 @@ class ShaderPlayerWebGL {
 
       if(this.headless){
         await this.draw_gl(time);
-        this.image_saver(frame, this.width, this.height);
+        await this.image_saver(frame, this.width, this.height);
       }
     }
 

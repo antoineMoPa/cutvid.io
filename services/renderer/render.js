@@ -135,9 +135,8 @@ function bind_image_saver(player) {
   let duration = this.player.get_total_duration();
   let total_count = parseInt(Math.ceil(fps * duration));
 
-  return new Promise(function(resolve, reject){
-
-    player.image_saver = async function(frame) {
+  player.image_saver = async function(frame) {
+    await new Promise(async function(resolve, reject){
       let pixels = new Uint8Array(width * height * 4);
 
       await new Promise(function(resolve, reject){
@@ -154,18 +153,17 @@ function bind_image_saver(player) {
       image.data = pixels;
 
       let path = "./image-" + zero_pad(frame) + ".png";
-      let ws = fs.createWriteStream(path)
+      let ws = fs.createWriteStream(path);
 
       image.pack().pipe(ws);
 
       ws.on('finish',()=>{
         saved_count++;
-        if(saved_count == total_count){
-          resolve();
-        }
+
+        resolve();
       });
-    };
-  });
+    });
+  };
 }
 
 function init_player(project_file_content){
@@ -386,7 +384,7 @@ function assemble_video(fps, player){
 async function render(gl, player){
   let start = new Date();
   let fps = parseInt(player.fps);
-  let all_saved_promise = bind_image_saver(player);
+  bind_image_saver(player);
 
   await attach_passes(gl, player.sequences).catch((e) => {
     console.error("Error attaching passes: " + e);
@@ -400,8 +398,6 @@ async function render(gl, player){
 
   var ext = gl.getExtension('STACKGL_destroy_context');
   ext.destroy();
-
-  await all_saved_promise;
 
   await assemble_video(fps, player).catch((e) => {
     console.error("Error assembling video: " + e);

@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "get-pixels": "^3.3.2",
-    "gl": "file:../../../../../bin/headless-gl",
+    "gl": "file:~/bin/headless-gl",
     "jpeg-js": "^0.3.6",
     "ndarray": "^1.0.18",
     "pngjs": "^3.4.0",
