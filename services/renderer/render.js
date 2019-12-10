@@ -306,19 +306,22 @@ function build_ffmpeg_audio_args(player){
     audio_mix += "[o" + audio_index + "]";
   }
 
-  audio_filter_graph +=  audio_mix + "amix=inputs=" + audio_index + ":duration=longest[a]";
+  let map_args = "";
 
-  console.log("\nAUDIO FILTER GRAPH:");
-  console.log(audio_filter_graph);
-  console.log("\n");
-
-  let map_args = "-map 0:v -map \"[a]\"";
-
+  // No audio? then return nothing
   if(audio_index == 0){
     audio_args = "";
     audio_filter_graph = "";
     map_args = "";
+  } else {
+    audio_filter_graph +=  audio_mix + "amix=inputs=" + audio_index + ":duration=longest[a]";
+
+    map_args = "-map \"[a]\"";
   }
+
+  console.log("\nAUDIO FILTER GRAPH:");
+  console.log(audio_filter_graph);
+  console.log("\n");
 
   return [audio_args, audio_filter_graph, map_args];
 }
@@ -328,18 +331,19 @@ function build_ffmpeg_audio_args(player){
 function build_ffmpeg_args(fps, audio_args, audio_filter_graph, map_args){
 
   let command = [
-      "-r " + fps,
-      "-i image-%06d.png",
-      audio_args,
-      audio_filter_graph,
-      "-nostdin",
-      "-y",
-      "-r " + fps,
-      "-vf \'vflip\'",
-      "-vb", "20M",
-      "-ac 2",
-      map_args,
-      "./video.avi"];
+    "-r " + fps,
+    "-i image-%06d.png",
+    audio_args,
+    audio_filter_graph,
+    "-nostdin",
+    "-y",
+    "-r " + fps,
+    "-vf \'vflip\'",
+    "-vb", "20M",
+    "-map", "\"0:v\"",
+    "-ac 2",
+    map_args,
+    "./video.avi"];
 
   return command;
 }
@@ -354,7 +358,11 @@ function assemble_video(fps, player){
     let fps = parseInt(player.fps);
     let [audio_args, audio_filter_graph, map_args] = build_ffmpeg_audio_args(player);
 
-    let audio_filter = "-filter_complex \"" + audio_filter_graph + "\"";
+    let audio_filter = "";
+
+    if(audio_filter_graph != ""){
+      audio_filter = "-filter_complex \"" + audio_filter_graph + "\"";
+    }
 
     let ffmpeg_args = build_ffmpeg_args(fps, audio_args, audio_filter, map_args).join(" ");
     let command = "ffmpeg " + ffmpeg_args;
@@ -393,7 +401,8 @@ async function render(gl, player){
   var ext = gl.getExtension('STACKGL_destroy_context');
   ext.destroy();
 
-  //await all_saved_promise;
+  await all_saved_promise;
+
   await assemble_video(fps, player).catch((e) => {
     console.error("Error assembling video: " + e);
   });
