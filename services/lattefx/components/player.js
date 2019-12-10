@@ -332,7 +332,7 @@ Vue.component('player', {
         Minimal will be useful for multi-user sync
        */
       let data = {};
-      let minimal = minimal || false;
+      minimal = minimal || false;
 
       if(!minimal){
         // Attached current textures so we don't
