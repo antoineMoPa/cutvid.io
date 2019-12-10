@@ -245,13 +245,68 @@ class ShaderPlayerWebGL {
     case "LQ":
       this.render_lq(callback);
       break;
-    case "HQ":
-      this.render_hq(callback);
-      break;
     default:
       console.error("Unhandled render mode");
     }
   }
+
+  async render_hq(callback) {
+    /* render high quality video */
+
+    let app = this;
+    let duration = this.get_total_duration();
+    let fps = this.fps;
+    let total_frames = fps * duration;
+    let vid_id = this.gen_vid_id();
+    let base_path = "";
+
+    if(!this.headless){
+      base_path = window.lattefx_settings.cloud;
+    }
+
+    for(let frame = 0; frame < total_frames; frame++){
+      if(app.cancel_hq_render){
+        app.cancel_hq_render = false;
+        this.time.time = 0;
+        this.pause();
+        this.rendering = false;
+        return;
+      }
+
+      let time = frame / fps;
+      this.update_render_status("Rendering frame " + frame + " of " + total_frames);
+
+      if(this.headless){
+        await this.draw_gl(time);
+        this.image_saver(frame, this.width, this.height);
+      }
+    }
+
+    this.time.time = 0;
+    this.pause();
+
+    if(this.headless){
+      callback();
+      // We are done
+      return;
+    }
+
+    let form = new FormData();
+    form.append("audio-sequences", JSON.stringify(this.export_audio_sequences()));
+
+    this.update_render_status("Server is rendering video");
+    let resp = await fetch(base_path + "/render_video/" + vid_id + "/" + fps, {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      body: form
+    });
+
+    let vidid = await resp.text();
+
+    callback([vidid]);
+  }
+
 
   render_lq(callback) {
     let app = this;
@@ -334,77 +389,6 @@ class ShaderPlayerWebGL {
     }
 
     return id;
-  }
-
-  async render_hq(callback) {
-    /* render high quality video */
-
-    let app = this;
-    let duration = this.get_total_duration();
-    let fps = this.fps;
-    let total_frames = fps * duration;
-    let vid_id = this.gen_vid_id();
-    let base_path = "";
-
-    if(!this.headless){
-      base_path = window.lattefx_settings.cloud;
-    }
-
-    for(let frame = 0; frame < total_frames; frame++){
-      if(app.cancel_hq_render){
-        app.cancel_hq_render = false;
-        this.time.time = 0;
-        this.pause();
-        this.rendering = false;
-        return;
-      }
-
-      let time = frame / fps;
-      this.update_render_status("Rendering frame " + frame + " of " + total_frames);
-
-      if(this.headless){
-        await this.draw_gl(time);
-        this.image_saver(frame, this.width, this.height);
-      } else {
-        await this.draw_gl(time);
-
-        let canvasFrame = await this.get_canvas_blob();
-        let form = new FormData();
-
-        form.append("frame.png", canvasFrame);
-
-        this.update_render_status("Uploading a frame");
-        await fetch(base_path + "/upload_frame/" + vid_id + "/" + frame, {
-          method: "POST",
-          mode: "cors",
-          body: form
-        });
-      }
-    }
-
-    this.time.time = 0;
-    this.pause();
-
-    if(this.headless){
-      callback();
-      // We are done
-      return;
-    }
-
-    let form = new FormData();
-    form.append("audio-sequences", JSON.stringify(this.export_audio_sequences()));
-
-    this.update_render_status("Server is rendering video");
-    let resp = await fetch(base_path + "/render_video/" + vid_id + "/" + fps, {
-      method: "POST",
-      mode: "cors",
-      cache: "no-cache",
-      body: form
-    });
-
-    let vidid = await resp.text();
-
-    callback([vidid]);
   }
 
   export_audio_sequences() {
@@ -499,8 +483,6 @@ class ShaderPlayerWebGL {
         this.time.time = 0;
         this.pause();
         this.rendering = false;
-      } else {
-        this.cancel_hq_render = true;
       }
     }
   }
@@ -756,14 +738,6 @@ class ShaderPlayerWebGL {
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
         let shaderProgram = seq.pass;
 
-        if(this.rendering && this.renderMode == "HQ"){
-          if( seq.effect != null &&
-              seq.effect.plugin != null &&
-              seq.effect.plugin.updateTexts != undefined){
-            seq.effect.plugin.updateTexts();
-          }
-        }
-
         if(shaderProgram == undefined){
           continue;
         }
@@ -831,24 +805,6 @@ class ShaderPlayerWebGL {
               ).catch((e) => {
                 console.log("Error in video update: " + e)
               });
-            } else if (this.rendering && this.renderMode == "HQ") {
-              let timeTo = parseFloat(seq.to);
-              // Get exact frame
-              if(tex.isVideo){
-                await tex.updateVideoHQ(
-                  this.fps,
-                  trimBefore,
-                  timeFrom-trimBefore,
-                  shouldBeTime
-                );
-              }
-
-              // Clear after first instance of a video for a frame
-              // This prevent flicker when rendering
-              if(!has_cleared){
-                this.clear();
-                has_cleared = true;
-              }
             } else {
               // Get approximate timing
               let mediaElements = [];
@@ -1002,11 +958,6 @@ class ShaderPlayerWebGL {
     function _animate() {
       // Make sure to render when focussed or rendering
       if (player.rendering || player.window_focused) {
-        if(player.rendering && player.renderMode == "HQ"){
-          // Draw is handled elsewhere
-          window.requestAnimationFrame(_animate.bind(this));
-          return;
-        }
         try{
           player.draw_gl();
         } catch (e) {

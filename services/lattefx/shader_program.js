@@ -351,6 +351,13 @@ class ShaderProgram {
     }
 
     async function load() {
+
+      let url = source;
+
+      if (source.tagName != undefined && source.tagName == "CANVAS") {
+        url = source.toDataURL();
+      }
+
       if(!isVideo &&
          !isAudio &&
          options.force_width != undefined ||
@@ -362,6 +369,10 @@ class ShaderProgram {
         can.height = options.force_height;
         ctx.drawImage(image, 0, 0, options.force_width, options.force_height);
         image = can;
+
+        // Backend renderer only supports png
+        // luckily, Canvas.toDataURL exports as png
+        url = can.toDataURL();
       }
 
       // Cleanup before setting again
@@ -374,12 +385,6 @@ class ShaderProgram {
       if(!isAudioOnly) {
         texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
-      }
-
-      let url = source;
-
-      if (source.tagName != undefined && source.tagName == "CANVAS") {
-        url = source.toDataURL();
       }
 
       app.textures[name] = {

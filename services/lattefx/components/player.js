@@ -8,46 +8,11 @@ Vue.component('player', {
                        (player == null || !player.rendering?
                        'settings-panel-hidden':
                        '')">
-      <div v-if="player != null && player.renderMode == 'HQ'">
-        <h3>Rendering in progress</h3>
-        <h4>Magic in progress</h4>
-        <p>
-          Feel free to read a blog post or order a coffee while we work!
-        </p>
-        <p>
-          We are rendering your video, this process takes some time.
-        </p>
-        <h4>Status</h4>
-        <p class="render-status">
-          Beginning render
-        </p>
-        <h4>Don't close your tab</h4>
-        <p>
-          Don't close or reload this tab, as you will lose your progress.
-        </p>
-        <h4>When it is done</h4>
-        <p>
-          When rendering is over, you will be presented instructions on how to
-          purchase or download your video.
-        </p>
-        <h4>Cancelling</h4>
-        <p>
-          You can cancel this render and keep working with the big red button in
-          the sequencer.
-        </p>
-        <h4>Pricing</h4>
-        <p>
-          One time video renders cost US$ 4.50
-        </p>
-      </div>
-      <div v-else>
-        <h3>Rendering in progress</h3>
-        <h4>How does Espresso/LQ rendering work?</h4>
-        <p>Espresso/LQ rendering happens entirely in your browser, which is quick but incurs some limitations. (dropped frames, poor quality). But it's quick and cheap!</p>
-        <h4>How does Latte/HQ rendering work?</h4>
-        <p>HQ rendering carefully extracts your video frames on our server. The frames are then sent back to your browser, which applies effects. Everything is then put together on our server.</p>
-
-      </div>
+      <h3>Rendering in progress</h3>
+      <h4>How does Espresso/LQ rendering work?</h4>
+      <p>Espresso/LQ rendering happens entirely in your browser, which is quick but incurs some limitations. (dropped frames, poor quality). But it's quick and cheap!</p>
+      <h4>How does Latte/HQ rendering work?</h4>
+      <p>HQ rendering . Everything is then put together on our server.</p>
     </div>
     <div v-bind:class="'settings-panel ' +
                        (player != null && player.rendering?
