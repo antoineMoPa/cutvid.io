@@ -381,6 +381,25 @@ function assemble_video(fps, player){
   });
 }
 
+function cleanup(){
+  /* «If it does not bring joy, remove it.» - Kondo */
+
+  let exec_sync = require('child_process').execSync;
+
+  let command = "rm -rf image-*.png media images-*";
+
+  const child = exec_sync(
+      command,
+      (error, stdout, stderr) => {
+        console.log(`stdout: ${stdout}`);
+        console.log(`stderr: ${stderr}`);
+        if (error !== null) {
+          console.log(`exec error: ${error}`);
+        }
+      });
+
+}
+
 async function render(gl, player){
   let start = new Date();
   let fps = parseInt(player.fps);
@@ -404,7 +423,9 @@ async function render(gl, player){
   });
 
   let end = new Date() - start;
-  console.log('Video render time: %dms', end)
+  console.log('Video render time: %dms', end);
+
+  cleanup();
 }
 
 const fs = require('fs');
