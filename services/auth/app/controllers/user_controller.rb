@@ -1,7 +1,7 @@
 require 'jwt'
 
 class UserController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:sign_out_current_user]
+  skip_before_action :verify_authenticity_token, only: [:sign_out_current_user], raise: false
 
   def make_first_admin
     if current_user.nil?
