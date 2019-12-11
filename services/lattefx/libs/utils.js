@@ -337,3 +337,40 @@ utils.ask_interact = Vue.component('ask-interaction', {
     }
   },
 });
+
+utils.flag_message = function(message, options){
+  let box = document.createElement("div");
+  options = options || {};
+
+  box.classList.add("flag-message");
+  box.classList.add("show");
+
+  box.innerText = message;
+
+  if(options.button_message){
+    let button = document.createElement("button");
+    button.classList.add("flag-message-button");
+    button.innerText = options.button_message;
+    box.appendChild(button);
+    button.onclick = function(){
+      close();
+      options.button_action();
+    };
+  }
+
+  function close(){
+    if(box.parentNode == null){
+      return;
+    }
+    box.classList.remove("show");
+    setTimeout(function(){
+      box.parentNode.removeChild(box);
+    },300);
+  }
+
+  setTimeout(function(){
+    close();
+  },8000);
+
+  document.body.appendChild(box);
+};

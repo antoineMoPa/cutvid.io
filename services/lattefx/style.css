@@ -1372,3 +1372,40 @@ a:visited{
 }
 
 /* END ASK CONFIRM POPUP */
+
+
+/* FLAG MESSAGE */
+
+.flag-message{
+  height:20px;
+  padding:30px;
+  background:#3af;
+  color:#fff;
+  position: absolute;
+  top:60px;
+  right:10px;
+  z-index: 2000;
+  border-radius:5px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  font-size: 18px;
+  opacity:0;
+  transition: all 0.3s;
+}
+
+.flag-message.show{
+  opacity:1.0;
+  transition: all 0.3s;
+}
+
+.flag-message-button{
+  background:#fff;
+  color:#3af;
+  border:none;
+  border-radius:3px;
+  margin-left:20px;
+  padding:10px;
+  margin-top:-20px;
+  cursor:pointer;
+}
+
+/* END FLAG MESSAGE */

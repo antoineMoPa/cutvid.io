@@ -223,7 +223,20 @@ Vue.component('player', {
       fetch("/stats/lattefx_app_lq_initiate_download/");
     },
     async makeHQ(){
+      let app = this;
+
       let project = this.serialize();
+      let user_info = await this.$refs.auth.get_user_info();
+
+      if(user_info == null){
+        utils.flag_message("You must sign in to render HQ videos!", {
+          button_message: "Sign in",
+          button_action: function(){
+            app.$refs.auth.show_login();
+          }
+        });
+        return;
+      }
 
       let token = await this.$refs.auth.get_token();
       let cloud_url = this.settings.cloud;

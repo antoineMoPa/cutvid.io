@@ -191,7 +191,6 @@
 
             let container = document.createElement("div");
             document.body.appendChild(container);
-            ask_interact.$mount(container);
           },
           video_media_id(media_id){
             this.loadVideo();
