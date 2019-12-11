@@ -2,7 +2,7 @@ Vue.component('renders', {
   template:
   `<div class="renders popup">
      <h3>
-       <img src="icons/feather-dark/user.svg" width="30"/>
+       <img src="icons/feather-dark/image.svg" width="30"/>
        Renders
      </h3>
      <div v-for="render in renders" class="render">
