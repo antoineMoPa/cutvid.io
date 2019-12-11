@@ -1413,3 +1413,12 @@ a:visited{
 }
 
 /* END FLAG MESSAGE */
+
+/* BEGIN RENDERS */
+
+.renders.popup{
+  margin-top: 30px;
+  text-align: center;
+}
+
+/* END RENDERS */

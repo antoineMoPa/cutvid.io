@@ -191,13 +191,21 @@ Vue.component('auth', {
       let header = document.querySelectorAll("header")[0];
       header.appendChild(sign_in_out);
 
-      let container = document.querySelectorAll(".ui-auth-container")[0];
-      let ui = document.querySelectorAll(".ui .ui-buttons-right")[0];
-      ui.appendChild(container);
+      let container = document.querySelectorAll(".ui-auth-container");
 
-      let container_for_props = this.$el.querySelectorAll(".props-auth-container")[0];
-      let props = document.querySelectorAll(".props-auth-placeholder")[0];
-      props.appendChild(container_for_props);
+      if(container.length != 0){
+        // We are in "renders" app, not in player
+        return;
+      } else {
+        // We are in "renders" app
+        container = container[0];
+        let ui = document.querySelectorAll(".ui .ui-buttons-right")[0];
+        ui.appendChild(container);
+
+        let container_for_props = this.$el.querySelectorAll(".props-auth-container")[0];
+        let props = document.querySelectorAll(".props-auth-placeholder")[0];
+        props.appendChild(container_for_props);
+      }
     });
 
     window.auth = this; // This is in the limited globals approval list
