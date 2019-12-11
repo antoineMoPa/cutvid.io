@@ -1371,6 +1371,10 @@ a:visited{
   background:#ddd;
 }
 
+.projects .storage .storage-indicator-inner.pretty-full{
+  background: #844;
+}
+
 /* END ASK CONFIRM POPUP */
 
 

@@ -77,10 +77,12 @@ Vue.component('ui', {
     renderLQ(){
       this.$emit("renderLQ");
       fetch("/stats/lattefx_app_click_render_lq/");
+      this.show_render_options = false;
     },
     renderHQ(){
       this.$emit("renderHQ");
       fetch("/stats/lattefx_app_click_render_hq/");
+      this.show_render_options = false;
     },
     cancelRender(){
       this.$emit("cancelRender");

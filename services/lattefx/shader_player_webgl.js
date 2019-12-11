@@ -732,8 +732,6 @@ class ShaderPlayerWebGL {
       let sequences = sequencesByLayer[layer];
       for (let sequenceIndex = 0; sequenceIndex < sequences.length; sequenceIndex++) {
 
-
-
         let seq = sequences[sequenceIndex];
         let currentRelativeTime = (time - seq.from) / parseFloat(seq.to - seq.from);
         let shaderProgram = seq.pass;

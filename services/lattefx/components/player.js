@@ -258,10 +258,13 @@ Vue.component('player', {
       }).then(() => {
         app.saving = false;
         app.show_saved_message = true;
+        utils.flag_message("We are uploading your video to the render server!");
         setTimeout(()=>{
           app.show_saved_message = false;
+          utils.flag_message("Your video is processing and you'll be notified by email once ready!");
         }, 2000);
       });
+
 
       fetch("/stats/lattefx_app_initiate_render_hq/");
     },

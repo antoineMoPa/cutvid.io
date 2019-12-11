@@ -370,7 +370,7 @@ utils.flag_message = function(message, options){
 
   setTimeout(function(){
     close();
-  },8000);
+  },10000);
 
   document.body.appendChild(box);
 };

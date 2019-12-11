@@ -278,6 +278,8 @@ Vue.component('sequence-effect', {
     }
   },
   beforeDestroy(){
-    this.last_plugin.$destroy();
+    if(this.last_plugin != undefined){
+      this.last_plugin.$destroy();
+    }
   }
 });

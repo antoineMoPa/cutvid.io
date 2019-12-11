@@ -28,6 +28,10 @@ Vue.component('projects', {
        </div>
        <p>Used space: {{parseInt(used_bytes / 1e6)}}MB<br>
        Total space: {{parseInt(available_bytes / 1e6)}}MB</p>
+       <p v-if="storage_full">
+         You are above your storage limit.<br>
+         We may remove your projects at any time.
+       </p>
      </div>
    </div>`,
   data(){
@@ -38,7 +42,8 @@ Vue.component('projects', {
       used_bytes: 0,
       available_bytes: 0,
       used_percent: 0,
-      on_open_project: () => {}
+      on_open_project: () => {},
+      storage_full: false
     }
   },
   props: ["settings"],
@@ -70,8 +75,15 @@ Vue.component('projects', {
 
       // Update bar width
       let indicator_inner = this.$el.querySelectorAll(".storage-indicator-inner")[0];
-      indicator_inner.style.width = this.used_percent + "%";
+      indicator_inner.style.width = Math.min(this.used_percent,100) + "%";
 
+      if(this.used_percent){
+        this.storage_full = true;
+        indicator_inner.classList.add("pretty-full");
+      } else {
+        this.storage_full = false;
+        indicator_inner.classList.remove("pretty-full");
+      }
     },
     async fetch_projects(){
       let auth = window.auth;
