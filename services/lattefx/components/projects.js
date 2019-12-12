@@ -90,16 +90,21 @@ Vue.component('projects', {
       let cloud_url = this.settings.cloud;
 
       if(typeof(auth) == "undefined"){
-        return;
+        return [];
       }
 
       if(auth.user_info == null){
         auth.show_login();
         this.close();
-        return;
+        return [];
       }
 
       let token = await auth.get_token();
+
+      if(token == null){
+        return [];
+      }
+
       let req = await fetch(cloud_url + "/list_projects", {
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -107,6 +112,8 @@ Vue.component('projects', {
       });
 
       let projects = await req.json();
+
+      console.log(projects);
 
       for(let i in projects){
         projects[i].renaming = false;

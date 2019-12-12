@@ -195,8 +195,6 @@ Vue.component('auth', {
 
       if(container.length != 0){
         // We are in "renders" app, not in player
-        return;
-      } else {
         // We are in "renders" app
         container = container[0];
         let ui = document.querySelectorAll(".ui .ui-buttons-right")[0];
@@ -205,6 +203,8 @@ Vue.component('auth', {
         let container_for_props = this.$el.querySelectorAll(".props-auth-container")[0];
         let props = document.querySelectorAll(".props-auth-placeholder")[0];
         props.appendChild(container_for_props);
+      } else {
+        return;
       }
     });
 
