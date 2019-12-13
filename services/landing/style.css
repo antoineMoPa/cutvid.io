@@ -197,15 +197,33 @@ input{
 }
 
 .screenshot{
-  max-width:100%;
-  transform: skew(-0.02turn, 1deg) scale(0.7);
-  box-shadow: 0 0 60px rgba(255,255,255,0.1);
-  margin-top: -100px;
-  margin-bottom: -100px;
+  max-width: 100%;
+  transform: skew(0.01turn) scale(0.8);
+  box-shadow: 0 0 30px rgba(255,255,255,0.05);
+  border-radius:10px;
+  border:0.5px solid #111;
 }
 
 .screenshot.other-side{
   transform: skew(0.01turn, 0deg) scale(0.7);
+}
+
+.features-list{
+  list-style-type: disc;
+  text-align: left;
+  font-size:23px;
+  width: 400px;
+  margin:auto;
+  margin-top:40px;
+  margin-bottom:30px;
+}
+
+.coffee{
+  color:#555;
+}
+
+.supported-platforms{
+  margin-top:30px;
 }
 
 p.small{
