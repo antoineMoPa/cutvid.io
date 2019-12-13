@@ -6,6 +6,11 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  after_create :send_admin_mail
+  def send_admin_mail
+    UserMailer.send_new_user_message(self).deliver
+  end
+
   def get_jwt_token
     hmac_secret = Rails.application.credentials.jwt_hmac_secret
     # Tokens will be good for 10 minutes

@@ -1,25 +1,25 @@
 <section class="section">
   <div class="container">
     <h1 class="title">Edit User</h1>
-	<br>
-	<h3 class="subtitle">Current Values</h3>
-	<div class="user-in-admin">
+    <br>
+    <h3 class="subtitle">Current Values</h3>
+    <div class="user-in-admin">
       <%= @user.id %> - <%= @user.email %> -
-	  Seconds per months <%= @user.seconds_per_month %> -
-	  Seconds left this month<%= @user.seconds_left_this_month %>
+      Seconds per months <%= @user.seconds_per_month %> -
+      Seconds left this month<%= @user.seconds_left_this_month %>
     </div>
-	<br>
-	<h3 class="subtitle">Modify</h3>
-	<%= form_tag('/users/' + @user.id.to_s + '/edit', method: "post") do %>
+    <br>
+    <h3 class="subtitle">Modify</h3>
+    <%= form_tag('/users/' + @user.id.to_s + '/edit', method: "post") do %>
     <div class="field">
-	  Seconds per month
+      Seconds per month
       <input type="number" class="control" min="0" max="3000" value="<%= @user.seconds_per_month%>" name="seconds_per_month">
     </div>
     <div class="field">
-	  Seconds left this month
+      Seconds left this month
       <input type="number" class="control" min="0" max="3000" value="<%= @user.seconds_left_this_month %>" name="seconds_left_this_month">
     </div>
-	<br>
+    <br>
     <div class="actions">
       <%= submit_tag "Apply modifications", class:"button" %><br><br><br><br>
     </div>

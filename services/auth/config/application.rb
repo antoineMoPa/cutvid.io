@@ -19,6 +19,8 @@ module Auth
     settings_file = open '../lattefx/settings.json'
     settings = JSON.parse(settings_file.read)
 
+    config.lattefx_settings = settings
+
     config.action_dispatch.default_headers = {
       'Access-Control-Allow-Origin' => settings['app'],
       'Access-Control-Request-Method' => 'GET, POST'
