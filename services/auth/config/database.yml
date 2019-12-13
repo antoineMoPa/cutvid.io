@@ -50,6 +50,6 @@ test:
 #
 production:
   <<: *default
-  database: auth_production
-  username: auth
-  password: <%= ENV['AUTH_DATABASE_PASSWORD'] %>
+  database: <%= Rails.application.credentials.dig(:production, :database_name) %>
+  username: <%= Rails.application.credentials.dig(:production, :database_username) %>
+  password: <%= Rails.application.credentials.dig(:production, :database_password) %>

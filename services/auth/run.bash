@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bundle exec rails server
+bundle exec rails server -e production
