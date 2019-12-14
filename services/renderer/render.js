@@ -1,3 +1,5 @@
+const fetch = require("node-fetch");
+
 function flatten_plugin_list(plugins_list){
   let plugins_list_flat = {};
 
@@ -400,6 +402,16 @@ function cleanup(){
 
 }
 
+function notify_user(){
+  try{
+    let notify_url = process.argv[3];
+    fetch(notify_url);
+  } catch (e) {
+    console.log("Could not notify user.");
+    console.log(e);
+  }
+}
+
 async function render(gl, player){
   let start = new Date();
   let fps = parseInt(player.fps);
@@ -426,6 +438,8 @@ async function render(gl, player){
   console.log('Video render time: %dms', end);
 
   cleanup();
+
+  notify_user();
 }
 
 const fs = require('fs');

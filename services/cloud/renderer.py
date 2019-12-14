@@ -14,6 +14,7 @@ import requests
 import jwt
 from utils import *
 
+from renders import renders
 from projects import projects
 from media import media
 
@@ -21,7 +22,7 @@ app = Flask(__name__)
 
 app.register_blueprint(projects)
 app.register_blueprint(media)
-
+app.register_blueprint(renders)
 
 settings = json.load(open('../lattefx/settings.json'))
 
@@ -343,9 +344,11 @@ def render_video():
     render_id = id_generator()
     user_id = int(token['user_id'])
 
-    render_folder = TMP_FOLDER + "lattefx-render-" + render_id + "/"
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    render_folder = user_folder + "lattefx-render-" + render_id + "/"
     project_file_path = render_folder + "lattefx_file.lattefx"
 
+    os.makedirs(user_folder, exist_ok=True)
     os.makedirs(render_folder, exist_ok=True)
 
     with open(project_file_path, "w") as f:
@@ -359,10 +362,24 @@ def render_video():
     project_id = project_file["project_id"]
     copy_medias(user_id, project_id, render_folder + "media/")
 
-    render_preview = subprocess.Popen([
-        "node", os.getcwd() + "/../renderer/render.js", "lattefx_file.lattefx"
-    ], cwd=render_folder)
+    auth_port = 8000
+    notify_url = "http://127.0.0.1:" + str(auth_port) + "/auth/notify_render/" + str(user_id) + "/" + render_id
 
+    command = [
+        "node", os.getcwd() + "/../renderer/render.js",
+        "lattefx_file.lattefx",
+        notify_url
+    ]
+
+    if settings["use_xvfb"]:
+        command = [
+            "xvfb-run",
+            "-e", "/dev/stdout",
+            "-s",
+            "-ac -screen 0 1920x1080x24"
+        ] + command
+
+    render_preview = subprocess.Popen(command, cwd=render_folder)
 
     return json.dumps({"status": "ok", "render_id": render_id})
 

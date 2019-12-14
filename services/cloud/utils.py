@@ -10,6 +10,7 @@ import time
 import requests
 import jwt
 import shutil
+from base64 import b64decode
 
 settings = json.load(open('../lattefx/settings.json'))
 

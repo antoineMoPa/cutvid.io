@@ -13,6 +13,7 @@
     "gl": "file:~/bin/headless-gl",
     "jpeg-js": "^0.3.6",
     "ndarray": "^1.0.18",
+    "node-fetch": "^2.6.0",
     "pngjs": "^3.4.0",
     "save-pixels": "^2.3.4",
     "zeros": "^1.0.0"

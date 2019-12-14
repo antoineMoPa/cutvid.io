@@ -101,6 +101,13 @@ class UserController < ApplicationController
     render :json => status
   end
 
+  def notify_render
+    if request.local?
+      user = User.find(params[:user_id].to_i)
+      UserMailer.new_render(user).deliver
+    end
+  end
+
   def sign_out_current_user
     sign_out @user
   end

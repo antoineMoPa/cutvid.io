@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root to: "home#index"
 
-  variant_name = Rails.configuration.lattefx_settings["variant-name"]
+  variant_name = Rails.configuration.lattefx_settings["variant_name"]
   root_url = "/auth"
 
   if variant_name != "prod"
@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     devise_for :users
 
     get '/current_user', to: 'user#current_user_info'
+    get '/notify_render/:user_id/:render_id', to: 'user#notify_render'
     get '/jwt_token', to: 'user#jwt_token'
     get '/validate_jwt_token', to: 'user#validate_jwt_token'
 

@@ -403,6 +403,12 @@ class ShaderPlayerWebGL {
       let effect = seq.effect;
       let textures = effect.shaderProgram.textures;
 
+      if ("muted" in effect){
+        if(effect["muted"]){
+          continue;
+        }
+      }
+
       if("video" in textures){
         let vid = textures.video;
 

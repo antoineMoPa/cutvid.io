@@ -261,7 +261,7 @@ Vue.component('player', {
         utils.flag_message("We are uploading your video to the render server!");
         setTimeout(()=>{
           app.show_saved_message = false;
-          utils.flag_message("Your video is processing and you'll be notified by email once ready!");
+          utils.flag_message("Your video is processing and you'll be notified by email once it's ready!");
         }, 2000);
       });
 

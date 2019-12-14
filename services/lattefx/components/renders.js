@@ -15,7 +15,7 @@ Vue.component('renders', {
        </div>
      </div>
      <div v-if="renders.length == 0">
-       <p class="renders-no-render">You currently have no active renders.<br/></p>
+       <p class="renders-no-render">You currently have no renders.<br/></p>
      </div>
      <div class="storage">
        <p>You have used <span class="percentage">{{used_percent}}%</span> of your storage on Lattefx cloud.</p>
