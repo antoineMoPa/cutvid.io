@@ -410,6 +410,10 @@ function notify_user(){
     console.log("Could not notify user.");
     console.log(e);
   }
+
+  let meta = JSON.parse(fs.readFileSync("./lattefx_render.meta"));
+  meta.status = "rendered";
+  fs.writeFileSync("./lattefx_render.meta", JSON.stringify(meta));
 }
 
 async function render(gl, player){

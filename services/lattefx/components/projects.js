@@ -113,8 +113,6 @@ Vue.component('projects', {
 
       let projects = await req.json();
 
-      console.log(projects);
-
       for(let i in projects){
         projects[i].renaming = false;
       }

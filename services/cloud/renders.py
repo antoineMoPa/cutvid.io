@@ -39,6 +39,8 @@ def list_renders():
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
     render_meta_files = glob.glob(user_folder + "/render-*/lattefx_render.meta")
 
+    render_meta_files = sorted(render_meta_files, key=os.path.getctime, reverse=True)
+
     render_metas = []
 
     for render_meta_file in render_meta_files:
@@ -71,20 +73,19 @@ def get_render(render_id):
     if token is None:
         return "error 1 bad token"
 
-    render_id = int(render_id)
+    render_id = validate_and_sanitize_id(render_id)
     user_id = int(token['user_id'])
 
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
     render_folder = user_folder + "render-" + str(render_id) + "/"
-    render_file_path = render_folder + "lattefx_file.lattefx"
+    render_file_path = render_folder + "video.avi"
 
     if not os.path.exists(render_file_path):
         return "error 8 no render file found"
 
     extract_media(render_folder)
 
-    with open(render_file_path, "r") as f:
-        return f.read()
+    return send_file(render_file_path)
 
 @renders.route("/delete_render/<render_id>", methods=['DELETE', 'OPTIONS'])
 def delete_render(render_id):

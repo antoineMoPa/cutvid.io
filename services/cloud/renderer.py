@@ -345,7 +345,7 @@ def render_video():
     user_id = int(token['user_id'])
 
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    render_folder = user_folder + "lattefx-render-" + render_id + "/"
+    render_folder = user_folder + "render-" + render_id + "/"
     project_file_path = render_folder + "lattefx_file.lattefx"
 
     os.makedirs(user_folder, exist_ok=True)
@@ -360,7 +360,30 @@ def render_video():
         project_file = json.loads(f.read())
 
     project_id = project_file["project_id"]
-    copy_medias(user_id, project_id, render_folder + "media/")
+    project_name = ""
+
+    if project_id is not None:
+        project_id = int(project_id)
+        copy_medias(user_id, project_id, render_folder + "media/")
+
+        project_folder = user_folder + "project-" + str(project_id) + "/"
+        project_meta_path = project_folder + "lattefx_project.meta"
+
+        if os.path.exists(project_meta_path):
+            with open(project_meta_path, "r") as f:
+                project_meta = json.loads(f.read())
+                project_name = project_meta["name"]
+
+    render_meta_path = render_folder + "lattefx_render.meta"
+
+    # Create render meta for new renders
+    render_meta = json.dumps({
+        "name": project_name,
+        "status": "rendering"
+    })
+
+    with open(render_meta_path, "w") as f:
+        f.write(render_meta)
 
     auth_port = 8000
     notify_url = "http://127.0.0.1:" + str(auth_port) + "/auth/notify_render/" + str(user_id) + "/" + render_id

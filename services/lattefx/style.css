@@ -74,6 +74,10 @@ a:visited{
   text-align:right;
 }
 
+.text-left{
+  text-align:left;
+}
+
 .text-center{
   text-align:center;
 }
@@ -1420,6 +1424,52 @@ a:visited{
   margin-top: 30px;
   text-align: center;
   z-index:1;
+}
+
+.renders .table{
+  width:100%;
+  max-width:800px;
+  margin:auto;
+  border-collapse:collapse;
+  border-radius:3px;
+}
+
+.renders .table tr:nth-child(2n){
+  background:#f8f8f8;
+}
+
+.renders .table tr:nth-child(2){
+  height:100px;
+  box-shadow:0 0 30px rgba(0,100,255,0.2);
+}
+
+.renders .table tr{
+  border-radius: 3px;
+}
+
+.renders .table tr td{
+  height: 70px;
+}
+
+.renders .table tr th{
+  height: 40px;
+}
+
+.renders .table td:first-child{
+  padding-left:20px;
+}
+
+.renders .table td:last-child{
+  padding-right:20px;
+}
+
+.renders h3{
+  text-align: left;
+}
+
+.delete-render{
+  background: #f33;
+  color:#fff;
 }
 
 /* END RENDERS */

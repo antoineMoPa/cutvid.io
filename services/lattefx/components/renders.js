@@ -5,15 +5,48 @@ Vue.component('renders', {
        <img src="icons/feather-dark/image.svg" width="30"/>
        Renders
      </h3>
-     <div v-for="render in renders" class="render">
-       <a class="open-render" v-on:click="open_render_button(render)">Open</a>
-       <input v-model="render.name" type="text" class="render-name" v-on:keyup="begin_renaming(render)"/>&nbsp;
-       <a v-if="render.renaming" v-on:click="rename_render(render)">Save</a>
-       <div class="render-right">
-         {{parseInt(render.bytecount / 1e6)}}MB
-         <a class="delete-render" v-on:click="delete_render(render)">Delete</a>
-       </div>
-     </div>
+     <table class="table">
+       <tr>
+         <th class="text-left">
+           Project name
+         </th>
+         <th>
+           Status
+         </th>
+         <th>
+           Storage
+         </th>
+         <th>
+         </th>
+       </tr>
+       <tr v-for="render in renders" class="render">
+         <td class="text-left">
+           <span>{{render.name}}</span>
+         </td>
+         <td>
+           <span>{{render.status}}</span>
+         </td>
+         <td>
+           {{parseInt(render.bytecount / 1e6)}}MB
+         </td>
+         <td class="text-right">
+           <a class="delete-render ui-button" v-on:click="delete_render(render)">
+             <img src="icons/feather/trash.svg" class="feather-button" width="24"/>
+             Delete
+           </a>
+           <a class="ui-button" v-if="render.status == 'purchased'"
+             v-on:click="download_video(render)">
+             <img src="icons/feather/download.svg" class="feather-button" width="24"/>
+             Download
+           </a>
+           <a class="ui-button" v-else
+             v-on:click="buy_video(render)">
+             <img src="icons/feather/dollar-sign.svg" class="feather-button" width="24"/>
+             Buy
+           </a>
+         </td>
+       </tr>
+     </table>
      <div v-if="renders.length == 0">
        <p class="renders-no-render">You currently have no renders.<br/></p>
      </div>
@@ -45,6 +78,37 @@ Vue.component('renders', {
   },
   props: ["settings"],
   methods: {
+    buy_video(render){
+      render.status = "purchased";
+    },
+    async download_video(render){
+      let auth = window.auth;
+      let cloud_url = this.settings.cloud;
+
+      if(typeof(auth) == "undefined"){
+        return;
+      }
+
+      if(auth.user_info == null){
+        auth.show_login();
+      }
+
+      let token = await auth.get_token();
+      let url = this.settings.cloud + "/render/" + render.id;
+
+      let req = await fetch(url, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+        }
+      });
+      let blob = await req.blob();
+      let blob_url = window.URL.createObjectURL(blob);
+
+      let a = document.createElement("a");
+      a.href = blob_url;
+      a.download = "video.avi";
+      a.click();
+    },
     async update_storage_info(token){
       let cloud_url = this.settings.cloud;
       let req = await fetch(cloud_url + "/get_storage_info", {
@@ -81,8 +145,6 @@ Vue.component('renders', {
 
       if(auth.user_info == null){
         auth.show_login();
-        this.close();
-        return;
       }
 
       let token = await auth.get_token();
@@ -95,7 +157,6 @@ Vue.component('renders', {
       let renders = await req.json();
 
       for(let i in renders){
-        renders[i].renaming = false;
       }
 
       // It is probably a good time to update used storage
@@ -143,42 +204,12 @@ Vue.component('renders', {
 
       // Update render list
       this.renders = await this.fetch_renders();
-    },
-    async rename_render(render){
-      render.renaming = false;
-
-      let auth = window.auth;
-      let cloud_url = this.settings.cloud;
-
-      if(auth.user_info == null){
-        auth.show_login();
-        this.close();
-        return;
-      }
-
-      let form = new FormData();
-      form.append('name', render.name);
-
-      let token = await auth.get_token();
-      let req = await fetch(cloud_url + "/rename_render/" + render.id, {
-        method: "POST",
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Content-Encoding': 'multipart/form-data'
-        },
-        body: form
-      });
-
-      // Update render list
-      this.renders = await this.fetch_renders();
-    },
-    begin_renaming(render){
-      render.renaming = true;
     }
   },
   watch: {
-    settings(){
+    async settings(){
       let app = this;
+      this.renders = await this.fetch_renders();
     }
   },
   mounted() {
