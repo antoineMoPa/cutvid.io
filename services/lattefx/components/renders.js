@@ -30,7 +30,7 @@ Vue.component('renders', {
            {{parseInt(render.bytecount / 1e6)}}MB
          </td>
          <td class="text-right">
-           <a class="delete-render ui-button" v-on:click="delete_render(render)">
+           <a class="delete-render ui-button" v-if="render.status != 'rendering'" v-on:click="delete_render(render)">
              <img src="icons/feather/trash.svg" class="feather-button" width="24"/>
              Delete
            </a>
