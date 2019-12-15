@@ -39,7 +39,7 @@ Vue.component('renders', {
              <img src="icons/feather/download.svg" class="feather-button" width="24"/>
              Download
            </a>
-           <a class="ui-button" v-else
+           <a class="ui-button" v-if="render.status == 'rendered'"
              v-on:click="buy_video(render)">
              <img src="icons/feather/dollar-sign.svg" class="feather-button" width="24"/>
              Buy
