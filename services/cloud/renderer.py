@@ -117,7 +117,9 @@ def clean_old_cache():
 
 @app.after_request
 def apply_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = settings['app']
+    app_domain = settings['app'].replace("/app/","")
+
+    response.headers['Access-Control-Allow-Origin'] = app_domain
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Methods'] = 'POST, DELETE'
     response.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Encoding'

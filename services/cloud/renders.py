@@ -101,7 +101,7 @@ def delete_render(render_id):
     if token is None:
         return "error 1 bad token"
 
-    render_id = int(render_id)
+    render_id = validate_and_sanitize_id(render_id)
     user_id = int(token['user_id'])
 
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
@@ -114,47 +114,5 @@ def delete_render(render_id):
         shutil.rmtree(render_folder)
     except:
         return "error removing render " + str(render_id) + " of user " + str(user_id)
-
-    return "success"
-
-
-@renders.route("/rename_render/<render_id>", methods=['POST', 'OPTIONS'])
-def rename_render(render_id):
-    """
-    Rename a render
-
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
-
-    if token is None:
-        return "error 1 bad token"
-
-    render_id = int(render_id)
-    user_id = int(token['user_id'])
-    new_name = request.form['name']
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    render_folder = user_folder + "render-" + str(render_id) + "/"
-
-    render_meta_path = render_folder + "lattefx_render.meta"
-
-    if not os.path.exists(render_meta_path):
-        return "error 7 no render meta found"
-
-    render_meta = None
-
-    with open(render_meta_path, "r") as f:
-        render_meta = json.loads(f.read())
-
-    render_meta['name'] = new_name
-
-    print(new_name)
-
-    with open(render_meta_path, "w") as f:
-        f.write(json.dumps(render_meta))
 
     return "success"
