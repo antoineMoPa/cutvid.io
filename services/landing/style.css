@@ -209,20 +209,19 @@ input{
 }
 
 
-
 @media all and (min-width:1000px){
   .pull-screenshot-right{
-	margin-right:-180px;
+	margin-right:-35%;
   }
   .hero-desktop-spacer{
-	height:70px;
+	height:20px;
   }
 }
 
 .features-list{
   list-style-type: disc;
   text-align: left;
-  font-size:23px;
+  font-size:21px;
   width: 400px;
   margin:auto;
   margin-top:40px;
