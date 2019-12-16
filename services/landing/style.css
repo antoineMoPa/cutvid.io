@@ -208,6 +208,17 @@ input{
   transform: skew(0.01turn, 0deg) scale(0.7);
 }
 
+
+
+@media all and (min-width:1000px){
+  .pull-screenshot-right{
+	margin-right:-180px;
+  }
+  .hero-desktop-spacer{
+	height:70px;
+  }
+}
+
 .features-list{
   list-style-type: disc;
   text-align: left;
@@ -224,6 +235,8 @@ input{
 
 .supported-platforms{
   margin-top:30px;
+  font-size:20px;
+  font-weight:600;
 }
 
 p.small{
