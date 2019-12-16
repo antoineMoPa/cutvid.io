@@ -274,7 +274,7 @@ class ShaderPlayerWebGL {
       }
 
       let time = frame / fps;
-      this.update_render_status("Rendering frame " + frame + " of " + total_frames);
+      this.update_render_status("Rendering frame " + frame + " of " + parseInt(total_frames));
 
       if(this.headless){
         await this.draw_gl(time);

@@ -1,5 +1,10 @@
 const fetch = require("node-fetch");
 
+/*
+   Arg 1: Project file name
+   Arg 2: Notify url that we'll call when the render is done
+ */
+
 function flatten_plugin_list(plugins_list){
   let plugins_list_flat = {};
 
@@ -85,6 +90,15 @@ async function attach_passes(gl, sequences){
       let url = seq.texture_urls[t];
 
       if(url == ""){
+        continue;
+      }
+
+      // Image path whitelisting
+      if(url == "/app/plugins/mask/default.png"){
+        let code_folder = __dirname;
+        url = code_folder + '/../lattefx/plugins/mask/default.png';
+      } else if(url.split(",")[0] != "data:image/png;base64"){
+        // This could be any path in our server, so let's not trust it
         continue;
       }
 
@@ -447,6 +461,7 @@ async function render(gl, player){
 }
 
 const fs = require('fs');
+console.log("Rendering project at " + process.cwd());
 [gl, player] = init_player(fs.readFileSync(process.argv[2]))
 
 render(gl, player);
