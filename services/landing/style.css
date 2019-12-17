@@ -57,10 +57,6 @@ input{
   margin-top: 40px;
 }
 
-.pricing-hero .premium-effects .button{
-  margin-left:30px;
-}
-
 .pricing-card{
   background:#fff;
   background: linear-gradient(#fff,#e1e1e1);
@@ -193,7 +189,6 @@ input{
 
 .pricing-card.pay-as-you-go .button{
   margin-top:10px;
-  margin-left:30px;
 }
 
 .screenshot{
