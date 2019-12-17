@@ -70,7 +70,7 @@ Vue.component('player', {
           <a target="_blank" href="/landing/lattefx_intro_pdf_oct_2019.pdf">
             <button
               class="empty-player-button lfx-button">
-              Learn how to use LatteFx [pdf]
+              Learn how to use Lattefx [pdf]
             </button>
           </a>
         </div>
