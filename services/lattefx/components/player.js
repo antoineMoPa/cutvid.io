@@ -67,7 +67,7 @@ Vue.component('player', {
     <div id="main-player">
       <div class="canvas-container">
         <div v-if="player != null && player.sequences.length == 0">
-          <a target="_blank" href="/landing/lattefx_intro_pdf_oct_2019.pdf">
+          <a target="_blank" href="/landing/lattefx_intro_pdf_dec_2019.pdf">
             <button
               class="empty-player-button lfx-button">
               Learn how to use Lattefx [pdf]
