@@ -262,7 +262,7 @@ Vue.component('player', {
         app.show_saved_message = true;
         setTimeout(()=>{
           app.show_saved_message = false;
-          utils.flag_message("Your video is processing and you'll be notified by email once it's ready. expect around 15 min for short videos!");
+          utils.flag_message("Your video is processing and you'll be notified by email once it's ready. Expect around 15 min for short videos!");
         }, 2000);
       });
 
