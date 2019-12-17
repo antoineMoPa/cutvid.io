@@ -1,10 +1,11 @@
 {
-  "app": "http://127.0.0.1:8000",
-  "renderer": "http://127.0.0.1:8004",
-  "auth": "http://127.0.0.1:8000",
+  "use_xvfb": false,
+  "variant-name": "next",
+  "app": "https://lattefx.com/variant-next/app/",
+  "cloud": "https://lattefx.com/cloud-next",
+  "auth": "https://lattefx.com/auth-next",
   "downloadables_folder": "../downloadables/public",
-  "candidates_folder": "../downloadables/candidates",
   "By the way": "This last variable is relative to python script working directory",
   "downloadables_url": "http://127.0.0.1:8005",
-  "paypal_client_id": ""
+  "paypal_client_id": "ATLayMgxBgXMotbHvCFdjCXzg4Vqb20L_cYcL-ldUACFlOfR-vjONtD6Lrw6U2WSe2EqD3ATcTw7lyma"
 }
