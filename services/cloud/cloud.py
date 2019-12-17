@@ -131,7 +131,7 @@ def slash():
     api home
     useful to test that the api is up
     """
-    return "lattefx renderer home"
+    return "lattefx cloud home"
 
 @app.route("/has_vid_in_cache/<vidid>")
 def has_vid_in_cache(vidid):
@@ -407,61 +407,3 @@ def render_video():
     render_preview = subprocess.Popen(command, cwd=render_folder)
 
     return json.dumps({"status": "ok", "render_id": render_id})
-
-
-@app.route("/rendered_video/<vidid>/<desired_filename>", methods=['GET'])
-def rendered_video(vidid, desired_filename):
-    """
-    Get a rendered video from cache
-
-    Desired filename is arbitray and not used here
-    """
-    vidid = validate_and_sanitize_id(vidid)
-
-    if vidid is None:
-        return "error 1 bad id"
-
-    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
-
-    if not os.path.exists(folder):
-        # prevent ddos
-        time.sleep(1.0)
-        return "error 3 no file for this id"
-
-    vid_format = "avi"
-    filename = "lattefx-hq-video." + vid_format
-
-    return send_file(folder + "/" + filename)
-
-@app.route("/rendered_video_preview/<vidid>", methods=['GET'])
-def rendered_video_preview(vidid):
-    """
-    Get a rendered video preview from cache
-    """
-    vidid = validate_and_sanitize_id(vidid)
-
-    if vidid is None:
-        return "error 1 bad id"
-
-    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
-
-    if not os.path.exists(folder):
-        # prevent ddos
-        time.sleep(1.0)
-        return "error 3 no file for this id"
-
-    vid_format = "avi"
-    filename = "lattefx-hq-video." + vid_format
-
-    # Create ogv preview, because it works in most places
-    render_preview = subprocess.Popen([
-        "ffmpeg", "-t", "5",
-        "-nostdin",
-        "-y",
-        "-i", filename,
-        "-vb", "10M",
-        "preview.ogv"
-    ], cwd=folder)
-    render_preview.wait()
-
-    return send_file(folder + "/preview.ogv")

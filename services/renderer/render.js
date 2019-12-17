@@ -433,7 +433,7 @@ function notify_user(){
 function create_preview(){
   let exec_sync = require('child_process').execSync;
 
-  let command = "ffmpeg -i video.avi -t 5 preview.avi";
+  let command = "ffmpeg -i video.avi -t 5 preview.mp4";
 
   exec_sync(
     command,

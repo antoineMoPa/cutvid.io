@@ -6,20 +6,14 @@ Vue.component('buy-video', {
   </div>
   <h3>
     <img src="icons/feather-dark/download-cloud.svg" width="30"/>
-    <span v-if="!canDownload">
-      Buy video
-    </span>
-    <span v-else>
-      Download video
-    </span>
+    Buy video
   </h3>
-  <p v-if="!canDownload" class="thank-you">
-    Latte/<span title="High Quality">HQ</span> videos are USD $ 4.50
+  <p class="thank-you">
+    Latte/<span title="High Quality">HQ</span> videos are USD $ 4.50 -
+    Here is a 5 seconds preview:
     <br>
   </p>
-  <div v-if="!canDownload" class="video-preview" v-on:contextmenu="onContextMenu">
-    <p v-if="!previewReady">We are building a 5 seconds preview...</p>
-    <p v-else>Here is a 5 seconds preview:</p>
+  <div class="video-preview" v-on:contextmenu="onContextMenu">
     <video v-bind:src="previewURL" controls></video>
   </div>
   <div class="payment-container" v-if="!canDownload">
@@ -50,12 +44,13 @@ Vue.component('buy-video', {
 `,
   data: function(){
     return {
+      render: null,
       videoURL: null,
       previewURL: null,
       canDownload: false,
-      previewReady: false,
       error: null,
-      stats: null
+      stats: null,
+      token: ""
     };
   },
   props: ["settings"],
@@ -75,22 +70,16 @@ Vue.component('buy-video', {
       // And improvement at my email address!
       return false;
     },
-    show(vidid){
-      this.$el.classList.remove("hidden");
-      this.previewReady = false;
-      this.previewURL = window.lattefx_settings.cloud +
-        "/rendered_video_preview/" +
-        vidid;
-      this.videoURL = window.lattefx_settings.cloud +
-        "/rendered_video/" + vidid + "/lattefx-hq-video.avi";
+    show(render, token){
+      this.render = render;
+      this.token = token;
+      let vidid = render.id;
 
-      this.$el.querySelectorAll("video")[0].addEventListener(
-        "loadeddata",
-        function(){
-          this.previewReady = true;
-        }.bind(this),
-        {once: true}
-      );
+      this.$el.classList.remove("hidden");
+      this.previewURL = window.lattefx_settings.cloud +
+        "/render_preview/" + vidid + "/" + token;
+      this.videoURL = window.lattefx_settings.cloud +
+        "/render/" + vidid + "/" + token;
 
       let client_id = this.settings.paypal_client_id;
       let script = document.createElement("script");
@@ -102,6 +91,8 @@ Vue.component('buy-video', {
     initPaypal(){
       let app = this;
       let paymentContainer = this.$el.querySelectorAll(".payment-container")[0];
+      let render_id = app.render.id;
+
       paypal.Buttons({
         createOrder: function(data, actions) {
           // Set up the transaction
@@ -118,21 +109,36 @@ Vue.component('buy-video', {
         },
         onApprove: function(data, actions) {
           return actions.order.capture().then(function(details) {
-            fetch("/stats/lattefx_app_payment_done/");
-            app.canDownload = true;
-
-            // Temporary freebie
-            window.localStorage.last_buy = new Date();
+            app.validate_purchase(render_id, details.id);
+            fetch("/stats/lattefx_app_payment_approved/");
           });
         }
       }).render(paymentContainer);
 
       fetch("/stats/lattefx_app_paypal_init/");
     },
+    async validate_purchase(render_id, order_id){
+      let cloud_url = this.settings.cloud;
+      let url = cloud_url + "/complete_purchase/" + render_id + "/" + order_id;
+      let token = this.token;
+      let req = await fetch(url, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+        }
+      });
+
+      let text = await req.text();
+
+      if(text == "success"){
+        this.canDownload = true;
+        this.$emit("bought");
+      } else {
+        utils.real_bad_error("Error in payment.");
+      }
+    },
     setVideoID(_id){
       this.videoID = _id;
       this.loggedIn = false;
-      this.canDownload = false;
     },
     videoTimeStamp(){
       let date = new Date();

@@ -63,6 +63,8 @@ Vue.component('renders', {
          We may remove your renders at any time.
        </p>
      </div>
+     <buy-video v-bind:settings="settings" ref="buy-video"
+                v-on:bought="on_bought()"/>
    </div>`,
   data(){
     return {
@@ -78,8 +80,21 @@ Vue.component('renders', {
   },
   props: ["settings"],
   methods: {
-    buy_video(render){
-      render.status = "purchased";
+    async buy_video(render){
+      // render.status = "purchased";
+      let auth = window.auth;
+
+      if(typeof(auth) == "undefined"){
+        return;
+      }
+
+      if(auth.user_info == null){
+        auth.show_login();
+      }
+
+      let token = await auth.get_token();
+
+      this.$refs['buy-video'].show(render, token);
     },
     async download_video(render){
       let auth = window.auth;
@@ -94,13 +109,9 @@ Vue.component('renders', {
       }
 
       let token = await auth.get_token();
-      let url = this.settings.cloud + "/render/" + render.id;
+      let url = this.settings.cloud + "/render/" + render.id + "/" + token;
 
-      let req = await fetch(url, {
-        headers: {
-          'Authorization': 'Bearer ' + token,
-        }
-      });
+      let req = await fetch(url);
       let blob = await req.blob();
       let blob_url = window.URL.createObjectURL(blob);
 
@@ -134,6 +145,9 @@ Vue.component('renders', {
         this.storage_full = false;
         indicator_inner.classList.remove("pretty-full");
       }
+    },
+    async on_bought(){
+      this.renders = await this.fetch_renders();
     },
     async fetch_renders(){
       let auth = window.auth;
