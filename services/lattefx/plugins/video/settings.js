@@ -10,6 +10,10 @@
         template: `
 <div>
   <label>Your Video</label>
+  <div class="action-suggest animated bounce delay-2s"
+       v-if="videoFileB64 == null">
+    Choose your video below!
+  </div>
   <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid" class="video-file-input" v-on:change="onVideo()">
   <div v-if="video != null">
     <label>Download source video to computer</label>

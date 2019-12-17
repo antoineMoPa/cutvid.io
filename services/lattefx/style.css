@@ -1473,3 +1473,16 @@ a:visited{
 }
 
 /* END RENDERS */
+
+/* UI GUIDING */
+
+.action-suggest{
+  background:#3af;
+  color:#fff;
+  padding:10px;
+  margin-top:8px;
+  margin-right:10px;
+  border-radius:3px;
+}
+
+/* END UI GUIDING */
