@@ -274,7 +274,7 @@ class ShaderPlayerWebGL {
       }
 
       let time = frame / fps;
-      this.update_render_status("Rendering frame " + frame + " of " + total_frames);
+      this.update_render_status("Rendering frame " + frame + " of " + parseInt(total_frames));
 
       if(this.headless){
         await this.draw_gl(time);
@@ -402,6 +402,12 @@ class ShaderPlayerWebGL {
 
       let effect = seq.effect;
       let textures = effect.shaderProgram.textures;
+
+      if ("muted" in effect){
+        if(effect["muted"]){
+          continue;
+        }
+      }
 
       if("video" in textures){
         let vid = textures.video;

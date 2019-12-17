@@ -374,3 +374,8 @@ utils.flag_message = function(message, options){
 
   document.body.appendChild(box);
 };
+
+utils.real_bad_error = function(message){
+  fetch("/stats/real_bad_error/" + message);
+  alert(message);
+};

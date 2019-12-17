@@ -10,6 +10,7 @@ import time
 import requests
 import jwt
 import shutil
+from base64 import b64decode
 
 settings = json.load(open('../lattefx/settings.json'))
 
@@ -45,6 +46,10 @@ def folder_size(path):
 
 def project_meta_path_to_project_id(project_meta_file_path):
     return int(project_meta_file_path.split("/")[-2].split("-")[1])
+
+def render_meta_path_to_render_id(render_meta_file_path):
+    render_id = render_meta_file_path.split("/")[-2].split("-")[1]
+    return validate_and_sanitize_id(render_id)
 
 def mark_cache(vidid,  keep_delta=None):
     """ hit the cache so a video is not deleted now """

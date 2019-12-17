@@ -8,8 +8,7 @@ class UserMailer < ApplicationMailer
   end
 
   def new_render(user)
-    @user = user
-    mail( :to => @user.email)
+    mail( :to => user.email)
   end
 
 

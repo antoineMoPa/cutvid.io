@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   after_create :send_admin_mail
   def send_admin_mail
-    UserMailer.send_new_user_message(self).deliver
+    UserMailer.new_signup(self).deliver
   end
 
   def get_jwt_token

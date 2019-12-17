@@ -14,6 +14,7 @@ import requests
 import jwt
 from utils import *
 
+from renders import renders
 from projects import projects
 from media import media
 
@@ -21,7 +22,7 @@ app = Flask(__name__)
 
 app.register_blueprint(projects)
 app.register_blueprint(media)
-
+app.register_blueprint(renders)
 
 settings = json.load(open('../lattefx/settings.json'))
 
@@ -116,7 +117,9 @@ def clean_old_cache():
 
 @app.after_request
 def apply_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = settings['app']
+    app_domain = settings['app'].replace("/app/","")
+
+    response.headers['Access-Control-Allow-Origin'] = app_domain
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Methods'] = 'POST, DELETE'
     response.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Encoding'
@@ -128,7 +131,7 @@ def slash():
     api home
     useful to test that the api is up
     """
-    return "lattefx renderer home"
+    return "lattefx cloud home"
 
 @app.route("/has_vid_in_cache/<vidid>")
 def has_vid_in_cache(vidid):
@@ -343,9 +346,11 @@ def render_video():
     render_id = id_generator()
     user_id = int(token['user_id'])
 
-    render_folder = TMP_FOLDER + "lattefx-render-" + render_id + "/"
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    render_folder = user_folder + "render-" + render_id + "/"
     project_file_path = render_folder + "lattefx_file.lattefx"
 
+    os.makedirs(user_folder, exist_ok=True)
     os.makedirs(render_folder, exist_ok=True)
 
     with open(project_file_path, "w") as f:
@@ -357,69 +362,48 @@ def render_video():
         project_file = json.loads(f.read())
 
     project_id = project_file["project_id"]
-    copy_medias(user_id, project_id, render_folder + "media/")
+    project_name = ""
 
-    render_preview = subprocess.Popen([
-        "node", os.getcwd() + "/../renderer/render.js", "lattefx_file.lattefx"
-    ], cwd=render_folder)
+    if project_id is not None:
+        project_id = int(project_id)
+        copy_medias(user_id, project_id, render_folder + "media/")
 
+        project_folder = user_folder + "project-" + str(project_id) + "/"
+        project_meta_path = project_folder + "lattefx_project.meta"
+
+        if os.path.exists(project_meta_path):
+            with open(project_meta_path, "r") as f:
+                project_meta = json.loads(f.read())
+                project_name = project_meta["name"]
+
+    render_meta_path = render_folder + "lattefx_render.meta"
+
+    # Create render meta for new renders
+    render_meta = json.dumps({
+        "name": project_name,
+        "status": "rendering"
+    })
+
+    with open(render_meta_path, "w") as f:
+        f.write(render_meta)
+
+    auth_port = 8000
+    notify_url = "http://127.0.0.1:" + str(auth_port) + "/auth/notify_render/" + str(user_id) + "/" + render_id
+
+    command = [
+        "node", os.getcwd() + "/../renderer/render.js",
+        "lattefx_file.lattefx",
+        notify_url
+    ]
+
+    if settings["use_xvfb"]:
+        command = [
+            "xvfb-run",
+            "-e", "/dev/stdout",
+            "-s",
+            "-ac -screen 0 1920x1080x24"
+        ] + command
+
+    render_preview = subprocess.Popen(command, cwd=render_folder)
 
     return json.dumps({"status": "ok", "render_id": render_id})
-
-
-@app.route("/rendered_video/<vidid>/<desired_filename>", methods=['GET'])
-def rendered_video(vidid, desired_filename):
-    """
-    Get a rendered video from cache
-
-    Desired filename is arbitray and not used here
-    """
-    vidid = validate_and_sanitize_id(vidid)
-
-    if vidid is None:
-        return "error 1 bad id"
-
-    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
-
-    if not os.path.exists(folder):
-        # prevent ddos
-        time.sleep(1.0)
-        return "error 3 no file for this id"
-
-    vid_format = "avi"
-    filename = "lattefx-hq-video." + vid_format
-
-    return send_file(folder + "/" + filename)
-
-@app.route("/rendered_video_preview/<vidid>", methods=['GET'])
-def rendered_video_preview(vidid):
-    """
-    Get a rendered video preview from cache
-    """
-    vidid = validate_and_sanitize_id(vidid)
-
-    if vidid is None:
-        return "error 1 bad id"
-
-    folder = TMP_FOLDER + "/lattefx-cache-" + vidid
-
-    if not os.path.exists(folder):
-        # prevent ddos
-        time.sleep(1.0)
-        return "error 3 no file for this id"
-
-    vid_format = "avi"
-    filename = "lattefx-hq-video." + vid_format
-
-    # Create ogv preview, because it works in most places
-    render_preview = subprocess.Popen([
-        "ffmpeg", "-t", "5",
-        "-nostdin",
-        "-y",
-        "-i", filename,
-        "-vb", "10M",
-        "preview.ogv"
-    ], cwd=folder)
-    render_preview.wait()
-
-    return send_file(folder + "/preview.ogv")

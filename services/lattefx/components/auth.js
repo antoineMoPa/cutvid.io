@@ -198,6 +198,11 @@ Vue.component('auth', {
         // We are in "renders" app
         container = container[0];
         let ui = document.querySelectorAll(".ui .ui-buttons-right")[0];
+
+        if(ui == undefined){
+          return;
+        }
+
         ui.appendChild(container);
 
         let container_for_props = this.$el.querySelectorAll(".props-auth-container")[0];

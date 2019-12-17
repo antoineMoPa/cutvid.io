@@ -1,3 +1,10 @@
+const fetch = require("node-fetch");
+
+/*
+   Arg 1: Project file name
+   Arg 2: Notify url that we'll call when the render is done
+ */
+
 function flatten_plugin_list(plugins_list){
   let plugins_list_flat = {};
 
@@ -83,6 +90,15 @@ async function attach_passes(gl, sequences){
       let url = seq.texture_urls[t];
 
       if(url == ""){
+        continue;
+      }
+
+      // Image path whitelisting
+      if(url == "/app/plugins/mask/default.png"){
+        let code_folder = __dirname;
+        url = code_folder + '/../lattefx/plugins/mask/default.png';
+      } else if(url.split(",")[0] != "data:image/png;base64"){
+        // This could be any path in our server, so let's not trust it
         continue;
       }
 
@@ -400,6 +416,36 @@ function cleanup(){
 
 }
 
+function notify_user(){
+  try{
+    let notify_url = process.argv[3];
+    fetch(notify_url);
+  } catch (e) {
+    console.log("Could not notify user.");
+    console.log(e);
+  }
+
+  let meta = JSON.parse(fs.readFileSync("./lattefx_render.meta"));
+  meta.status = "rendered";
+  fs.writeFileSync("./lattefx_render.meta", JSON.stringify(meta));
+}
+
+function create_preview(){
+  let exec_sync = require('child_process').execSync;
+
+  let command = "ffmpeg -i video.avi -t 5 preview.mp4";
+
+  exec_sync(
+    command,
+    (error, stdout, stderr) => {
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+      if (error !== null) {
+        console.log(`exec error: ${error}`);
+      }
+    });
+}
+
 async function render(gl, player){
   let start = new Date();
   let fps = parseInt(player.fps);
@@ -426,9 +472,14 @@ async function render(gl, player){
   console.log('Video render time: %dms', end);
 
   cleanup();
+
+  await create_preview();
+
+  notify_user();
 }
 
 const fs = require('fs');
+console.log("Rendering project at " + process.cwd());
 [gl, player] = init_player(fs.readFileSync(process.argv[2]))
 
 render(gl, player);

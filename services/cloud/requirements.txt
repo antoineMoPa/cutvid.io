@@ -2,3 +2,4 @@ pyjwt
 waitress
 flask
 requests
+b64decode
