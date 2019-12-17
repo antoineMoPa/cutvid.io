@@ -67,11 +67,12 @@ Vue.component('player', {
     <div id="main-player">
       <div class="canvas-container">
         <div v-if="player != null && player.sequences.length == 0">
-          <button
-            class="empty-player-button lfx-button"
-            v-on:click="launch_template_selector()">
-            Start by loading a template
-          </button>
+          <a target="_blank" href="/landing/lattefx_intro_pdf_oct_2019.pdf">
+            <button
+              class="empty-player-button lfx-button">
+              Learn how to use LatteFx [pdf]
+            </button>
+          </a>
         </div>
       </div>
       <div class="player-overlay"/>
