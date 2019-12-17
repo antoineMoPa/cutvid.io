@@ -79,6 +79,7 @@ Vue.component('player', {
       <sequencer
         ref="sequencer"
         v-on:playLooping="playLooping"
+        v-on:resize="on_resize"
         v-bind:player="player"
      />
     </div>
@@ -135,8 +136,10 @@ Vue.component('player', {
     on_resize(){
       let app = this;
       let left_panel_width = 315;
+      let sequencer = document.querySelectorAll("#main-player .sequencer")[0];
+
       let x_spacing = 60 + left_panel_width + 40; // left theme settings panel and margin
-      let y_spacing = 100 + 150 + 70; // 100: bottom ui, 250: sequencer, margin
+      let y_spacing = sequencer.clientHeight + 165; // 100: bottom ui
 
       let x_available_space = window.innerWidth;
       let y_available_space = window.innerHeight;
@@ -154,7 +157,7 @@ Vue.component('player', {
       let displayed_h = available_size / app.aspect;
       let canvas_container = document.querySelectorAll("#main-player .canvas-container")[0];
       let player_overlay = document.querySelectorAll("#main-player .player-overlay")[0]
-      let sequencer = document.querySelectorAll("#main-player .sequencer")[0];
+
 
       sequencer.style.width =
         (x_available_space - x_spacing) + "px";

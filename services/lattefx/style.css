@@ -571,7 +571,7 @@ a:visited{
   top:10px;
   left:0;
   width:1px;
-  height:135px;
+  height:calc(100% - 20px);
   border-left:1px dotted #aaa;
   border-radius:4px;
   z-index:0;
@@ -581,6 +581,7 @@ a:visited{
   position:absolute;
   top:5px;
   height:150px;
+  color:rgba(0,0,0,0.2);
 }
 
 .sequence-effects .info{
@@ -767,7 +768,6 @@ a:visited{
 
 .sequencer{
   position:absolute;
-  height:155px;
   background: #222;
   border-radius:3px;
   -webkit-user-select: none;
@@ -778,11 +778,8 @@ a:visited{
 
 .sequencer-scrollbox{
   max-width: 100%;
-  overflow-y: hidden;
   overflow-x: scroll;
   position: relative;
-  max-height: 155px;
-  height: 155px;
 }
 
 .sequencer .suggestion,
@@ -942,6 +939,21 @@ a:visited{
   line-height:60px;
   z-index:200;
   border-radius:5px;
+}
+
+.sequencer-height-dragger{
+  background:rgba(255,255,255,0.0);
+  height:10px;
+  width:100%;
+  cursor:ns-resize;
+  border-top-right-radius:3px;
+  border-top-left-radius:3px;
+  position:relative;
+  transition:all 0.2s;
+}
+
+.sequencer-height-dragger:hover{
+  background:rgba(255,255,255,0.1);
 }
 
 /* END SEQUENCER */

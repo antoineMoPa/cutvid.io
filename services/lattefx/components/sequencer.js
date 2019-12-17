@@ -11,6 +11,10 @@ Vue.component('sequencer', {
         v-on:click.self="clickSequencer"
         v-on:mouseenter="mouseover = true"
         v-on:mouseleave="mouseover = false">
+        <div class="sequencer-height-dragger"
+             v-on:mousedown="height_dragger_down"
+             v-on:mouseup="height_dragger_up">
+        </div>
         <div class="add-menu">
           <button class="video-suggestion suggestion"
                 v-on:click="quick_add_sequence('video')">
@@ -136,6 +140,7 @@ Vue.component('sequencer', {
       mouseover: false,
       has_moved: false,                /* Used to detect if mouse has moved
                                           after clicking body */
+      dragging_height: false,
       dragging: null,
       draggingBody: null,
       draggingLeft: null,
@@ -408,6 +413,18 @@ Vue.component('sequencer', {
       this.mouseMoveListener = this.mouseMove.bind(this);
       window.addEventListener("mousemove", this.mouseMoveListener);
     },
+    height_dragger_up(){
+      this.dragging_height = false;
+    },
+    height_dragger_down(e){
+      this.dragging_height = true;
+      this.initial_y = e.clientY;
+      this.initial_height = parseInt(this.$el.style.height);
+
+      window.addEventListener("mouseup", this.unDrag.bind(this), {once: true});
+      this.mouseMoveListener = this.mouseMove.bind(this);
+      window.addEventListener("mousemove", this.mouseMoveListener);
+    },
     unDrag(e){
       if(this.player != null && this.player.rendering) { return; }
 
@@ -421,6 +438,7 @@ Vue.component('sequencer', {
       this.draggingLeft = false;
       this.draggingRight = false;
       this.dragging = null;
+      this.dragging_height = false;
 
       if(this.dragging_selected != null && this.has_moved){
         this.selected  = this.dragging_selected.slice();
@@ -499,6 +517,10 @@ Vue.component('sequencer', {
       // Limit to 21 (including 0)
       layer = Math.min(layer, 20);
       layer = Math.max(layer, 0);
+
+      if(this.dragging_height){
+        this.resize(this.initial_y - e.clientY + this.initial_height);
+      }
 
       if(this.draggingLeft){
         // -10 to grab from center
@@ -600,6 +622,16 @@ Vue.component('sequencer', {
       let add_menu = this.$el.querySelectorAll(".add-menu")[0];
       add_menu.style.left = (maxTo * scale.timeScale + 10) + "px";
       add_menu.style.bottom = (5 + 0 * scale.layerScale + this.offset_y) + "px";
+    },
+    resize(height){
+      height = (height || 200) + "px";
+
+      this.$el.style.height = height;
+      // Scrollbox
+      this.$el.children[0].style.maxHeight = height;
+      this.$el.children[0].style.height = height;
+
+      this.$emit("resize");
     },
     launch_template_selector(){
       if(this.player != null && this.player.rendering) { return; }
@@ -786,5 +818,6 @@ Vue.component('sequencer', {
 
     this.bindShortcuts();
     this.repositionSequences();
+    this.resize();
   }
 });
