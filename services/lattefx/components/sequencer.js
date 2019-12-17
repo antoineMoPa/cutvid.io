@@ -290,20 +290,35 @@ Vue.component('sequencer', {
       }
     },
     zoom_in(){
-      this.visibleDuration -= 10;
+      let go_to = this.time.time;
+
+      this.visibleDuration -= 0.1 * this.visibleDuration;
       this.time.time = this.time.time + 0.001; // hack to update the timebar
 
       if(this.visibleDuration < 1){
         this.visibleDuration = 1;
       }
 
+      this.center_time(go_to);
+
       this.repositionSequences();
     },
     zoom_out(){
-      this.visibleDuration += 10;
+      let go_to = this.time.time;
+
+      this.visibleDuration += 0.1 * this.visibleDuration;
       this.time.time = this.time.time + 0.001; // hack to update the timebar
 
+      this.center_time(go_to);
+
       this.repositionSequences();
+    },
+    center_time(go_to){
+      let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
+      let scale = this.getScale();
+      let center = scale.timeScale * go_to;
+      let go_to_px = center - scale.totalDuration * scale.timeScale / 2;
+      scrollbox.scrollLeft = parseInt(go_to_px);
     },
     onWheel(e){
       e.stopPropagation();
@@ -317,9 +332,9 @@ Vue.component('sequencer', {
       } else {
         e.stopPropagation();
         if(e.deltaY < 0){
-          this.zoom_in();
+          this.zoom_in(e);
         } else {
-          this.zoom_out();
+          this.zoom_out(e);
         }
       }
     },
