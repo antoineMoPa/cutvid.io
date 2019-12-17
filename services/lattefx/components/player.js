@@ -248,6 +248,8 @@ Vue.component('player', {
       let form = new FormData();
       form.append('lattefx_file.lattefx', data);
 
+      utils.flag_message("We are uploading your video to the render server!");
+
       fetch(cloud_url + "/render_video/", {
         method: 'POST',
         headers: {
@@ -258,13 +260,11 @@ Vue.component('player', {
       }).then(() => {
         app.saving = false;
         app.show_saved_message = true;
-        utils.flag_message("We are uploading your video to the render server!");
         setTimeout(()=>{
           app.show_saved_message = false;
           utils.flag_message("Your video is processing and you'll be notified by email once it's ready!");
         }, 2000);
       });
-
 
       fetch("/stats/lattefx_app_initiate_render_hq/");
     },

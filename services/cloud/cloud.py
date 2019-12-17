@@ -387,7 +387,7 @@ def render_video():
     with open(render_meta_path, "w") as f:
         f.write(render_meta)
 
-    auth_port = 8000
+    auth_port = settings['auth_port']
     notify_url = "http://127.0.0.1:" + str(auth_port) + "/auth/notify_render/" + str(user_id) + "/" + render_id
 
     command = [
