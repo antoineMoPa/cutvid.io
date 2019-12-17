@@ -1,5 +1,5 @@
 from waitress import serve
 
-import renderer
+import cloud
 
-serve(renderer.app, host='0.0.0.0', port=8004)
+serve(cloud.app, host='0.0.0.0', port=8004)
