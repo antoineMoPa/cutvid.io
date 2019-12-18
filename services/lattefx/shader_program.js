@@ -275,7 +275,7 @@ class ShaderProgram {
 
     if(isVideo){
       videoElement.addEventListener("error", function(error){
-        options.onerror();
+        options.onerror(error);
       });
 
       // Hack to suppress lag in my old chromebook:

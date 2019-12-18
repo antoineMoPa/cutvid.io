@@ -94,9 +94,10 @@
               video_media_getter: this.media_getter,
               video_media_id: this.video_media_id,
               autoplay: !this.player.paused,
-              onerror: function(){
+              onerror: function(error){
                 app.error = true;
                 fetch("/stats/lattefx_app_video_has_error/");
+                console.error(error);
               },
               ready: function(){
                 // "this" points to <video> element
@@ -140,9 +141,11 @@
             this.trimBefore += diff;
           },
           async media_getter(){
-            if(this.video_media_id == null){
+            if(this.videoFile != null){
               return window.URL.createObjectURL(this.videoFile);
-            } else {
+            } else if (this.video != "") {
+              return this.video;
+            } else if (this.video_media_id != null) {
               let settings = window.lattefx_settings;
               let cloud_url = settings.cloud;
               let auth = window.auth;
