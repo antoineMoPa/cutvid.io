@@ -372,6 +372,7 @@ Vue.component('sequencer', {
           this.selected.push(index);
         } else {
           this.selected = [index];
+          this.dragging_selected = [index];
         }
         // Move time to middle of newly selected sequence
         this.time.time = seq.from + (seq.to - seq.from) * 0.5;
