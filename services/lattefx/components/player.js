@@ -2,7 +2,15 @@ Vue.component('player', {
   template:
   `<div class="player">
     <p class="project-links">
-      <a v-on:click="browse_projects">Projects</a>
+      <span v-if="settings != null">
+        <a v-on:click="browse_projects">
+          Projects
+        </a>
+        <a v-bind:href="settings.app + 'renders'"
+           target="_blank">
+          Renders
+        </a>
+      </span>
     </p>
     <div v-bind:class="'settings-panel rendering-info-panel ' +
                        (player == null || !player.rendering?
@@ -47,8 +55,8 @@ Vue.component('player', {
         <h4>Dimensions & fps</h4>
         <br>
         <label>width x height (pixels):</label>
-        <input v-model.number="width" type="number"> x
-        <input v-model.number="height" type="number">
+        <input v-model.number="width" min="10" max="1920" type="number"> x
+        <input v-model.number="height" min="10" max="1080" type="number">
         <label>Presets</label>
         <a class="preset" v-on:click="set_dimensions(1280,720,30)">HD 720p</a>
         <a class="preset" v-on:click="set_dimensions(540,540,10)">Square 540</a>
@@ -56,9 +64,10 @@ Vue.component('player', {
         <a class="preset" v-on:click="set_dimensions(864,1080,30)">Instagram Video</a>
         <label>HQ presets (got a good GPU?)</label>
         <a class="preset" v-on:click="set_dimensions(1920,1080,30)">Full HD 1080p</a>
-        <a class="preset" v-on:click="set_dimensions(3840,2160,30)">UHD</a>
-        <a class="preset" v-on:click="set_dimensions(4096,2160,30)">Movie 4K</a>
-
+        <!-- Let's wait to stress test the server before higher resolutions
+          <a class="preset" v-on:click="set_dimensions(3840,2160,30)">UHD</a>
+          <a class="preset" v-on:click="set_dimensions(4096,2160,30)">Movie 4K</a>
+        -->
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
         <br><br>
@@ -83,7 +92,6 @@ Vue.component('player', {
         v-bind:player="player"
      />
     </div>
-    <buy-video ref="buyVideo" v-bind:settings="settings"/>
     <buy-video-lq ref="buyVideoLQ"
                  v-bind:settings="settings"
                  v-on:renderHQ="makeHQ"/>
@@ -261,12 +269,21 @@ Vue.component('player', {
           'Content-Encoding': 'multipart/form-data'
         },
         body: form
-      }).then(() => {
+      }).then(async function(resp){
         app.saving = false;
         app.show_saved_message = true;
+
+        let json = await resp.json();
+        if(json.status != "ok"){
+          utils.flag_error(json.error);
+          return;
+        }
+
         setTimeout(()=>{
           app.show_saved_message = false;
           utils.flag_message("Your video is processing and you'll be notified by email once it's ready. Expect around 15 min for short videos!");
+
+          app.$refs.auth.update_user_info();
         }, 2000);
       });
 

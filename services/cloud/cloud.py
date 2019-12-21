@@ -281,7 +281,6 @@ def make_audio_media(vidid):
 
     return folder + "/audio.mp4"
 
-
 @projects.route("/upload_project/<project_id>", methods=['POST', 'OPTIONS'])
 def upload_project(project_id):
     """
@@ -340,11 +339,14 @@ def render_video():
     token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
 
     if token is None:
-        return "error 1 bad token"
+        return json.dumps({"status": "error","error": "Bad authentication token"})
 
     project_file = request.form['lattefx_file.lattefx']
     render_id = id_generator()
     user_id = int(token['user_id'])
+
+    if consume_render_credits(user_id, 1) is False:
+        return json.dumps({"status": "error","error": "No credits left"})
 
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
     render_folder = user_folder + "render-" + render_id + "/"

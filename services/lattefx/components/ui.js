@@ -44,7 +44,7 @@ Vue.component('ui', {
          title="High Quality render">
         <img class="feather-button"
              src="icons/feather/image.svg"/>
-        Latte - US$ <span class="ui-price">4.50</span>
+        Latte - <span class="ui-price">1 render credit</span>
       </a>
       <a v-if="player.rendering"
          v-on:click="cancelRender"
@@ -80,9 +80,23 @@ Vue.component('ui', {
       this.show_render_options = false;
     },
     renderHQ(){
-      this.$emit("renderHQ");
-      fetch("/stats/lattefx_app_click_render_hq/");
-      this.show_render_options = false;
+      let app = this;
+      let ask = new utils.ask_confirm();
+      let container = document.createElement("div");
+
+      document.body.appendChild(container);
+      ask.$mount(container);
+
+      ask.message = "You are about to spend 1 render credit.";
+      ask.button_yes = "Yes, let's go!";
+      ask.button_no = "No, let me tweak some things.";
+      ask.on_yes = () => {
+        this.$emit("renderHQ");
+      };
+      ask.on_no = () => {
+        // Do nothing
+      };
+      ask.container_class = "confirm-spend-credit";
     },
     cancelRender(){
       this.$emit("cancelRender");

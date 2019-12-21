@@ -61,11 +61,21 @@ input{
   background:#fff;
   background: linear-gradient(#fff,#e1e1e1);
   box-shadow: 0 0 30px rgba(255,255,255,0.4);
-  width:240px;
+  width:300px;
   display:inline-block;
   vertical-align:top;
   border-radius:5px;
   margin:15px;
+}
+
+.pricing-card p{
+  text-align:left;
+  margin-top:15px;
+}
+
+.pricing-card .how-to-purchase{
+  color:#000;
+  text-align:center;
 }
 
 .pricing-card h3{
@@ -183,11 +193,7 @@ input{
   border-bottom:10px solid #333;
 }
 
-.pricing-card.pay-as-you-go{
-  width: 500px;
-}
-
-.pricing-card.pay-as-you-go .button{
+.pricing-card .button{
   margin-top:10px;
 }
 
@@ -266,7 +272,7 @@ p.subject-to-change{
   .screenshot{
 	margin-top:0;
   }
-  .pricing-card.pay-as-you-go{
+  .pricing-card{
 	width:auto;
   }
 }

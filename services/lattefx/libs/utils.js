@@ -373,7 +373,15 @@ utils.flag_message = function(message, options){
   }, 14000);
 
   document.body.appendChild(box);
+
+  return box;
 };
+
+utils.flag_error = function(message, options){
+  let box = utils.flag_message(message, options);
+  box.classList.add("flag-error");
+};
+
 
 utils.real_bad_error = function(message){
   fetch("/stats/real_bad_error/" + message);

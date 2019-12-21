@@ -34,15 +34,11 @@ Vue.component('renders', {
              <img src="icons/feather/trash.svg" class="feather-button" width="24"/>
              Delete
            </a>
-           <a class="ui-button" v-if="render.status == 'purchased'"
-             v-on:click="download_video(render)">
+           <a class="ui-button"
+             v-on:click="download_video(render)"
+             v-if="render.status == 'rendered'">
              <img src="icons/feather/download.svg" class="feather-button" width="24"/>
              Download
-           </a>
-           <a class="ui-button" v-if="render.status == 'rendered'"
-             v-on:click="buy_video(render)">
-             <img src="icons/feather/dollar-sign.svg" class="feather-button" width="24"/>
-             Buy
            </a>
          </td>
        </tr>
@@ -63,8 +59,6 @@ Vue.component('renders', {
          We may remove your renders at any time.
        </p>
      </div>
-     <buy-video v-bind:settings="settings" ref="buy-video"
-                v-on:bought="on_bought()"/>
    </div>`,
   data(){
     return {
@@ -80,22 +74,6 @@ Vue.component('renders', {
   },
   props: ["settings"],
   methods: {
-    async buy_video(render){
-      // render.status = "purchased";
-      let auth = window.auth;
-
-      if(typeof(auth) == "undefined"){
-        return;
-      }
-
-      if(auth.user_info == null){
-        auth.show_login();
-      }
-
-      let token = await auth.get_token();
-
-      this.$refs['buy-video'].show(render, token);
-    },
     async download_video(render){
       let auth = window.auth;
       let cloud_url = this.settings.cloud;
@@ -209,7 +187,7 @@ Vue.component('renders', {
       }
 
       let token = await auth.get_token();
-      let req = await fetch(cloud_url + "/delete_render/" + render.id, {
+      let req = await fetch(cloud_url + "/delete_render/" + render.id + "/" + token, {
         method: "DELETE",
         headers: {
           'Authorization': 'Bearer ' + token,

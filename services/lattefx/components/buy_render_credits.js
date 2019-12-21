@@ -1,55 +1,37 @@
-Vue.component('buy-video', {
+Vue.component('buy-render-credits', {
   template: `
-<div class="popup buy-video hidden">
+<div class="popup buy-render-credits hidden">
   <div class="close-button">
     <img src="icons/feather-dark/x.svg" width="40"/>
   </div>
   <h3>
-    <img src="icons/feather-dark/download-cloud.svg" width="30"/>
-    Buy video
+    <img src="icons/feather-dark/image.svg" width="30"/>
+    Buy render credits
   </h3>
-  <p class="thank-you">
-    Latte/<span title="High Quality">HQ</span> videos are USD $ 4.50 -
-    Here is a 5 seconds preview:
-    <br>
+  <p class="product has-new-item">
+    5 Lattefx render credits - USD $ 4.50
+    <span class="new-item-indicator">NEW</span>
   </p>
-  <div class="video-preview" v-on:contextmenu="onContextMenu">
-    <video v-bind:src="previewURL" controls></video>
-  </div>
-  <div class="payment-container" v-if="!canDownload">
+  <p>
+    Unused render credits stay in your account for as long as you don't use them.
+  </p>
+  <br/>
+  <div class="payment-container">
     <!-- Paypal stuff goes here -->
   </div>
-  <p v-if="canDownload" class="thank-you">
+  <p v-if="purchased" class="thank-you">
     Thank you for your purchase!<br>
-    Use this button to save your video.<br>
-  </p>
-  <p class="text-center" v-if="canDownload">
-    <a class="ui-button large"
-       v-bind:href="videoURL"
-       v-bind:download="'lattefx-purchased-video-'+videoTimeStamp()+'.avi'">
-      Download Video
-    </a>
-    <br><br>
-  </p>
-  <p v-if="canDownload" class="thank-you">
-    See you soon!<br><br>
   </p>
   <p class="thank-you">
-    For any questions, comments, refunds, feedback on Lattefx, please contact
-    {{email()}}<br>
-    Help me improve this new product!
-    <br><br>
+    For any questions, comments, refunds, feedback on Lattefx, please contact the owner directly at
+    <span class="owner-email">{{email()}}</span><br>
+    <br>
   </p>
 </div>
 `,
   data: function(){
     return {
-      render: null,
-      videoURL: null,
-      previewURL: null,
-      canDownload: false,
-      error: null,
-      stats: null,
+      purchased: false,
       token: ""
     };
   },
@@ -70,17 +52,8 @@ Vue.component('buy-video', {
       // And improvement at my email address!
       return false;
     },
-    show(render, token){
-      this.render = render;
-      this.token = token;
-      let vidid = render.id;
-
+    show(){
       this.$el.classList.remove("hidden");
-      this.previewURL = window.lattefx_settings.cloud +
-        "/render_preview/" + vidid + "/" + token;
-      this.videoURL = window.lattefx_settings.cloud +
-        "/render/" + vidid + "/" + token;
-
       let client_id = this.settings.paypal_client_id;
       let script = document.createElement("script");
       script.type = "text/javascript";
@@ -91,7 +64,6 @@ Vue.component('buy-video', {
     initPaypal(){
       let app = this;
       let paymentContainer = this.$el.querySelectorAll(".payment-container")[0];
-      let render_id = app.render.id;
 
       paypal.Buttons({
         createOrder: function(data, actions) {
@@ -99,7 +71,7 @@ Vue.component('buy-video', {
           return actions.order.create({
             purchase_units: [{
               currency_code: "USD",
-              description: "Video - web render",
+              description: "5x Render Credits",
               amount: {
                 value: "4.50"
               }
@@ -109,7 +81,7 @@ Vue.component('buy-video', {
         },
         onApprove: function(data, actions) {
           return actions.order.capture().then(function(details) {
-            app.validate_purchase(render_id, details.id);
+            app.validate_purchase(details.id);
             fetch("/stats/lattefx_app_payment_approved/");
           });
         }
@@ -117,34 +89,19 @@ Vue.component('buy-video', {
 
       fetch("/stats/lattefx_app_paypal_init/");
     },
-    async validate_purchase(render_id, order_id){
-      let cloud_url = this.settings.cloud;
-      let url = cloud_url + "/complete_purchase/" + render_id + "/" + order_id;
-      let token = this.token;
-      let req = await fetch(url, {
-        headers: {
-          'Authorization': 'Bearer ' + token,
-        }
-      });
-
+    async validate_purchase(order_id){
+      let auth_url = this.settings.auth;
+      let url = auth_url + "/validate_render_credit_order/" + order_id;
+      let req = await fetch(url);
       let text = await req.text();
 
       if(text == "success"){
-        this.canDownload = true;
         this.$emit("bought");
+        utils.flag_message("You have purchased 5 render credits!");
+        this.$el.classList.add("hidden");
       } else {
         utils.real_bad_error("Error in payment.");
       }
-    },
-    setVideoID(_id){
-      this.videoID = _id;
-      this.loggedIn = false;
-    },
-    videoTimeStamp(){
-      let date = new Date();
-      let date_string = date.toLocaleString();
-
-      return date_string.replace(/[^0-9-A-Za-z]+/g,"-");
     }
   },
   watch: {
@@ -159,9 +116,7 @@ Vue.component('buy-video', {
 
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
-      window.player.player.rendering = false;
-      el.querySelectorAll("video")[0].pause();
-      fetch("/stats/lattefx_app_hit_close/");
+      fetch("/stats/lattefx_render_credits_hit_close/");
     });
 
     window.addEventListener("message", this.onWindowMessage);

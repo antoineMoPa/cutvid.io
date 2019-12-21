@@ -152,3 +152,20 @@ def copy_medias(user_id, project_id, dest_folder):
 
         media_path = medias_folder + media_id
         shutil.copyfile(media_path, dest_folder + media_id)
+
+def consume_render_credits(user_id, count):
+    """
+    Consume 'count' render credits from user account
+
+    Returns True on success
+    """
+
+    auth_port = settings['auth_port']
+    auth_url = "http://127.0.0.1:" + str(auth_port) + "/auth"
+    url = auth_url + "/consume_render_credits/" + str(user_id) + "/" + str(count)
+
+    request = requests.get(url=url)
+
+    print(request.text)
+
+    return request.text == "success"

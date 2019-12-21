@@ -185,6 +185,8 @@ function bind_image_saver(player) {
 function init_player(project_file_content){
   let code_folder = __dirname;
   let project = JSON.parse(project_file_content);
+  let width = Math.min(parseInt(project.width), 1920);
+  let height = Math.min(parseInt(project.height), 1080);
 
   let gl = require('gl')(project.width, project.height, {preserveDrawingBuffer: true, premultipliedAlpha: false});
   let ShaderPlayerWebGL = require(code_folder + '/../lattefx/shader_player_webgl.js');

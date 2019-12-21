@@ -235,6 +235,18 @@ a:visited{
   color: #fff;
 }
 
+header .render-credits-count{
+  background:#111;
+  padding-top:5px;
+  padding-bottom:5px;
+  padding-right:5px;
+  padding-left:10px;
+  border-radius:20px;
+  color:#eee;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
 .render-buy-info{
   position:absolute;
   top:0;
@@ -341,6 +353,12 @@ a:visited{
   left:50%;
   transform:translateX(-50%);
   z-index:1010;
+}
+
+@media all and (max-height: 550px){
+  .empty-player-button{
+	display: none;
+  }
 }
 
 /* END PLAYER --------------- */
@@ -725,21 +743,25 @@ a:visited{
 }
 
 .theme-box{
-    position:relative;
+  position:relative;
+}
+
+.has-new-item{
+  position:relative;
 }
 
 .new-item-indicator{
-    position:absolute;
-    top:0;
-    right:-20px;
-    background:#af00ff;
-    color:#fff;
-    font-size:15px;
-    padding:8px;
-    border-radius:6px;
-    font-weight:600;
-    transition:0.3s;
-    cursor:default;
+  position:absolute;
+  top:-10px;
+  right:-20px;
+  background:#af00ff;
+  color:#fff;
+  font-size:9px;
+  padding:3px;
+  border-radius:6px;
+  font-weight:600;
+  transition:0.3s;
+  cursor:default;
 }
 
 .theme-box:hover .new-item-indicator{
@@ -1053,9 +1075,27 @@ a:visited{
   color: #000;
 }
 
-.buy-video .payment-container{
+.payment-container{
   width: 750px;
   margin: auto;
+}
+
+.owner-email{
+  font-style: italic;
+}
+
+.buy-render-credits .product{
+  font-size: 18px;
+  background: #f3f3f0;
+  padding: 14px;
+  border-radius: 10px;
+  margin: 0 20px;
+  color:#000;
+}
+
+.confirm-spend-credit .button-yes{
+  background:#3af;
+  color:#fff;
 }
 
 @keyframes rotation {
@@ -1412,6 +1452,11 @@ a:visited{
   transition: all 0.3s;
 }
 
+.flag-message.flag-error{
+  background:#f33;
+  color:#fff;
+}
+
 .flag-message.show{
   opacity:1.0;
   transition: all 0.3s;
@@ -1448,11 +1493,6 @@ a:visited{
 
 .renders .table tr:nth-child(2n){
   background:#f8f8f8;
-}
-
-.renders .table tr:nth-child(2){
-  height:100px;
-  box-shadow:0 0 30px rgba(0,100,255,0.2);
 }
 
 .renders .table tr{

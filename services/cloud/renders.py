@@ -91,19 +91,6 @@ def get_render(render_id, token):
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
     render_folder = user_folder + "render-" + str(render_id) + "/"
     render_file_path = render_folder + "video.avi"
-    render_meta_file = render_folder + "lattefx_render.meta"
-
-    if not os.path.exists(render_meta_path):
-        return "error 10 no render meta found"
-
-    render_meta = {}
-
-    with open(render_meta_file, "r") as f:
-        render_meta = json.loads(f.read())
-        f.close()
-
-    if render_meta["status"] != "purchased":
-        return "error 11 video was not purchased"
 
     return send_file(render_file_path, as_attachment=True)
 
@@ -197,34 +184,3 @@ def complete_purchase(render_id, order_id):
         f.write(json.dumps(render_meta))
 
     return "success"
-
-
-def validate_order(order_id):
-    url = "https://api.sandbox.paypal.com/v2/checkout/orders/" + order_id
-    client_id = ""
-    secret = ""
-
-    # this, kids, is how you do a MVP
-    return True
-
-    with open(os.path.expanduser("~/.paypal.json"), "r") as f:
-        paypal_settings = json.loads(f.read())
-        client_id = paypal_settings["token"]
-
-    token = client_id + ":" + secret
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-    }
-
-    response = requests.get(url=url, headers=headers)
-
-    # This is pretty MVP-ish.
-    # We should check for date + already activated orders
-    # Anyway we'll see in the logs if people start doing that
-
-    if response.status_code == 200:
-        return True
-    else:
-        return False

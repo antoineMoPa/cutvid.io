@@ -1,4 +1,6 @@
 require 'jwt'
+require 'net/http'
+require 'uri'
 
 class UserController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:sign_out_current_user], raise: false
@@ -52,8 +54,6 @@ class UserController < ApplicationController
     end
 
     @user = User.find(params[:userid])
-    @user.seconds_per_month = params[:seconds_per_month]
-    @user.seconds_left_this_month = params[:seconds_left_this_month]
     @user.save!
 
     render 'edit'
@@ -77,6 +77,74 @@ class UserController < ApplicationController
     render :plain => "true"
   end
 
+  def paypal_api_domain
+    if Rails.env.production?
+      api_domain = "api.paypal.com"
+    else
+      api_domain = "api.sandbox.paypal.com"
+    end
+    return api_domain
+  end
+
+  def get_paypal_token
+    paypal_client_id = Rails.application.credentials.paypal_client_id
+    paypal_secret = Rails.application.credentials.paypal_secret
+    path = '/v1/oauth2/token'
+    uri = URI("https://" + paypal_api_domain + path)
+
+    req = Net::HTTP::Post.new(uri)
+
+    req.body = "grant_type=client_credentials&response_type=token"
+    req.basic_auth paypal_client_id, paypal_secret
+
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) {|http|
+      http.request(req)
+    }
+
+    # after MVP TODO: cache token for some time
+
+    return JSON.parse(res.body)['access_token']
+  end
+
+  def validate_render_credit_order
+    order_id = params[:order_id]
+
+    net = Net::HTTP.new(paypal_api_domain, 443)
+    net.use_ssl = true
+    headers = {'Authorization': 'Bearer ' + get_paypal_token}
+    response = net.request_get("/v2/checkout/orders/" + order_id, headers)
+
+    # This is pretty MVP-ish.
+    # We should check for date + already activated orders
+    # Anyway we'll see in the logs if people start doing that
+
+    if response.code.to_i == 200
+      current_user.increment(:render_credits, 5)
+      current_user.save
+      render :plain => "success"
+    else
+      render :plain => "error"
+    end
+  end
+
+  def consume_render_credits
+    if request.local?
+      user = User.find(params[:user_id].to_i)
+
+      count = params[:count].to_i
+
+      if user.render_credits > count
+        user.decrement(:render_credits, count)
+        user.save!
+        render :plain => "success"
+      else
+        render :plain => "Error: Not enough credits"
+      end
+    else
+      render :plain => "Error: non-local access"
+    end
+  end
+
   def current_user_info
     status = nil
 
@@ -94,7 +162,8 @@ class UserController < ApplicationController
 
       status = {
         status: "logged_in",
-        email_summary: email_summary
+        email_summary: email_summary,
+        render_credits: current_user.render_credits
       }
     end
 
