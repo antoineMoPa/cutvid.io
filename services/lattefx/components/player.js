@@ -6,7 +6,7 @@ Vue.component('player', {
         <a v-on:click="browse_projects">
           Projects
         </a>
-        <a v-bind:href="settings.app + 'renders'"
+        <a v-bind:href="settings.app + '/renders'"
            target="_blank">
           Renders
         </a>

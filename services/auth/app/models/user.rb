@@ -12,7 +12,6 @@ class User < ApplicationRecord
 
   def init_user
     # Set default render credits amount
-    self.update_render_credits
     UserMailer.new_signup(self).deliver
   end
 
