@@ -20,7 +20,9 @@ Vue.component('player', {
       <h4>How does Espresso/LQ rendering work?</h4>
       <p>Espresso/LQ rendering happens entirely in your browser, which is quick but incurs some limitations. (dropped frames, poor quality). But it's quick and cheap!</p>
       <h4>How does Latte/HQ rendering work?</h4>
-      <p>HQ rendering . Everything is then put together on our server.</p>
+      <p>In HQ rendering. Most of the rendering happens on our server,
+        with high quality frame extraction and audio mixing.
+      </p>
     </div>
     <div v-bind:class="'settings-panel ' +
                        (player != null && player.rendering?

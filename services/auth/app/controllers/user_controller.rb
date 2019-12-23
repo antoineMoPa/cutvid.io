@@ -133,7 +133,7 @@ class UserController < ApplicationController
 
       count = params[:count].to_i
 
-      if user.render_credits > count
+      if user.render_credits >= count
         user.decrement(:render_credits, count)
         user.save!
         render :plain => "success"

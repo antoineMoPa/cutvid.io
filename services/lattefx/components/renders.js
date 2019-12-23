@@ -95,7 +95,7 @@ Vue.component('renders', {
 
       let a = document.createElement("a");
       a.href = blob_url;
-      a.download = "video.avi";
+      a.download = "video.mp4";
       a.click();
     },
     async update_storage_info(token){

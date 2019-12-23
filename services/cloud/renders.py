@@ -90,36 +90,9 @@ def get_render(render_id, token):
 
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
     render_folder = user_folder + "render-" + str(render_id) + "/"
-    render_file_path = render_folder + "video.avi"
+    render_file_path = render_folder + "video.mp4"
 
     return send_file(render_file_path, as_attachment=True)
-
-
-@renders.route("/render_preview/<render_id>/<token>", methods=['GET', 'OPTIONS'])
-def get_render_preview(render_id, token):
-    """
-    Read a render
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(token)
-
-    if token is None:
-        return "error 1 bad token"
-
-    render_id = validate_and_sanitize_id(render_id)
-    user_id = int(token['user_id'])
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    render_folder = user_folder + "render-" + str(render_id) + "/"
-    render_file_path = render_folder + "preview.mp4"
-
-    if not os.path.exists(render_file_path):
-        return "error 8 no render file found"
-
-    return send_file(render_file_path)
 
 @renders.route("/delete_render/<render_id>/<token>", methods=['DELETE', 'OPTIONS'])
 def delete_render(render_id, token):

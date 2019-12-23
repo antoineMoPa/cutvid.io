@@ -359,7 +359,7 @@ function build_ffmpeg_args(fps, audio_args, audio_filter_graph, map_args){
     "-map", "\"0:v\"",
     "-ac 2",
     map_args,
-    "./video.avi"];
+    "./video.mp4"];
 
   return command;
 }
@@ -432,22 +432,6 @@ function notify_user(){
   fs.writeFileSync("./lattefx_render.meta", JSON.stringify(meta));
 }
 
-function create_preview(){
-  let exec_sync = require('child_process').execSync;
-
-  let command = "ffmpeg -i video.avi -t 5 preview.mp4";
-
-  exec_sync(
-    command,
-    (error, stdout, stderr) => {
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
-      if (error !== null) {
-        console.log(`exec error: ${error}`);
-      }
-    });
-}
-
 async function render(gl, player){
   let start = new Date();
   let fps = parseInt(player.fps);
@@ -474,8 +458,6 @@ async function render(gl, player){
   console.log('Video render time: %dms', end);
 
   cleanup();
-
-  await create_preview();
 
   notify_user();
 }
