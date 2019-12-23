@@ -77,7 +77,7 @@ Vue.component('projects', {
       let indicator_inner = this.$el.querySelectorAll(".storage-indicator-inner")[0];
       indicator_inner.style.width = Math.min(this.used_percent,100) + "%";
 
-      if(this.used_percent){
+      if(this.used_percent > 100){
         this.storage_full = true;
         indicator_inner.classList.add("pretty-full");
       } else {
