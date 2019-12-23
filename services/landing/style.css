@@ -23,6 +23,16 @@ input{
   background:#eee;
 }
 
+.main-features-list{
+  list-style-type: disc;
+  text-align: left;
+  font-size:21px;
+  width: 400px;
+  margin:auto;
+  margin-top:40px;
+  margin-bottom:30px;
+}
+
 .video-container{
   background:#111;
 }
