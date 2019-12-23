@@ -96,8 +96,7 @@
               autoplay: !this.player.paused,
               onerror: function(error){
                 app.error = true;
-                fetch("/stats/lattefx_app_video_has_error/");
-                console.error(error);
+                fetch("/stats/lattefx_app_video_has_error/" + this.videoFile.name);
               },
               ready: function(){
                 // "this" points to <video> element
