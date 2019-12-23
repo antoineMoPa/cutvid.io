@@ -220,14 +220,21 @@ input{
 }
 
 .features-list{
-  list-style-type: disc;
-  text-align: left;
-  font-size:21px;
-  width: 400px;
-  margin:auto;
-  margin-top:40px;
-  margin-bottom:30px;
+  margin-top:20px;
 }
+
+.features-list li{
+  text-align: left;
+  font-size:16px;
+  padding:10px;
+  border-radius:3px;
+}
+
+.features-list li:nth-child(2n+1){
+  background:#ddd;
+  color:#111;
+}
+
 
 .coffee{
   color:#555;
