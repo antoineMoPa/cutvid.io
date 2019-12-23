@@ -639,15 +639,14 @@ Vue.component('sequencer', {
 
       let app = this;
 
-      this.$refs['scene-template-selector'].open(function(data){
+      this.$refs['scene-template-selector'].open(async function(data){
         let erase = false;
         app.loading_scene = true;
-        app.$nextTick(()=>{
-          app.unserialize(data, erase);
-          setTimeout(function(){
-            app.loading_scene = false;
-          },1000);
-        });
+        await app.$nextTick();
+        app.unserialize(data, erase);
+        setTimeout(function(){
+          app.loading_scene = false;
+        },1000);
       });
     },
     addSequenceAndDrag(){
