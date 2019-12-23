@@ -236,13 +236,13 @@ a:visited{
 }
 
 header .render-credits-count{
-  background:#111;
+  background:#af00ff;
   padding-top:5px;
   padding-bottom:5px;
   padding-right:5px;
   padding-left:10px;
   border-radius:20px;
-  color:#eee;
+  color:#fff;
   margin: 0 10px;
   cursor: pointer;
 }
