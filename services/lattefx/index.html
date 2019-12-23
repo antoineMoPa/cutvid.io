@@ -20,15 +20,6 @@
     <script type="text/javascript" src="./libs/vue.js"></script>
     <script type="text/javascript" src="./libs/utils.js?v=0.0.5"></script>
     <script type="text/javascript" src="./libs/gif.js"></script>
-
-    <script type="text/javascript">
-     let available_themes = ["epicSunset", "retrowave"];
-     var theme_name = new URL(window.location.href).searchParams.get("theme") || "default";
-     if(!available_themes.find((el) => {return el == theme_name})){
-       theme_name = "epicSunset";
-     }
-    </script>
-
     <script type="text/javascript" src="./shader_program.js?v=0.0.5"></script>
     <script type="text/javascript" src="./shader_player_webgl.js?v=0.0.5"></script>
     <script type="text/javascript" src="./components/sequence_effects.js?v=0.0.5"></script>
