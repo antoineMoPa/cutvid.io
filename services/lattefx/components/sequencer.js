@@ -128,7 +128,9 @@ Vue.component('sequencer', {
           Zoom out
         </button>
       </div>
-      <scene-template-selector ref="scene-template-selector"/>
+      <scene-template-selector
+        ref="scene-template-selector"
+        v-on:start_loading="loading_scene = true"/>
     </div>
   `,
   props: ["player", "scenes"],

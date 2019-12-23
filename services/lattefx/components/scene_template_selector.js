@@ -43,11 +43,15 @@ Vue.component('scene-template-selector', {
     };
   },
   methods: {
-    chooseTemplate(template){
+    async chooseTemplate(template){
       let templates_selector = this.$el;
       templates_selector.classList.add("hidden");
       if(this.callback != null){
         let callback = this.callback;
+
+        this.$emit("start_loading");
+
+        await this.$nextTick();
 
         fetch('scene_templates/'+template+'/template.lattefx?' + Math.random())
           .then((data) => {
@@ -80,6 +84,7 @@ Vue.component('scene-template-selector', {
     document.body.append(this.$el);
     let close_button = this.$el.querySelectorAll(".close-button")[0];
     let el = this.$el;
+
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");
     });
