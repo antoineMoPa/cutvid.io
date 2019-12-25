@@ -22,3 +22,9 @@ python3
 avconv/ffmpeg
 mediainfo
 rbenv ruby-build
+node
+npm
+
+# dev dependencies
+
+pip3 install watchdog
