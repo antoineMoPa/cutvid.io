@@ -29,31 +29,13 @@ Vue.component('player', {
                        'settings-panel-hidden':
                        '')">
       <panel-selector ref="panel-selector"
-        v-bind:panelNames="['Effects &  Videos', 'Properties']"
+        v-bind:panelNames="['Effect', 'Project', 'Sources']"
         v-on:switch="switch_panel"/>
 
       <div class="switchable-panel all-sequences-container">
         <!-- sequencer puts stuff here -->
       </div>
       <div class="switchable-panel">
-        <h4>Save to Lattefx cloud</h4>
-        <p>Save project in our cloud to access it from any computer.</p>
-        <div class="props-auth-placeholder"/>
-        <br/>
-        <h4>Save a .lattefx project</h4>
-        <p>Download a working copy to modify your video later.</p>
-        <label>
-          <button v-on:click="onSaveLatteFxFile">
-            Download
-          </button>
-        </label>
-        <br>
-        <h4>Load a .lattefx project</h4>
-        <label>
-          Load a .lattefx file<br>
-          <input type="file" v-on:change="onLoadLatteFxFile"/>
-        </label>
-        <br><br>
         <h4>Dimensions & fps</h4>
         <br>
         <label>width x height (pixels):</label>
@@ -73,6 +55,28 @@ Vue.component('player', {
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
         <br><br>
+        <h4>Save to Lattefx cloud</h4>
+        <p>Save project in our cloud to access it from any computer.</p>
+        <div class="props-auth-placeholder"/>
+        <br/>
+        <h4>Save a .lattefx project</h4>
+        <p>Download a working copy to modify your video later.</p>
+        <label>
+          <button v-on:click="onSaveLatteFxFile">
+            Download
+          </button>
+        </label>
+        <br>
+        <h4>Load a .lattefx project</h4>
+        <label>
+          Load a .lattefx file<br>
+          <input type="file" v-on:change="onLoadLatteFxFile"/>
+        </label>
+        <br><br>
+      </div>
+      <div class="switchable-panel media-sources-panel">
+        <h4>Media sources</h4>
+        <p>Monitor this project's videos here.</p>
       </div>
     </div>
     <div id="main-player">

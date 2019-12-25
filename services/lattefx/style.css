@@ -629,7 +629,7 @@ header .render-credits-count{
   padding:10px 0;
   cursor:pointer;
   font-size:13px;
-  width:50%;
+  width:33.33%;
 }
 
 .panel-tab-header:not(.selected-tab-header){
@@ -1196,6 +1196,19 @@ header .render-credits-count{
 }
 
 /* END GFONT PICKER SPECIFIC ------------ */
+
+/* BEGIN VIDEO PLUGIN */
+
+.media-source-video{
+  margin-top:10px;
+  max-width: calc(100% - 40px);
+  width: calc(100% - 40px);
+  margin-left: 10px;
+  border-radius:8px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+/* END VIDEO PLUGIN */
 
 /* BEGIN TEXT BOX */
 

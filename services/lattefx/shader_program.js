@@ -260,6 +260,12 @@ class ShaderProgram {
       isVideo = true;
       isAudio = true;
       videoElement = document.createElement("video");
+
+      let panel = document.querySelectorAll(".media-sources-panel")[0];
+
+      // Showing video somewhere improves FPS
+      panel.appendChild(videoElement);
+      videoElement.classList.add("media-source-video");
     }
 
     if(isVideo || options.audioFile != undefined ||
@@ -277,14 +283,6 @@ class ShaderProgram {
       videoElement.addEventListener("error", function(error){
         options.onerror(error);
       });
-
-      // Hack to suppress lag in my old chromebook:
-      {
-        document.body.appendChild(videoElement);
-        videoElement.style.position = "absolute";
-        videoElement.style.left = "-1000px";
-        videoElement.style.width = "400px";
-      }
     }
 
     function isPowerOf2(value) {
@@ -521,6 +519,12 @@ class ShaderProgram {
     if(this.textures[name].isVideo){
       // Don't delete texture if audio only
       gl.deleteTexture(this.textures[name].texture);
+
+      let video_element = this.textures[name].videoElement;
+
+      if(video_element.parentNode != null){
+        video_element.parentNode.removeChild(video_element);
+      }
     }
 
     delete this.textures[name];
