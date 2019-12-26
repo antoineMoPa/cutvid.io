@@ -38,6 +38,10 @@
     </div>
     <canvas class="canvas-plugin-canvas"></canvas>
   </div>
+  <p>Welcome to the canvas plugin!<br>
+  When a Canvas sequence is selected, you can use the icons at the top
+  of the viewing area to add text and shapes.
+  </p>
   <div v-if="editing_text">
     <label>Font</label>
     <button v-on:click="browse_fonts">Change font</button>
@@ -85,6 +89,9 @@
             for(let i = 0; i < data.objects.length; i++){
               let obj = data.objects[i];
               if ("fontFamily" in obj) {
+                if(obj.fontFamily == 'sans-serif'){
+                  continue;
+                }
                 utils.load_gfont(
                   obj.fontFamily,
                   obj.fontSize,
@@ -145,10 +152,10 @@
           add_text(){
             canvas = this.canvas;
             let text = new fabric.IText('New text', {
-              fontSize: this.text_size,
+              fontSize: 200,
               fontFamily: 'sans-serif',
-              left: 100,
-              top: 100
+              top: this.player.height/2 - 200,
+              left: this.player.width/2 - 500,
             });
             canvas.add(text);
             canvas.renderAll();

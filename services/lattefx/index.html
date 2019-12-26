@@ -23,7 +23,7 @@
 
      function beforeUnload(){
        window.localStorage.last_lattefx_session = JSON.stringify(
-         window.player.serialize()
+         window.player.serialize(true)
        );
 
        window.player.player.gl.getExtension('WEBGL_lose_context').loseContext();

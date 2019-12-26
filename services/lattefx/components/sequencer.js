@@ -645,11 +645,19 @@ Vue.component('sequencer', {
         let erase = false;
         app.loading_scene = true;
         await app.$nextTick();
+
+        let duration = this.get_total_duration();
+
+        for (let i = 0; i < data.length; i++){
+          data[i].from += duration;
+          data[i].to += duration;
+        }
+
         app.unserialize(data, erase);
         setTimeout(function(){
           app.loading_scene = false;
         },1000);
-      });
+      }.bind(this));
     },
     addSequenceAndDrag(){
       if(this.player != null && this.player.rendering) { return; }

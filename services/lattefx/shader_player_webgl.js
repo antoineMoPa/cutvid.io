@@ -828,7 +828,11 @@ class ShaderPlayerWebGL {
                   element.currentTime = shouldBeTime;
 
                   if (!this.paused) {
-                    element.play();
+                    try{
+                      element.play();
+                    } catch (e) {
+                      console.error(e);
+                    }
                   }
                 } else if (this.rendering) {
                   element.play();
