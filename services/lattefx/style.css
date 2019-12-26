@@ -1219,6 +1219,37 @@ header .render-credits-count{
   z-index:2000;
 }
 
+.canvas-plugin-buttons{
+  position:absolute;
+  top:5px;
+  left:6px;
+  text-align:left;
+  width:100%;
+}
+
+.canvas-plugin-button{
+  position:relative;
+  background:#333;
+  border-radius:30px;
+  width:34px;
+  height:34px;
+  cursor:pointer;
+  z-index:2010;
+  border:none;
+}
+
+.canvas-plugin-button.delete-button{
+  background:#f33;
+  position:absolute;
+  right:15px;
+}
+
+.canvas-plugin-button .feather-icon{
+  position: absolute;
+  top: 6.5px;
+  left: 6.5px;
+}
+
 /* END CANVAS PLUGIN */
 
 /* BEGIN TEXT BOX */
