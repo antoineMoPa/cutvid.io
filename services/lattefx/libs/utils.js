@@ -56,29 +56,38 @@ utils.load_gfont = function(name_in, size, text){
 utils.scripts = [];
 utils.randurl_param = "?" + Math.random();
 
-utils.load_script = function(url, callback){
-  // Already loaded?
-  if(url in utils.scripts){
-    if(utils.scripts[url].ready){
-      callback();
-    } else {
-      utils.scripts[url].callbacks.push(callback);
+utils.load_script = async function(url, callback){
+  return new Promise(function (resolve, reject) {
+    // Already loaded?
+    if(url in utils.scripts){
+      resolve();
+
+      if(utils.scripts[url].ready){
+
+        callback();
+      } else {
+        utils.scripts[url].callbacks.push(callback);
+      }
+
+      return;
     }
-    return;
-  }
 
-  utils.scripts[url] = {ready: false, callbacks: []};
+    utils.scripts[url] = {ready: false, callbacks: []};
 
-  let script = document.createElement("script");
+    let script = document.createElement("script");
 
-  script.onload = function(){
-    utils.scripts[url].callbacks.push(callback);
-    utils.scripts[url].ready = true;
-    let cbs = utils.scripts[url].callbacks;
-    cbs.forEach((cb) => {cb()});
-  };
-  script.src = url + utils.randurl_param;
-  document.body.appendChild(script);
+    script.onload = function(){
+      if(callback != undefined){
+        utils.scripts[url].callbacks.push(callback);
+        utils.scripts[url].ready = true;
+        let cbs = utils.scripts[url].callbacks;
+        cbs.forEach((cb) => {cb()});
+      }
+      resolve();
+    };
+    script.src = url + utils.randurl_param;
+    document.body.appendChild(script);
+  });
 }
 
 utils.plugins = {};

@@ -197,6 +197,8 @@ Vue.component('player', {
       player_overlay.style.left =
         canvas_container.style.left =
         x_spacing - 20 + x_align_center + "px";
+
+      this.player.call_resize_listeners();
     },
     on_player_progress(time, duration){
       // TODO: find less visually annoying solution
@@ -418,6 +420,9 @@ Vue.component('player', {
     app.player.set_width(app.width);
     app.player.set_height(app.height);
     app.on_resize();
+
+    app.player.canvas.classList.add("main-canvas");
+
     let container = document.querySelectorAll("#main-player .canvas-container")[0];
     app.player.set_container(container);
     this.switch_panel(0);

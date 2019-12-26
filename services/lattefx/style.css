@@ -325,14 +325,14 @@ header .render-credits-count{
   position: relative;
 }
 
-#main-player canvas{
+#main-player .main-canvas{
   width:100%;
   margin-top:20px;
   margin-left:0;
   background:#3f3f3f;
 }
 
-#main-player canvas{
+#main-player .main-canvas{
   background: url(images/landing_image.png);
   background-size: contain;
 }
@@ -1209,6 +1209,17 @@ header .render-credits-count{
 }
 
 /* END VIDEO PLUGIN */
+
+/* BEGIN CANVAS PLUGIN */
+
+.canvas-plugin-canvas{
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:2000;
+}
+
+/* END CANVAS PLUGIN */
 
 /* BEGIN TEXT BOX */
 

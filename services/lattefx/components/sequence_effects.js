@@ -209,7 +209,16 @@ Vue.component('sequence-effect', {
       }
 
       let component = this.plugin;
-      let data = utils.serialize_vue(component.$data);
+      let data = {};
+
+      if(component.serialize != undefined){
+        // Some plugins have a custom
+        // serialisation method
+        data = component.serialize();
+      } else {
+        data = utils.serialize_vue(component.$data);
+      }
+
       data.effectName = effect.name;
       return data;
     },
@@ -217,8 +226,12 @@ Vue.component('sequence-effect', {
       let component = this.plugin;
 
       if(data != undefined){
-        // Put data in component data
-        utils.unserialize_vue(component.$data, data);
+        if(this.plugin.unserialize != undefined){
+          this.plugin.unserialize(data);
+        } else {
+          // Put data in component data
+          utils.unserialize_vue(component.$data, data);
+        }
       }
 
       component.active = this.active;
