@@ -9,6 +9,7 @@ uniform float ratio, time;
 uniform float offset;
 uniform float boost;
 uniform sampler2D previous_layer;
+uniform sampler2D previous_previous_layer;
 
 void main(void){
     float x = UV.x * ratio;
@@ -28,5 +29,9 @@ void main(void){
 	col *= boost;
 
 	col.a = clamp(length(col.rgba), 0.0, 1.0);
+
+	vec4 previous = texture2D(previous_previous_layer, lastUV);
+	col = col.a * col + (1.0 - col.a) * previous;
+
     gl_FragColor = col;
 }

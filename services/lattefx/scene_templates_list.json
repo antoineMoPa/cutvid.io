@@ -9,6 +9,10 @@
     "simple_title": {
       "description": "A title bar with text with custom color",
       "date": "Tue Nov  5 00:42:09 EST 2019"
+    },
+    "epic_text_glitch": {
+      "description": "A big title with glitch effects",
+      "date": "Thu Dec 26 18:16:30 EST 2019"
     }
   }
 }

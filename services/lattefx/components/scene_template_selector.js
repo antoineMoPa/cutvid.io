@@ -34,8 +34,7 @@ Vue.component('scene-template-selector', {
     </a>
     <br><br>
   </div>
-  <p style="line-height:30px;">The scene templates feature was just shipped (October 30, 2019).<br><br> New templates coming soon!</p>
-  <br><br>
+  <br>
 </div>`,
   data(){
     return {
