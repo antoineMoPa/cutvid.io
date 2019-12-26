@@ -38,14 +38,30 @@
     </div>
     <canvas class="canvas-plugin-canvas"></canvas>
   </div>
+  <div v-if="editing_text">
+    <label>Font</label>
+    <button v-on:click="browse_fonts">Change font</button>
+    <label>Text color</label>
+    <input v-model="color" type="color">
+  </div>
+  <div v-if="editing_shape">
+    <label>Color</label>
+    <input v-model="color" type="color">
+    <label>Opacity</label>
+    <input type="number" v-model.number="opacity" min="0" max="1.0" step="0.1">
+  </div>
 </div>`,
         data: function(){
           return {
-            serializeExclude: ["canvas", "canvas_el", "data"],
+            serializeExclude: ["canvas", "canvas_el", "selection"],
             active: false,
             image: null,
             imageName: "",
-            backgroundColor: "#000000",
+            editing_text: false,
+            editing_shape: false,
+            selection: null,
+            color: "#000",
+            opacity: 1.0,
             at_mount_load: "",
             player: null,
             effect: null,
@@ -54,6 +70,7 @@
         },
         methods: {
           update_canvas(){
+            this.canvas.renderAll();
             this.shaderProgram.set_texture(
               'image',
               this.canvas.toCanvasElement(4), function(){});
@@ -79,8 +96,28 @@
 
             let zoom = width/window.player.player.width;
             this.canvas.setZoom(zoom);
-            this.canvas.renderAll();
             this.update_canvas();
+          },
+          browse_fonts(){
+            let app = this;
+            let picker = new utils.gfont_picker();
+            let container = document.createElement("div");
+            document.body.appendChild(container);
+            picker.$mount(container);
+
+            picker.on_font = function(fontName) {
+              let promise = utils.load_gfont(
+                fontName,
+                30,
+                this.selection.text
+              );
+              promise.then(function(){
+                this.selection.set("fontFamily", fontName);
+                this.update_canvas();
+              }.bind(this));
+            }.bind(this);
+
+            picker.container_class = "gfont-plugin-font-picker";
           },
           add_text(){
             canvas = this.canvas;
@@ -94,7 +131,7 @@
             let rect = new fabric.Rect({
               top: 50, left: 50,
               width: 200, height: 100,
-              fill: '#333', opacity: 0.7
+              fill: '#333'
             });
 
             canvas.add(rect);
@@ -108,7 +145,7 @@
               radius: 20,
               fill: '#333'
             });
-            console.log(circle);
+
             canvas.add(circle);
             canvas.renderAll();
           },
@@ -120,26 +157,39 @@
             }
 
             this.canvas.remove(selection);
-            this.canvas.renderAll();
             this.update_canvas();
           },
           layer_up(){
             let selection = this.canvas.getActiveObject();
 
             selection.bringForward();
-            this.canvas.renderAll();
             this.update_canvas();
           },
           layer_down(){
             let selection = this.canvas.getActiveObject();
 
             selection.sendBackwards();
-            this.canvas.renderAll();
             this.update_canvas();
           },
           listen_modified(){
             this.canvas.on("object:modified", function(){
               this.update_canvas();
+            }.bind(this));
+          },
+          listen_selection(){
+            this.canvas.on("selection:created", function(){
+              let selection = this.canvas.getActiveObject();
+
+              this.editing_shape = false;
+              this.editing_text = false;
+
+              if("text" in selection){
+                this.editing_text = true;
+              } else {
+                this.editing_shape = true;
+              }
+
+              this.selection = selection;
             }.bind(this));
           },
           listen_scaling(){
@@ -183,6 +233,20 @@
           }
         },
         watch: {
+          color(){
+            if(this.editing_text){
+              this.selection.setColor(this.color);
+              this.update_canvas();
+            }
+            if(this.editing_shape){
+              this.selection.set("fill", this.color);
+              this.update_canvas();
+            }
+          },
+          opacity(){
+            this.selection.set("opacity", this.opacity);
+            this.update_canvas();
+          }
         },
         async mounted(){
           await utils.load_script("./plugins/canvas/fabric.min.js");
@@ -192,6 +256,7 @@
           this.load_initial_data();
           this.listen_modified();
           this.listen_scaling();
+          this.listen_selection();
         }
       }
     };
