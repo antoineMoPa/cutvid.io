@@ -22,11 +22,21 @@
      fetch("/stats/lattefx_app_page_view/");
 
      function beforeUnload(){
+       window.localStorage.last_lattefx_session = JSON.stringify(
+         window.player.serialize()
+       );
+
        window.player.player.gl.getExtension('WEBGL_lose_context').loseContext();
        fetch("/stats/lattefx_app_page_leave/");
      };
 
      window.onpagehide = beforeUnload;
+
+     if(window.localStorage.last_lattefx_session != undefined){
+       window.player.unserialize(JSON.parse(
+         window.localStorage.last_lattefx_session)
+       );
+     }
     </script>
     <div id="ask-confirm-placeholder"></div>
   </body>
