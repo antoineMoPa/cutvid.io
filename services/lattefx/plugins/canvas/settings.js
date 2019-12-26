@@ -9,10 +9,10 @@
       ui: {
         template: `
 <div>
-  <div class="canvas-plugin-ui">
+  <div v-bind:class="'canvas-plugin-ui ' + (active? '': 'hidden')">
     <div class="canvas-plugin-buttons">
       <button class="canvas-plugin-button" v-on:click="add_text">
-        <img src="icons/feather/edit-2.svg"
+        <img src="icons/feather/type.svg"
            class="feather-icon " width="20">
       </button>
       <button class="canvas-plugin-button" v-on:click="add_rect">
@@ -21,6 +21,14 @@
       </button>
       <button class="canvas-plugin-button" v-on:click="add_circle">
         <img src="icons/feather/circle.svg"
+           class="feather-icon " width="20">
+      </button>
+      <button class="canvas-plugin-button" v-on:click="layer_up">
+        <img src="icons/feather/arrow-up.svg"
+           class="feather-icon " width="20">
+      </button>
+      <button class="canvas-plugin-button" v-on:click="layer_down">
+        <img src="icons/feather/arrow-down.svg"
            class="feather-icon " width="20">
       </button>
       <button class="canvas-plugin-button delete-button" v-on:click="delete_selection">
@@ -34,6 +42,7 @@
         data: function(){
           return {
             serializeExclude: ["canvas", "canvas_el", "data"],
+            active: false,
             image: null,
             imageName: "",
             backgroundColor: "#000000",
@@ -67,6 +76,10 @@
 
             this.canvas.setWidth(width)
             this.canvas.setHeight(height)
+
+            let zoom = width/window.player.player.width;
+            this.canvas.setZoom(zoom);
+            this.canvas.renderAll();
             this.update_canvas();
           },
           add_text(){
@@ -110,8 +123,24 @@
             this.canvas.renderAll();
             this.update_canvas();
           },
+          layer_up(){
+            let selection = this.canvas.getActiveObject();
+
+            selection.bringForward();
+            this.canvas.renderAll();
+            this.update_canvas();
+          },
+          layer_down(){
+            let selection = this.canvas.getActiveObject();
+
+            selection.sendBackwards();
+            this.canvas.renderAll();
+            this.update_canvas();
+          },
           listen_modified(){
-            this.canvas.on("object:modified", this.update_canvas);
+            this.canvas.on("object:modified", function(){
+              this.update_canvas();
+            }.bind(this));
           },
           listen_scaling(){
             this.canvas.on("object:scaling", function(e) {

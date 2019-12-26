@@ -35,6 +35,10 @@ input{
   background:#eee;
 }
 
+.hidden{
+  display: none;
+}
+
 a,
 a:visited{
   color: #3af;
