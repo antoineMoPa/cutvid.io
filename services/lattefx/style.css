@@ -856,13 +856,26 @@ header .render-credits-count{
 .sequence-body{
   position:absolute;
   top:0;
-  left:25px;
+  left:20px;
   width:calc(100% - 45px);
   height:20px;
   font-size:10px;
   color:#fff;
   line-height:20px;
   cursor:pointer;
+  background:#333;
+}
+
+.sequence-small .sequence-button-left{
+  display:none;
+}
+
+.sequence-small .sequence-button-right{
+  display:none;
+}
+
+.sequence-small .sequence-body{
+  left:0;
 }
 
 .sequence-button-left{
@@ -870,10 +883,11 @@ header .render-credits-count{
   top:0;
   left:0;
   width:20px;
+  overflow:show;
   height:20px;
   border-radius:4px;
   cursor:pointer;
-  background:url(/app/icons/feather/chevron-left.svg);
+  background:url(/app/icons/feather/chevron-left.svg) #252525;
   background-size:cover;
 }
 
@@ -890,8 +904,9 @@ header .render-credits-count{
   opacity:0.7;
   border-radius:4px;
   cursor:pointer;
-  background:url(/app/icons/feather/chevron-right.svg);
+  background:url(/app/icons/feather/chevron-right.svg) #252525;
   background-size:cover;
+  z-index:5;
 }
 
 .sequence-button-right:hover{

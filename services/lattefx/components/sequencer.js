@@ -299,7 +299,7 @@ Vue.component('sequencer', {
     zoom_in(){
       let go_to = this.time.time;
 
-      this.visibleDuration -= 0.1 * this.visibleDuration;
+      this.visibleDuration -= 0.2 * this.visibleDuration;
       this.time.time = this.time.time + 0.001; // hack to update the timebar
 
       if(this.visibleDuration < 1){
@@ -313,7 +313,7 @@ Vue.component('sequencer', {
     zoom_out(){
       let go_to = this.time.time;
 
-      this.visibleDuration += 0.1 * this.visibleDuration;
+      this.visibleDuration += 0.2 * this.visibleDuration;
       this.time.time = this.time.time + 0.001; // hack to update the timebar
 
       this.center_time(go_to);
@@ -610,6 +610,13 @@ Vue.component('sequencer', {
           continue;
         }
         let el = els[0];
+
+        el.classList.remove("sequence-small");
+
+        if(seq.to - seq.from < 50/scale.timeScale){
+          el.classList.add("sequence-small");
+        }
+
         el.style.left = (seq.from * scale.timeScale) + "px";
         el.style.width = ((seq.to - seq.from) * scale.timeScale) + "px";
         el.style.bottom = (5 + (seq.layer) * scale.layerScale + this.offset_y) + "px";
