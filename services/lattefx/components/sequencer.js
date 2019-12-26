@@ -47,9 +47,9 @@ Vue.component('sequencer', {
           </button>
           <button class="more-suggestion suggestion"
                   v-if="add_menu_open"
-                  v-on:click="quick_add_sequence('gfontTextLayer')">
-            <img src="icons/feather/type.svg" class="feather-icon" width="20"/>
-            Text
+                  v-on:click="quick_add_sequence('canvas')">
+            <img src="icons/feather/edit.svg" class="feather-icon" width="20"/>
+            Canvas
           </button>
         </div>
         <div
@@ -264,7 +264,7 @@ Vue.component('sequencer', {
         // If timebar is between from and to,
         // split at timebar position
         // else skip
-        if(time < from || time > to){
+        if(time <= from || time >= to){
           continue;
         }
 

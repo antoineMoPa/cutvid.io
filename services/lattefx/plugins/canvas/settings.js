@@ -47,6 +47,8 @@
   <div v-if="editing_shape">
     <label>Color</label>
     <input v-model="color" type="color">
+  </div>
+  <div v-if="editing_shape || editing_text">
     <label>Opacity</label>
     <input type="number" v-model.number="opacity" min="0" max="1.0" step="0.1">
   </div>
@@ -61,6 +63,7 @@
             editing_shape: false,
             selection: null,
             color: "#000",
+            text_size: 30,
             opacity: 1.0,
             at_mount_load: "",
             player: null,
@@ -78,10 +81,30 @@
           serialize(){
             return this.canvas.toJSON();
           },
+          initial_font_load(data){
+            for(let i = 0; i < data.objects.length; i++){
+              let obj = data.objects[i];
+              if ("fontFamily" in obj) {
+                utils.load_gfont(
+                  obj.fontFamily,
+                  obj.fontSize,
+                  obj.text
+                ).then(function(){
+                  this.update_canvas();
+                }.bind(this));
+              }
+            }
+            /*
+            let promise = */
+          },
           async unserialize(data){
             await utils.load_script("./plugins/canvas/fabric.min.js");
+
+            this.initial_font_load(data);
+
             if(this.canvas != undefined){
               this.canvas.loadFromJSON(data);
+
               this.on_resize();
             } else {
               this.at_mount_load = data;
@@ -108,7 +131,7 @@
             picker.on_font = function(fontName) {
               let promise = utils.load_gfont(
                 fontName,
-                30,
+                this.text_size,
                 this.selection.text
               );
               promise.then(function(){
@@ -121,7 +144,12 @@
           },
           add_text(){
             canvas = this.canvas;
-            let text = new fabric.IText('New text', { left: 100, top: 100 });
+            let text = new fabric.IText('New text', {
+              fontSize: this.text_size,
+              fontFamily: 'sans-serif',
+              left: 100,
+              top: 100
+            });
             canvas.add(text);
             canvas.renderAll();
           },
@@ -129,7 +157,8 @@
             canvas = this.canvas;
 
             let rect = new fabric.Rect({
-              top: 50, left: 50,
+              top: this.player.height/2,
+              left: this.player.width/2,
               width: 200, height: 100,
               fill: '#333'
             });
@@ -141,8 +170,9 @@
             canvas = this.canvas;
 
             let circle = new fabric.Circle({
-              top: 50, left: 50,
-              radius: 20,
+              top: this.player.height/2,
+              left: this.player.width/2,
+              radius: 100,
               fill: '#333'
             });
 
@@ -169,6 +199,7 @@
             let selection = this.canvas.getActiveObject();
 
             selection.sendBackwards();
+            this.canvas.discardActiveObject();
             this.update_canvas();
           },
           listen_modified(){
@@ -177,7 +208,7 @@
             }.bind(this));
           },
           listen_selection(){
-            this.canvas.on("selection:created", function(){
+            let listener = function(){
               let selection = this.canvas.getActiveObject();
 
               this.editing_shape = false;
@@ -189,8 +220,14 @@
                 this.editing_shape = true;
               }
 
+              this.color = selection.fill;
+              this.opacity = selection.opacity;
+
               this.selection = selection;
-            }.bind(this));
+            }.bind(this);
+
+            this.canvas.on("selection:created", listener);
+            this.canvas.on("selection:updated", listener);
           },
           listen_scaling(){
             this.canvas.on("object:scaling", function(e) {
@@ -227,6 +264,7 @@
             canvas_el.width = window.player.player.canvas.clientWidth;
             canvas_el.height = window.player.player.canvas.clientHeight;
             let canvas = new fabric.Canvas(canvas_el);
+            canvas.preserveObjectStacking = true;
             this.canvas = canvas;
 
             canvas.renderAll();
