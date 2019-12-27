@@ -633,7 +633,7 @@ header .render-credits-count{
   padding:10px 0;
   cursor:pointer;
   font-size:13px;
-  width:33.33%;
+  width:50%;
 }
 
 .panel-tab-header:not(.selected-tab-header){

@@ -14,7 +14,7 @@
        v-if="videoFileB64 == null">
     Choose your video below!
   </div>
-  <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid" class="video-file-input" v-on:change="onVideo()">
+  <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid" class="video-file-input" v-on:change="on_video_upload()">
   <p v-if="error">ERROR: Your browser does not seem to support this video file encoding.<br>
   You can try converting it to .ogv at:<br>
     <a href="https://video.online-convert.com/convert-to-ogv"
@@ -40,11 +40,11 @@
 </div>`,
         data: function(){
           return {
-            serializeExclude: ["video", "videoFile", "effect"],
+            serializeExclude: ["effect", "shaderProgram"],
             video: null,
             videoFile: null,
             videoFileB64: null,
-            video_media_id: null,
+            video_media_id: "",
             videoName: "",
             error: false,
             backgroundColor: "#000000",
@@ -88,6 +88,7 @@
             let app = this;
 
             app.error = false;
+
             this.shaderProgram.set_texture('video', '', function(){}, {
               video: this.video,
               videoFile: this.videoFile,
@@ -117,16 +118,29 @@
               }
             });
           },
+          on_video_upload(){
+            let app = this;
+            const input = this.$el.querySelectorAll('.video-file-input')[0];
+            file = input.files[0];
+            app.videoFile = file;
+            app.video = window.URL.createObjectURL(file);
+
+            utils.file_to_base64(file).then((result)=>{
+              app.videoFileB64 = result;
+            });
+
+            app.video_media_id = "";
+            app.loadVideo();
+          },
           onVideo(videoToLoad) {
             const app = this;
-            const input = this.$el.querySelectorAll('.video-file-input')[0];
 
             try {
               let file = null;
               if(typeof(videoToLoad) != "undefined"){
                 file = videoToLoad;
               } else {
-                file = input.files[0];
+                return;
               }
               app.videoFile = file;
               app.video = window.URL.createObjectURL(file);
@@ -146,27 +160,31 @@
             this.trimBefore += diff;
           },
           async media_getter(){
-            if(this.videoFile != null){
-              return window.URL.createObjectURL(this.videoFile);
-            } else if (this.video_media_id != null) {
+            console.log(this);
+
+            if (this.video_media_id != "") {
+
               let settings = window.lattefx_settings;
               let cloud_url = settings.cloud;
               let auth = window.auth;
               let token = await auth.get_token();
               let project_id = window.player.project_id;
               let project_media_url = cloud_url + "/media/" + project_id + "/";
-              let req = await fetch(project_media_url + this.video_media_id, {
-                headers: {
-                  'Authorization': 'Bearer ' + token,
-                }
-              });
-
+              let url = project_media_url + this.video_media_id + "/" + token;
+              let req = await fetch(url);
               let blob = await req.blob();
-              let url = window.URL.createObjectURL(blob);
+              let blob_url = window.URL.createObjectURL(blob);
 
-              return url;
+              return blob_url;
             } else if (this.video != "") {
               return this.video;
+            } else if(this.videoFile != null){
+              console.log(this.videoFile);
+              let reader = new FileReader();
+              let url = await reader.readAsDataURL(this.videoFile);
+              return url;
+            } else if(this.videoFileB64 != ""){
+
             }
           }
         },
@@ -177,18 +195,8 @@
           videoFile(){
             this.effect.videoFile = this.videoFile;
           },
-          muted(m){
-            this.effect.muted = m;
-          },
-          effect(){
-            this.effect.muted = this.muted;
-          },
           videoFileB64(){
             let app = this;
-
-            if(this.videoFileB64 == ""){
-              return;
-            }
 
             fetch(app.videoFileB64).then((result) => {
               result.blob().then((result) => {
@@ -197,9 +205,12 @@
                 app.onVideo(file);
               });
             });
-
-            let container = document.createElement("div");
-            document.body.appendChild(container);
+          },
+          muted(m){
+            this.effect.muted = m;
+          },
+          effect(){
+            this.effect.muted = this.muted;
           },
           video_media_id(media_id){
             this.loadVideo();

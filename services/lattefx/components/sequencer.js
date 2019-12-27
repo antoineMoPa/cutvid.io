@@ -743,6 +743,11 @@ Vue.component('sequencer', {
       let app = this;
       window.addEventListener("keydown", (e) => {
         if(!app.mouseover){
+          // CTRL+a globally is not nice outside squencer
+          if(e.key == "a"){
+            e.preventDefault();
+            e.stopPropagation();
+          }
           return;
         }
 

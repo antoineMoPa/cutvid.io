@@ -451,7 +451,7 @@ class ShaderProgram {
     // Handle videos/canvas texture
     if(isVideo){
       let video_blob_url = await options.video_media_getter();
-
+      console.log(video_blob_url);
       videoElement.addEventListener("timeupdate", function(){
         timeUpdate = true;
         checkReady();
@@ -511,12 +511,6 @@ class ShaderProgram {
       return;
     }
 
-    if(this.textures[name].isVideo){
-      let el = this.textures[name].videoElement;
-      if(el.parentNode != null){
-        el.parentNode.removeChild(el);
-      }
-    }
     if(this.textures[name].isAudio){
       let el = this.textures[name].audioElement;
       if(el.parentNode != null){
@@ -529,7 +523,6 @@ class ShaderProgram {
       gl.deleteTexture(this.textures[name].texture);
 
       let video_element = this.textures[name].videoElement;
-
       if(video_element.parentNode != null){
         video_element.parentNode.removeChild(video_element);
       }

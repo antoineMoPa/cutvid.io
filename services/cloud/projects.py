@@ -39,6 +39,8 @@ def list_projects():
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
     project_meta_files = glob.glob(user_folder + "/project-*/lattefx_project.meta")
 
+    project_meta_files = sorted(project_meta_files, key=os.path.getatime)
+
     project_metas = []
 
     for project_meta_file in project_meta_files:

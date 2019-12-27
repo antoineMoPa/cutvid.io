@@ -20,8 +20,8 @@ from utils import *
 
 media = Blueprint('media', __name__)
 
-@media.route("/media/<project_id>/<media_id>", methods=['GET', 'OPTIONS'])
-def get_media(project_id, media_id):
+@media.route("/media/<project_id>/<media_id>/<token>", methods=['GET', 'OPTIONS'])
+def get_media(project_id, media_id, token):
     """
     Read a project's media
     """
@@ -29,7 +29,7 @@ def get_media(project_id, media_id):
     if request.method == 'OPTIONS':
         return ""
 
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
+    token = read_token(token)
 
     if token is None:
         return "error 1 bad token"

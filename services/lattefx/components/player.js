@@ -29,7 +29,7 @@ Vue.component('player', {
                        'settings-panel-hidden':
                        '')">
       <panel-selector ref="panel-selector"
-        v-bind:panelNames="['Effect', 'Project', 'Sources']"
+        v-bind:panelNames="['Effect', 'Project' /* dev only:, 'Sources' */]"
         v-on:switch="switch_panel"/>
 
       <div class="switchable-panel all-sequences-container">
@@ -289,7 +289,17 @@ Vue.component('player', {
 
         setTimeout(()=>{
           app.show_saved_message = false;
-          utils.flag_message("Your video is processing and you'll be notified by email once it's ready. Expect around 15 min for short videos!");
+          let message =
+              "Your video is processing and you'll be notified" +
+              "by email once it's ready." +
+              "Expect around 15 min for short videos!";
+
+          utils.flag_message(message, {
+            button_message: "Track",
+            button_action: function(){
+              window.open('./renders', '_blank');
+            }
+          });
 
           app.$refs.auth.update_user_info();
         }, 2000);
