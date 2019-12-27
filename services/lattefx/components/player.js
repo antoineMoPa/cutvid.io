@@ -10,8 +10,26 @@ Vue.component('player', {
            target="_blank">
           Renders
         </a>
+        <a href="#" v-on:click="resources_menu_open = !resources_menu_open">
+          Resources
+        </a>
       </span>
     </p>
+    <div class="application-menus">
+      <div class="application-menu resources-menu" v-if="resources_menu_open">
+        <p>LatteFx help</p>
+        <a href="/landing/lattefx_intro_pdf_dec_2019.pdf"
+           target="_blank">LatteFx intro PDF</a><br>
+        <br>
+        <p>Free content for your videos</p>
+        <a href="https://www.bensound.com/"
+           target="_blank"
+           class="external-link">Free music - Bensound</a><br>
+        <a href="https://www.pexels.com/videos/"
+           target="_blank"
+           class="external-link">Free stock videos - Pexels</a>
+      </div>
+    </div>
     <div v-bind:class="'settings-panel rendering-info-panel ' +
                        (player == null || !player.rendering?
                        'settings-panel-hidden':
@@ -120,7 +138,10 @@ Vue.component('player', {
       expert_mode: true,
       fps: 30,
       watermark: "",
-      project_id: null
+      project_id: null,
+      resources_menu_open: false,
+      file_menu_open: false,
+      edit_menu_open: false
     };
   },
   props: ["settings"],

@@ -1612,3 +1612,50 @@ header .render-credits-count{
 }
 
 /* END UI GUIDING */
+
+/* BEGIN APPLICATION MENUS */
+
+.application-menus{
+  position:absolute;
+  top:5px;
+  z-index:2000;
+}
+
+.application-menu{
+  position:absolute;
+  background: #fff;
+  color:#111;
+  border-radius:4px;
+  box-shadow:0 0 5px rgba(0,0,0,0.3);
+  padding:10px;
+  width:300px;
+  text-align:left;
+}
+
+.resources-menu{
+  left:380px;
+}
+
+.application-menu a{
+  color:#333;
+  width:100%;
+}
+
+.application-menu a:hover{
+  color:#000;
+}
+
+.application-menu p{
+  text-align: center;
+  margin:5px;
+}
+
+.application-menu .external-link{
+  padding-left:30px;
+  background:url(/app/icons/feather-dark/external-link.svg) no-repeat;
+  padding-top:2px;
+  padding-bottom:2px;
+  line-height:35px;
+}
+
+/* END APPLICATION MENUS */
