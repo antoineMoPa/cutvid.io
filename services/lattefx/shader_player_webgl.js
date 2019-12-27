@@ -832,8 +832,15 @@ class ShaderPlayerWebGL {
                 let currTime = element.currentTime;
 
                 // Attempt: dont sync while rendering
-                if (Math.abs(shouldBeTime - currTime) > 2.0) {
+                if (Math.abs(shouldBeTime - currTime) > 0.2) {
                   element.pause();
+
+                  let time_at_seek = this.time.time;
+
+                  element.addEventListener("seeked", function(){
+                    this.time.time = time_at_seek;
+                  }.bind(this), {once: true})
+
                   element.currentTime = shouldBeTime;
 
                   if (!this.paused) {

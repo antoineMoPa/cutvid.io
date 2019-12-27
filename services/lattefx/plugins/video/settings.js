@@ -96,7 +96,12 @@
               autoplay: !this.player.paused,
               onerror: function(error){
                 app.error = true;
-                fetch("/stats/lattefx_app_video_has_error/" + this.videoFile.name);
+
+                if(this.videoFile != null){
+                  fetch("/stats/lattefx_app_video_has_error/" + this.videoFile.name);
+                } else {
+                  fetch("/stats/lattefx_app_video_has_error/" + this.video_media_id)
+                }
               },
               ready: function(){
                 // "this" points to <video> element
@@ -141,10 +146,9 @@
             this.trimBefore += diff;
           },
           async media_getter(){
+            console.log(this.video_media_id);
             if(this.videoFile != null){
               return window.URL.createObjectURL(this.videoFile);
-            } else if (this.video != "") {
-              return this.video;
             } else if (this.video_media_id != null) {
               let settings = window.lattefx_settings;
               let cloud_url = settings.cloud;
@@ -162,6 +166,8 @@
               let url = window.URL.createObjectURL(blob);
 
               return url;
+            } else if (this.video != "") {
+              return this.video;
             }
           }
         },

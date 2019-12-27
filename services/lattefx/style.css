@@ -919,7 +919,7 @@ header .render-credits-count{
   position: absolute;
   right: 0;
   z-index:1010;
-  top:-40px;
+  top:0;
   background:#222;
   padding-top: 7px;
   padding-left: 10px;
