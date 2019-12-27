@@ -146,7 +146,6 @@
             this.trimBefore += diff;
           },
           async media_getter(){
-            console.log(this.video_media_id);
             if(this.videoFile != null){
               return window.URL.createObjectURL(this.videoFile);
             } else if (this.video_media_id != null) {
