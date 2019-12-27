@@ -322,7 +322,14 @@ class ShaderProgram {
         videoInitialized = true;
       } else {
         let texture = app.textures[name].texture;
+
         gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
         if (videoElement.readyState >= 2) { // Fix firefox black screen
           gl.texImage2D(
             gl.TEXTURE_2D, level, internalFormat,
@@ -413,7 +420,7 @@ class ShaderProgram {
         });
       }
 
-      if(!isAudioOnly){
+      if(!isAudioOnly && !isVideo){
         gl.texImage2D(
           gl.TEXTURE_2D, level, internalFormat,
           srcFormat, srcType, image);
@@ -421,6 +428,7 @@ class ShaderProgram {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       }
 
       ready();

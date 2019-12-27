@@ -39,7 +39,7 @@ class ShaderPlayerWebGL {
 
     // Create time object just to be by reference
     this.time = {};
-    this.time.time = 0.0;
+    this.time.time = 0.01;
     this.on_progress = function(progress){};
 
     this.PREVIOUS_LAYER_0 = 0;
@@ -549,8 +549,10 @@ class ShaderPlayerWebGL {
     for (var i = 0; i < 3; i++) {
       this.rttTexture[i] = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, this.rttTexture[i]);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, ww, hh, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 
       // Render to texture stuff
@@ -657,8 +659,6 @@ class ShaderPlayerWebGL {
   get_sequences_by_layers(only_current){
     let time = this.time.time;
 
-    let maxLayer = 0;
-
     let sequencesByLayer = [];
     for(let i = 0; i <= 20; i++){
       sequencesByLayer.push([]);
@@ -666,8 +666,11 @@ class ShaderPlayerWebGL {
 
     for(let i = 0; i < this.sequences.length; i++){
       let seq = this.sequences[i];
-      if(only_current && time < seq.from || time > seq.to){
-        continue;
+
+      if(only_current){
+        if(time < seq.from || time > seq.to){
+          continue;
+        }
       }
       let effect = seq.effect;
       let arr = sequencesByLayer[seq.layer];
@@ -683,10 +686,16 @@ class ShaderPlayerWebGL {
         uniforms: effect.uniforms,
         trimBefore: effect.trimBefore || 0
       });
-      if(seq.layer > maxLayer){
-        maxLayer = seq.layer;
+    }
+
+    // delete empty layers
+    for(let i = sequencesByLayer.length - 1; i > 0; i--){
+      if(sequencesByLayer[i].length == 0){
+        sequencesByLayer.splice(i, 1);
       }
     }
+
+    let maxLayer = sequencesByLayer.length - 1;
 
     return {maxLayer, sequencesByLayer}
   }
@@ -925,7 +934,12 @@ class ShaderPlayerWebGL {
           }
         }
         gl.viewport(0, 0, this.width, this.height);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        try{
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        } catch (e) {
+          console.log(e);
+        }
       }
     }
 

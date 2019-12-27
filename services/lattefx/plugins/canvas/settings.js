@@ -77,6 +77,8 @@
         },
         methods: {
           update_canvas(){
+            if(this.canvas == undefined){ return; }
+
             this.canvas.renderAll();
             this.shaderProgram.set_texture(
               'image',
