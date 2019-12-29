@@ -780,8 +780,17 @@ Vue.component('sequencer', {
     bindShortcuts(){
       let app = this;
       window.addEventListener("keydown", (e) => {
+        if(e.key == "s"){
+          if(e.ctrlKey){
+            e.preventDefault();
+            e.stopPropagation();
+            window.player.save_video();
+          }
+        }
+
+        // Skip next actions if mouse is not over sequencer
         if(!app.mouseover){
-          // CTRL+a globally is not nice outside squencer
+          // CTRL+a globally is not nice outside sequencer
           if(e.key == "a"){
             e.preventDefault();
             e.stopPropagation();
@@ -824,6 +833,7 @@ Vue.component('sequencer', {
             app.paste();
           }
         }
+
       });
     }
   },

@@ -44,14 +44,8 @@ Vue.component('player', {
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
         <br><br>
-        <h4>Save to Lattefx cloud</h4>
-        <p>Save project in our cloud to access it from any computer.</p>
-        <div class="props-auth-placeholder"/>
-        <br/>
-        <h4>Save a .lattefx project</h4>
-        <p>Download a working copy to modify your video later.</p>
         <label>
-          <button v-on:click="onSaveLatteFxFile">
+          <button v-on:click="save_lattefx_file">
             Download
           </button>
         </label>
@@ -90,6 +84,33 @@ Vue.component('player', {
     <buy-video-lq ref="buyVideoLQ"
                  v-bind:settings="settings"
                  v-on:renderHQ="makeHQ"/>
+    <div class="ui-auth-container">
+      <a class="ui-button button-left-1 button-save"
+        v-if="!saving"
+        v-on:click="save_video">
+        <img class="play-icon feather-button"
+             v-if="show_saved_message"
+             src="icons/feather/check.svg"/>
+        <img class="play-icon feather-button"
+             v-else-if="user_info != null"
+             src="icons/feather/save.svg"/>
+        <img class="play-icon feather-button"
+             v-else
+             src="icons/feather/user.svg"/>
+        <span v-if="show_saved_message">
+          Saved!
+        </span>
+        <span v-else-if="user_info != null">
+          Save progress
+        </span>
+        <span v-else>
+          Sign in
+        </span>
+      </a>
+      <button v-else class="ui-button saving-video">
+        Saving video...
+      </button>
+    </div>
     <ui ref="ui"
         v-on:playAll="playAll"
         v-on:renderHQ="makeHQ"
@@ -110,6 +131,9 @@ Vue.component('player', {
       fps: 30,
       watermark: "",
       project_id: null,
+      user_info: null,
+      saving: false,
+      show_saved_message: false
     };
   },
   props: ["settings"],
@@ -299,7 +323,7 @@ Vue.component('player', {
     onCancelRender(){
       this.player.cancel_render();
     },
-    onSaveLatteFxFile(){
+    save_lattefx_file(){
       let data = JSON.stringify(this.serialize());
 
       let a = document.createElement("a");
@@ -372,7 +396,57 @@ Vue.component('player', {
     },
     launch_template_selector(){
       this.$refs['sequencer'].launch_template_selector();
-    }
+    },
+    async save_video(){
+      let app = this;
+      let auth_url = this.settings.auth;
+      let token = await this.$refs.auth.get_token();
+
+      app.saving = true;
+
+      await this.$nextTick();
+      this.user_info = await this.$refs.auth.user_info;
+      // Verify sign in as it could have timed out
+      if(this.user_info == null){
+        this.show_login();
+        app.saving = false;
+      } else{
+        let cloud_url = this.settings.cloud;
+        let data = window.player.serialize();
+        let project_id = data.project_id;
+
+        // New project - get a new project id
+        if(project_id == null){
+          let req = await fetch(cloud_url + "/get_a_new_project_id", {
+            headers: {
+              'Authorization': 'Bearer ' + token,
+            }
+          });
+          project_id = await req.text();
+          window.player.project_id = project_id;
+        }
+
+        data = JSON.stringify(data);
+
+        let form = new FormData();
+        form.append('lattefx_file.lattefx', data);
+
+        fetch(cloud_url + "/upload_project/" + project_id, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Encoding': 'multipart/form-data'
+          },
+          body: form
+        }).then(() => {
+          app.saving = false;
+          app.show_saved_message = true;
+          setTimeout(()=>{
+            app.show_saved_message = false;
+          }, 2000);
+        });
+      }
+    },
   },
   watch: {
     width(){
@@ -382,9 +456,13 @@ Vue.component('player', {
       this.update_dimensions();
     },
     fps(){
+    },
+    async settings(){
+      await this.$nextTick();
+      this.user_info = await this.$refs["auth"].get_user_info();
     }
   },
-  mounted: function(){
+  mounted: async function (){
     let app = this;
     window.player = this;
     window.addEventListener("resize", app.on_resize);
@@ -402,5 +480,11 @@ Vue.component('player', {
     this.switch_panel(0);
     this.$refs['panel-selector'].switch_to(0);
     this.pause();
+
+    await this.$nextTick();
+    container = document.querySelectorAll(".ui-auth-container")[0];
+
+    let ui = document.querySelectorAll(".ui .ui-buttons-right")[0];
+    ui.appendChild(container);
   },
 });

@@ -1645,6 +1645,16 @@ header .render-credits-count{
   left:245px;
 }
 
+.shortcut-hint{
+  color: #888;
+  float: right;
+}
+
+.warning-note{
+  font-size:10px;
+  line-height:20px;
+}
+
 .application-menu a{
   color:#333;
   width:100%;

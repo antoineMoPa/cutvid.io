@@ -6,7 +6,8 @@ var app = new Vue({
     resources_menu_open: false,
     file_menu_open: false,
     edit_menu_open: false,
-    sequencer: null
+    sequencer: null,
+    player: null
   },
   template: `<div>
                <header>
@@ -40,9 +41,17 @@ var app = new Vue({
                       class="external-link">Free stock videos - Pexels</a>
                  </div>
                  <div class="application-menu edit-menu" v-if="edit_menu_open">
-                   <p>Sequencer</p>
+                   <a v-on:click="sequencer.copy()">Copy Sequences</a>
+                   <span class="shortcut-hint">Ctrl+C</span>
+                   <br>
+                   <a v-on:click="sequencer.paste()">Paste Sequences</a>
+                   <span class="shortcut-hint">Ctrl+V</span>
+                   <br>
+                   <hr>
                    <a v-on:click="sequencer.select_none()">Clear Selection</a><br>
-                   <a v-on:click="sequencer.select_all()">Select All</a><br>
+                   <a v-on:click="sequencer.select_all()">Select All</a>
+                   <span class="shortcut-hint">Ctrl +A</span>
+                   <br>
                    <a v-on:click="sequencer.select_all_after_cursor()">
                      Select All After Cursor
                    </a><br>
@@ -55,6 +64,7 @@ var app = new Vue({
                  </div>
                  <div class="application-menu file-menu"
                     v-if="file_menu_open && settings != null">
+                   <p>LatteFx cloud</p>
                    <a v-on:click="browse_projects">
                      Your Projects
                    </a><br>
@@ -62,6 +72,9 @@ var app = new Vue({
                       target="_blank">
                      Render Tracker
                    </a>
+                   <br>
+                   <a v-on:click="player.save_video()">Save to cloud</a>
+                   <span class="shortcut-hint">Ctrl+S</span>
                  </div>
                </div>
                <player ref="player" v-bind:settings="settings"></player>
@@ -161,5 +174,6 @@ var app = new Vue({
     });
 
     this.sequencer = this.$refs["player"].$refs["sequencer"];
+    this.player = this.$refs["player"];
   }
 })
