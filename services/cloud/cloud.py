@@ -12,6 +12,8 @@ import random
 import time
 import requests
 import jwt
+import zmq
+
 from utils import *
 
 from renders import renders
@@ -36,6 +38,8 @@ USERS_FOLDER=os.path.expanduser("~/lattefx-users/")
 if not os.path.exists(USERS_FOLDER):
     os.mkdir(USERS_FOLDER)
 
+
+render_queue = None
 
 @app.route("/get_storage_info", methods=['GET', 'OPTIONS'])
 def get_storage_info():
@@ -184,13 +188,14 @@ def make_audio_media(vidid):
 
     folder = os.path.dirname(video_files[0])
 
-    render_audio = subprocess.Popen(
-        ["ffmpeg", "-i", video_files[0],
-         "-nostdin",
-         "-y",
-         "-vn",
-         "-acodec", "copy",
-         folder + "/audio.mp4"
+    render_audio = subprocess.Popen([
+        "cpulimit", "-l", "85", # Leave some cpu time for web server
+        "ffmpeg", "-i", video_files[0],
+        "-nostdin",
+        "-y",
+        "-vn",
+        "-acodec", "copy",
+        folder + "/audio.mp4"
     ], cwd=folder)
     render_audio.wait()
 
@@ -298,7 +303,7 @@ def render_video():
     # Create render meta for new renders
     render_meta = json.dumps({
         "name": project_name,
-        "status": "rendering"
+        "status": "in queue"
     })
 
     with open(render_meta_path, "w") as f:
@@ -321,6 +326,24 @@ def render_video():
             "-ac -screen 0 1920x1080x24"
         ] + command
 
-    render_preview = subprocess.Popen(command, cwd=render_folder)
+    message = json.dumps({
+        "command": command,
+        "render_folder": render_folder
+    })
+
+    render_queue.send_string(message)
 
     return json.dumps({"status": "ok", "render_id": render_id})
+
+def start_zmq_server():
+    global render_queue
+
+    context = zmq.Context()
+    render_queue = context.socket(zmq.PUB)
+
+    # When we go distributed, we can change this to tcp
+    # and diligently authenticate our clients/servers
+    # for the moment, we use ipc (inter-process comm.)
+    render_queue.bind("ipc:///tmp/render_queue")
+
+start_zmq_server()

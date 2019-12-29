@@ -304,7 +304,7 @@ Vue.component('player', {
           app.show_saved_message = false;
           let message =
               "Your video is processing and you'll be notified" +
-              "by email once it's ready." +
+              "by email once it's ready. " +
               "Expect around 15 min for short videos!";
 
           utils.flag_message(message, {
