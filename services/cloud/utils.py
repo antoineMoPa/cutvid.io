@@ -161,7 +161,14 @@ def consume_render_credits(user_id, count):
     """
 
     auth_port = settings['auth_port']
-    auth_url = "http://127.0.0.1:" + str(auth_port) + "/auth"
+
+    auth_url = "http://127.0.0.1:" + str(auth_port)
+
+    if settings["variant_name"] == "prod":
+        auth_url += "/auth/"
+    elif settings["variant_name"] == "next":
+        auth_url += "/auth-next/"
+
     url = auth_url + "/consume_render_credits/" + str(user_id) + "/" + str(count)
 
     request = requests.get(url=url)
