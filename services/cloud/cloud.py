@@ -310,7 +310,14 @@ def render_video():
         f.write(render_meta)
 
     auth_port = settings['auth_port']
-    notify_url = "http://127.0.0.1:" + str(auth_port) + "/auth/notify_render/" + str(user_id) + "/" + render_id
+    auth_url = "http://127.0.0.1:" + str(auth_port)
+
+    if settings["variant_name"] == "prod":
+        auth_url += "/auth/"
+    elif settings["variant_name"] == "next":
+        auth_url += "/auth-next/"
+
+    notify_url = auth_url + "notify_render/" + str(user_id) + "/" + render_id
 
     command = [
         "node", os.getcwd() + "/../renderer/render.js",
@@ -341,9 +348,14 @@ def start_zmq_server():
     context = zmq.Context()
     render_queue = context.socket(zmq.PUB)
 
+    if settings["variant_name"] == "prod":
+        ipc_channel = "ipc:///tmp/render_queue"
+    elif settings["variant_name"] == "next":
+        ipc_channel = "ipc:///tmp/render_queue_next"
+
     # When we go distributed, we can change this to tcp
     # and diligently authenticate our clients/servers
     # for the moment, we use ipc (inter-process comm.)
-    render_queue.bind("ipc:///tmp/render_queue")
+    render_queue.bind(ipc_channel)
 
 start_zmq_server()

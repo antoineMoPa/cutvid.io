@@ -166,6 +166,4 @@ def consume_render_credits(user_id, count):
 
     request = requests.get(url=url)
 
-    print(request.text)
-
     return request.text == "success"

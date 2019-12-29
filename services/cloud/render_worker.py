@@ -7,6 +7,10 @@ Listens to render tasks and executes them with the renderer
 import json
 import zmq
 import subprocess
+import json
+
+settings = json.load(open('../lattefx/settings.json'))
+
 
 def update_status(render_folder):
     # Update status
@@ -27,7 +31,12 @@ def start_render_worker():
     context = zmq.Context()
     render_queue = context.socket(zmq.SUB)
 
-    render_queue.connect("ipc:///tmp/render_queue");
+    if settings["variant_name"] == "prod":
+        ipc_channel = "ipc:///tmp/render_queue"
+    elif settings["variant_name"] == "next":
+        ipc_channel = "ipc:///tmp/render_queue_next"
+
+    render_queue.connect(ipc_channel);
 
     render_queue.setsockopt_string(zmq.SUBSCRIBE, "")
 
