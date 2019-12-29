@@ -5,7 +5,8 @@ var app = new Vue({
     navigator_supported: true,
     resources_menu_open: false,
     file_menu_open: false,
-    edit_menu_open: false
+    edit_menu_open: false,
+    sequencer: null
   },
   template: `<div>
                <header>
@@ -15,6 +16,9 @@ var app = new Vue({
                  <div class="app-menu-links">
                    <a href="#" v-on:click="toggle_menu('file_menu_open')">
                      File
+                   </a>
+                   <a href="#" v-on:click="toggle_menu('edit_menu_open')">
+                     Edit
                    </a>
                    <a href="#" v-on:click="toggle_menu('resources_menu_open')">
                      Resources
@@ -35,14 +39,28 @@ var app = new Vue({
                       target="_blank"
                       class="external-link">Free stock videos - Pexels</a>
                  </div>
+                 <div class="application-menu edit-menu" v-if="edit_menu_open">
+                   <p>Sequencer</p>
+                   <a v-on:click="sequencer.select_none()">Clear Selection</a><br>
+                   <a v-on:click="sequencer.select_all()">Select All</a><br>
+                   <a v-on:click="sequencer.select_all_after_cursor()">
+                     Select All After Cursor
+                   </a><br>
+                   <a v-on:click="sequencer.select_all_before_cursor()">
+                     Select All Before Cursor
+                   </a><br>
+                   <a v-on:click="sequencer.select_inverse()">
+                     Invert Selection
+                   </a>
+                 </div>
                  <div class="application-menu file-menu"
                     v-if="file_menu_open && settings != null">
                    <a v-on:click="browse_projects">
-                     Your projects
+                     Your Projects
                    </a><br>
                    <a v-bind:href="settings.app + '/renders'"
                       target="_blank">
-                     Render tracker
+                     Render Tracker
                    </a>
                  </div>
                </div>
@@ -71,7 +89,7 @@ var app = new Vue({
              </div>`,
   methods: {
     toggle_menu(menu_name){
-      let menus = ["resources_menu_open", "file_menu_open"];
+      let menus = ["resources_menu_open", "file_menu_open", "edit_menu_open"];
 
       if(this[menu_name]){
         this[menu_name] = false;
@@ -141,5 +159,7 @@ var app = new Vue({
         window.lattefx_settings = data;
       });
     });
+
+    this.sequencer = this.$refs["player"].$refs["sequencer"];
   }
 })

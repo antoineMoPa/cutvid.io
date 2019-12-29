@@ -1641,6 +1641,10 @@ header .render-credits-count{
   left:240px;
 }
 
+.edit-menu{
+  left:245px;
+}
+
 .application-menu a{
   color:#333;
   width:100%;

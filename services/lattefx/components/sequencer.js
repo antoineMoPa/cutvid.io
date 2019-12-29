@@ -739,6 +739,44 @@ Vue.component('sequencer', {
 
       this.repositionSequences();
     },
+    select_all(){
+      this.selected = [];
+
+      for(let i = 0; i < this.sequences.length; i++){
+        this.selected.push(i);
+      }
+    },
+    select_none(){
+      this.selected = [];
+    },
+    select_all_after_cursor(){
+      this.selected = [];
+
+      for(let i = 0; i < this.sequences.length; i++){
+        if(this.sequences[i].from > this.time.time){
+          this.selected.push(i);
+        }
+      }
+    },
+    select_all_before_cursor(){
+      this.selected = [];
+
+      for(let i = 0; i < this.sequences.length; i++){
+        if(this.sequences[i].to < this.time.time){
+          this.selected.push(i);
+        }
+      }
+    },
+    select_inverse(){
+      let old_selected = JSON.parse(JSON.stringify(this.selected));
+      this.selected = [];
+
+      for(let i = 0; i < this.sequences.length; i++){
+        if(old_selected.indexOf(i) == -1){
+          this.selected.push(i);
+        }
+      }
+    },
     bindShortcuts(){
       let app = this;
       window.addEventListener("keydown", (e) => {
@@ -757,10 +795,7 @@ Vue.component('sequencer', {
           if(e.ctrlKey){
             e.preventDefault();
             e.stopPropagation();
-            this.selected = [];
-            for(let i = 0; i < this.sequences.length; i++){
-              this.selected.push(i);
-            }
+            this.select_all();
             return false;
           }
         }
