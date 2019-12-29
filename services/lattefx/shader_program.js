@@ -451,7 +451,7 @@ class ShaderProgram {
     // Handle videos/canvas texture
     if(isVideo){
       let video_blob_url = await options.video_media_getter();
-      console.log(video_blob_url);
+
       videoElement.addEventListener("timeupdate", function(){
         timeUpdate = true;
         checkReady();

@@ -1,35 +1,6 @@
 Vue.component('player', {
   template:
   `<div class="player">
-    <p class="project-links">
-      <span v-if="settings != null">
-        <a v-on:click="browse_projects">
-          Projects
-        </a>
-        <a v-bind:href="settings.app + '/renders'"
-           target="_blank">
-          Renders
-        </a>
-        <a href="#" v-on:click="resources_menu_open = !resources_menu_open">
-          Resources
-        </a>
-      </span>
-    </p>
-    <div class="application-menus">
-      <div class="application-menu resources-menu" v-if="resources_menu_open">
-        <p>LatteFx help</p>
-        <a href="/landing/lattefx_intro_pdf_dec_2019.pdf"
-           target="_blank">LatteFx intro PDF</a><br>
-        <br>
-        <p>Free content for your videos</p>
-        <a href="https://www.bensound.com/"
-           target="_blank"
-           class="external-link">Free music - Bensound</a><br>
-        <a href="https://www.pexels.com/videos/"
-           target="_blank"
-           class="external-link">Free stock videos - Pexels</a>
-      </div>
-    </div>
     <div v-bind:class="'settings-panel rendering-info-panel ' +
                        (player == null || !player.rendering?
                        'settings-panel-hidden':
@@ -139,9 +110,6 @@ Vue.component('player', {
       fps: 30,
       watermark: "",
       project_id: null,
-      resources_menu_open: false,
-      file_menu_open: false,
-      edit_menu_open: false
     };
   },
   props: ["settings"],
@@ -404,31 +372,6 @@ Vue.component('player', {
     },
     launch_template_selector(){
       this.$refs['sequencer'].launch_template_selector();
-    },
-    browse_projects(){
-      let cloud_url = this.settings.cloud;
-      let app = this;
-      this.$refs['projects'].open();
-      this.$refs['projects'].on_open_project = async (project) => {
-        let auth = window.auth;
-        let token = await auth.get_token();
-        app.project_id = project.id;
-
-        this.$refs['sequencer'].loading_scene = true;
-
-        await this.$nextTick();
-
-        let req = await fetch(cloud_url + "/project/" + project.id, {
-          headers: {
-            'Authorization': 'Bearer ' + token,
-          }
-        });
-        let data = await req.json();
-
-        this.$refs['sequencer'].loading_scene = true;
-        app.unserialize(data);
-        this.$refs['sequencer'].loading_scene = false;
-      };
     }
   },
   watch: {
@@ -459,12 +402,5 @@ Vue.component('player', {
     this.switch_panel(0);
     this.$refs['panel-selector'].switch_to(0);
     this.pause();
-
-    this.$nextTick(() => {
-      // Move project link to header
-      let links = document.querySelectorAll(".project-links")[0];
-      let header = document.querySelectorAll("header")[0];
-      header.appendChild(links);
-    });
   },
 });

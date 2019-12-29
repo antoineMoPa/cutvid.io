@@ -202,7 +202,7 @@ a:visited{
   position: static;
 }
 
-.project-links{
+.app-menu-links{
   line-height: 50px;
   margin:0;
   position:absolute;
@@ -210,14 +210,14 @@ a:visited{
   top:0;
 }
 
-.project-links a{
+.app-menu-links a{
   color: #aaa;
   cursor: pointer;
   padding: 0 20px;
   display: inline-block;
 }
 
-.project-links a:hover{
+.app-menu-links a:hover{
   color: #fff;
   background:rgba(255,255,255,0.02);
 }
@@ -1617,7 +1617,7 @@ header .render-credits-count{
 
 .application-menus{
   position:absolute;
-  top:5px;
+  top:60px;
   z-index:2000;
 }
 
@@ -1630,10 +1630,15 @@ header .render-credits-count{
   padding:10px;
   width:300px;
   text-align:left;
+  line-height:30px;
+}
+
+.file-menu{
+  left:175px;
 }
 
 .resources-menu{
-  left:380px;
+  left:240px;
 }
 
 .application-menu a{

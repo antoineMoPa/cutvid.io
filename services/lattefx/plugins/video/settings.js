@@ -160,8 +160,6 @@
             this.trimBefore += diff;
           },
           async media_getter(){
-            console.log(this);
-
             if (this.video_media_id != "") {
 
               let settings = window.lattefx_settings;
@@ -179,7 +177,6 @@
             } else if (this.video != "") {
               return this.video;
             } else if(this.videoFile != null){
-              console.log(this.videoFile);
               let reader = new FileReader();
               let url = await reader.readAsDataURL(this.videoFile);
               return url;
