@@ -218,8 +218,14 @@ function validate_file_has_audio(file_path){
   let verify_audio_command = "ffprobe -i " + file_path + " -show_streams -select_streams a -loglevel fatal";
 
   let has_audio = false;
+  let out = "";
 
-  let out = exec_sync(verify_audio_command);
+  try{
+    out = exec_sync(verify_audio_command);
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 
   if(out.indexOf("index=") != -1){
     return true;
@@ -258,6 +264,10 @@ function build_ffmpeg_audio_args(player){
     let trim_before = parseFloat(sequence['trimBefore']);
 
     if(sequence['digest'] == undefined){
+      continue;
+    }
+
+    if(sequence['digest'] == ""){
       continue;
     }
 
