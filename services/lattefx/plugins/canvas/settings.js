@@ -304,6 +304,7 @@
           this.listen_modified();
           this.listen_scaling();
           this.listen_selection();
+          this.on_resize();
         }
       }
     };

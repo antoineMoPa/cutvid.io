@@ -1633,6 +1633,10 @@ header .render-credits-count{
   line-height:30px;
 }
 
+.application-menu hr{
+  color:#f0f0f0;
+}
+
 .file-menu{
   left:175px;
 }
