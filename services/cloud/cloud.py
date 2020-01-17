@@ -326,20 +326,10 @@ def render_video():
         notify_url
     ]
 
-    if settings["use_xvfb"]:
-        command = [
-            "xvfb-run",
-            "-e", "/dev/stdout",
-            "-s",
-            "-ac -screen 0 1920x1080x24"
-        ] + command
-
     message = json.dumps({
         "command": command,
         "render_folder": render_folder
     })
-
-    print("Executing: " + str(command))
 
     render_queue.send_string(message)
 
