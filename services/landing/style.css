@@ -61,6 +61,12 @@ input{
   margin-bottom: 30px;
 }
 
+.pricing-hero p.description{
+  color:#fff;
+  font-size:20px;
+  margin-bottom:20px;
+}
+
 .pricing-hero .premium-effects{
   font-size: 20px;
   color: #fff;
@@ -76,7 +82,14 @@ input{
   vertical-align:top;
   border-radius:5px;
   margin:15px;
-  height: 490px;
+  height: 540px;
+  position:relative;
+}
+
+.pricing-card .button{
+  position:absolute;
+  bottom:20px;
+  left:calc(50% - 50px);
 }
 
 .pricing-card p{
@@ -243,7 +256,7 @@ input{
 
 .features-list li:nth-child(2n+1){
   background:#ddd;
-  color:#111;
+  color:#000;
 }
 
 
