@@ -339,6 +339,8 @@ def render_video():
         "render_folder": render_folder
     })
 
+    print("Executing: " + str(command))
+
     render_queue.send_string(message)
 
     return json.dumps({"status": "ok", "render_id": render_id})
