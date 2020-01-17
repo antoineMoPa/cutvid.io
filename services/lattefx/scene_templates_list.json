@@ -1,10 +1,4 @@
 {
-  "Lattefx Intro": {
-    "lattefx_intro": {
-      "description": "A quick introduction to Lattefx editing",
-      "date": "Thu Oct 30 10:00:00 EDT 2019"
-    }
-  },
   "Titles":{
     "simple_title": {
       "description": "A title bar with text with custom color",

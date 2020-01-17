@@ -98,16 +98,6 @@ Vue.component('sequencer', {
       </div>
 
       <div class="sequencer-buttons-container" v-if="dragging == null">
-        <button v-on:click="addSequenceAndDrag"
-                class="add-button">
-          <img src="icons/feather/plus.svg" title="new blank sequence" width="20"/>
-          New sequence
-        </button>
-        <button v-on:click="launch_template_selector()"
-                class="add-button">
-          <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
-          From template
-        </button>
         <button v-on:click="split_at_cursor"
                 class="split-button">
           <img src="icons/feather/scissors.svg" title="cut sequence at selected time" width="20"/>
@@ -126,6 +116,11 @@ Vue.component('sequencer', {
         <button v-on:click="zoom_out()" class="tool-button" title="shortcut: Shift + Mousewheel">
           <img src="icons/feather/minus.svg" width="20"/>
           Zoom out
+        </button>
+        <button v-on:click="launch_template_selector()"
+                class="add-button">
+          <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
+          Templates
         </button>
       </div>
       <scene-template-selector

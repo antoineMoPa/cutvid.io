@@ -26,10 +26,6 @@
   <label>Offset the video X, Y</label>
   <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.01">
   <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.01">
-  <label>Trim Before (seconds)<br>
-    <input v-model="trimBefore" step="any" min="0" type="number">
-  </label>
-
   <label>Mute sound
     <input v-model="muted" type="checkbox">
   </label>

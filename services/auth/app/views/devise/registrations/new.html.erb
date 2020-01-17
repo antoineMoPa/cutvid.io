@@ -1,15 +1,25 @@
 <section class="section">
   <div class="container">
     <h2 class="title">Sign up</h2>
-    
+    <div class="content">
+      <p>
+		Why sign up?
+      </p>
+      <ul>
+		<li>Purchase render credits.</li>
+		<li>Be notified by email when a video is ready.</li>
+		<li>Save video projects for later.</li>
+		<li>Get 2 free render credits per weeks!</li>
+      </ul>
+	</div>
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
-    
+
     <div class="field">
       <%= f.label :email %><br />
       <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
     </div>
-    
+
     <div class="field">
       <%= f.label :password %>
       <% if @minimum_password_length %>
@@ -17,14 +27,14 @@
       <% end %><br />
       <%= f.password_field :password, autocomplete: "new-password" %>
     </div>
-    
+
     <div class="field">
       <%= f.label :password_confirmation %><br />
       <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
     </div>
-    
+
     <div class="actions">
-      <%= f.submit "Sign up", class: "button" %><br><br><br><br>
+      <%= f.submit "Sign up", class: "button is-link" %><br><br><br><br>
     </div>
     <% end %>
 </section>

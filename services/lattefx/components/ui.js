@@ -22,29 +22,12 @@ Vue.component('ui', {
     </p>
     <div class="ui-buttons-right">
       <a class="ui-button buy-button button-1"
-         v-if="!player.rendering && !show_render_options &&
+         v-if="!player.rendering &&
                player.sequences.length > 0"
-         v-on:click="show_render_options = true"
-         title="High Quality render">
+         v-on:click="renderHQ">
         <img class="feather-button"
              src="icons/feather/download.svg"/>
-        Download video
-      </a>
-      <a class="ui-button buy-button button-2"
-         v-if="!player.rendering && show_render_options"
-         v-on:click="renderLQ"
-         title="Quick render">
-        <img class="feather-button"
-             src="icons/feather/image.svg"/>
-        Draft render <span class="ui-price">FREE</span>
-      </a>
-      <a class="ui-button buy-button button-1"
-         v-if="!player.rendering && show_render_options"
-         v-on:click="renderHQ"
-         title="High Quality render">
-        <img class="feather-button"
-             src="icons/feather/image.svg"/>
-        Latte - <span class="ui-price">1 render credit</span>
+        Render &amp; Buy Video - <span class="ui-price">1 render credit</span>
       </a>
       <a v-if="player.rendering"
          v-on:click="cancelRender"
