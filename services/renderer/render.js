@@ -415,7 +415,7 @@ function cleanup(){
 
   let exec_sync = require('child_process').execSync;
 
-  let command = "rm -rf image-*.png media images-*";
+  let command = "rm -rf image-*.png images-*";
 
   const child = exec_sync(
       command,
