@@ -8,17 +8,9 @@
       "description": "Put an image at any place and size on the canvas.",
       "date": "Monday Jul 1 16:03:37 EDT 2019"
     },
-    "gfontTextLayer": {
-      "description": "Choose from 800+ Google WebFonts.",
-      "date": "Monday Jul 1 16:03:37 EDT 2019"
-    },
     "audio": {
       "description": "Upload an audio track.",
       "date": "Monday Jul 1 16:03:37 EDT 2019"
-    },
-    "mask": {
-      "description": "Use black&white images as a mask to create shapes.",
-      "date": "Mon Nov  4 22:53:12 EST 2019"
     },
     "canvas": {
       "description": "Place scale and rotate text & shapes anywhere on the canvas.",

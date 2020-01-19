@@ -60,31 +60,42 @@ utils.load_script = async function(url, callback){
   return new Promise(function (resolve, reject) {
     // Already loaded?
     if(url in utils.scripts){
-      resolve();
-
       if(utils.scripts[url].ready){
-
-        callback();
+        if(callback != undefined){
+          callback();
+        }
+        resolve();
       } else {
-        utils.scripts[url].callbacks.push(callback);
+        if(callback != undefined){
+          utils.scripts[url].callbacks.push(callback);
+        }
+        utils.scripts[url].promises.push(resolve);
       }
 
       return;
     }
 
-    utils.scripts[url] = {ready: false, callbacks: []};
+    utils.scripts[url] = {ready: false, callbacks: [], promises: []};
 
     let script = document.createElement("script");
 
     script.onload = function(){
+      // Call callbacks and resolve()'s
+      // to inform that script is loaded
       if(callback != undefined){
         utils.scripts[url].callbacks.push(callback);
-        utils.scripts[url].ready = true;
-        let cbs = utils.scripts[url].callbacks;
-        cbs.forEach((cb) => {cb()});
       }
-      resolve();
+
+      utils.scripts[url].promises.push(resolve);
+      utils.scripts[url].ready = true;
+
+      let cbs = utils.scripts[url].callbacks;
+      cbs.forEach((cb) => {cb()});
+
+      let promises = utils.scripts[url].promises;
+      promises.forEach((resolve) => {resolve()});
     };
+
     script.src = url + utils.randurl_param;
     document.body.appendChild(script);
   });

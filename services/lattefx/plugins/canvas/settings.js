@@ -297,7 +297,6 @@
         },
         async mounted(){
           await utils.load_script("./plugins/canvas/fabric.min.js");
-
           this.init_canvas();
           this.player.add_on_resize_listener(this.on_resize);
           this.load_initial_data();
