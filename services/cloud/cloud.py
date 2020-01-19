@@ -320,7 +320,6 @@ def render_video():
     notify_url = auth_url + "notify_render/" + str(user_id) + "/" + render_id
 
     command = [
-        "cpulimit", "-l", "85", # Leave some cpu time for web server
         "node", os.getcwd() + "/../renderer/render.js",
         "lattefx_file.lattefx",
         notify_url

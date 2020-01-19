@@ -62,6 +62,7 @@ module.exports = async function(api){
       let promise = new Promise(function(resolve, reject){
         get_pixels(file, function(err, pixels) {
           if(err) {
+            console.log("Error getting pixels from image");
             reject(err);
             return;
           }
