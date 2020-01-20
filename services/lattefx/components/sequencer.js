@@ -16,22 +16,23 @@ Vue.component('sequencer', {
              v-on:mouseup="height_dragger_up">
         </div>
         <div class="add-menu">
-          <button class="video-suggestion suggestion"
-                v-on:click="quick_add_sequence('video')">
-            <img src="icons/feather/film.svg" class="feather-icon" width="20"/>
-            Add video
-          </button>
           <button class="more-suggestion suggestion"
                   v-if="!add_menu_open"
                   v-on:click="add_menu_open = true">
             <img src="icons/feather/plus.svg" class="feather-icon" width="20"/>
-            More
+            Add
           </button>
           <button class="more-suggestion suggestion"
                   v-else
                   v-on:click="add_menu_open = false">
-            <img src="icons/feather/minus.svg" class="feather-icon" width="20"/>
-            Less
+            <img src="icons/feather/x.svg" class="feather-icon" width="20"/>
+            Close
+          </button>
+          <button class="more-suggestion suggestion"
+                v-if="add_menu_open"
+                v-on:click="quick_add_sequence('video')">
+            <img src="icons/feather/film.svg" class="feather-icon" width="20"/>
+            Video
           </button>
           <button class="more-suggestion suggestion"
                   v-if="add_menu_open"
@@ -50,6 +51,12 @@ Vue.component('sequencer', {
                   v-on:click="quick_add_sequence('canvas')">
             <img src="icons/feather/edit.svg" class="feather-icon" width="20"/>
             Canvas
+          </button>
+          <button class="more-suggestion suggestion"
+                  v-if="add_menu_open"
+                  v-on:click="quick_add_sequence(null)">
+            <img src="icons/feather/plus.svg" class="feather-icon" width="20"/>
+            Other
           </button>
         </div>
         <div
@@ -126,6 +133,7 @@ Vue.component('sequencer', {
       <scene-template-selector
         ref="scene-template-selector"
         v-on:start_loading="loading_scene = true"/>
+      <effects-selector ref="effectSelector"/>
     </div>
   `,
   props: ["player", "scenes"],
@@ -165,7 +173,14 @@ Vue.component('sequencer', {
         add_layer = 3;
       }
 
-      this.addSequence(type, add_at, add_layer);
+      if(type == null){
+        // Pick from plugins list
+        await this.$refs['effectSelector'].open(function(effectName){
+          this.addSequence(effectName, add_at, add_layer);
+        }.bind(this));
+      } else {
+        this.addSequence(type, add_at, add_layer);
+      }
 
       await this.$nextTick();
 

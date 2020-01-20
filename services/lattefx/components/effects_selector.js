@@ -38,18 +38,25 @@ Vue.component('effects-selector', {
       }
     },
     open(callback) {
-      let app = this;
-      this.callback = callback;
-      this.$el.classList.toggle("hidden");
+      return new Promise(function(resolve, reject) {
+        let app = this;
 
-      let random = Math.random();
+        this.callback = function(effect){
+          callback(effect);
+          resolve(effect);
+        }.bind(this);
 
-	  fetch("plugins_list.json?r="+random).then(function(resp){
-	    resp.json()
-		  .then(function(data){
-		    app.categories = data;
-		  });
-	  });
+        this.$el.classList.toggle("hidden");
+
+        let random = Math.random();
+
+	    fetch("plugins_list.json?r="+random).then(function(resp){
+	      resp.json()
+		    .then(function(data){
+		      app.categories = data;
+		    });
+	    });
+      }.bind(this));
     },
     is_date_new(_date){
       let date = new Date(_date).getTime();
