@@ -22,7 +22,7 @@ Vue.component('sequencer', {
             <img src="icons/feather/plus.svg" class="feather-icon" width="20"/>
             Add
           </button>
-          <button class="more-suggestion suggestion"
+          <button class="more-suggestion suggestion close-button"
                   v-else
                   v-on:click="add_menu_open = false">
             <img src="icons/feather/x.svg" class="feather-icon" width="20"/>

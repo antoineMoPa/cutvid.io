@@ -113,8 +113,6 @@ input{
 
 .pricing-card .button{
   margin-top:20px;
-  background: linear-gradient(#9c5200,#c96800);
-  box-shadow: 0 0 8px rgba(0,0,0,0.5);
   border-top: none;
   transition:all 0.2s;
 }
@@ -195,6 +193,11 @@ input{
 .navbar a{
   color: #fff;
   margin-right: 20px;
+}
+
+link:hover, a.navbar-item.is-active, a.navbar-item:hover {
+  background-color: #111;
+  color: #fff;
 }
 
 .pricing-card.basic{

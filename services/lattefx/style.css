@@ -805,6 +805,7 @@ header .render-credits-count{
 .sequencer .suggestion .feather-icon{
   vertical-align:middle;
   margin-top: -2px;
+  margin-right: 5px;
 }
 
 .sequencer .add-menu{
@@ -816,19 +817,24 @@ header .render-credits-count{
 
 .sequencer .suggestion{
   position:static;
-  border:1px dashed #fff;
   color:#fff;
   line-height:24px;
   height:24px;
   font-size:11px;
   cursor:pointer;
-  width:220px;
   background:rgba(255,255,255,0.1);
   opacity:0.4;
+  display: block;
+  margin-top: 3px;
 }
 
 .sequencer .more-suggestion{
-  width:100px;
+  width:80px;
+}
+
+.sequencer .close-button{
+  border:none;
+  background:#000;
 }
 
 .sequencer .sequence.selected{
@@ -1218,6 +1224,7 @@ header .render-credits-count{
   top:0;
   left:0;
   z-index:2000;
+  background:rgba(255,255,255,0.2);
 }
 
 .canvas-plugin-buttons{
