@@ -400,7 +400,7 @@ Vue.component('player', {
       this.user_info = await this.$refs.auth.user_info;
       // Verify sign in as it could have timed out
       if(this.user_info == null){
-        this.show_login();
+        this.$refs.auth.show_login();
         app.saving = false;
       } else{
         let cloud_url = this.settings.cloud;
