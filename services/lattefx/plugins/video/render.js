@@ -27,36 +27,36 @@ module.exports = async function(api){
 
     let video_media_id = validate_media_id(sequence.effect.video_media_id);
 
-    if (!fs.existsSync("./images-"+video_media_id)){
-      fs.mkdirSync("./images-"+video_media_id);
-    }
-
     let trim_before = parseFloat(effect.trimBefore);
     let time_from = parseFloat(sequence.from);
     let time_to = parseFloat(sequence.to);
     let duration = time_to - time_from;
     let fps = api.fps;
 
-    let command = [
-      "ffmpeg",
-      "-ss " + trim_before,
-      "-i ./media/" + video_media_id,
-      "-nostdin",
-      "-y",
-      "-start_number 0",
-      "-frames:v " + parseInt(Math.ceil(fps * duration)),
-      "-r " + fps,
-      "-compression_level 100",
-      "./images-" + video_media_id + "/image-%06d.png"];
+    if (!fs.existsSync("./images-"+video_media_id)){
+      fs.mkdirSync("./images-"+video_media_id);
 
-    const child = exec_sync(command.join(" "),
-                            (error, stdout, stderr) => {
-                             console.log(`stdout: ${stdout}`);
-                              console.log(`stderr: ${stderr}`);
-                              if (error !== null) {
-                                console.log(`exec error: ${error}`);
-                              }
-                            });
+      let command = [
+        "ffmpeg",
+        "-ss " + trim_before,
+        "-i ./media/" + video_media_id,
+        "-nostdin",
+        "-y",
+        "-start_number 0",
+        "-frames:v " + parseInt(Math.ceil(fps * duration)),
+        "-r " + fps,
+        "-compression_level 100",
+        "./images-" + video_media_id + "/image-%06d.png"];
+
+      const child = exec_sync(command.join(" "),
+                              (error, stdout, stderr) => {
+                               console.log(`stdout: ${stdout}`);
+                                console.log(`stderr: ${stderr}`);
+                                if (error !== null) {
+                                  console.log(`exec error: ${error}`);
+                                }
+                              });
+    }
 
     async function load_image(file){
       let promise = new Promise(function(resolve, reject){

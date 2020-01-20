@@ -761,6 +761,7 @@ class ShaderPlayerWebGL {
         // Render to buffer
         if (layer < maxLayer) {
           gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer[this.PREVIOUS_LAYER_0 +(layerCounter % 3)]);
+          gl.clear(gl.DEPTH_BUFFER_BIT);
         } else {
           // Render to screen
           // null = screen
