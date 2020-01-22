@@ -3,3 +3,4 @@ waitress
 flask
 requests
 zmq
+watchdog
