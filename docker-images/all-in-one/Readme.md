@@ -17,6 +17,6 @@ I generally don't recommend trying to code in the docker image as it is generall
 
 # Running:
 
-    docker run --network="host" -it lattefx-all-in-one .
+    docker run --network="host" -it lattefx-all-in-one
 
 You can then visit http://127.0.0.1:8000/app/, make videos, user accounts and renders.
