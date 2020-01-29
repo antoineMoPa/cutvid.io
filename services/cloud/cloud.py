@@ -63,6 +63,9 @@ def get_storage_info():
 
     available_storage = 100 * 1e6
 
+    if token['premium_tier'] == 1:
+        available_storage = 1.024 * 1e9
+
     response = {
         "used_bytes": bytecount,
         "available_bytes": available_storage,

@@ -6,32 +6,70 @@ Vue.component('buy-render-credits', {
   </div>
   <h3>
     <img src="icons/feather-dark/image.svg" width="30"/>
-    Buy render credits
+    Buy Render Credits
   </h3>
-  <p class="product has-new-item">
-    5 Lattefx render credits - USD $ 4.50
-    <span class="new-item-indicator">NEW</span>
+  <h4>What is a render credit?</h4>
+  <p>1 render credit allows you to render 1 video with a maximum duration of 5 minutes.</p>
+  <div v-if="open_at_start" class="not-ready-to-buy">
+    <h4>Not ready to buy?</h4>
+    <p>
+      You can create, edit and save projects after closing this popup.
+      <br/>
+      When you are ready to purchase a render,
+      simply click the "Render Credits" purple button at the top right to open it back.
+    </p>
+  </div>
+  <h4>Ready to buy?</h4>
+  <p>We don't store nor handle any credit card details ourselves, we use PayPal as a secure payment provider.
+    <br/>
+    For any questions, problems, comments, refunds, feedback on Lattefx, please contact the owner directly at
+    <span class="owner-email">{{email()}}</span>
   </p>
+  <label class="product">
+    <input type="radio" name="purchaseItem" value="2credits" v-model="purchaseItem">
+    2 Lattefx Render Credits - USD $ 2.50
+  </label>
+  <br/>
+  <label class="product">
+    <input type="radio" name="purchaseItem" value="5credits" v-model="purchaseItem">
+    5 Lattefx Render Credits - USD $ 4.50
+  </label>
+  <br/>
+  <label class="product">
+    <input type="radio" name="purchaseItem" value="premium" v-model="purchaseItem">
+    1 Year Pro Subscription - USD $ 42.00<br/>
+    <ul class="features-list">
+      <li>
+        Account topped up to 5 render credits per week.
+      </li>
+      <li>
+        Up to 1GB project and render storage for 1 year.
+      </li>
+      <li>
+        Cancel anytime.
+      </li>
+    </ul>
+  </label>
   <p>
     Unused render credits stay in your account for as long as you don't use them.
   </p>
+  <p>
+    For pro subscriptions, your render credits are not accumulative. Render credits are filled to your weekly amount every week.
+  </p>
   <br/>
-  <div class="payment-container">
+  <div class="payment-container paypal-container">
     <!-- Paypal stuff goes here -->
   </div>
   <p v-if="purchased" class="thank-you">
     Thank you for your purchase!<br>
-  </p>
-  <p class="thank-you">
-    For any questions, comments, refunds, feedback on Lattefx, please contact the owner directly at
-    <span class="owner-email">{{email()}}</span><br>
-    <br>
   </p>
 </div>
 `,
   data: function(){
     return {
       purchased: false,
+      purchaseItem: null,
+      open_at_start: false,
       token: ""
     };
   },
@@ -47,7 +85,7 @@ Vue.component('buy-render-credits', {
       // If you know how to remove this,
       // maybe you deserve your download
       // But keep in mind that paying allows
-      // me to develop features & host LatteFx
+      // me to develop features & host Lattefx
       // You can also pay me by suggesting features
       // And improvement at my email address!
       return false;
@@ -67,14 +105,45 @@ Vue.component('buy-render-credits', {
 
       paypal.Buttons({
         createOrder: function(data, actions) {
+
+          let product_price = {
+            "2credits": {
+              "description": "2x Render Credits",
+              "value": "2.50"
+            },
+            "5credits": {
+              "description": "5x Render Credits",
+              "value": "4.50"
+            },
+            "premium": {
+              "description": "Premium Yearly Subscription",
+              "value": "42.00"
+            }
+          };
+
           // Set up the transaction
           return actions.order.create({
             purchase_units: [{
               currency_code: "USD",
-              description: "5x Render Credits",
+              description: product_price[app.purchaseItem]["description"],
               amount: {
-                value: "4.50"
-              }
+                value: product_price[app.purchaseItem]["value"],
+                breakdown: {
+                  item_total: {
+                    currency_code: "USD",
+                    value: product_price[app.purchaseItem]["value"]
+                  },
+                }
+              },
+              items: [{
+                name: product_price[app.purchaseItem]["description"],
+                sku: app.purchaseItem,
+                unit_amount: {
+                  currency_code: "USD",
+                  value: product_price[app.purchaseItem]["value"]
+                },
+                quantity: "1"
+              }]
             }]
           });
           fetch("/stats/lattefx_app_paypal_order_created/");
@@ -93,21 +162,47 @@ Vue.component('buy-render-credits', {
       let auth_url = this.settings.auth;
       let url = auth_url + "/validate_render_credit_order/" + order_id;
       let req = await fetch(url);
-      let text = await req.text();
+      let resp = await req.json();
 
-      if(text == "success"){
+      if(resp.success == true){
         this.$emit("bought");
-        utils.flag_message("You have purchased 5 render credits!");
+        utils.flag_message(resp.message);
         this.$el.classList.add("hidden");
       } else {
-        utils.real_bad_error("Error in payment.");
+        utils.real_bad_error("Error in payment. " + resp.message);
       }
     }
   },
   watch: {
+    settings(){
+      if(this.flow_started){
+        return;
+      }
+      this.flow_started = true;
+
+      let url = window.location.href;
+
+      if(url.indexOf("?plan_") != -1){
+        this.open_at_start = true;
+
+        if(url.indexOf("plan_2credits") != -1){
+          this.purchaseItem = "2credits";
+          this.show();
+        }
+        if(url.indexOf("plan_5credits") != -1){
+          this.purchaseItem = "5credits";
+          this.show();
+        }
+        if(url.indexOf("plan_premium") != -1){
+          this.purchaseItem = "premium";
+          this.show();
+        }
+      }
+    }
   },
   mounted(){
     let app = this;
+    this.flow_started = false;
 
     document.body.append(this.$el);
 

@@ -108,8 +108,9 @@ Vue.component('player', {
         v-on:renderHQ="makeHQ"
         v-on:renderLQ="makeLQ"
         v-on:cancelRender="onCancelRender"
+        v-bind:user_info="user_info"
         v-bind:player="player"/>
-    <auth ref="auth" v-bind:settings="settings"/>
+    <auth ref="auth" v-bind:settings="settings" v-on:user_info="on_user_info"/>
     <projects ref="projects" v-bind:settings="settings"/>
   </div>`,
   data(){
@@ -151,6 +152,9 @@ Vue.component('player', {
       this.player.set_height(this.height);
       this.aspect = parseFloat(this.width) / parseFloat(this.height);
       this.on_resize();
+    },
+    on_user_info(data){
+      this.user_info = data;
     },
     on_resize(){
       let app = this;
@@ -254,7 +258,7 @@ Vue.component('player', {
       let user_info = await this.$refs.auth.get_user_info();
 
       if(user_info == null){
-        utils.flag_message("You must sign in to render HQ videos!", {
+        utils.flag_message("You must sign in to render videos!", {
           button_message: "Sign in",
           button_action: function(){
             app.$refs.auth.show_login();
@@ -397,7 +401,9 @@ Vue.component('player', {
       app.saving = true;
 
       await this.$nextTick();
-      this.user_info = await this.$refs.auth.user_info;
+
+      let user_info = await this.$refs.auth.get_user_info();
+
       // Verify sign in as it could have timed out
       if(this.user_info == null){
         this.$refs.auth.show_login();

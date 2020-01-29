@@ -43,7 +43,7 @@
   margin-bottom: 1.5rem;
 }
 
-.hero-video,.is-overlay {
+.hero-video {
   bottom: 0;
   left: 0;
   position: absolute;
@@ -51,7 +51,7 @@
   top: 0;
 }
 
-.button,.select select {
+.button {
   -moz-appearance: none;
   -webkit-appearance: none;
   align-items: center;
@@ -71,11 +71,11 @@
   vertical-align: top;
 }
 
-.button:active,.button:focus,.select select:active,.select select:focus {
+.button:active,.button:focus {
   outline: 0;
 }
 
-.button[disabled],.select select[disabled] {
+.button[disabled] {
   cursor: not-allowed;
 }
 
@@ -95,7 +95,7 @@ ul {
   list-style: none;
 }
 
-button,select {
+button {
   margin: 0;
 }
 
@@ -135,7 +135,7 @@ footer,section {
   display: block;
 }
 
-body,button,select {
+body,button {
   font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
@@ -173,10 +173,6 @@ code {
 img {
   height: auto;
   max-width: 100%;
-}
-
-small {
-  font-size: .875em;
 }
 
 span {
@@ -361,11 +357,6 @@ a.has-text-link:focus,a.has-text-link:hover {
   box-shadow: none;
 }
 
-.button.is-small {
-  border-radius: 2px;
-  font-size: .75rem;
-}
-
 .button.is-large {
   font-size: 1.5rem;
 }
@@ -501,135 +492,7 @@ a.has-text-link:focus,a.has-text-link:hover {
   list-style-type: square;
 }
 
-.content.is-small {
-  font-size: .75rem;
-}
-
 .content.is-large {
-  font-size: 1.5rem;
-}
-
-.select {
-  display: inline-block;
-  max-width: 100%;
-  position: relative;
-  vertical-align: top;
-}
-
-.select select {
-  background-color: #fff;
-  border-color: #dbdbdb;
-  color: #363636;
-  cursor: pointer;
-  display: block;
-  font-size: 1em;
-  max-width: 100%;
-  outline: 0;
-}
-
-.select select::-moz-placeholder {
-  color: rgba(54,54,54,.3);
-}
-
-.select select::-webkit-input-placeholder {
-  color: rgba(54,54,54,.3);
-}
-
-.select select:-moz-placeholder {
-  color: rgba(54,54,54,.3);
-}
-
-.select select:-ms-input-placeholder {
-  color: rgba(54,54,54,.3);
-}
-
-.select select:hover {
-  border-color: #b5b5b5;
-}
-
-.select select:active,.select select:focus {
-  border-color: #3273dc;
-  box-shadow: 0 0 0 .125em rgba(50,115,220,.25);
-}
-
-.select select[disabled] {
-  background-color: #f5f5f5;
-  border-color: #f5f5f5;
-  box-shadow: none;
-  color: #7a7a7a;
-}
-
-.select select[disabled]::-moz-placeholder {
-  color: rgba(122,122,122,.3);
-}
-
-.select select[disabled]::-webkit-input-placeholder {
-  color: rgba(122,122,122,.3);
-}
-
-.select select[disabled]:-moz-placeholder {
-  color: rgba(122,122,122,.3);
-}
-
-.select select[disabled]:-ms-input-placeholder {
-  color: rgba(122,122,122,.3);
-}
-
-.select select::-ms-expand {
-  display: none;
-}
-
-.select select[disabled]:hover {
-  border-color: #f5f5f5;
-}
-
-.select select:not([multiple]) {
-  padding-right: 2.5em;
-}
-
-.select select[multiple] {
-  height: auto;
-  padding: 0;
-}
-
-.select.is-primary:not(:hover)::after {
-  border-color: #00d1b2;
-}
-
-.select.is-primary select {
-  border-color: #00d1b2;
-}
-
-.select.is-primary select:hover {
-  border-color: #00b89c;
-}
-
-.select.is-primary select:active,.select.is-primary select:focus {
-  box-shadow: 0 0 0 .125em rgba(0,209,178,.25);
-}
-
-.select.is-link:not(:hover)::after {
-  border-color: #3273dc;
-}
-
-.select.is-link select {
-  border-color: #3273dc;
-}
-
-.select.is-link select:hover {
-  border-color: #2366d1;
-}
-
-.select.is-link select:active,.select.is-link select:focus {
-  box-shadow: 0 0 0 .125em rgba(50,115,220,.25);
-}
-
-.select.is-small {
-  border-radius: 2px;
-  font-size: .75rem;
-}
-
-.select.is-large {
   font-size: 1.5rem;
 }
 
@@ -642,10 +505,6 @@ a.has-text-link:focus,a.has-text-link:hover {
 
 .label:not(:last-child) {
   margin-bottom: .5em;
-}
-
-.label.is-small {
-  font-size: .75rem;
 }
 
 .label.is-large {
@@ -820,10 +679,6 @@ a.list-item {
 
 .menu {
   font-size: 1rem;
-}
-
-.menu.is-small {
-  font-size: .75rem;
 }
 
 .menu.is-large {
@@ -1290,11 +1145,6 @@ a.list-item {
   color: #fff;
 }
 
-.hero.is-small .hero-body {
-  padding-bottom: 1.5rem;
-  padding-top: 1.5rem;
-}
-
 @media screen and (min-width:769px),print {
   .hero.is-large .hero-body {
     padding-bottom: 18rem;
@@ -1450,7 +1300,7 @@ h3 {
   vertical-align: top;
   border-radius: 5px;
   margin: 15px;
-  height: 540px;
+  height: 520px;
   position: relative;
 }
 
@@ -1463,11 +1313,6 @@ h3 {
 .pricing-card p {
   text-align: left;
   margin-top: 15px;
-}
-
-.pricing-card .how-to-purchase {
-  color: #000;
-  text-align: center;
 }
 
 .pricing-card h3 {
@@ -1483,22 +1328,6 @@ h3 {
   margin-top: 20px;
   border-top: none;
   transition: all 0.2s;
-}
-
-.pricing-card .feature {
-  font-size: 20px;
-  color: #333;
-  line-height: 50px;
-  font-size: 20px;
-  color: #333;
-  line-height: 60px;
-  background: linear-gradient(#fff,#ddd);
-  width: 240px;
-  margin-left: -24px;
-  margin-bottom: 20px;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #bbb;
-  box-shadow: 0 0 6px rgba(0,0,0,0.1);
 }
 
 .pricing-card .price-per-year {
@@ -1568,26 +1397,6 @@ link:hover,a.navbar-item:hover {
   color: #fff;
 }
 
-.pricing-card.basic {
-  border-top: 10px solid #aaa;
-  border-bottom: 10px solid #aaa;
-}
-
-.pricing-card.pro {
-  background: #fff;
-  margin-top: -5px;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  border-top: 10px solid #c96800;
-  border-bottom: 10px solid #c96800;
-}
-
-.pricing-card.business {
-  background: #fff;
-  border-top: 10px solid #333;
-  border-bottom: 10px solid #333;
-}
-
 .pricing-card .button {
   margin-top: 10px;
 }
@@ -1638,17 +1447,6 @@ link:hover,a.navbar-item:hover {
   margin-top: 30px;
   font-size: 20px;
   font-weight: 600;
-}
-
-p.small {
-  font-size: 13px;
-  color: #000;
-}
-
-p.subject-to-change {
-  margin-bottom: 40px;
-  margin-top: -30px;
-  color: #bbb;
 }
 
 @media all and (min-width:768px) {
@@ -1790,33 +1588,26 @@ p.subject-to-change {
         <p class="title">
           Pricing
         </p>
-        <p class="description">Rendering a video costs 1 render credit. You will be guided to purchase render credits when your account is empty.</p>
+        <p class="description">Rendering a video costs 1 render credit.</p>
         <div class="card-content pricing-card">
           <h3>Visitor</h3>
-          <p class="has-text-centered">Free Basic Account</p>
+          <p class="has-text-centered">2 Render Credits</p>
           <br>
           <div class="price">
-            <span class="the-price">Free</span>
+            <span class="dollar-sign">US$</span>
+            <span class="the-price">2.50</span>
+            <span class="per-what"></span>
           </div>
           <ul class="features-list">
             <li>
-              Cut &amp; mix videos.
+              One time purchase.
             </li>
             <li>
-              Add text and music.
-            </li>
-            <li>
-              Overlay images.
-            </li>
-            <li>
-              Save projects. (up to 100MB)
-            </li>
-            <li>
-              Topped-up to 2 render credits per week.
+              Purchased credits never expire.
             </li>
           </ul>
           <br>
-          <a class="button is-link" href="/app/">Launch!</a>
+          <a class="button is-link" href="/app/?plan=2credits">Launch!</a>
         </div>
         <div class="card-content pricing-card">
           <h3>Espresso</h3>
@@ -1829,106 +1620,39 @@ p.subject-to-change {
           </div>
           <ul class="features-list">
             <li>
-              One time payment.
-            </li>
-            <li>
-              Keep all features of free plan.
+              One time purchase.
             </li>
             <li>
               Purchased credits never expire.
             </li>
           </ul>
-          <p class="how-to-purchase">
-            Purchase credits anytime by clicking your
-            render credit count in the editor.
-          </p>
-          <a class="button is-link" href="/app/">Launch!</a>
+          <a class="button is-link" href="/app/?plan=5credits">Launch!</a>
         </div>
         <div class="card-content pricing-card">
           <h3>Latte</h3>
-          <p class="has-text-centered">Premium Monthly Subscription</p>
+          <p class="has-text-centered">Premium Subscription</p>
           <br>
+          <div class="price">
+            <span class="dollar-sign">US$</span>
+            <span class="the-price">42.00</span>
+            <span class="per-what">/month</span>
+          </div>
           <ul class="features-list">
             <li>
-              Monthly payment.
+              Account topped up to 5 render credits per week.
             </li>
             <li>
-              A bunch of render credits per week.
-            </li>
-            <li>
-              Increased storage space.
+              Up to 1GB project and render storage for 1 year.
             </li>
           </ul>
-          <p class="has-text-centered">- Available later this year -</p>
+          <a class="button is-link" href="/app/?plan=premium">Launch!</a>
         </div>
         <br><br>
-        <!--
-             <p class="title">
-             Subscription plans*
-             </p>
-             <p class="small subject-to-change">
-             * subject to change
-             </p>
-             <div class="card-content pricing-card basic">
-             <h3>Basic</h3>
-             <div class="price">
-             <span class="dollar-sign">$</span>
-             <span class="the-price">9</span>
-             <span class="per-what">/month</span>
-             </div>
-             <p class="price-per-year">
-             (108/year)
-             </p>
-             <p class="feature">
-             <b>100</b> render seconds
-             </p>
-             <p>
-             Ideal for small business owners and independent video makers.
-             </p>
-             <a class="button is-link ">Select Plan</a>
-             </div>
-             <div class="card-content pricing-card pro">
-             <h3>Pro</h3>
-             <div class="price">
-             <span class="dollar-sign">$</span>
-             <span class="the-price">14</span>
-             <span class="per-what">/month</span>
-             </div>
-             <p class="price-per-year">
-             ($168/year)
-             </p>
-             <p class="feature">
-             <b>200</b> render seconds
-             </p>
-             <p>
-             Ideal for power users who need more render time.
-             </p>
-             <a class="button is-link ">Select Plan</a>
-             </div>
-             <div class="card-content pricing-card business">
-             <h3>Business</h3>
-             <div class="price">
-             <span class="dollar-sign">$</span>
-             <span class="the-price">24</span>
-             <span class="per-what">/month</span>
-             </div>
-             <p class="price-per-year">
-             ($288/year)
-             </p>
-             <p class="feature">
-             <b>400</b> render seconds
-             </p>
-             <p>
-             Ideal for small teams who render many videos every month.
-             </p>
-             <a class="button is-link ">Select Plan</a>
-             </div>
-        -->
-        <!-- wait till I have email
-             <div class="premium-effects">
-             Premium exclusive effects development : <a class="button is-link ">contact-us!</a>
-             </div>
-        -->
+
+        <p class="description">You will be guided to purchase render credits when your account is empty.</p>
+        <p class="description">Free accounts can use up to 100MB of renders and project storage.</p>
+        <p class="description">You can edit videos and create projects freely but you will need to pay to render your video.</p>
+
       </div>
     </section>
 

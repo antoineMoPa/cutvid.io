@@ -20,6 +20,9 @@ Vue.component('auth', {
          <span v-if="user_info != null">
            signed in as {{user_info.email_summary}}
          </span>
+         <span v-if="user_info != null && user_info.premium_tier == 1" class="user-premium-tier">
+           PRO
+         </span>
          <span v-if="user_info != null" class="render-credits-count"
            title="Number of render credits in your account | click to buy more"
            v-on:click="shop_render_credits"
@@ -53,6 +56,7 @@ Vue.component('auth', {
       if(json.status == "logged_out"){
         return null;
       } else {
+        this.$emit("user_info", this.user_info);
         return json;
       }
     },
@@ -71,8 +75,14 @@ Vue.component('auth', {
 
       return token
     },
-    on_window_message(){
+    on_window_message(message){
       let app = this;
+
+      // Prevent infinite loop
+      if(this.user_info != null){
+        return;
+      }
+
       this.get_user_info().then((result) => {
         app.user_info = result;
       });
@@ -104,9 +114,9 @@ Vue.component('auth', {
     settings(){
       let app = this;
 
-      this.get_user_info().then((result) => {
+      this.get_user_info().then(function(result) {
         app.user_info = result;
-      });
+      }.bind(this));
     },
     user_info(){
       if(this.user_info != null){

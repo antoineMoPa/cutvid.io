@@ -163,6 +163,12 @@ a:visited{
   margin-bottom: -7px;
 }
 
+.ui .info{
+  display: inline;
+  color: #fff;
+  margin-right:10px;
+}
+
 .settings-panel .button-save{
   color: #fff;
 }
@@ -1092,12 +1098,37 @@ header .render-credits-count{
 }
 
 .buy-render-credits .product{
+  display:block;
   font-size: 18px;
   background: #f3f3f0;
   padding: 14px;
   border-radius: 10px;
   margin: 0 20px;
   color:#000;
+  transition:0.2s all;
+  display: block;
+}
+
+.buy-render-credits .product input{
+  margin-right: 12px;
+}
+
+.buy-render-credits .product ul{
+  margin-left: 20px;
+}
+
+.buy-render-credits h4{
+  margin-top:0;
+  margin-bottom:-5px;
+}
+
+.buy-render-credits p{
+  line-height: 25px;
+}
+
+.product:active, .product:hover{
+  background: #3af;
+  color: #fff;
 }
 
 .confirm-spend-credit .button-yes{
@@ -1366,6 +1397,12 @@ header .render-credits-count{
 
 /* BEGIN AUTH */
 
+.user-premium-tier{
+  color: #9c5200;
+  font-style: italic;
+  font-weight: 800;
+  margin-left:8px;
+}
 
 .auth-iframe{
   width: calc(100% - 80px);

@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_18_171051) do
+ActiveRecord::Schema.define(version: 2020_01_29_151217) do
+
+  create_table "user_purchases", force: :cascade do |t|
+    t.integer "user_id"
+    t.datetime "purchase_date"
+    t.string "purchased_premium_tier"
+    t.string "purchased_credit_amount"
+    t.string "order_id"
+    t.index ["user_id"], name: "index_user_purchases_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -25,6 +34,7 @@ ActiveRecord::Schema.define(version: 2019_12_18_171051) do
     t.integer "render_credits"
     t.integer "render_credits_per_week"
     t.datetime "render_credits_last_renew_date"
+    t.integer "premium_tier"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

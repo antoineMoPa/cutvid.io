@@ -23,12 +23,19 @@ Vue.component('ui', {
     <div class="ui-buttons-right">
       <a class="ui-button buy-button button-1"
          v-if="!player.rendering &&
+               user_info != null &&
                player.sequences.length > 0"
          v-on:click="renderHQ">
         <img class="feather-button"
              src="icons/feather/download.svg"/>
         Render &amp; Buy Video - <span class="ui-price">1 render credit</span>
       </a>
+      <p class="info" v-else-if="player.sequences.length == 0">
+        You must add at least 1 sequence to render a video.
+      </p>
+      <p class="info" v-else>
+        You must sign in to render a video.
+      </p>
       <a v-if="player.rendering"
          v-on:click="cancelRender"
          class="ui-button button-1 cancel-button">
@@ -45,7 +52,7 @@ Vue.component('ui', {
       show_render_options: false
     }
   },
-  props: ["player"],
+  props: ["player", "user_info"],
   methods: {
     play(){
       this.player.play();

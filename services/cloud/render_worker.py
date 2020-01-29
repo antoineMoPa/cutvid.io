@@ -54,8 +54,11 @@ def start_render_worker():
 
         xvfb_run = ['xvfb-run', '-s' , '-ac -screen 0 1920x1080x24']
 
+        if settings["use_xvfb"] == True:
+          command["command"] = xvfb_run + command["command"]
+
         render_command = subprocess.Popen(
-            xvfb_run + command["command"],
+            command["command"],
             cwd=command["render_folder"]
         )
 
