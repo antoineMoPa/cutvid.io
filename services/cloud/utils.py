@@ -114,7 +114,7 @@ def extract_media(project_folder):
 
           video_dataurl = effect[media_type+"FileB64"]
 
-          if video_dataurl == "":
+          if video_dataurl == "" or video_dataurl == {}:
               # Video already extracted
               continue
 
