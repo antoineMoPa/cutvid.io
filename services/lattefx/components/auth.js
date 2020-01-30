@@ -56,7 +56,7 @@ Vue.component('auth', {
       if(json.status == "logged_out"){
         return null;
       } else {
-        this.$emit("user_info", this.user_info);
+        this.$emit("user_info", json);
         return json;
       }
     },
