@@ -71,9 +71,15 @@ Vue.component('ui', {
     },
     renderHQ(){
       let app = this;
+
+      if(this.user_info.render_credits == 0){
+        utils.flag_message("You must have a render credits to render a video.");
+        window.auth.$refs["buy_render_credits"].show();
+        return;
+      }
+
       let ask = new utils.ask_confirm();
       let container = document.createElement("div");
-
       document.body.appendChild(container);
       ask.$mount(container);
 
