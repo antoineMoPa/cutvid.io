@@ -8,23 +8,30 @@ Vue.component('buy-render-credits', {
     <img src="icons/feather-dark/image.svg" width="30"/>
     Buy Render Credits
   </h3>
-  <h4>What is a render credit?</h4>
-  <p>1 render credit allows you to render 1 video with a maximum duration of 5 minutes.</p>
-  <div v-if="open_at_start" class="not-ready-to-buy">
-    <h4>Not ready to buy?</h4>
-    <p>
-      You can create, edit and save projects after closing this popup.
+  <div class="buy-credit-info">
+    <h4>What is a render credit?</h4>
+    <p>1 render credit allows you to render 1 video with a maximum duration of 5 minutes.</p>
+    <div v-if="open_at_start" class="not-ready-to-buy">
+      <h4>Not ready to buy?</h4>
+      <p>
+        You can create, edit and save projects after closing this popup.
+        <br/>
+        When you are ready to purchase a render,
+        simply click the "Render Credits" purple button at the top right to open it back.
+      </p>
+    </div>
+    <h4>Ready to buy?</h4>
+    <p>We don't store nor handle any credit card details ourselves, we use PayPal as a secure payment provider.
       <br/>
-      When you are ready to purchase a render,
-      simply click the "Render Credits" purple button at the top right to open it back.
+      For any questions, problems, comments, refunds, feedback on Lattefx, please contact the owner directly at
+      <span class="owner-email">{{email()}}</span>
     </p>
   </div>
-  <h4>Ready to buy?</h4>
-  <p>We don't store nor handle any credit card details ourselves, we use PayPal as a secure payment provider.
-    <br/>
-    For any questions, problems, comments, refunds, feedback on Lattefx, please contact the owner directly at
-    <span class="owner-email">{{email()}}</span>
-  </p>
+  <label class="product">
+    <input type="radio" name="purchaseItem" value="1credit" v-model="purchaseItem">
+    1 Lattefx Render Credit - USD $ 1.50
+  </label>
+  <br/>
   <label class="product">
     <input type="radio" name="purchaseItem" value="2credits" v-model="purchaseItem">
     2 Lattefx Render Credits - USD $ 2.50
@@ -107,6 +114,10 @@ Vue.component('buy-render-credits', {
         createOrder: function(data, actions) {
 
           let product_price = {
+            "1credit": {
+              "description": "1 Render Credit",
+              "value": "1.50"
+            },
             "2credits": {
               "description": "2x Render Credits",
               "value": "2.50"
@@ -185,6 +196,10 @@ Vue.component('buy-render-credits', {
       if(url.indexOf("?plan_") != -1){
         this.open_at_start = true;
 
+        if(url.indexOf("plan_1credit") != -1){
+          this.purchaseItem = "1credit";
+          this.show();
+        }
         if(url.indexOf("plan_2credits") != -1){
           this.purchaseItem = "2credits";
           this.show();

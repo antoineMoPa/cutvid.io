@@ -25,6 +25,11 @@ class User < ApplicationRecord
 
       if seconds_diff > one_week
         # Only add credits
+
+        if self.render_credits_per_week.nil?
+          self.render_credits_per_week = 0
+        end
+
         if super < self.render_credits_per_week
           self.render_credits = self.render_credits_per_week
           self.render_credits_last_renew_date = DateTime.now

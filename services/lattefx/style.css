@@ -1117,13 +1117,24 @@ header .render-credits-count{
   margin-left: 20px;
 }
 
-.buy-render-credits h4{
+.buy-render-credits .buy-credit-info{
+  background: #efefef;
+  padding-top:20px;
+  padding-bottom:20px;
+  border-radius:20px;
+  margin:30px;
+  margin-top:0;
+  font-size:14px;
+}
+
+.buy-render-credits .buy-credit-info h4{
   margin-top:0;
   margin-bottom:-5px;
+  font-size:15px;
 }
 
 .buy-render-credits p{
-  line-height: 25px;
+  line-height: 20px;
 }
 
 .product:active, .product:hover{

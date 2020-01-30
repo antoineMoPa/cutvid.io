@@ -133,7 +133,15 @@ class UserController < ApplicationController
       purchase.purchase_date = DateTime.now
       purchase.order_id = order_id
 
-      if sku == "5credits"
+      if sku == "1credit"
+        current_user.increment(:render_credits, 1)
+
+        purchase.purchased_premium_tier = 0
+        purchase.purchased_credit_amount = 1
+
+        message = "1 render credit was added to your account!"
+
+      elsif sku == "5credits"
         current_user.increment(:render_credits, 5)
 
         purchase.purchased_premium_tier = 0
