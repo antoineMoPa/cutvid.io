@@ -56,7 +56,6 @@ Vue.component('ui', {
   methods: {
     play(){
       this.player.play();
-      fetch("/stats/lattefx_app_hit_play/");
     },
     pause(){
       this.player.pause();
