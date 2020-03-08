@@ -43,7 +43,7 @@
   margin-bottom: 1.5rem;
 }
 
-.hero-video {
+.hero-video,.image.is-16by9 img,.image.is-1by1 img,.image.is-1by2 img,.image.is-1by3 img,.image.is-2by1 img,.image.is-2by3 img,.image.is-3by1 img,.image.is-3by2 img,.image.is-3by4 img,.image.is-3by5 img,.image.is-4by3 img,.image.is-4by5 img,.image.is-5by3 img,.image.is-5by4 img,.image.is-9by16 img {
   bottom: 0;
   left: 0;
   position: absolute;
@@ -184,6 +184,10 @@ span {
   text-align: center!important;
 }
 
+.has-text-left {
+  text-align: left!important;
+}
+
 .has-text-right {
   text-align: right!important;
 }
@@ -191,6 +195,12 @@ span {
 @media screen and (min-width:1088px) {
   .has-text-centered-desktop {
     text-align: center!important;
+  }
+}
+
+@media screen and (min-width:1088px) {
+  .has-text-left-desktop {
+    text-align: left!important;
   }
 }
 
@@ -511,6 +521,82 @@ a.has-text-link:focus,a.has-text-link:hover {
   font-size: 1.5rem;
 }
 
+.image {
+  display: block;
+  position: relative;
+}
+
+.image img {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.image.is-16by9 img,.image.is-1by1 img,.image.is-1by2 img,.image.is-1by3 img,.image.is-2by1 img,.image.is-2by3 img,.image.is-3by1 img,.image.is-3by2 img,.image.is-3by4 img,.image.is-3by5 img,.image.is-4by3 img,.image.is-4by5 img,.image.is-5by3 img,.image.is-5by4 img,.image.is-9by16 img {
+  height: 100%;
+  width: 100%;
+}
+
+.image.is-1by1 {
+  padding-top: 100%;
+}
+
+.image.is-5by4 {
+  padding-top: 80%;
+}
+
+.image.is-4by3 {
+  padding-top: 75%;
+}
+
+.image.is-3by2 {
+  padding-top: 66.6666%;
+}
+
+.image.is-5by3 {
+  padding-top: 60%;
+}
+
+.image.is-16by9 {
+  padding-top: 56.25%;
+}
+
+.image.is-2by1 {
+  padding-top: 50%;
+}
+
+.image.is-3by1 {
+  padding-top: 33.3333%;
+}
+
+.image.is-4by5 {
+  padding-top: 125%;
+}
+
+.image.is-3by4 {
+  padding-top: 133.3333%;
+}
+
+.image.is-2by3 {
+  padding-top: 150%;
+}
+
+.image.is-3by5 {
+  padding-top: 166.6666%;
+}
+
+.image.is-9by16 {
+  padding-top: 177.7777%;
+}
+
+.image.is-1by2 {
+  padding-top: 200%;
+}
+
+.image.is-1by3 {
+  padding-top: 300%;
+}
+
 @-webkit-keyframes moveIndeterminate {
   from {
     background-position: 200% 0;
@@ -614,6 +700,11 @@ a.has-text-link:focus,a.has-text-link:hover {
   box-shadow: 0 2px 3px rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.1);
   color: #4a4a4a;
   max-width: 100%;
+  position: relative;
+}
+
+.card-image {
+  display: block;
   position: relative;
 }
 
@@ -1259,6 +1350,10 @@ h3 {
   width: 100%;
 }
 
+.hero-body .text-hero {
+  color: #abd0ff!important;
+}
+
 .pricing-hero {
   background: #000;
 }
@@ -1395,6 +1490,15 @@ h3 {
 link:hover,a.navbar-item:hover {
   background-color: #111;
   color: #fff;
+}
+
+.pricing-card.pro {
+  background: #fff;
+  margin-top: -5px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  border-top: 10px solid #c96800;
+  border-bottom: 10px solid #c96800;
 }
 
 .pricing-card .button {
@@ -1589,6 +1693,10 @@ link:hover,a.navbar-item:hover {
           Pricing
         </p>
         <p class="description">Rendering a video costs 1 render credit.</p>
+        <p class="description">The base price for 1 render credit is USD $ 1.50
+          <a class="button is-link" style="margin-left:30px;" href="/app/?plan_1credit">Buy 1 render credit!</a>
+        </p>
+        <p class="description">Save by buying more credits at once or by getting a yearly Pro Subscription:</p>
         <div class="card-content pricing-card">
           <h3>Visitor</h3>
           <p class="has-text-centered">2 Render Credits</p>
@@ -1630,7 +1738,7 @@ link:hover,a.navbar-item:hover {
         </div>
         <div class="card-content pricing-card">
           <h3>Latte</h3>
-          <p class="has-text-centered">Premium Subscription</p>
+          <p class="has-text-centered">Pro Subscription</p>
           <br>
           <div class="price">
             <span class="dollar-sign">US$</span>
@@ -1649,10 +1757,45 @@ link:hover,a.navbar-item:hover {
         </div>
         <br><br>
 
-        <p class="description">You will be guided to purchase render credits when your account is empty.</p>
         <p class="description">Free accounts can use up to 100MB of renders and project storage.</p>
         <p class="description">You can edit videos and create projects freely but you will need to pay to render your video.</p>
 
+      </div>
+    </section>
+
+    <section class="hero is-primary">
+      <div class="hero-body pricing-hero has-text-centered">
+        <p class="title">
+          Free Low-Quality renders
+        </p>
+        <p>
+          One of our distinctive functionnality is to render
+          videos directly in your browser without watermark.
+        </p>
+        <p>
+          This produces lower quality videos, but all the processing
+          is done on your computer, so you get the video for free.
+        </p>
+      </div>
+    </section>
+
+    <section class="hero is-primary text-hero">
+      <div class="hero-body pricing-hero has-text-centered">
+        <p class="title">
+          Q: I want high quality and I don't want to pay.
+        </p>
+        <p>
+          A: Great, you are like me! You can try installing the
+          <a href="https://gitlab.com/antoineMoPa/lattefx/-/blob/master/docker-images/renderer/Dockerfile"
+             class="link"
+             target="_blank">
+            Docker image
+          </a>
+          for the renderer.
+        </p>
+        <p>
+          I you can't install the Docker image, you should consider paying, which always helps paying the bills.
+        </p>
       </div>
     </section>
 
