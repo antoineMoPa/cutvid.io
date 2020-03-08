@@ -38,19 +38,6 @@ Vue.component('buy-video-lq', {
   <p v-if="canDownload" class="thank-you">
     See you soon!<br><br>
   </p>
-  <!-- hide for now
-    <p class="goto-hq">
-      Need more quality?
-      <br>
-      <a class="ui-button goto-hq-button"
-         v-on:click="renderHQ"
-         >
-        <span class="ui-button-paypal-part">
-          <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="PayPal">
-        </span>
-        Render & Buy  US$ 2.50
-      </a>
-    </p>
   <p class="goto-hq-details">
     No frame drop<br>
     Accurate audio timing<br>
