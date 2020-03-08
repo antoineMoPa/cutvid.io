@@ -28,7 +28,7 @@ Vue.component('ui', {
          v-on:click="renderLQ">
         <img class="feather-button"
              src="icons/feather/download.svg"/>
-        Render Low Quality - <span class="ui-price">FREE</span>
+        Render LQ - <span class="ui-price">FREE</span>
       </a>
       <a class="ui-button buy-button button-1"
          v-if="!player.rendering &&
@@ -37,7 +37,7 @@ Vue.component('ui', {
          v-on:click="renderHQ">
         <img class="feather-button"
              src="icons/feather/download.svg"/>
-        Render &amp; Buy Video - <span class="ui-price">1 render credit</span>
+        Render HQ - <span class="ui-price">1 render credit</span>
       </a>
       <p class="info" v-else-if="player.sequences.length == 0">
         You must add at least 1 sequence to render a video.
