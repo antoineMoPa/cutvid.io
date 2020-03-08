@@ -166,7 +166,9 @@ a:visited{
 .ui .info{
   display: inline;
   color: #fff;
+  font-size: 13px;
   margin-right:10px;
+  margin-left: 10px;
 }
 
 .settings-panel .button-save{
