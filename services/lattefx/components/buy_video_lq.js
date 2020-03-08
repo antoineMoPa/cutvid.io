@@ -56,19 +56,6 @@ Vue.component('buy-video-lq', {
     Accurate audio timing<br>
     Professionnal quality
   </p>
-  -->
-  <p class="thank-you">
-    For any questions, comments, refunds, feedback on Lattefx, please contact
-    {{email()}}<br>
-    Help me improve this new product!
-    <br><br>
-    We would also like you to fill our survey to help improve Lattefx:
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLScb_mbpafTrCLf73RPhNlkVz3RUHK_k-4KUKa69RKKn8f4evQ/viewform?usp=sf_link"
-       target="_blank">
-      2 minutes Form
-    </a>
-    <br><br>
-  </p>
 </div>
 `,
   data: function(){

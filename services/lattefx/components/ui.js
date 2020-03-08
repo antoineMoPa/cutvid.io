@@ -25,6 +25,15 @@ Vue.component('ui', {
          v-if="!player.rendering &&
                user_info != null &&
                player.sequences.length > 0"
+         v-on:click="renderLQ">
+        <img class="feather-button"
+             src="icons/feather/download.svg"/>
+        Render Low Quality - <span class="ui-price">FREE</span>
+      </a>
+      <a class="ui-button buy-button button-1"
+         v-if="!player.rendering &&
+               user_info != null &&
+               player.sequences.length > 0"
          v-on:click="renderHQ">
         <img class="feather-button"
              src="icons/feather/download.svg"/>

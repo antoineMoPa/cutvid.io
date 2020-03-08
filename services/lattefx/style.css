@@ -381,14 +381,10 @@ header .render-credits-count{
 .settings-panel a.preset{
   cursor:pointer;
   font-size:12px;
-  background:#eee;
-  padding:5px;
   border-radius:3px;
   margin-bottom:4px;
-  margin:4px 3px;
   display: inline-block;
   line-height: 22px;
-  color:#222;
 }
 
 .rendering-info-panel{
