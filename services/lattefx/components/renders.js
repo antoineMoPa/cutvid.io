@@ -36,7 +36,7 @@ Vue.component('renders', {
            </a>
            <a class="ui-button"
              v-on:click="download_video(render)"
-             v-if="render.status == 'rendered'">
+             v-if="render.status == 'rendered' && !downloading">
              <img src="icons/feather/download.svg" class="feather-button" width="24"/>
              Download
            </a>
@@ -69,7 +69,8 @@ Vue.component('renders', {
       available_bytes: 0,
       used_percent: 0,
       on_open_render: () => {},
-      storage_full: false
+      storage_full: false,
+      downloading: false
     }
   },
   props: ["settings"],
@@ -86,6 +87,8 @@ Vue.component('renders', {
         auth.show_login();
       }
 
+      this.downloading = true;
+
       let token = await auth.get_token();
       let url = this.settings.cloud + "/render/" + render.id + "/" + token;
 
@@ -97,6 +100,8 @@ Vue.component('renders', {
       a.href = blob_url;
       a.download = "video.mp4";
       a.click();
+
+      this.downloading = false;
     },
     async update_storage_info(token){
       let cloud_url = this.settings.cloud;
