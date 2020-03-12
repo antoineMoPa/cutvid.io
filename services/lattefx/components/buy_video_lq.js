@@ -38,11 +38,6 @@ Vue.component('buy-video-lq', {
   <p v-if="canDownload" class="thank-you">
     See you soon!<br><br>
   </p>
-  <p class="goto-hq-details">
-    No frame drop<br>
-    Accurate audio timing<br>
-    Professionnal quality
-  </p>
 </div>
 `,
   data: function(){
