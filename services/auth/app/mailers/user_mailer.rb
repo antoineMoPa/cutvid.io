@@ -1,10 +1,10 @@
 class UserMailer < ApplicationMailer
-  default :from => 'noreply@lattefx.com'
+  default :from => 'noreply@cutvid.io'
 
   def new_signup(user)
     @user = user
     mail( :to => @user.email,
-          :subject => 'Welcome to LatteFX!' )
+          :subject => 'Welcome to cutvid.io!' )
   end
 
   def new_render(user)

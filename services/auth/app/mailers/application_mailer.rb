@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'noreply@lattefx.com'
+  default from: 'noreply@cutvid.io'
   layout 'mailer'
 end
