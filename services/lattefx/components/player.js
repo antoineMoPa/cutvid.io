@@ -44,17 +44,23 @@ Vue.component('player', {
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
         <br><br>
-        <label>
+          <h4>Download a .lattefx project</h4>
+          <p>Includes sequences, videos, etc.</p>
           <button v-on:click="save_lattefx_file">
             Download
           </button>
-        </label>
+          <p>Pssst: To download the video itself, it's not here, <br/>
+                    click one of the "render" buttons</p>
+
         <br>
         <h4>Load a .lattefx project</h4>
         <label>
           Load a .lattefx file<br>
           <input type="file" v-on:change="onLoadLatteFxFile"/>
         </label>
+        <p>Pssst: to add a video, it's not here.<br/>
+           use the "add" button in the sequencer.</p>
+
         <br><br>
       </div>
       <div class="switchable-panel media-sources-panel">
