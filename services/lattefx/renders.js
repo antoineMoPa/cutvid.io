@@ -6,26 +6,26 @@ var app = new Vue({
   },
   template: `<div>
                <header>
-                 <a href="https://lattefx.com/" target="_blank">
+                 <a href="https://cutvid.io/" target="_blank">
                    <img src="images/logo.png" class="header-logo" alt="Latte fx"/>
                  </a>
                </header>
                <div v-if="!navigator_supported" class="navigator-no-support">
                  <p style="font-weight:500;font-size:24px;">
-                   Please open Lattefx in Chrome or Firefox
+                   Please open cutvid.io in Chrome or Firefox
                  </p>
                  <p>
                    Currently, only Chrome and Firefox are supported.<br>
                    We use advanced WebGL rendering techniques that we cannot support<br> in other browsers due to limited time in life.
                  </p>
-                 <input type="text" value="https://lattefx.com"></input>
+                 <input type="text" value="https://cutvid.io"></input>
                  <p style="font-size:10px;margin-top:0px;">Go ahead, copy paste in Chrome or Firefox!</p>
                  <p>
                    You can download Firefox at <a href="https://www.mozilla.org/en-CA/firefox/new/" target="_blank">mozilla.org</a>
                  </p>
                  <br><br>
                  <p style="font-size:11px;">
-                   You can still try running Lattefx at your own risk:
+                   You can still try running cutvid.io at your own risk:
                    <a v-on:click="navigator_supported = true" style="color:#3af;cursor:pointer;">
                      try anyway
                    </a>

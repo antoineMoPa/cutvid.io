@@ -92,12 +92,12 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.action_mailer.default_url_options = { host: 'https://lattefx.com/' }
+  config.action_mailer.default_url_options = { host: 'https://cutvid.io/' }
 
   ActionMailer::Base.smtp_settings = {
     :user_name => Rails.application.credentials.send_grid_user_name,
     :password => Rails.application.credentials.send_grid_password,
-    :domain => 'lattefx.com',
+    :domain => 'cutvid.io',
     :address => 'smtp.sendgrid.net',
     :port => 465,
     :authentication => :plain,
