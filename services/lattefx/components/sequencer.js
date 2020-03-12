@@ -160,6 +160,13 @@ Vue.component('sequencer', {
     };
   },
   methods: {
+    expose(){
+      let API = window.API;
+
+
+
+
+    },
     async quick_add_sequence(type){
       // Add at minimum 0
       // Else add after last video, but with some overlap to
@@ -897,5 +904,6 @@ Vue.component('sequencer', {
     this.bindShortcuts();
     this.repositionSequences();
     this.resize();
+    this.expose();
   }
 });

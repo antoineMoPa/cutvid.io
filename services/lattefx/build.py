@@ -6,6 +6,7 @@ def build():
     all_js_files = [
         "./libs/vue.js",
         "./libs/utils.js",
+        "./api.js",
         "./shader_program.js",
         "./shader_player_webgl.js",
         "./components/sequence_effects.js",
