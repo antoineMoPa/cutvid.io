@@ -10,7 +10,7 @@ Vue.component('auth', {
      </div>
      <h3>
        <img src="icons/feather-dark/user.svg" width="30"/>
-       Lattefx cloud
+       cutvid.io cloud
      </h3>
      <iframe class="auth-iframe"></iframe>
 

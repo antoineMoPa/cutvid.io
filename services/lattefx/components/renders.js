@@ -47,7 +47,7 @@ Vue.component('renders', {
        <p class="renders-no-render">You currently have no renders.<br/></p>
      </div>
      <div class="storage">
-       <p>You have used <span class="percentage">{{used_percent}}%</span> of your storage on Lattefx cloud.</p>
+       <p>You have used <span class="percentage">{{used_percent}}%</span> of your storage on cutvid.io cloud.</p>
        <div class="storage-indicator">
          <div class="storage-indicator-inner">
          </div>

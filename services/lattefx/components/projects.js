@@ -21,7 +21,7 @@ Vue.component('projects', {
        <p class="projects-no-project">You currently have no saved project.<br> Start one by clicking save progress next time you edit a video!</p>
      </div>
      <div class="storage">
-       <p>You have used <span class="percentage">{{used_percent}}%</span> of your storage on Lattefx cloud.</p>
+       <p>You have used <span class="percentage">{{used_percent}}%</span> of your storage on cutvid.io cloud.</p>
        <div class="storage-indicator">
          <div class="storage-indicator-inner">
          </div>

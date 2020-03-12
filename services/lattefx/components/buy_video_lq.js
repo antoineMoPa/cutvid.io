@@ -24,13 +24,13 @@ Vue.component('buy-video-lq', {
     <!-- Paypal stuff goes here -->
   </div>
   <p v-if="canDownload" class="thank-you">
-    Thank you for using Lattefx!<br><br>
+    Thank you for using cutvid.io!<br><br>
     Click this button to save your video.<br>
   </p>
   <p class="text-center" v-if="canDownload">
     <a class="ui-button large"
        v-bind:href="videoURL"
-       v-bind:download="'lattefx-purchased-video-'+videoTimeStamp()+'.avi'">
+       v-bind:download="'cutvid-io-purchased-video-'+videoTimeStamp()+'.avi'">
       Download Video
     </a>
     <br><br>

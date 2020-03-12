@@ -23,23 +23,23 @@ Vue.component('buy-render-credits', {
     <h4>Ready to buy?</h4>
     <p>We don't store nor handle any credit card details ourselves, we use PayPal as a secure payment provider.
       <br/>
-      For any questions, problems, comments, refunds, feedback on Lattefx, please contact the owner directly at
+      For any questions, problems, comments, refunds, feedback on cutvid.io, please contact the owner directly at
       <span class="owner-email">{{email()}}</span>
     </p>
   </div>
   <label class="product">
     <input type="radio" name="purchaseItem" value="1credit" v-model="purchaseItem">
-    1 Lattefx Render Credit - USD $ 1.50
+    1 cutvid.io Render Credit - USD $ 1.50
   </label>
   <br/>
   <label class="product">
     <input type="radio" name="purchaseItem" value="2credits" v-model="purchaseItem">
-    2 Lattefx Render Credits - USD $ 2.50
+    2 cutvid.io Render Credits - USD $ 2.50
   </label>
   <br/>
   <label class="product">
     <input type="radio" name="purchaseItem" value="5credits" v-model="purchaseItem">
-    5 Lattefx Render Credits - USD $ 4.50
+    5 cutvid.io Render Credits - USD $ 4.50
   </label>
   <br/>
   <label class="product">
