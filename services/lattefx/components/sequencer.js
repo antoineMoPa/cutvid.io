@@ -747,6 +747,13 @@ Vue.component('sequencer', {
         this.sequences[info.sequence].from +
         info.duration;
 
+      console.log(info.duration);
+      // It would be bright to unzoom
+      // to fit the video in the screen
+      // With a bit more time so we can see the controls at the right
+      this.visibleDuration = Math.max(this.visibleDuration, info.duration * 1.1);
+      // # tiny thoughts for my users
+
       this.repositionSequences();
     },
     select_all(){

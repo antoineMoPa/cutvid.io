@@ -51,6 +51,7 @@
             backgroundColor: "#000000",
             trimBefore: 0,
             durationInitialized: false,
+            durationSent: false,
             player: null,
             effect: null,
             shaderProgram: null,
@@ -110,12 +111,16 @@
                 app.uniforms.videoWidth.value = this.videoWidth;
                 app.uniforms.videoHeight.value = this.videoHeight;
                 app.videoElement = this;
-                if(!app.durationInitialized){
+                console.log("TEST", app.durationInitialized, this.duration);
+
+                if(!app.durationSent){
                   app.onDuration(this.duration);
+                  app.durationSent = true;
                   fetch("/stats/lattefx_app_video_duration/"+parseInt(this.duration));
-                  // Don't resize video after initial resize
-                  app.durationInitialized = true;
                 }
+
+                // Don't resize video after initial resize
+                app.durationInitialized = true;
               }
             });
           },
@@ -203,6 +208,7 @@
               result.blob().then((result) => {
                 let file = new File([result], "video.vid");
                 app.durationInitialized = true;
+                app.durationSent = false;
                 app.onVideo(file);
               });
             });
