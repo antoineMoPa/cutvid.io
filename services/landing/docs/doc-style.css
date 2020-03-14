@@ -5,3 +5,17 @@ html, body{
 .container{
   text-align:left;
 }
+
+iframe.left-menu{
+  overflow:hidden;
+}
+
+@media all and (max-width:768px){
+  .content{
+	margin-left:10px;
+	margin-right:10px;
+  }
+  iframe.left-menu{
+	display:none;
+  }
+}
