@@ -21,7 +21,7 @@ Vue.component('sequence-effect', {
       <button v-else
               v-on:click="onChangeEffect">
         <img src="icons/feather/edit.svg" width="20"/>
-        Change Effect
+        Change Sequence Type
       </button>
     </div>
     <effects-selector ref="effectSelector" v-on:chooseEffect="changeEffect"/>

@@ -6,7 +6,7 @@ Vue.component('effects-selector', {
   </div>
   <h3>
     <img src="icons/feather-dark/image.svg" width="30"/>
-    Select and effect
+    Select an effect type
   </h3>
   <div v-for="(effects, categoryName) in categories">
     <h4>{{ categoryName }}</h4>
