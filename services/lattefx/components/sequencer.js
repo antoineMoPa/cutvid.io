@@ -142,6 +142,8 @@ Vue.component('sequencer', {
       time: {time: 0.0},
       selected: [],
       visibleDuration: 10,
+      add_menu_time: 0,
+      add_menu_layer: 0,
       mouseover: false,
       has_moved: false,                /* Used to detect if mouse has moved
                                           after clicking body */
@@ -171,14 +173,8 @@ Vue.component('sequencer', {
       // Add at minimum 0
       // Else add after last video, but with some overlap to
       // create room for a transition
-      let add_at = Math.max(this.get_total_duration() - 0.5, 0.0);
-      let add_layer = 0;
-
-      if(type == 'audio'){
-        // Add audio above current things
-        add_at = 0;
-        add_layer = 3;
-      }
+      let add_at = this.add_menu_time;
+      let add_layer = this.add_menu_layer;
 
       if(type == null){
         // Pick from plugins list
@@ -364,8 +360,34 @@ Vue.component('sequencer', {
     },
     clickSequencer(e){
       let info = this.mouseEventInfo(e);
+      let time = info[2];
+
       // Move cursor to this time
-      this.player.time.time = info[2];
+      this.player.time.time = time;
+      this.add_menu_time = time;
+
+      this.recalculate_layer_add_menu();
+      this.add_menu_open = false;
+    },
+    recalculate_layer_add_menu(){
+      let time = this.player.time.time;
+
+      // Find number of layers at current time
+      let max_layer = 0;
+      for(let i in this.sequences){
+        if (this.sequences[i].from - 0.06 * this.visibleDuration > time) {
+          continue;
+        }
+        if (this.sequences[i].to < time) {
+          continue;
+        }
+        max_layer = Math.max(max_layer, this.sequences[i].layer + 1);
+      }
+
+      this.add_menu_layer = max_layer;
+
+      this.repositionSequences();
+
     },
     sequenceBodyDown(index, e, dragFromMiddle){
       if(this.player != null && this.player.rendering) { return; }
@@ -647,8 +669,13 @@ Vue.component('sequencer', {
       timeSpacer.style.left = (maxTo * scale.timeScale * 1.33) + "px"
 
       let add_menu = this.$el.querySelectorAll(".add-menu")[0];
-      add_menu.style.left = (maxTo * scale.timeScale + 10) + "px";
-      add_menu.style.bottom = (5 + 0 * scale.layerScale + this.offset_y) + "px";
+
+      // 3 pixels prevents unwanted clicks on menu when
+      // clicking sequencer to move time bar
+      add_menu.style.left = (3 + this.add_menu_time * scale.timeScale) + "px";
+      add_menu.style.bottom = (5 +
+                               this.add_menu_layer * scale.layerScale +
+                               this.offset_y) + "px";
     },
     resize(height){
       height = (height || 200) + "px";
@@ -717,6 +744,8 @@ Vue.component('sequencer', {
 
       let API = window.API;
       API.call("player.panel.switch_to_effect_settings");
+
+      this.recalculate_layer_add_menu();
     },
     deleteSelected(){
       let app = this;

@@ -815,7 +815,6 @@ header .render-credits-count{
 .sequencer .add-menu{
   position: absolute;
   bottom: 0;
-  width:800px;
   text-align:left;
 }
 
@@ -830,6 +829,10 @@ header .render-credits-count{
   opacity:0.4;
   display: block;
   margin-top: 3px;
+}
+
+.sequencer .suggestion:hover{
+  opacity:1.0;
 }
 
 .sequencer .more-suggestion{
