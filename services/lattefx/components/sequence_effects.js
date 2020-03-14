@@ -265,7 +265,6 @@ Vue.component('sequence-effect', {
     },
     ready(){
       this.$emit("ready");
-      console.log("read");
     },
     onDuration(duration){
       this.$emit('duration', {

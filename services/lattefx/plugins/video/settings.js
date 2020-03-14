@@ -1,4 +1,3 @@
-/* This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.  */
 {
   let name = "video";
 
@@ -15,7 +14,7 @@
     Choose your video below!
   </div>
   <label>
-    <button v-on:click="browse_file">Upload video</button>
+    <button v-on:click="browse_file">Upload Video</button>
     <input type="file"
            accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid"
            class="video-file-input hidden" v-on:change="on_video_upload()">
@@ -111,7 +110,6 @@
                 app.uniforms.videoWidth.value = this.videoWidth;
                 app.uniforms.videoHeight.value = this.videoHeight;
                 app.videoElement = this;
-                console.log("TEST", app.durationInitialized, this.duration);
 
                 if(!app.durationSent){
                   app.onDuration(this.duration);

@@ -786,7 +786,6 @@ Vue.component('sequencer', {
         this.sequences[info.sequence].from +
         info.duration;
 
-      console.log(info.duration);
       // It would be bright to unzoom
       // to fit the video in the screen
       // With a bit more time so we can see the controls at the right
