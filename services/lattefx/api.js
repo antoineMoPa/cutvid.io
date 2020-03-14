@@ -48,8 +48,6 @@ class API{
       The method definition is an object that contains:
 
       - name   : The name used to call this function
-      - title  : Arbitarily formatted title
-      - desc   : A quick summary of what the command does
       - doc    : A long string to document the method for
                 the user
 
@@ -60,13 +58,24 @@ class API{
       - argsdoc     : An array of strings documenting each arg
       - argsprompt  : The question strings to use when
                       interactively calling the method
+
+
+      Here is an example:
+
+      API.expose({
+        name: "bufferview.left",
+        doc: `Move cursor of active buffer
+
+        bla bla bla long documentation you get the point.
+        `,
+        fn: function(){ this.whatever() }.bind(this)
+      });
+
     */
 
     // Make sure we have a name
     if(!("name" in method_definition)) return false;
     // Make sure we are self-documenting
-    if(!("title" in method_definition)) return false;
-    if(!("desc" in method_definition)) return false;
     if(!("doc" in method_definition)) return false;
 
     // Make sure we have a function to call
@@ -92,8 +101,6 @@ class API{
 
     return {
       name:  name,
-      title: this.the_api[name].title,
-      desc:  this.the_api[name].desc,
       doc:  this.the_api[name].doc
     };
   }

@@ -140,6 +140,19 @@ Vue.component('player', {
   },
   props: ["settings"],
   methods: {
+    expose(){
+      let API = window.API;
+
+      API.expose({
+        name: "player.panel.switch_to_effect_settings",
+        doc: `Go to the "effects settings" panel
+
+        `,
+        fn: function(){
+          this.$refs['panel-selector'].switch_to(0);
+        }.bind(this)
+      });
+    },
     browse_file(){
       this.$el.querySelectorAll(".project-file-input")[0].click();
     },
@@ -496,5 +509,7 @@ Vue.component('player', {
 
     let ui = document.querySelectorAll(".ui .ui-buttons-right")[0];
     ui.appendChild(container);
+
+    this.expose();
   },
 });

@@ -714,6 +714,9 @@ Vue.component('sequencer', {
 
       this.$nextTick(this.repositionSequences);
       this.selected = [];
+
+      let API = window.API;
+      API.call("player.panel.switch_to_effect_settings");
     },
     deleteSelected(){
       let app = this;
