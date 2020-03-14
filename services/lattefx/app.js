@@ -177,5 +177,14 @@ var app = new Vue({
 
     this.sequencer = this.$refs["player"].$refs["sequencer"];
     this.player = this.$refs["player"];
+
+    let links = this.$el.querySelectorAll(".app-menu-links a");
+    for(let i in links){
+      links[i].onblur = function(){
+        this.resources_menu_open = false;
+        this.file_menu_open = false;
+        this.edit_menu_open = false;
+      }.bind(this);
+    }
   }
 })
