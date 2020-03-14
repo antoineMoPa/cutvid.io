@@ -269,7 +269,7 @@
 
             let ui = this.$el.querySelectorAll(".canvas-plugin-ui")[0];
             player_overlay.appendChild(ui);
-
+            this.ui = ui;
             canvas_el.width = window.player.player.canvas.clientWidth;
             canvas_el.height = window.player.player.canvas.clientHeight;
             let canvas = new fabric.Canvas(canvas_el);
@@ -305,6 +305,10 @@
           this.listen_scaling();
           this.listen_selection();
           this.on_resize();
+        },
+        beforeDestroy(){
+          this.canvas_el.parentNode.removeChild(this.canvas_el);
+          this.ui.parentNode.removeChild(this.ui);
         }
       }
     };
