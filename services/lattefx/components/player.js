@@ -54,9 +54,12 @@ Vue.component('player', {
 
         <br>
         <h4>Load a .lattefx project</h4>
+        <p>If you saved a project to your computer, you can upload it here.</p>
         <label>
-          Load a .lattefx file<br>
-          <input type="file" v-on:change="onLoadLatteFxFile"/>
+          <button v-on:click="browse_file">Upload Existing Project</button>
+          <input type="file"
+                 class="hidden project-file-input"
+                 v-on:change="onLoadLatteFxFile"/>
         </label>
         <p>Pssst: to add a video, it's not here.<br/>
            use the "add" button in the sequencer.</p>
@@ -137,6 +140,9 @@ Vue.component('player', {
   },
   props: ["settings"],
   methods: {
+    browse_file(){
+      this.$el.querySelectorAll(".project-file-input")[0].click();
+    },
     set_dimensions(w, h, fps){
       this.width = w;
       this.height = h;

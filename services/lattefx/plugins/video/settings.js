@@ -14,7 +14,12 @@
        v-if="videoFileB64 == null">
     Choose your video below!
   </div>
-  <input type="file" accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid" class="video-file-input" v-on:change="on_video_upload()">
+  <label>
+    <button v-on:click="browse_file">Upload video</button>
+    <input type="file"
+           accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid"
+           class="video-file-input hidden" v-on:change="on_video_upload()">
+  </label>
   <p v-if="error">ERROR: Your browser does not seem to support this video file encoding.<br>
   You can try converting it to .ogv at:<br>
     <a href="https://video.online-convert.com/convert-to-ogv"
@@ -113,6 +118,9 @@
                 }
               }
             });
+          },
+          browse_file(){
+            this.$el.querySelectorAll(".video-file-input")[0].click();
           },
           on_video_upload(){
             let app = this;
