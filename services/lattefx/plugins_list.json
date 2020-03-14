@@ -31,6 +31,12 @@
       "date": "Monday Jul 1 16:03:37 EDT 2019"
     }
   },
+  "Rotation": {
+    "rotate": {
+      "description": "Rotate the sequences below",
+      "date": "Fri Mar 13 20:16:25 EDT 2020"
+    }
+  },
   "Backgrounds": {
     "retrowave": {
       "description": "Retro nostalgia poster effect with text. [Animated]",
