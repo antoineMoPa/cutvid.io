@@ -178,13 +178,16 @@ var app = new Vue({
     this.sequencer = this.$refs["player"].$refs["sequencer"];
     this.player = this.$refs["player"];
 
-    let links = this.$el.querySelectorAll(".app-menu-links a");
-    for(let i in links){
-      links[i].onblur = function(){
-        this.resources_menu_open = false;
-        this.file_menu_open = false;
-        this.edit_menu_open = false;
-      }.bind(this);
-    }
+    document.addEventListener("click", function(e){
+      // https://gomakethings.com/detecting-clicks-outside-of-an-element-with-vanilla-javascript/
+      // If we are clicking elsewhere, close that menu
+      if (e.target.closest('.app-menu-links')) {
+        return
+      };
+
+      this.resources_menu_open = false;
+      this.file_menu_open = false;
+      this.edit_menu_open = false;
+    }.bind(this));
   }
 })
