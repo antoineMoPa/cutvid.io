@@ -84,6 +84,7 @@ Vue.component('player', {
     </div>
     <buy-video-lq ref="buyVideoLQ"
                  v-bind:settings="settings"
+                 v-bind:user_info="user_info"
                  v-on:renderHQ="makeHQ"/>
     <div class="ui-auth-container">
       <a class="ui-button button-left-1 button-save"

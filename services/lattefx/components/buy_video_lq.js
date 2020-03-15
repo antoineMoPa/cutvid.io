@@ -17,7 +17,7 @@ Vue.component('buy-video-lq', {
     Espresso/<span title="low quality">LQ</span> videos are USD $ 2.50
     <br>
   </p>
-  <div v-if="!canDownload" class="video-preview" v-on:contextmenu="onContextMenu">
+  <div v-if="!canDownload" class="video-preview">
     <video v-bind:src="previewURL" controls></video>
   </div>
   <div class="payment-container" v-if="!canDownload">
@@ -25,16 +25,39 @@ Vue.component('buy-video-lq', {
   </div>
   <p v-if="canDownload" class="thank-you">
     Thank you for using cutvid.io!<br><br>
-    Click this button to save your video.<br>
+    You can now save and share your video:<br>
   </p>
   <p class="text-center" v-if="canDownload">
-    <a class="ui-button large"
+    <a class="ui-button"
        v-bind:href="videoURL"
        v-bind:download="'cutvid-io-purchased-video-'+videoTimeStamp()+'.avi'">
+      <img src="icons/feather/download.svg" width="25"/>
       Download Video
     </a>
+    <a class="ui-button"
+       v-if="user_info != null && shared_video_id == null"
+       v-on:click="share_video">
+      <img src="icons/feather/link.svg" width="25"/>
+      Share Video*
+    </a>
+    <span v-else-if="shared_video_id == null" style="margin-left:30px;">
+      Sign in to share video*
+    </span>
     <br><br>
+    <span style="font-size:14px;">
+      *To allow this service to be sustainable, the shared video page may contain ads from third parties who may install cookies in visiting browsers.
+    </span>
+
   </p>
+  <div class="text-center" v-if="shared_video_url != null">
+    <input type="text"
+           size="80"
+           v-model="shared_video_url"
+           class="text-center" readonly><br>
+    <p style="margin-top:-4px;font-size:14px;">
+      Warning: Anyone with this link can view the video.
+    </p>
+  </div>
   <p v-if="canDownload" class="thank-you">
     See you soon!<br><br>
   </p>
@@ -44,13 +67,16 @@ Vue.component('buy-video-lq', {
     return {
       videoURL: null,
       previewURL: null,
+      video_blob: null,
       canDownload: true,
       previewReady: false,
+      shared_video_id: null,
+      shared_video_url: null,
       error: null,
       stats: null
     };
   },
-  props: ["settings"],
+  props: ["settings", "user_info"],
   methods: {
     email(){
       let name = "antoine.morin.paulhus";
@@ -58,21 +84,13 @@ Vue.component('buy-video-lq', {
       let host = "g" + "ma" + "il" + "." + "com";
       return name + at + host;
     },
-    onContextMenu(){
-      // If you know how to remove this,
-      // maybe you deserve your download
-      // But keep in mind that paying allows
-      // me to develop features & host LatteFx
-      // You can also pay me by suggesting features
-      // And improvement at my email address!
-      return false;
-    },
     show(blob){
       this.$el.classList.remove("hidden");
       let url = URL.createObjectURL(blob);
       this.previewReady = false;
       this.previewURL = url;
       this.videoURL = url;
+      this.video_blob = blob;
 
       let videos = this.$el.querySelectorAll("video");
       if(videos.length > 0){
@@ -87,7 +105,6 @@ Vue.component('buy-video-lq', {
     },
     setVideoID(_id){
       this.videoID = _id;
-      this.loggedIn = false;
       this.canDownload = false;
     },
     videoTimeStamp(){
@@ -95,6 +112,32 @@ Vue.component('buy-video-lq', {
       let date_string = date.toLocaleString();
 
       return date_string.replace(/[^0-9-A-Za-z]+/g,"-");
+    },
+    async share_video(){
+      if(this.user_info == null){
+        return;
+      }
+
+      let form = new FormData();
+      form.append('video.video', new File([this.video_blob], "video.video"));
+
+      let token = await auth.get_token();
+      let cloud_url = this.settings.cloud;
+      let req = await fetch(cloud_url + "/upload_shared_video/", {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Encoding': 'multipart/form-data'
+        },
+        body: form
+      });
+
+      let json = await req.json();
+
+      if(json.success == true){
+        this.shared_video_id = json.video_id;
+        this.shared_video_url = cloud_url + "/share/" + json.user_id + "/" + json.video_id;
+      }
     }
   },
   watch: {

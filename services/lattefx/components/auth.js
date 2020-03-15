@@ -95,6 +95,7 @@ Vue.component('auth', {
       });
       this.get_user_info().then((result) => {
         app.user_info = result;
+        window.player.user_info = result;
       });
     },
     sign_in(){

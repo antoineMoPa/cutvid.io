@@ -18,6 +18,7 @@ from utils import *
 
 from renders import renders
 from projects import projects
+from share import share
 from media import media
 
 app = Flask(__name__)
@@ -25,6 +26,7 @@ app = Flask(__name__)
 app.register_blueprint(projects)
 app.register_blueprint(media)
 app.register_blueprint(renders)
+app.register_blueprint(share)
 
 settings = json.load(open('../lattefx/settings.json'))
 

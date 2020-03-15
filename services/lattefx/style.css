@@ -273,6 +273,11 @@ header .render-credits-count{
   padding: 20px;
 }
 
+.buy-video .ui-button img{
+  position: relative;
+  top: 5px;
+}
+
 .ui-progress{
   position:absolute;
   top:-10px;
@@ -681,6 +686,10 @@ header .render-credits-count{
   box-shadow:0 0 30px rgba(0,0,0,0.8);
   border-radius:10px;
   text-align:left;
+}
+
+.auth.popup{
+  z-index:2010;
 }
 
 @media (max-width: 1080px){
