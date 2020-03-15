@@ -839,16 +839,16 @@ a.list-item {
 }
 
 @media screen and (min-width:1088px) {
-  .navbar.is-primary .navbar-end .navbar-link,  .navbar.is-primary .navbar-end>.navbar-item {
+  .navbar.is-primary .navbar-end .navbar-link,  .navbar.is-primary .navbar-end>.navbar-item,  .navbar.is-primary .navbar-start .navbar-link,  .navbar.is-primary .navbar-start>.navbar-item {
     color: #fff;
   }
 
-  .navbar.is-primary .navbar-end .navbar-link:hover,  .navbar.is-primary .navbar-end>a.navbar-item:hover {
+  .navbar.is-primary .navbar-end .navbar-link:hover,  .navbar.is-primary .navbar-end>a.navbar-item:hover,  .navbar.is-primary .navbar-start .navbar-link:hover,  .navbar.is-primary .navbar-start>a.navbar-item:hover {
     background-color: #00b89c;
     color: #fff;
   }
 
-  .navbar.is-primary .navbar-end .navbar-link::after {
+  .navbar.is-primary .navbar-end .navbar-link::after,  .navbar.is-primary .navbar-start .navbar-link::after {
     border-color: #fff;
   }
 }
@@ -872,16 +872,16 @@ a.list-item {
 }
 
 @media screen and (min-width:1088px) {
-  .navbar.is-link .navbar-end .navbar-link,  .navbar.is-link .navbar-end>.navbar-item {
+  .navbar.is-link .navbar-end .navbar-link,  .navbar.is-link .navbar-end>.navbar-item,  .navbar.is-link .navbar-start .navbar-link,  .navbar.is-link .navbar-start>.navbar-item {
     color: #fff;
   }
 
-  .navbar.is-link .navbar-end .navbar-link:hover,  .navbar.is-link .navbar-end>a.navbar-item:hover {
+  .navbar.is-link .navbar-end .navbar-link:hover,  .navbar.is-link .navbar-end>a.navbar-item:hover,  .navbar.is-link .navbar-start .navbar-link:hover,  .navbar.is-link .navbar-start>a.navbar-item:hover {
     background-color: #2366d1;
     color: #fff;
   }
 
-  .navbar.is-link .navbar-end .navbar-link::after {
+  .navbar.is-link .navbar-end .navbar-link::after,  .navbar.is-link .navbar-start .navbar-link::after {
     border-color: #fff;
   }
 }
@@ -962,7 +962,7 @@ a.list-item {
 }
 
 @media screen and (min-width:1088px) {
-  .navbar,  .navbar-end,  .navbar-menu {
+  .navbar,  .navbar-end,  .navbar-menu,  .navbar-start {
     align-items: stretch;
     display: flex;
   }
@@ -983,6 +983,11 @@ a.list-item {
   .navbar-menu {
     flex-grow: 1;
     flex-shrink: 0;
+  }
+
+  .navbar-start {
+    justify-content: flex-start;
+    margin-right: auto;
   }
 
   .navbar-end {
@@ -1697,11 +1702,38 @@ link:hover,a.navbar-item:hover {
         <p class="title">
           Pricing
         </p>
-        <p class="description">Rendering a video costs 1 render credit.</p>
-        <p class="description">The base price for 1 render credit is USD $ 1.50
-          <a class="button is-link" style="margin-left:30px;" href="/app/?plan_1credit">Buy 1 render credit!</a>
-        </p>
-        <p class="description">Save by buying more credits at once or by getting a yearly Pro Subscription:</p>
+        <div class="columns">
+          <div class="column">
+            <p>
+              <span class="title">
+                LQ renders: Free
+              </span><br/>
+              &nbsp;<!-- Vertical align with other column -->
+            </p>
+            <br/>
+            <p class="description">
+              Low-Quality videos are free and don't have any watermark!
+            </p>
+            <br/>&nbsp;<br/>
+            <a class="button is-link" href="/app/">Start editing!</a>
+          </div>
+          <div class="column">
+            <p>
+              <span class="title">
+                HQ renders: Cheaper than a coffee*
+              </span><br/>
+              *Depending on where you shop your coffee.
+            </p>
+            <br/>
+            <p class="description">High-Quality videos cost 1 render credit per slice of 1 minute.</p>
+            <p class="description">
+              The base price for 1 render credit is USD $ 1.50<br><br>
+              <a class="button is-link" style="margin-left:30px;" href="/app/?plan_1credit">Buy 1 render credit!</a>
+            </p>
+          </div>
+        </div>
+        <br/><br/>
+        <p class="description">Save by buying more credits or by getting a yearly Pro Subscription:</p>
         <div class="card-content pricing-card">
           <h3>Visitor</h3>
           <p class="has-text-centered">2 Render Credits</p>
@@ -1763,29 +1795,45 @@ link:hover,a.navbar-item:hover {
         <br><br>
 
         <p class="description">Free accounts can use up to 100MB of renders and project storage.</p>
-        <p class="description">You can edit videos and create projects freely but you will need to pay to render your video.</p>
+        <p class="description">You can edit videos and create projects freely but you will need to pay to render your video in HQ.</p>
 
       </div>
     </section>
 
     <section class="hero is-primary">
-      <div class="hero-body pricing-hero has-text-centered">
-        <p class="title">
-          Free Low-Quality renders
-        </p>
-        <p>
-          One of our distinctive functionnality is to render
-          videos directly in your browser without watermark.
-        </p>
-        <p>
-          This produces lower quality videos, but all the processing
-          is done on your computer, so you get the video for free.
-        </p>
-      </div>
     </section>
 
     <section class="hero is-primary text-hero">
       <div class="hero-body pricing-hero has-text-centered">
+        <p class="title">
+          Q: What is a render?
+        </p>
+        <p>
+          Rendering is the last step when creating a video. When rendering, the video is built so you can eventually download it.<br>
+          This process takes some time.
+        </p>
+        <br/><br/>
+        <p class="title">
+          Q: What is a LQ render?
+        </p>
+        <p>
+          LQ renders happen directly in your browser.<br>
+          Since current browser video technology is quite limited, this
+          does not produce the best quality available.<br>
+          However, it could be good enough depending on what you are doing.<br>
+          If you are making a dank meme for your friend, go for LQ.
+        </p>
+        <br/><br/>
+        <p class="title">
+          Q: What is an HQ render?
+        </p>
+        <p>
+          In HQ renders, all frames of videos are extracted, then combined as smoothly as possible on cutvid.io's server.<br/>
+          When this process is done, you receive an email with a link to download your video.<br>
+          If you are presenting to some important group/person, you should buy an HQ render.<br>
+          If you are publishing a video advertisement, you should buy an HQ render.
+        </p>
+        <br/><br/>
         <p class="title">
           Q: I want high quality and I don't want to pay.
         </p>
@@ -1798,8 +1846,14 @@ link:hover,a.navbar-item:hover {
           </a>
           for the renderer.
         </p>
+        <br><br>
+        <p class="title">
+          Q: How do I contact the owner?
+        </p>
         <p>
-          If you can't install the Docker image, you should consider paying, which always helps paying the bills.
+          There is a twitter link in the footer.<br>
+          You can get my email when you click the render credits count after signing-in.<br>
+          Please don't spam me unless you have sales-related problems or desire to invest in cutvid.io.
         </p>
       </div>
     </section>
@@ -1818,7 +1872,7 @@ link:hover,a.navbar-item:hover {
           <div class="column">
             <p class="subtitle">About</p>
             <p>
-              cutvid.io is a new browser-based video sequencer.
+              cutvid.io is a new browser-based video platform.
             </p>
             <p>
               Made by <a href="https://twitter.com/AntoineMoPa">@antoineMoPa</a>
