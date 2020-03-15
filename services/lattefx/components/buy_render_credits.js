@@ -10,7 +10,7 @@ Vue.component('buy-render-credits', {
   </h3>
   <div class="buy-credit-info">
     <h4>What is a render credit?</h4>
-    <p>1 render credit allows you to render 1 video with a maximum duration of 5 minutes.</p>
+    <p>1 render credit allows you to render 1 video minute. Render credits cannot be split.</p>
     <div v-if="open_at_start" class="not-ready-to-buy">
       <h4>Not ready to buy?</h4>
       <p>

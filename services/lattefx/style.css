@@ -582,7 +582,7 @@ header .render-credits-count{
   height:calc(100% - 20px);
   border-left:1px dotted #aaa;
   border-radius:4px;
-  z-index:0;
+  z-index:2000;
 }
 
 .time-spacer{
@@ -952,7 +952,7 @@ header .render-credits-count{
 }
 
 .sequencer .time-indicator{
-  background:rgba(0,0,0,0.3);
+  background:rgba(0,0,0,0.8);
   font-size:10px;
   line-height:20px;
   position:absolute;
@@ -1656,7 +1656,7 @@ header .render-credits-count{
 .application-menus{
   position:absolute;
   top:60px;
-  z-index:2000;
+  z-index:3000;
 }
 
 .application-menu{

@@ -1,4 +1,7 @@
 /*
+
+  API for communication between components
+
   Here is the problem:
 
   For synchronizing operation within a large web app, I personnally
@@ -93,7 +96,7 @@ class API{
       return false;
     }
 
-    this.the_api[name].fn.call(null, args);
+    return this.the_api[name].fn.call(null, args);
   }
 
   doc(name){

@@ -165,8 +165,29 @@ Vue.component('sequencer', {
     expose(){
       let API = window.API;
 
+      API.expose({
+        name: "sequencer.get_total_duration",
+        doc: `Get total duration
 
+        Total duration (in seconds) starts from 0 and goes to the
+        end of the last sequence.
+        `,
+        fn: function(){
+          return this.get_total_duration();
+        }.bind(this)
+      });
 
+      API.expose({
+        name: "sequencer.get_cost",
+        doc: `Get cost in render credits
+
+        `,
+        fn: function(){
+          let duration = this.get_total_duration();
+          let cost = parseInt(duration / 60) + 1;
+          return cost;
+        }.bind(this)
+      });
 
     },
     async quick_add_sequence(type){

@@ -297,10 +297,15 @@ Vue.component('player', {
       let data = this.serialize();
       let project_id = data.project_id;
 
+      let API = window.API;
+      let cost = API.call("sequencer.get_cost");
+
       data = JSON.stringify(data);
 
       let form = new FormData();
       form.append('lattefx_file.lattefx', data);
+
+      form.append('cost', cost)
 
       utils.flag_message("We are uploading your video to the render server!");
 

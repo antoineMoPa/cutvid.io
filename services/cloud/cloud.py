@@ -267,8 +267,9 @@ def render_video():
     project_file = request.form['lattefx_file.lattefx']
     render_id = id_generator()
     user_id = int(token['user_id'])
+    cost = int(request.form['cost'])
 
-    if consume_render_credits(user_id, 1) is False:
+    if consume_render_credits(user_id, cost) is False:
         return json.dumps({"status": "error","error": "No credits left"})
 
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"

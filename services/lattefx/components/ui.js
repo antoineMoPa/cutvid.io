@@ -36,7 +36,7 @@ Vue.component('ui', {
          v-on:click="renderHQ">
         <img class="feather-button"
              src="icons/feather/download.svg"/>
-        Render HQ - <span class="ui-price">1 render credit</span>
+        Render HQ - <span class="ui-price">spend render credits</span>
       </a>
       <p class="info" v-else-if="player.sequences.length == 0">
         You must add at least 1 sequence to render a video.
@@ -79,8 +79,11 @@ Vue.component('ui', {
     renderHQ(){
       let app = this;
 
-      if(this.user_info.render_credits == 0){
-        utils.flag_message("You must have a render credits to render a video.");
+      let API = window.API;
+      let cost = API.call("sequencer.get_cost");
+
+      if(this.user_info.render_credits < cost){
+        utils.flag_message("You must have " + cost + " credits to render a video.");
         window.auth.$refs["buy_render_credits"].show();
         return;
       }
@@ -90,7 +93,7 @@ Vue.component('ui', {
       document.body.appendChild(container);
       ask.$mount(container);
 
-      ask.message = "You are about to spend 1 render credit.";
+      ask.message = "You are about to spend " + cost + " render credit.";
       ask.button_yes = "Yes, let's go!";
       ask.button_no = "No, let me tweak some things.";
       ask.on_yes = () => {
