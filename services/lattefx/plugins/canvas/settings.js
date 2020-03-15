@@ -66,7 +66,7 @@
             editing_text: false,
             editing_shape: false,
             selection: null,
-            color: "#000",
+            color: "#ffffff",
             text_size: 30,
             opacity: 1.0,
             at_mount_load: "",

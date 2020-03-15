@@ -269,6 +269,10 @@ utils.gfont_picker = Vue.component('gfont-picker', {
          <img src="icons/feather-dark/edit-2.svg" width="30"/>
          Pick a font
        </h3>
+       <div class="text-center">
+         <input type="text" v-model="filter" placeholder="filter">
+       </div>
+       <br/>
        <div v-for="info in fonts">
          <span class="raw-fontname">{{info.font}}</span><br>
          <button class="gfont-button"
@@ -285,6 +289,7 @@ utils.gfont_picker = Vue.component('gfont-picker', {
    </div>`,
   data(){
     return {
+      filter: "",
       fonts: [],
       on_font: ()=>{},
       container_class: ""
@@ -310,6 +315,24 @@ utils.gfont_picker = Vue.component('gfont-picker', {
         this.fonts.push(this.all_fonts[i]);
       }
       this.all_fonts = this.all_fonts.splice(15);
+    }
+  },
+  watch:{
+    filter(str){
+      let to_display = [];
+      let number_displayed = 0;
+
+      for(let i in this.all_fonts){
+        if(this.all_fonts[i].font.toLowerCase().indexOf(str.toLowerCase()) != -1){
+          to_display.push(this.all_fonts[i]);
+          number_displayed++;
+          if(number_displayed > 15){
+            break;
+          }
+        }
+      }
+
+      this.fonts = to_display;
     }
   },
   mounted(){
