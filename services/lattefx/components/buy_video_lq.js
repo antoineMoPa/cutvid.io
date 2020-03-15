@@ -35,7 +35,7 @@ Vue.component('buy-video-lq', {
       Download Video
     </a>
     <a class="ui-button"
-       v-if="user_info != null && shared_video_id == null"
+       v-if="user_info != null && shared_video_id == null && !uploading"
        v-on:click="share_video">
       <img src="icons/feather/link.svg" width="25"/>
       Share Video*
@@ -43,6 +43,7 @@ Vue.component('buy-video-lq', {
     <span v-else-if="shared_video_id == null" style="margin-left:30px;">
       Sign in to share video*
     </span>
+    <span v-if="uploading" style="margin-left:20px;">Uploading video</span>
     <br><br>
     <span style="font-size:14px;">
       *To allow this service to be sustainable, the shared video page may contain ads from third parties who may install cookies in visiting browsers.
@@ -50,8 +51,9 @@ Vue.component('buy-video-lq', {
 
   </p>
   <div class="text-center" v-if="shared_video_url != null">
+    <p>Copy/paste this link to share your video:</p>
     <input type="text"
-           size="80"
+           size="50"
            v-model="shared_video_url"
            class="text-center" readonly><br>
     <p style="margin-top:-4px;font-size:14px;">
@@ -72,6 +74,7 @@ Vue.component('buy-video-lq', {
       previewReady: false,
       shared_video_id: null,
       shared_video_url: null,
+      uploading: false,
       error: null,
       stats: null
     };
@@ -106,6 +109,9 @@ Vue.component('buy-video-lq', {
     setVideoID(_id){
       this.videoID = _id;
       this.canDownload = false;
+      this.shared_video_url = null;
+      this.shared_video_id = null;
+      this.uploading = false;
     },
     videoTimeStamp(){
       let date = new Date();
@@ -118,10 +124,13 @@ Vue.component('buy-video-lq', {
         return;
       }
 
+      this.uploading = true;
+
       let form = new FormData();
       form.append('video.video', new File([this.video_blob], "video.video"));
 
       let token = await auth.get_token();
+
       let cloud_url = this.settings.cloud;
       let req = await fetch(cloud_url + "/upload_shared_video/", {
         method: "POST",
@@ -138,6 +147,7 @@ Vue.component('buy-video-lq', {
         this.shared_video_id = json.video_id;
         this.shared_video_url = cloud_url + "/share/" + json.user_id + "/" + json.video_id;
       }
+      this.uploading = false;
     }
   },
   watch: {
