@@ -148,23 +148,8 @@ var app = new Vue({
   mounted(){
     let app = this;
 
-    var ua = navigator.userAgent.toLowerCase();
-    if (ua.indexOf('safari') != -1) {
-      if (ua.indexOf('chrome') <= -1) {
-        app.navigator_supported = false;
-        console.log("safari detected");
-      }
-    }
-
-    if (document.documentMode || /Edge/.test(navigator.userAgent)) {
-      app.navigator_supported = false;
-      console.log("Edge detected");
-    }
-
-    if (navigator.userAgent.indexOf("OPR") !== -1) {
-      app.navigator_supported = false;
-      console.log("Opera detected");
-    }
+    app.navigator_supported = true; // legacy
+    // Now I just assume support
 
     fetch("settings.json").then((resp) => {
       resp.json().then((data) => {
