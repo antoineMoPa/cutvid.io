@@ -145,7 +145,22 @@ Vue.component('buy-video-lq', {
 
       if(json.success == true){
         this.shared_video_id = json.video_id;
-        this.shared_video_url = cloud_url + "/share/" + json.user_id + "/" + json.video_id;
+        let url = "";
+
+        // Faster than checking settings
+        if(window.location.href.indexOf("127.0.0.1") != -1){
+          url = this.settings.app.replace("/app/","") +
+            "/landing/share/?" +
+            json.user_id + "-" +
+            json.video_id;
+        } else {
+          url = this.settings.app.replace("/app/","") +
+            "/share/?" +
+            json.user_id + "-" +
+            json.video_id;
+        }
+
+        this.shared_video_url = url;
       }
       this.uploading = false;
     }
