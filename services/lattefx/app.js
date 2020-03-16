@@ -30,10 +30,6 @@ var app = new Vue({
                  <div class="application-menu resources-menu" v-if="resources_menu_open">
                    <a href="https://cutvid.io/docs/"
                       target="_blank">Documentation</a><br>
-
-                   <a href="/landing/lattefx_intro_pdf_dec_2019.pdf"
-                      target="_blank">[old] LatteFx intro PDF</a><br>
-                   <br>
                    <p>Free content for your videos</p>
                    <a href="https://www.bensound.com/"
                       target="_blank"
