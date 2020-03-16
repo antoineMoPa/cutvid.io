@@ -154,7 +154,7 @@ Vue.component('buy-video-lq', {
             json.user_id + "-" +
             json.video_id;
         } else {
-          url = this.settings.app.replace("/app/","") +
+          url = this.settings.app.replace("/app","") +
             "/share/?" +
             json.user_id + "-" +
             json.video_id;
