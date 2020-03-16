@@ -344,7 +344,7 @@ class ShaderPlayerWebGL {
       }
       stream = new webkitMediaStream(outputTracks);
     } else {
-      new MediaStream([
+      stream = new MediaStream([
         video_stream.getTracks()[0],
         audio_dest.stream.getTracks()[0]
       ]);
