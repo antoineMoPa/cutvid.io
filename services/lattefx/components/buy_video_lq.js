@@ -89,7 +89,10 @@ Vue.component('buy-video-lq', {
     },
     show(blob){
       this.$el.classList.remove("hidden");
-      let url = URL.createObjectURL(blob);
+      let url = "";
+
+      url = URL.createObjectURL(blob);
+
       this.previewReady = false;
       this.previewURL = url;
       this.videoURL = url;

@@ -318,23 +318,37 @@ class ShaderPlayerWebGL {
     }
 
     let video_stream = app.canvas.captureStream(app.fps);
-    let all_streams = app.get_all_audio_streams();
+    let audio_streams = app.get_all_audio_streams();
 
     // https://stackoverflow.com/questions/42138545
     let audio_context = new AudioContext();
-    let sources = all_streams.map((s) => {
+    let sources = audio_streams.map((s) => {
       return audio_context.createMediaStreamSource(new MediaStream([s]))
     });
 
     let audio_dest = audio_context.createMediaStreamDestination();
+
     sources.forEach((s) => {
       s.connect(audio_dest)
     });
 
-    let stream = new MediaStream([
-      video_stream.getTracks()[0],
-      audio_dest.stream.getTracks()[0]
-    ]);
+    let stream = null;
+
+    if("webkitMediaStream" in window){
+      // Chrome
+      // https://stackoverflow.com/questions/36093376/
+      var outputTracks = [];
+      outputTracks = outputTracks.concat(video_stream.getTracks());
+      if(audio_streams.length > 0){
+        outputTracks = outputTracks.concat(audio_dest.stream.getTracks());
+      }
+      stream = new webkitMediaStream(outputTracks);
+    } else {
+      new MediaStream([
+        video_stream.getTracks()[0],
+        audio_dest.stream.getTracks()[0]
+      ]);
+    }
 
     app.capture_stream = stream;
     app.media_recorder_chunks = [];
@@ -356,14 +370,14 @@ class ShaderPlayerWebGL {
 
     // Leave some time for videos to seek
     setTimeout(function(){
+      media_recorder.onstop = function(){
+        app.on_render_done(app.media_recorder_chunks);
+      };
+
       media_recorder.ondataavailable = function(e){
         if (e.data.size > 0) {
           app.media_recorder_chunks.push(e.data);
         }
-      };
-
-      media_recorder.onstop = function(){
-        app.on_render_done(app.media_recorder_chunks);
       };
 
       app.time.time = 0;
@@ -373,7 +387,7 @@ class ShaderPlayerWebGL {
       media_recorder.start();
       app.paused = false;
 
-    },10);
+    }, 10);
   }
 
   get_canvas_blob() {
