@@ -24,12 +24,11 @@ input{
 }
 
 .main-features-list{
-  list-style-type: disc;
-  text-align: left;
-  font-size:21px;
+  text-align: center;
+  font-size:18px;
   width: 400px;
   margin:auto;
-  margin-top:40px;
+  margin-top:20px;
   margin-bottom:30px;
 }
 
@@ -174,7 +173,8 @@ input{
 }
 
 .button.is-primary {
-  background: #c96800;
+  background:linear-gradient(#8320b0,#472f88);
+  border:none;
   transition:all 0.3s;
 }
 
@@ -316,7 +316,8 @@ p.subject-to-change{
 }
 
 .button.is-link {
-    background-color: #c96800;
+    background: linear-gradient(#8320b0,#472f88);
+	border:none;
 }
 
 .button.is-link:hover,.button.is-link:active {
