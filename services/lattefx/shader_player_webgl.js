@@ -310,6 +310,13 @@ class ShaderPlayerWebGL {
 
   render_lq(callback) {
     let app = this;
+
+    if(app.canvas.captureStream == undefined){
+      alert("Sorry, your browser does not support stream capturing from a canvas element, which is required for LQ renders. Consider updating your browser or switching to another one.");
+      app.rendering = false;
+      return;
+    }
+
     let video_stream = app.canvas.captureStream(app.fps);
     let all_streams = app.get_all_audio_streams();
 
