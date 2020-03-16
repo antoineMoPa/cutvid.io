@@ -43,7 +43,7 @@
   margin-bottom: 1.5rem;
 }
 
-.hero-video,.image.is-16by9 img,.image.is-1by1 img,.image.is-1by2 img,.image.is-1by3 img,.image.is-2by1 img,.image.is-2by3 img,.image.is-3by1 img,.image.is-3by2 img,.image.is-3by4 img,.image.is-3by5 img,.image.is-4by3 img,.image.is-4by5 img,.image.is-5by3 img,.image.is-5by4 img,.image.is-9by16 img {
+.hero-video {
   bottom: 0;
   left: 0;
   position: absolute;
@@ -208,6 +208,10 @@ span {
   .has-text-right-desktop {
     text-align: right!important;
   }
+}
+
+.is-italic {
+  font-style: italic!important;
 }
 
 .has-text-primary {
@@ -521,82 +525,6 @@ a.has-text-link:focus,a.has-text-link:hover {
   font-size: 1.5rem;
 }
 
-.image {
-  display: block;
-  position: relative;
-}
-
-.image img {
-  display: block;
-  height: auto;
-  width: 100%;
-}
-
-.image.is-16by9 img,.image.is-1by1 img,.image.is-1by2 img,.image.is-1by3 img,.image.is-2by1 img,.image.is-2by3 img,.image.is-3by1 img,.image.is-3by2 img,.image.is-3by4 img,.image.is-3by5 img,.image.is-4by3 img,.image.is-4by5 img,.image.is-5by3 img,.image.is-5by4 img,.image.is-9by16 img {
-  height: 100%;
-  width: 100%;
-}
-
-.image.is-1by1 {
-  padding-top: 100%;
-}
-
-.image.is-5by4 {
-  padding-top: 80%;
-}
-
-.image.is-4by3 {
-  padding-top: 75%;
-}
-
-.image.is-3by2 {
-  padding-top: 66.6666%;
-}
-
-.image.is-5by3 {
-  padding-top: 60%;
-}
-
-.image.is-16by9 {
-  padding-top: 56.25%;
-}
-
-.image.is-2by1 {
-  padding-top: 50%;
-}
-
-.image.is-3by1 {
-  padding-top: 33.3333%;
-}
-
-.image.is-4by5 {
-  padding-top: 125%;
-}
-
-.image.is-3by4 {
-  padding-top: 133.3333%;
-}
-
-.image.is-2by3 {
-  padding-top: 150%;
-}
-
-.image.is-3by5 {
-  padding-top: 166.6666%;
-}
-
-.image.is-9by16 {
-  padding-top: 177.7777%;
-}
-
-.image.is-1by2 {
-  padding-top: 200%;
-}
-
-.image.is-1by3 {
-  padding-top: 300%;
-}
-
 @-webkit-keyframes moveIndeterminate {
   from {
     background-position: 200% 0;
@@ -700,11 +628,6 @@ a.has-text-link:focus,a.has-text-link:hover {
   box-shadow: 0 2px 3px rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.1);
   color: #4a4a4a;
   max-width: 100%;
-  position: relative;
-}
-
-.card-image {
-  display: block;
   position: relative;
 }
 
@@ -1013,6 +936,11 @@ a.list-item {
 }
 
 @media screen and (min-width:769px),print {
+  .column.is-one-third {
+    flex: none;
+    width: 33.3333%;
+  }
+
   .column.is-1 {
     flex: none;
     width: 8.33333%;
@@ -1075,6 +1003,11 @@ a.list-item {
 }
 
 @media screen and (min-width:1088px) {
+  .column.is-one-third-desktop {
+    flex: none;
+    width: 33.3333%;
+  }
+
   .column.is-1-desktop {
     flex: none;
     width: 8.33333%;
@@ -1338,12 +1271,11 @@ h3 {
 }
 
 .main-features-list {
-  list-style-type: disc;
-  text-align: left;
-  font-size: 21px;
+  text-align: center;
+  font-size: 18px;
   width: 400px;
   margin: auto;
-  margin-top: 40px;
+  margin-top: 20px;
   margin-bottom: 30px;
 }
 
@@ -1435,6 +1367,22 @@ h3 {
   transition: all 0.2s;
 }
 
+.pricing-card .feature {
+  font-size: 20px;
+  color: #333;
+  line-height: 50px;
+  font-size: 20px;
+  color: #333;
+  line-height: 60px;
+  background: linear-gradient(#fff,#ddd);
+  width: 240px;
+  margin-left: -24px;
+  margin-bottom: 20px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #bbb;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
+
 .pricing-card .price-per-year {
   font-size: 14px;
   color: #333;
@@ -1472,7 +1420,8 @@ h3 {
 }
 
 .button.is-primary {
-  background: #c96800;
+  background: linear-gradient(#8320b0,#472f88);
+  border: none;
   transition: all 0.3s;
 }
 
@@ -1509,6 +1458,12 @@ link:hover,a.navbar-item:hover {
   padding-bottom: 40px;
   border-top: 10px solid #c96800;
   border-bottom: 10px solid #c96800;
+}
+
+.pricing-card.business {
+  background: #fff;
+  border-top: 10px solid #333;
+  border-bottom: 10px solid #333;
 }
 
 .pricing-card .button {
@@ -1557,12 +1512,6 @@ link:hover,a.navbar-item:hover {
   color: #555;
 }
 
-.supported-platforms {
-  margin-top: 30px;
-  font-size: 20px;
-  font-weight: 600;
-}
-
 @media all and (min-width:768px) {
   .hero .subtitle {
     line-height: 40px;
@@ -1592,7 +1541,8 @@ link:hover,a.navbar-item:hover {
 }
 
 .button.is-link {
-  background-color: #c96800;
+  background: linear-gradient(#8320b0,#472f88);
+  border: none;
 }
 
 .button.is-link:hover,.button.is-link:active {
@@ -1642,35 +1592,75 @@ link:hover,a.navbar-item:hover {
     <section class="hero is-primary">
       <div class="hero-body">
         <p class="title">
-          In-Browser video sequencing
+          Quick Video Editing
         </p>
-        <p class="subtitle">
-          No need to download complicated apps<br>
-        </p>
-
         <div class="columns screenshot-block">
           <div class="column">
             <img class="screenshot pull-screenshot-right" src="images/screenshot.jpg">
           </div>
           <div class="column">
             <div class="hero-desktop-spacer"></div>
+            <div class="hero-desktop-spacer"></div>
+            <div class="hero-desktop-spacer"></div>
+            <div class="hero-desktop-spacer"></div>
+            <div class="hero-desktop-spacer"></div>
+            <p>
+              <span class="is-italic">cutvid.io</span> is a video editor that run in modern browsers.<br> With <span class="is-italic">cutvid.io</span>, you can:
+            </p>
             <ul class="main-features-list">
               <li>Combine &amp; cut videos.</li>
-              <li>Add audio tracks.</li>
-              <li>Add images, texts and simple effects.</li>
-              <li>Save &amp; access video projects from any computer.</li>
+              <li>Add audio tracks, images, texts, visual effects.</li>
+              <li>Save projects and share videos.</li>
             </ul>
             <br>
             <a class="button is-link is-large" target="_blank" href="/app/">
-              Launch
+              Try it!
             </a>
-            <p class="supported-platforms">For desktop Chrome and Firefox.</p>
-            <p class="coffee">coffee not included</p>
           </div>
         </div>
 
       </div>
     </section>
+    <section class="hero">
+      <div class="hero-body has-text-centered">
+        <div class="columns">
+          <div class="column">
+            <p class="title">
+              About
+            </p>
+            <div class="content">
+              <p><span class="is-italic">cutvid.io</span> is aimed at people who are not video profesionnals but still want to create and share videos.</p>
+              <p><span class="is-italic">cutvid.io</span> is open source and built to grow with an <span title="The plugin-based system allows to build new effects quickly ">extensible</span> design.</p>
+
+            </div>
+          </div>
+          <div class="column">
+            <p class="title">
+              How it works
+            </p>
+            <div class="content">
+              <p>
+                Place a sequence, upload a video, move it, cut it, add effects.
+              </p>
+              <p>
+                Then render &amp; share your video!
+              </p>
+            </div>
+          </div>
+          <div class="column">
+            <p class="title">
+              Temporary Video Sharing
+            </p>
+            <div class="content">
+              <p>This is a brand new feature coded entirely on Sunday March 15.</p>
+              <p>Sharing is available for LQ videos for now.</p>
+              <p>Ads may appear before or next to your shared videos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!--
          <div class="video-container">
          <video controls loop poster="videos/preview.jpg">
@@ -1696,7 +1686,6 @@ link:hover,a.navbar-item:hover {
          </div>
          </section>
     -->
-
     <section class="hero">
       <div class="hero-body pricing-hero has-text-centered">
         <p class="title">
@@ -1733,7 +1722,6 @@ link:hover,a.navbar-item:hover {
           </div>
         </div>
         <br/><br/>
-        <p class="description">Save by buying more credits or by getting a yearly Pro Subscription:</p>
         <div class="card-content pricing-card">
           <h3>Visitor</h3>
           <p class="has-text-centered">2 Render Credits</p>
@@ -1793,20 +1781,15 @@ link:hover,a.navbar-item:hover {
           <a class="button is-link" href="/app/?plan_premium">Launch!</a>
         </div>
         <br><br>
-
-        <p class="description">Free accounts can use up to 100MB of renders and project storage.</p>
-        <p class="description">You can edit videos and create projects freely but you will need to pay to render your video in HQ.</p>
-
       </div>
     </section>
 
-    <section class="hero is-primary">
-    </section>
 
     <section class="hero is-primary text-hero">
-      <div class="hero-body pricing-hero has-text-centered">
+      <div class="hero-body has-text-centered">
+        <h3 class="title">Questions you might have</h3>
         <p class="title">
-          Q: What is a render?
+          What is a render?
         </p>
         <p>
           Rendering is the last step when creating a video. When rendering, the video is built so you can eventually download it.<br>
@@ -1814,7 +1797,7 @@ link:hover,a.navbar-item:hover {
         </p>
         <br/><br/>
         <p class="title">
-          Q: What is a LQ render?
+          What is a LQ render?
         </p>
         <p>
           LQ renders happen directly in your browser.<br>
@@ -1825,7 +1808,7 @@ link:hover,a.navbar-item:hover {
         </p>
         <br/><br/>
         <p class="title">
-          Q: What is an HQ render?
+          What is an HQ render?
         </p>
         <p>
           In HQ renders, all frames of videos are extracted, then combined as smoothly as possible on cutvid.io's server.<br/>
@@ -1834,26 +1817,31 @@ link:hover,a.navbar-item:hover {
           If you are publishing a video advertisement, you should buy an HQ render.
         </p>
         <br/><br/>
+
         <p class="title">
-          Q: I want high quality and I don't want to pay.
-        </p>
-        <p>
-          A: Great, you are like me! You can try installing the
-          <a href="https://gitlab.com/antoineMoPa/lattefx/-/blob/master/docker-images/renderer/Dockerfile"
-             class="link"
-             target="_blank">
-            Docker image
-          </a>
-          for the renderer.
-        </p>
-        <br><br>
-        <p class="title">
-          Q: How do I contact the owner?
+          How do I contact the owner?
         </p>
         <p>
           There is a twitter link in the footer.<br>
           You can get my email when you click the render credits count after signing-in.<br>
           Please don't spam me unless you have sales-related problems or desire to invest in cutvid.io.
+        </p>
+        <br/><br/>
+        <p class="title">
+          What is your tech stack?
+        </p>
+        <p>
+          Frontend: Vue.js, GLSL for effects.<br/>
+          Some plugins use third party libraries (canvas plugin uses fabric.js)<br/>
+          Backend: Python, Rails, ffmpeg for HQ videos<br/>
+
+        </p>
+        <br/><br/>
+        <p class="title">
+          Any business plan/features?
+        </p>
+        <p style="max-width:500px;margin:auto;">
+          Not yet, but these could include enough HQ renders for your employees, project storage, private instance of the app, generation of big quantities of personalized videos, removed time limits for shared videos and many other features.
         </p>
       </div>
     </section>
