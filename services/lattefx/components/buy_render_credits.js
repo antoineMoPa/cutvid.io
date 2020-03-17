@@ -29,17 +29,17 @@ Vue.component('buy-render-credits', {
   </div>
   <label class="product">
     <input type="radio" name="purchaseItem" value="1credit" v-model="purchaseItem">
-    1 cutvid.io Render Credit - USD $ 1.50
+    1 Render Credit - USD $ 1.50
   </label>
   <br/>
   <label class="product">
     <input type="radio" name="purchaseItem" value="2credits" v-model="purchaseItem">
-    2 cutvid.io Render Credits - USD $ 2.50
+    2 Render Credits - USD $ 2.50
   </label>
   <br/>
   <label class="product">
     <input type="radio" name="purchaseItem" value="5credits" v-model="purchaseItem">
-    5 cutvid.io Render Credits - USD $ 4.50
+    5 Render Credits - USD $ 4.50
   </label>
   <br/>
   <label class="product">
