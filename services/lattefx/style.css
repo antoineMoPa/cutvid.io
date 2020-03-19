@@ -53,7 +53,6 @@ a:visited{
   width:40%;
   background:#fff;
   opacity:1.0;
-  box-shadow:0 0 20px rgba(0,0,0,0.8);
   line-height:26px;
   z-index:3000;
   padding:10px;
@@ -479,7 +478,6 @@ header .render-credits-count{
 
 .settings-panel input:focus{
   color:#fff;
-  box-shadow:0 0 8px rgba(255,255,255,0.3);
   border:1px solid #fff;
 }
 
@@ -648,7 +646,6 @@ header .render-credits-count{
   top:20px;
   left: calc(50% - 250px);
   max-width:580px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.8);
   background:#fff;
   padding:20px;
   padding-top:60px;
@@ -671,8 +668,8 @@ header .render-credits-count{
   padding-left:20px;
   padding-right:20px;
   z-index:2000;
-  box-shadow:0 0 30px rgba(0,0,0,0.8);
   text-align:left;
+  border-radius:3px;
 }
 
 .auth.popup{
@@ -707,7 +704,6 @@ header .render-credits-count{
   margin-right:10px;
   margin-bottom:0px;
   text-align:center;
-  box-shadow:0 0 30px rgba(0,0,0,0.0);
   vertical-align: top;
   padding:20px;
   padding-bottom:0;
@@ -717,13 +713,12 @@ header .render-credits-count{
 }
 
 .theme-box:hover{
-  box-shadow:0 0 30px rgba(0,0,0,0.3);
+  box-shadow:0 0 30px rgba(0,0,0,0.1);
 }
 
 .theme-box img{
   width:200px;
   height:200px;
-  box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
 .theme-box{
@@ -984,7 +979,6 @@ header .render-credits-count{
 .scene-template-selector .theme-box img{
   width:480px;
   height:270px;
-  box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
 .scene-template-selector .theme-box{
@@ -1237,7 +1231,6 @@ header .render-credits-count{
   width: calc(100% - 40px);
   margin-left: 10px;
   border-radius:8px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
 
 .video-option{
@@ -1396,7 +1389,6 @@ header .render-credits-count{
   width: 800px;
   margin: auto;
   border-radius:30px;
-  box-shadow:0 0 30px rgba(0,0,0,0.5);
   border: 1px solid #000;
   position: absolute;
   z-index:1000;
@@ -1551,7 +1543,6 @@ header .render-credits-count{
   top:60px;
   right:10px;
   z-index: 2000;
-  box-shadow: 0 0 5px rgba(0,0,0,0.3);
   font-size: 18px;
   opacity:0;
   transition: all 0.3s;
@@ -1649,7 +1640,6 @@ header .render-credits-count{
   position:absolute;
   background: #fff;
   color:#111;
-  box-shadow:0 0 5px rgba(0,0,0,0.3);
   padding:10px;
   width:300px;
   text-align:left;
