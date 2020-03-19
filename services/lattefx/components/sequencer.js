@@ -124,11 +124,14 @@ Vue.component('sequencer', {
           <img src="icons/feather/minus.svg" width="20"/>
           Zoom out
         </button>
+        <!--
+        Templates were too ugly and few
         <button v-on:click="launch_template_selector()"
                 class="add-button">
           <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
           Templates
         </button>
+        -->
       </div>
       <scene-template-selector
         ref="scene-template-selector"
@@ -942,7 +945,7 @@ Vue.component('sequencer', {
           this.time.time = 0;
         }
         this.$refs["timeBar"].style.left = (this.time.time * scale.timeScale) + "px";
-        this.$refs["timeIndicator"].innerHTML = formatTime(this.time.time)
+        this.$refs["timeIndicator"].innerHTML = formatTime(this.time.time);
       },
       deep: true
     }

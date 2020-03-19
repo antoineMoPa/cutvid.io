@@ -6,6 +6,7 @@ body{
   margin:0;
 }
 
+
 a{
   cursor: pointer;
 }
@@ -104,8 +105,7 @@ a:visited{
 /* UI -------------- */
 
 .ui{
-  background:#111;
-  background: linear-gradient(#222,#333);
+  background: #222;
   position:fixed;
   bottom:0;
   left:0;
@@ -120,12 +120,11 @@ a:visited{
 /* ui-button class is also used in buy popup */
 .ui-button{
   padding:8px;
-  box-shadow:0 0 3px rgba(0,0,0,0.5);
   border-radius:3px;
   background:#333;
   color:#eee;
   cursor:pointer;
-  background: linear-gradient(#333, #222);
+  background: #333;
   text-decoration:none;
   font-size:14px;
   line-height:24px;
@@ -497,6 +496,7 @@ header .render-credits-count{
   display:block;
   font-size:13px;
   margin-top:5px;
+  margin-bottom:3px;
 }
 
 .settings-panel button{
@@ -1265,6 +1265,23 @@ header .render-credits-count{
   margin-left: 10px;
   border-radius:8px;
   box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+.video-option{
+  width:40%;
+  display:inline-block;
+}
+
+.record-block{
+  margin-top: 17px;
+  line-height: 39px;
+}
+
+.record-block .stop-recording-button{
+  float:right;
+  background:#FF3311;
+  color:#fff;
+  animation-duration: 3s;
 }
 
 /* END VIDEO PLUGIN */

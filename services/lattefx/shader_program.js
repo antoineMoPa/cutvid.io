@@ -321,6 +321,11 @@ class ShaderProgram {
         load();
         videoInitialized = true;
       } else {
+
+        if(app.textures[name] == undefined){
+          console.error("Texture should not be undefined if video is initialized");
+        }
+
         let texture = app.textures[name].texture;
 
         gl.bindTexture(gl.TEXTURE_2D, texture);

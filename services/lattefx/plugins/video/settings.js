@@ -8,17 +8,26 @@
       ui: {
         template: `
 <div>
-  <label>Your Video</label>
-  <div class="action-suggest animated bounce delay-2s"
-       v-if="videoFileB64 == null">
-    Choose your video below!
+  <div class="record-block" v-if="recording">
+    Recording
+    <button v-on:click="stop_recording"
+            class="stop-recording-button animated infinite flash">
+      Stop Recording
+    </button>
   </div>
-  <label>
+  <div class="video-option">
+    <label>Upload existing</label>
+
     <button v-on:click="browse_file">Upload Video</button>
     <input type="file"
            accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid"
            class="video-file-input hidden" v-on:change="on_video_upload()">
-  </label>
+  </div>
+  <div class="video-option">
+    <label>Screen Grab</label>
+
+    <button v-on:click="record_screen">Record Screen</button>
+  </div>
   <p v-if="error">ERROR: Your browser does not seem to support this video file encoding.<br>
   You can try converting it to .ogv at:<br>
     <a href="https://video.online-convert.com/convert-to-ogv"
@@ -41,6 +50,7 @@
         data: function(){
           return {
             serializeExclude: ["effect", "shaderProgram"],
+            recording: false,
             video: null,
             videoFile: null,
             videoFileB64: null,
@@ -85,6 +95,44 @@
           };
         },
         methods: {
+          stop_recording(){
+            if(this.on_stop_recording != undefined){
+              this.on_stop_recording();
+            }
+          },
+          async record_screen(){
+            let options = {};
+            let capture_stream = null;
+
+            try {
+              capture_stream = await navigator.mediaDevices.getDisplayMedia(options);
+            } catch(err) {
+              window.alert("Error: " + err);
+            }
+
+            let media_recorder = new MediaRecorder(capture_stream, {});
+            this.recording = true;
+
+            let media_recorder_chunks = [];
+
+            media_recorder.onstop = function(){
+              this.recording = false;
+            };
+
+            this.on_stop_recording = function(){
+              let tracks = capture_stream.getTracks();
+              tracks.forEach(track => track.stop());
+            }.bind(this);
+
+            media_recorder.ondataavailable = function(e){
+              if (e.data.size > 0) {
+                this.onVideo(e.data);
+                this.recording = false;
+              }
+            }.bind(this);
+
+            media_recorder.start();
+          },
           loadVideo(){
             let app = this;
 
@@ -222,6 +270,7 @@
           }
         },
         mounted(){
+
         },
         beforeDestroy(){
           this.shaderProgram.delete_texture('video');

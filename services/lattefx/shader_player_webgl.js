@@ -835,7 +835,7 @@ class ShaderPlayerWebGL {
               await tex.updateVideo(
                 this.fps,
                 trimBefore,
-                timeFrom-trimBefore,
+                timeFrom - trimBefore,
                 shouldBeTime
               ).catch((e) => {
                 console.log("Error in video update: " + e)
@@ -860,7 +860,7 @@ class ShaderPlayerWebGL {
                   let time_at_seek = this.time.time;
 
                   element.addEventListener("seeked", function(){
-                    this.time.time = time_at_seek;
+                    //this.time.time = time_at_seek;
                   }.bind(this), {once: true})
 
                   element.currentTime = shouldBeTime;
