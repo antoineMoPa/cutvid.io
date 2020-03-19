@@ -30,7 +30,6 @@ h3{
 }
 
 input{
-  border-radius:2px;
   border: 1px solid #aaa;
   padding:5px;
   background:#eee;
@@ -54,7 +53,6 @@ a:visited{
   width:40%;
   background:#fff;
   opacity:1.0;
-  border-radius:8px;
   box-shadow:0 0 20px rgba(0,0,0,0.8);
   line-height:26px;
   z-index:3000;
@@ -120,7 +118,6 @@ a:visited{
 /* ui-button class is also used in buy popup */
 .ui-button{
   padding:8px;
-  border-radius:3px;
   background:#333;
   color:#eee;
   cursor:pointer;
@@ -195,7 +192,6 @@ a:visited{
 .ui-button-paypal-part{
   background: #fff;
   display: inline-block;
-  border-radius:3px;
   margin-right:5px;
 }
 
@@ -367,7 +363,6 @@ header .render-credits-count{
 .settings-panel{
   background: #222;
   color:#eee;
-  border-radius:3px;
   position:fixed;
   top:70px;
   left:20px;
@@ -376,8 +371,6 @@ header .render-credits-count{
   height:calc(100% - 150px);
   text-align:left;
   padding-left:15px;
-  border-top-right-radius:5px;
-  border-top-left-radius:5px;
 }
 
 .settings-panel-hidden{
@@ -387,7 +380,6 @@ header .render-credits-count{
 .settings-panel a.preset{
   cursor:pointer;
   font-size:12px;
-  border-radius:3px;
   margin-bottom:4px;
   display: inline-block;
   line-height: 22px;
@@ -473,7 +465,6 @@ header .render-credits-count{
   border-left:1px solid #000;
   border-bottom:1px solid #2a2a2a;
   border-right:1px solid #2a2a2a;
-  border-radius:4px;
 }
 
 .settings-panel input[type="file"] {
@@ -503,7 +494,6 @@ header .render-credits-count{
   background:#111;
   border:none;
   padding:5px;
-  border-radius:4px;
   cursor:pointer;
   color:#fff;
   line-height: 31px;
@@ -586,7 +576,6 @@ header .render-credits-count{
   width:1px;
   height:calc(100% - 20px);
   border-left:1px dotted #aaa;
-  border-radius:4px;
   z-index:2000;
 }
 
@@ -661,7 +650,6 @@ header .render-credits-count{
   max-width:580px;
   box-shadow: 0 0 10px rgba(0,0,0,0.8);
   background:#fff;
-  border-radius:3px;
   padding:20px;
   padding-top:60px;
 }
@@ -684,7 +672,6 @@ header .render-credits-count{
   padding-right:20px;
   z-index:2000;
   box-shadow:0 0 30px rgba(0,0,0,0.8);
-  border-radius:10px;
   text-align:left;
 }
 
@@ -721,7 +708,6 @@ header .render-credits-count{
   margin-bottom:0px;
   text-align:center;
   box-shadow:0 0 30px rgba(0,0,0,0.0);
-  border-radius:10px;
   vertical-align: top;
   padding:20px;
   padding-bottom:0;
@@ -737,7 +723,6 @@ header .render-credits-count{
 .theme-box img{
   width:200px;
   height:200px;
-  border-radius:3px;
   box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
@@ -757,7 +742,6 @@ header .render-credits-count{
   color:#fff;
   font-size:9px;
   padding:3px;
-  border-radius:6px;
   font-weight:600;
   transition:0.3s;
   cursor:default;
@@ -790,7 +774,6 @@ header .render-credits-count{
 .sequencer{
   position:absolute;
   background: #222;
-  border-radius:3px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -808,7 +791,6 @@ header .render-credits-count{
   position:absolute;
   height:20px;
   background:#333;
-  border-radius:4px;
   border:1px solid #111;
   overflow:hidden;
   z-index:10;
@@ -889,7 +871,6 @@ header .render-credits-count{
   width:20px;
   overflow:show;
   height:20px;
-  border-radius:4px;
   cursor:pointer;
   background:url(/app/icons/feather/chevron-left.svg) #252525;
   background-size:cover;
@@ -906,7 +887,6 @@ header .render-credits-count{
   width:20px;
   height:20px;
   opacity:0.7;
-  border-radius:4px;
   cursor:pointer;
   background:url(/app/icons/feather/chevron-right.svg) #252525;
   background-size:cover;
@@ -967,7 +947,6 @@ header .render-credits-count{
   position:absolute;
   top:0px;
   left:3px;
-  border-radius:4px;
   padding: 0 3px;
   color:#fff;
 }
@@ -983,7 +962,6 @@ header .render-credits-count{
   padding: 0 20px;
   line-height:60px;
   z-index:200;
-  border-radius:5px;
 }
 
 .sequencer-height-dragger{
@@ -1006,7 +984,6 @@ header .render-credits-count{
 .scene-template-selector .theme-box img{
   width:480px;
   height:270px;
-  border-radius:3px;
   box-shadow:0 0 8px rgba(0,0,0,0.3);
 }
 
@@ -1020,7 +997,6 @@ header .render-credits-count{
   color:#fff;
   border: none;
   padding:10px;
-  border-radius:3px;
   cursor:pointer;
 }
 
@@ -1057,7 +1033,6 @@ header .render-credits-count{
   color: #fff;
   background: #cc0050;
   padding: 20px;
-  border-radius: 6px;
   margin: 60px;
   margin-bottom: 60px;
 }
@@ -1211,7 +1186,6 @@ header .render-credits-count{
   height: 60px;
   margin-bottom: 20px;
   border: none;
-  border-radius: 3px;
   font-size: 18px;
   cursor: pointer;
 }
@@ -1239,7 +1213,6 @@ header .render-credits-count{
 }
 
 .gfont-picker .gfont-button img{
-  border-radius:3px;
   margin-bottom: -13px;
 }
 
@@ -1355,7 +1328,6 @@ header .render-credits-count{
   position:absolute;
   width:20px;
   height:20px;
-  border-radius:2px;
 }
 
 .text-box .bottom-right-handle{
@@ -1466,7 +1438,6 @@ header .render-credits-count{
   padding:0 20px;
   line-height:40px;
   color:#333;
-  border-radius:3px;
 }
 
 .projects .project:hover{
@@ -1501,7 +1472,6 @@ header .render-credits-count{
 .projects .open-project{
   background:#3af;
   color:#fff;
-  border-radius:3px;
   padding:5px 10px;
 }
 
@@ -1532,7 +1502,6 @@ header .render-credits-count{
 .ask-interaction button{
   border:none;
   background:#eee;
-  border-radius:5px;
   padding:10px;
   margin:0 10px;
   cursor:pointer;
@@ -1553,7 +1522,6 @@ header .render-credits-count{
 
 .projects .storage .storage-indicator{
   border:1px solid #bbb;
-  border-radius:3px;
   width:80%;
   margin:auto;
   margin-bottom:20px;
@@ -1583,7 +1551,6 @@ header .render-credits-count{
   top:60px;
   right:10px;
   z-index: 2000;
-  border-radius:5px;
   box-shadow: 0 0 5px rgba(0,0,0,0.3);
   font-size: 18px;
   opacity:0;
@@ -1604,7 +1571,6 @@ header .render-credits-count{
   background:#fff;
   color:#3af;
   border:none;
-  border-radius:3px;
   margin-left:20px;
   padding:10px;
   margin-top:-20px;
@@ -1626,15 +1592,10 @@ header .render-credits-count{
   max-width:800px;
   margin:auto;
   border-collapse:collapse;
-  border-radius:3px;
 }
 
 .renders .table tr:nth-child(2n){
   background:#f8f8f8;
-}
-
-.renders .table tr{
-  border-radius: 3px;
 }
 
 .renders .table tr td{
@@ -1672,7 +1633,6 @@ header .render-credits-count{
   padding:10px;
   margin-top:8px;
   margin-right:10px;
-  border-radius:3px;
 }
 
 /* END UI GUIDING */
@@ -1689,7 +1649,6 @@ header .render-credits-count{
   position:absolute;
   background: #fff;
   color:#111;
-  border-radius:4px;
   box-shadow:0 0 5px rgba(0,0,0,0.3);
   padding:10px;
   width:300px;

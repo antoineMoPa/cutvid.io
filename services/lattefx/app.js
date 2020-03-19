@@ -62,7 +62,6 @@ var app = new Vue({
                  </div>
                  <div class="application-menu file-menu"
                     v-if="file_menu_open && settings != null">
-                   <p>cutvid.io cloud</p>
                    <a v-on:click="browse_projects">
                      Your Projects
                    </a><br>
