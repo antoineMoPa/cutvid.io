@@ -40,6 +40,9 @@
   <label>Offset the video X, Y</label>
   <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.01">
   <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.01">
+  <label>Opacity</label>
+  <input v-model.number="uniforms.opacity.value" type="number" size="4" step="0.1">
+
   <label>Mute sound
     <input v-model="muted" type="checkbox">
   </label>
@@ -92,6 +95,16 @@
                 len: 0,
                 value: 0,
               },
+              opacity: {
+                type: "f",
+                len: 0,
+                value: 1,
+              },
+              isLoaded: {
+                type: "f",
+                len: 0,
+                value: 0,
+              }
             }
           };
         },
@@ -138,6 +151,7 @@
             let app = this;
 
             app.error = false;
+            this.uniforms.isLoaded.value = 1.0;
 
             this.shaderProgram.set_texture('video', '', function(){}, {
               video: this.video,
@@ -190,6 +204,8 @@
           },
           onVideo(videoToLoad) {
             const app = this;
+
+            this.uniforms.isLoaded.value = 1.0;
 
             try {
               let file = null;

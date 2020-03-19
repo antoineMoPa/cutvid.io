@@ -1,11 +1,10 @@
-/* This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.  */
 precision highp float;
 
 varying vec2 UV;
 varying vec2 lastUV;
-uniform sampler2D in_tex;
+uniform sampler2D previous_layer;
 uniform vec2 mouse;
-uniform float ratio, time;
+uniform float ratio, time, isLoaded, opacity;
 uniform float videoWidth, videoHeight, videoScale, offsetTop, offsetLeft;
 uniform sampler2D video;
 
@@ -33,9 +32,16 @@ void main(void){
     video *= step(0.0, videoUV.x);
     video *= step(0.0, videoUV.y);
 
-    vec4 last = texture2D(in_tex, lastUV);
+    vec4 last = texture2D(previous_layer, lastUV);
+
+	if(isLoaded < 0.5){ // Could be optimized!
+	  video = vec4(0.0,0.0,0.0,1.0);
+	}
+
+	video.a *= opacity;
+
     //vec4 col = (1.0 - video.a) * last + video.a * video;
-    vec4 col = video + (1.0 - video.a) * last;
+    vec4 col = video * video.a + (1.0 - video.a) * last;
 
     gl_FragColor = col;
 }
