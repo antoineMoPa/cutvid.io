@@ -520,7 +520,7 @@ header .render-credits-count{
   position:relative;
   height:35px;
   width: calc(100% - 27px);
-  border-radius:10px;
+  border-radius:3px;
   background: #111;
   padding-left: 7px;
   font-size: 15px;
