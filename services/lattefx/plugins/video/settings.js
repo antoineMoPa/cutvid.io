@@ -15,6 +15,7 @@
       Stop Recording
     </button>
   </div>
+  <br v-if="recording"/>
   <div class="video-option">
     <label>Upload existing</label>
 
