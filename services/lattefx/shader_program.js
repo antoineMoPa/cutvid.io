@@ -312,18 +312,24 @@ class ShaderProgram {
     }
 
     let videoInitialized = false;
+    let update_video_mutex = false;
 
-    function updateVideo(){
+    async function updateVideo(){
       /*
         Returns true on success
        */
       if(!videoInitialized){
-        load();
+        if(update_video_mutex){
+          return;
+        }
+        update_video_mutex = true;
+        await load();
         videoInitialized = true;
+        update_video_mutex = false;
       } else {
-
         if(app.textures[name] == undefined){
           console.error("Texture should not be undefined if video is initialized");
+          return;
         }
 
         let texture = app.textures[name].texture;
@@ -361,82 +367,84 @@ class ShaderProgram {
     }
 
     async function load() {
+      return new Promise(async function(resolve, reject){
+        let url = source;
 
-      let url = source;
+        if (source.tagName != undefined && source.tagName == "CANVAS") {
+          url = source.toDataURL();
+        }
 
-      if (source.tagName != undefined && source.tagName == "CANVAS") {
-        url = source.toDataURL();
-      }
+        if(!isVideo &&
+           !isAudio &&
+           options.force_width != undefined ||
+           options.force_height != undefined
+          ){
+          let can = document.createElement("canvas");
+          let ctx = can.getContext("2d");
+          can.width = options.force_width;
+          can.height = options.force_height;
+          ctx.drawImage(image, 0, 0, options.force_width, options.force_height);
+          image = can;
 
-      if(!isVideo &&
-         !isAudio &&
-         options.force_width != undefined ||
-         options.force_height != undefined
-        ){
-        let can = document.createElement("canvas");
-        let ctx = can.getContext("2d");
-        can.width = options.force_width;
-        can.height = options.force_height;
-        ctx.drawImage(image, 0, 0, options.force_width, options.force_height);
-        image = can;
+          // Backend renderer only supports png
+          // luckily, Canvas.toDataURL exports as png
+          url = can.toDataURL();
+        }
 
-        // Backend renderer only supports png
-        // luckily, Canvas.toDataURL exports as png
-        url = can.toDataURL();
-      }
+        // Cleanup before setting again
+        if(app.textures[name] != undefined){
+          app.delete_texture(name);
+        }
 
-      // Cleanup before setting again
-      if(app.textures[name] != undefined){
-        app.delete_texture(name);
-      }
+        var texture = null;
 
-      var texture = null;
+        if(!isAudioOnly) {
+          texture = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, texture);
+        }
 
-      if(!isAudioOnly) {
-        texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-      }
+        app.textures[name] = {
+          texture,
+          isVideo,
+          isAudio,
+          videoElement: videoElement,
+          audioElement: audioElement,
+          updateVideo: updateVideo,
+          updateVideoHQ: updateVideoHQ,
+          url
+        };
 
-      app.textures[name] = {
-        texture,
-        isVideo,
-        isAudio,
-        videoElement: videoElement,
-        audioElement: audioElement,
-        updateVideo: updateVideo,
-        updateVideoHQ: updateVideoHQ,
-        url
-      };
+        if(options.video_media_id != null) {
+          app.textures[name].videoDigest = options.video_media_id;
+        } else if (options.audio_media_id != null) {
+          app.textures[name].audioDigest = options.audio_media_id;
+        } else if (isVideo) {
+          await app.get_file_digest(options.videoFile).then((digest) => {
+            app.textures[name].videoDigest = digest;
+            app.textures[name].videoFile = options.videoFile;
+          });
+        } else if (isAudioOnly) {
+          // Create digest for audio-only files
+          await app.get_file_digest(options.audioFile).then((digest) => {
+            app.textures[name].audioDigest = digest;
+            app.textures[name].audioFile = options.audioFile;
+          });
+        }
 
-      if(options.video_media_id != null) {
-        app.textures[name].videoDigest = options.video_media_id;
-      } else if (options.audio_media_id != null) {
-        app.textures[name].audioDigest = options.audio_media_id;
-      } else if (isVideo) {
-        await app.get_file_digest(options.videoFile).then((digest) => {
-          app.textures[name].videoDigest = digest;
-          app.textures[name].videoFile = options.videoFile;
-        });
-      } else if (isAudioOnly) {
-        // Create digest for audio-only files
-        await app.get_file_digest(options.audioFile).then((digest) => {
-          app.textures[name].audioDigest = digest;
-          app.textures[name].audioFile = options.audioFile;
-        });
-      }
+        if(!isAudioOnly && !isVideo){
+          gl.texImage2D(
+            gl.TEXTURE_2D, level, internalFormat,
+            srcFormat, srcType, image);
 
-      if(!isAudioOnly && !isVideo){
-        gl.texImage2D(
-          gl.TEXTURE_2D, level, internalFormat,
-          srcFormat, srcType, image);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        }
 
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      }
-
-      ready();
+        ready();
+        resolve();
+      });
     }
 
     let timeUpdate = false;

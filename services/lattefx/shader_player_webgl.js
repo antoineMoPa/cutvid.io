@@ -860,7 +860,7 @@ class ShaderPlayerWebGL {
                   let time_at_seek = this.time.time;
 
                   element.addEventListener("seeked", function(){
-                    //this.time.time = time_at_seek;
+                    // this.time.time = time_at_seek;
                   }.bind(this), {once: true})
 
                   element.currentTime = shouldBeTime;
