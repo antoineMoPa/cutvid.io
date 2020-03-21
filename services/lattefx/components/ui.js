@@ -27,7 +27,7 @@ Vue.component('ui', {
          v-on:click="renderLQ">
         <img class="feather-button"
              src="icons/feather/download.svg"/>
-        Render LQ - <span class="ui-price">FREE</span>
+        Render - <span class="ui-price">FREE</span>
       </a>
       <a class="ui-button buy-button button-1"
          v-if="!player.rendering &&

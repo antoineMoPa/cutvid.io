@@ -354,6 +354,33 @@ header .render-credits-count{
   margin-top:20px;
 }
 
+.player-overlay .dragger{
+  width: 6px;
+  height: 6px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.player-overlay .dragger:hover,
+.player-overlay .dragger.moving{
+  background: #222;
+}
+
+.player-overlay .right-dragger{
+  right:-3px;
+  left:auto;
+  height:100%;
+  cursor: ew-resize;
+}
+
+.player-overlay .bottom-dragger{
+  bottom:-3px;
+  top:auto;
+  width:100%;
+  cursor: ns-resize;
+}
+
 /* END PLAYER --------------- */
 
 

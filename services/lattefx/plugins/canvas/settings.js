@@ -1,4 +1,3 @@
-/* This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.  */
 {
   let name = "canvas";
 
@@ -305,6 +304,10 @@
           this.listen_scaling();
           this.listen_selection();
           this.on_resize();
+
+          window.addEventListener("paste", function(event){
+            console.log(event);
+          }, false);
         },
         beforeDestroy(){
           this.canvas_el.parentNode.removeChild(this.canvas_el);

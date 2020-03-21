@@ -74,7 +74,10 @@ Vue.component('player', {
     <div id="main-player">
       <div class="canvas-container">
       </div>
-      <div class="player-overlay"/>
+      <div class="player-overlay">
+        <div class="dragger right-dragger"></div>
+        <div class="dragger bottom-dragger"></div>
+      </div>
       <sequencer
         ref="sequencer"
         v-on:playLooping="playLooping"
@@ -129,6 +132,7 @@ Vue.component('player', {
       width: 1920,
       height: 1080,
       aspect: 1920.0/1080,
+      scale: 1.0,
       user_token: null,
       expert_mode: true,
       fps: 30,
@@ -204,6 +208,10 @@ Vue.component('player', {
 
       let displayed_w = available_size;
       let displayed_h = available_size / app.aspect;
+
+      // Used for draggers
+      this.scale = displayed_w / this.width;
+
       let canvas_container = document.querySelectorAll("#main-player .canvas-container")[0];
       let player_overlay = document.querySelectorAll("#main-player .player-overlay")[0]
 
@@ -217,10 +225,10 @@ Vue.component('player', {
 
       player_overlay.style.width =
         app.player.canvas.style.maxWidth =
-        displayed_w + "px";
+        (displayed_w) + "px";
       player_overlay.style.height =
         app.player.canvas.style.maxHeight =
-          displayed_h + "px";
+        (displayed_h) + "px";
 
       player_overlay.style.position =
         canvas_container.style.position = "absolute";
@@ -476,6 +484,71 @@ Vue.component('player', {
         });
       }
     },
+    init_draggers(){
+      let player_overlay = this.$el.querySelectorAll(".player-overlay")[0];
+
+      let sides = [{
+        position: "right",
+        event_prop: "clientX",
+        object_prop: "width",
+        dragger: this.$el.querySelectorAll(".right-dragger")[0]
+      }, {
+        position: "top",
+        event_prop: "clientY",
+        object_prop: "height",
+        dragger: this.$el.querySelectorAll(".bottom-dragger")[0]
+      }];
+
+      for(let i in sides){
+        const {
+          position,
+          event_prop,
+          object_prop,
+          dragger
+        } = sides[i];
+
+        dragger.addEventListener("mousedown", function(e){
+          e.preventDefault();
+          dragger.classList.add("moving");
+
+          let scale = this.scale;
+          let initial = e[event_prop];
+          let initial_player_size = this[object_prop];
+
+          initial = e[event_prop];
+
+          let move_listener = function(e, finalize=false){
+            current = e[event_prop];
+            delta = (current - initial) / scale;
+
+            let new_size = (initial_player_size + delta) * scale;
+
+            player_overlay.style[object_prop] = new_size + "px";
+
+            if (finalize){
+
+
+              if(object_prop == "height"){
+                this.player.cut_bottom += delta;
+              } else {
+                this[object_prop] = new_size / scale;
+              }
+
+              this.update_dimensions();
+            }
+          }.bind(this);
+
+          window.addEventListener("mousemove", move_listener);
+
+          window.addEventListener("mouseup", function(e){
+            e.preventDefault();
+            dragger.classList.remove("moving");
+            move_listener(e, true);
+            window.removeEventListener("mousemove", move_listener);
+          }, {once: true});
+        }.bind(this));
+      }
+    }
   },
   watch: {
     width(){
@@ -517,5 +590,6 @@ Vue.component('player', {
     ui.appendChild(container);
 
     this.expose();
+    this.init_draggers();
   },
 });
