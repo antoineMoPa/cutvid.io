@@ -77,6 +77,7 @@ Vue.component('player', {
       <div class="player-overlay">
         <div class="dragger right-dragger"></div>
         <div class="dragger bottom-dragger"></div>
+        <div class="dragger top-dragger"></div>
         <div class="dragger left-dragger"></div>
       </div>
       <sequencer
@@ -165,10 +166,20 @@ Vue.component('player', {
 
         `,
         fn: function(){
-          this.width = this.player.width - this.player.cut_left;
-          this.height = this.player.height - this.player.cut_bottom;
+          this.width = parseInt(
+            this.player.width - this.player.cut_left + this.player.cut_right
+          );
+
+          this.height = parseInt(
+            this.player.height - this.player.cut_bottom + this.player.cut_top
+          );
+
+          this.player.cut_right = 0;
           this.player.cut_left = 0;
           this.player.cut_bottom = 0;
+          this.player.cut_top = 0;
+
+          this.update_dimensions();
         }.bind(this)
       });
 
@@ -520,7 +531,13 @@ Vue.component('player', {
         event_prop: "clientX",
         object_prop: "width",
         dragger: this.$el.querySelectorAll(".left-dragger")[0]
-      }];
+      },{
+        position: "top",
+        direction: -1,
+        event_prop: "clientY",
+        object_prop: "height",
+        dragger: this.$el.querySelectorAll(".top-dragger")[0]
+      },];
 
       for(let i in sides){
         const {
@@ -554,6 +571,10 @@ Vue.component('player', {
                 this.player.cut_bottom -= delta;
               } else if(position == "left"){
                 this.player.cut_left += delta;
+              } else if(position == "right"){
+                this.player.cut_right += delta;
+              } else if(position == "top"){
+                this.player.cut_top -= delta;
               }
 
               this[object_prop] = new_size / scale;

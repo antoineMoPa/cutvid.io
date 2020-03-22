@@ -388,6 +388,13 @@ header .render-credits-count{
   cursor: ns-resize;
 }
 
+.player-overlay .top-dragger{
+  top:-3px;
+  bottom:auto;
+  width:100%;
+  cursor: ns-resize;
+}
+
 /* END PLAYER --------------- */
 
 

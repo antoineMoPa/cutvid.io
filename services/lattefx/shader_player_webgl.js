@@ -34,7 +34,9 @@ class ShaderPlayerWebGL {
 
 
     this.cut_left = 0;   // This is used to cut a portion of the viewport
+    this.cut_right = 0;
     this.cut_bottom = 0;
+    this.cut_top = 0;
 
     this.width = width || 540;
     this.height = height || 540;
@@ -953,7 +955,7 @@ class ShaderPlayerWebGL {
 
         // Screen ratio
         const ratio = (this.width - this.cut_left) /
-              (this.height - this.cut_bottom);
+              (this.height - this.cut_bottom + this.cut_top);
 
         const ratioAttribute = gl.getUniformLocation(program, 'ratio');
         gl.uniform1f(ratioAttribute, ratio);
@@ -975,7 +977,7 @@ class ShaderPlayerWebGL {
           this.cut_left,
           this.cut_bottom,
           this.width - this.cut_left,
-          this.height - this.cut_bottom
+          this.height - this.cut_bottom + this.cut_top
         );
 
         try{
