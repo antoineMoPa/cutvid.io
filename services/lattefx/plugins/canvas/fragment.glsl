@@ -6,7 +6,7 @@ varying vec2 lastUV;
 uniform sampler2D previous_layer;
 uniform vec2 mouse;
 uniform float ratio, time;
-uniform float imageWidth, imageHeight, imageScale, offsetTop, offsetLeft;
+uniform float imageWidth, imageHeight, y_scale, imageScale, offsetTop, offsetLeft;
 uniform sampler2D image;
 
 void main(void){
@@ -14,7 +14,7 @@ void main(void){
     float y = UV.y;
     vec2 p = vec2(x,y) - vec2(0.5 * ratio, 0.5);
 
-    vec2 imageUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
+    vec2 imageUV = UV * vec2(1.0, -y_scale) + vec2(0.0, y_scale);
     vec4 image = texture2D(image, imageUV);
     vec4 last = texture2D(previous_layer, lastUV);
 

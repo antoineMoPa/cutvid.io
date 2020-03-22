@@ -905,7 +905,6 @@ class ShaderPlayerWebGL {
           } else {
             gl.uniform1f(att, 0.0);
           }
-
         }
 
         gl.uniform2fv(
@@ -964,6 +963,11 @@ class ShaderPlayerWebGL {
             gl.uniform1f(attribute, parseFloat(uni.value));
           }
         }
+
+        att = gl.getUniformLocation(program, 'y_scale');
+        let y_scale = (this.height - this.cut_bottom) / this.height;
+        gl.uniform1f(att, y_scale);
+
         gl.viewport(0, this.cut_bottom, this.width, this.height - this.cut_bottom);
         try{
           gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

@@ -71,7 +71,14 @@
             at_mount_load: "",
             player: null,
             effect: null,
-            shaderProgram: null
+            shaderProgram: null,
+            uniforms: {
+              y_scale: {
+                type: "f",
+                len: 1,
+                value: 1,
+              },
+            }
           };
         },
         methods: {
@@ -119,13 +126,15 @@
             }
           },
           on_resize(){
-            let width = window.player.player.canvas.clientWidth;
-            let height = window.player.player.canvas.clientHeight;
+            let player = window.player.player;
+            let width = player.canvas.clientWidth;
+            let height = player.canvas.clientHeight;
 
             this.canvas.setWidth(width)
-            this.canvas.setHeight(height)
+            this.canvas.setHeight(height);
 
-            let zoom = width/window.player.player.width;
+            let zoom = width/player.width;
+
             this.canvas.setZoom(zoom);
             this.update_canvas();
           },
@@ -212,6 +221,9 @@
           },
           listen_modified(){
             this.canvas.on("object:modified", function(){
+              this.update_canvas();
+            }.bind(this));
+            this.canvas.on("text:changed", function(){
               this.update_canvas();
             }.bind(this));
           },

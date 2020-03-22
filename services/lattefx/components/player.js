@@ -530,6 +530,7 @@ Vue.component('player', {
 
               if(object_prop == "height"){
                 this.player.cut_bottom += delta;
+                this[object_prop] = new_size / scale;
               } else {
                 this[object_prop] = new_size / scale;
               }
