@@ -374,6 +374,13 @@ header .render-credits-count{
   cursor: ew-resize;
 }
 
+.player-overlay .left-dragger{
+  left:-3px;
+  right:auto;
+  height:100%;
+  cursor: ew-resize;
+}
+
 .player-overlay .bottom-dragger{
   bottom:-3px;
   top:auto;
@@ -1681,12 +1688,16 @@ header .render-credits-count{
   left:175px;
 }
 
+.project-menu{
+  left:215px;
+}
+
 .resources-menu{
-  left:255px;
+  left:320px;
 }
 
 .edit-menu{
-  left:215px;
+  left:275px;
 }
 
 .shortcut-hint{

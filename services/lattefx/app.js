@@ -5,6 +5,7 @@ var app = new Vue({
     navigator_supported: true,
     resources_menu_open: false,
     file_menu_open: false,
+    project_menu_open: false,
     edit_menu_open: false,
     sequencer: null,
     player: null
@@ -17,6 +18,9 @@ var app = new Vue({
                  <div class="app-menu-links">
                    <a href="#" v-on:click="toggle_menu('file_menu_open')">
                      File
+                   </a>
+                   <a href="#" v-on:click="toggle_menu('project_menu_open')">
+                     Project
                    </a>
                    <a href="#" v-on:click="toggle_menu('edit_menu_open')">
                      Edit
@@ -73,6 +77,12 @@ var app = new Vue({
                    <a v-on:click="player.save_video()">Save to cloud</a>
                    <span class="shortcut-hint">Ctrl+S</span>
                  </div>
+                 <div class="application-menu project-menu"
+                    v-if="project_menu_open && settings != null">
+                   <a v-on:click="api().call('player.reset_trim')">
+                     Reset Trim
+                   </a>
+                 </div>
                </div>
                <player ref="player" v-bind:settings="settings"></player>
                <div v-if="!navigator_supported" class="navigator-no-support">
@@ -98,8 +108,11 @@ var app = new Vue({
                </div>
              </div>`,
   methods: {
+    api(){
+      return window.API;
+    },
     toggle_menu(menu_name){
-      let menus = ["resources_menu_open", "file_menu_open", "edit_menu_open"];
+      let menus = ["resources_menu_open", "file_menu_open", "project_menu_open", "edit_menu_open"];
 
       if(this[menu_name]){
         this[menu_name] = false;
@@ -167,6 +180,7 @@ var app = new Vue({
 
       this.resources_menu_open = false;
       this.file_menu_open = false;
+      this.project_menu_open = false;
       this.edit_menu_open = false;
     }.bind(this));
   }

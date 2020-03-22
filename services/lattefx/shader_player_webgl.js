@@ -32,7 +32,9 @@ class ShaderPlayerWebGL {
     this.shaderProgram = null;
     this.last_frame_time = new Date().getTime();
 
-    this.cut_bottom = 0; // This is used to cut a portion of the viewport
+
+    this.cut_left = 0;   // This is used to cut a portion of the viewport
+    this.cut_bottom = 0;
 
     this.width = width || 540;
     this.height = height || 540;
@@ -950,7 +952,8 @@ class ShaderPlayerWebGL {
           ));
 
         // Screen ratio
-        const ratio = this.width / (this.height - this.cut_bottom);
+        const ratio = (this.width - this.cut_left) /
+              (this.height - this.cut_bottom);
 
         const ratioAttribute = gl.getUniformLocation(program, 'ratio');
         gl.uniform1f(ratioAttribute, ratio);
@@ -968,7 +971,13 @@ class ShaderPlayerWebGL {
         let y_scale = (this.height - this.cut_bottom) / this.height;
         gl.uniform1f(att, y_scale);
 
-        gl.viewport(0, this.cut_bottom, this.width, this.height - this.cut_bottom);
+        gl.viewport(
+          this.cut_left,
+          this.cut_bottom,
+          this.width - this.cut_left,
+          this.height - this.cut_bottom
+        );
+
         try{
           gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         } catch (e) {

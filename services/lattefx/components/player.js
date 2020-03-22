@@ -77,6 +77,7 @@ Vue.component('player', {
       <div class="player-overlay">
         <div class="dragger right-dragger"></div>
         <div class="dragger bottom-dragger"></div>
+        <div class="dragger left-dragger"></div>
       </div>
       <sequencer
         ref="sequencer"
@@ -157,6 +158,20 @@ Vue.component('player', {
           this.$refs['panel-selector'].switch_to(0);
         }.bind(this)
       });
+
+      API.expose({
+        name: "player.reset_trim",
+        doc: `Reset Trim
+
+        `,
+        fn: function(){
+          this.width = this.player.width - this.player.cut_left;
+          this.height = this.player.height - this.player.cut_bottom;
+          this.player.cut_left = 0;
+          this.player.cut_bottom = 0;
+        }.bind(this)
+      });
+
     },
     browse_file(){
       this.$el.querySelectorAll(".project-file-input")[0].click();
@@ -489,19 +504,28 @@ Vue.component('player', {
 
       let sides = [{
         position: "right",
+        direction: 1,
         event_prop: "clientX",
         object_prop: "width",
         dragger: this.$el.querySelectorAll(".right-dragger")[0]
       }, {
-        position: "top",
+        position: "bottom",
+        direction: 1,
         event_prop: "clientY",
         object_prop: "height",
         dragger: this.$el.querySelectorAll(".bottom-dragger")[0]
+      }, {
+        position: "left",
+        direction: -1,
+        event_prop: "clientX",
+        object_prop: "width",
+        dragger: this.$el.querySelectorAll(".left-dragger")[0]
       }];
 
       for(let i in sides){
         const {
           position,
+          direction,
           event_prop,
           object_prop,
           dragger
@@ -519,21 +543,22 @@ Vue.component('player', {
 
           let move_listener = function(e, finalize=false){
             current = e[event_prop];
-            delta = (current - initial) / scale;
+            delta = -(current - initial) / scale;
 
-            let new_size = (initial_player_size + delta) * scale;
-
-            player_overlay.style[object_prop] = new_size + "px";
+            dragger.style[position] = direction * delta*scale + "px";
 
             if (finalize){
+              let new_size = (initial_player_size - direction * delta) * scale;
 
-
-              if(object_prop == "height"){
-                this.player.cut_bottom += delta;
-                this[object_prop] = new_size / scale;
-              } else {
-                this[object_prop] = new_size / scale;
+              if(position == "bottom"){
+                this.player.cut_bottom -= delta;
+              } else if(position == "left"){
+                this.player.cut_left += delta;
               }
+
+              this[object_prop] = new_size / scale;
+              player_overlay.style[object_prop] = new_size + "px";
+              dragger.style[position] = -3 + "px";
 
               this.update_dimensions();
             }
