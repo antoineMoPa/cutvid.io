@@ -943,19 +943,16 @@ class ShaderPlayerWebGL {
 
         const iResolutionAttribute = gl.getUniformLocation(program, 'iResolution');
 
-        gl.uniform3fv(
-          iResolutionAttribute,
-          new Float32Array(
-            [
-              this.width,
-              this.height,
-              1.0
-            ]
-          ));
 
         // Screen ratio
-        const ratio = (this.width - this.cut_left) /
-              (this.height - this.cut_bottom + this.cut_top);
+        let ratio = 0.0
+
+        if(seq.effect.effectName == "video"){
+          ratio = (this.width - this.cut_left) /
+            (this.height - this.cut_bottom + this.cut_top);
+        } else {
+          ratio = this.width / this.height;
+        }
 
         const ratioAttribute = gl.getUniformLocation(program, 'ratio');
         gl.uniform1f(ratioAttribute, ratio);
@@ -973,11 +970,38 @@ class ShaderPlayerWebGL {
         let y_scale = (this.height - this.cut_bottom) / this.height;
         gl.uniform1f(att, y_scale);
 
-        gl.viewport(
-          this.cut_left,
-          this.cut_bottom,
-          this.width - this.cut_left,
-          this.height - this.cut_bottom + this.cut_top
+        att = gl.getUniformLocation(program, 'x_scale');
+        let x_scale = (this.width - this.cut_right) / this.width;
+        gl.uniform1f(att, x_scale);
+
+        let original_w = this.width;
+        let original_h = this.height;
+        let w_cut = this.width - this.cut_left;
+        let h_cut = this.height - this.cut_bottom + this.cut_top;
+
+        if(seq.effect.effectName == "video"){
+          original_w = this.width  + this.cut_right;
+
+          gl.viewport(
+            this.cut_left,
+            this.cut_bottom,
+            w_cut,
+            h_cut
+          );
+        } else {
+          gl.viewport(
+            0,0,
+            original_w,
+            original_h
+          );
+        }
+
+        gl.uniform2fv(
+          gl.getUniformLocation(program, 'center'),
+          [
+            (original_w/2-this.cut_left)/w_cut,
+            (original_h/2-this.cut_bottom)/h_cut
+          ]
         );
 
         try{

@@ -430,3 +430,24 @@ utils.real_bad_error = function(message){
   fetch("/stats/real_bad_error/" + message);
   alert(message);
 };
+
+utils.make_code_mirror = async function(textarea){
+  return new Promise(async function(resolve, reject){
+
+
+    let codemirror_url = "https://cdn.jsdelivr.net/npm/codemirror@5.52.2/lib/codemirror.min.js";
+
+    await utils.load_script(codemirror_url);
+
+    if(document.querySelectorAll("link[name=codemirror-style]").length == 0){
+      let link = document.createElement("link");
+      link.name = "codemirror-style";
+      link.rel = "stylesheet";
+      link.href = "https://cdn.jsdelivr.net/npm/codemirror@5.41.0/lib/codemirror.min.css";
+      document.head.appendChild(link);
+    }
+
+    let cm = CodeMirror.fromTextArea(textarea);
+    resolve(cm);
+  });
+};

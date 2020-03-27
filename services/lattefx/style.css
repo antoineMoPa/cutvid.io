@@ -1740,3 +1740,11 @@ header .render-credits-count{
 }
 
 /* END APPLICATION MENUS */
+
+/* SHADER EDIT */
+
+.shader-edit-codemirror{
+  width:30%;
+}
+
+/* END SHADER EDIT */

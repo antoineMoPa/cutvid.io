@@ -8,11 +8,12 @@ uniform vec2 mouse;
 uniform float ratio, time, relativeTime;
 uniform float angle, y_scale;
 uniform sampler2D logo;
+uniform vec2 center;
 
 void main(void){
   float a = angle / 180.0 * 3.141542069;
 
-  vec2 offset = lastUV/UV*vec2(0.5,0.5*y_scale);
+  vec2 offset = lastUV/UV*center;
   vec2 uv = lastUV - offset;
 
   uv *= mat2(cos(a), -sin(a), sin(a), cos(a));
@@ -28,6 +29,7 @@ void main(void){
 
   vec4 tex = texture2D(previous_layer, uv);
   vec4 col = tex * clamper + vec4(0.0,0.0,0.0,1.0) * (1.0 - clamper);
-
+  col.r = -uv.x;
+  col.b = uv.y;
   gl_FragColor = col;
 }
