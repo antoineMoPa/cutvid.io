@@ -61,7 +61,10 @@ class API{
       - argsdoc     : An array of strings documenting each arg
       - argsprompt  : The question strings to use when
                       interactively calling the method
+      - tags        : An array of tags used for your system
 
+      Any other properties added to the method definition will be
+      available in the dictionary.
 
       Here is an example:
 
@@ -83,6 +86,9 @@ class API{
 
     // Make sure we have a function to call
     if(!("fn" in method_definition)) return false;
+
+    // Prepare an empty tag array if there is no tags
+    if(method_definition.tags == undefined){ method_definition.tags = []; }
 
     this.the_api[method_definition.name] = method_definition;
   }

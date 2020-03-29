@@ -29,6 +29,7 @@ var app = new Vue({
                      Resources
                    </a>
                  </div>
+                 <console></console>
                </header>
                <div class="application-menus">
                  <div class="application-menu resources-menu" v-if="resources_menu_open">

@@ -5,8 +5,8 @@ Combine all javascript files into one
 def build():
     all_js_files = [
         "./libs/vue.js",
-        "./libs/utils.js",
         "./api.js",
+        "./libs/utils.js",
         "./shader_program.js",
         "./shader_player_webgl.js",
         "./components/sequence_effects.js",
@@ -21,6 +21,7 @@ def build():
         "./components/projects.js",
         "./components/ui.js",
         "./components/player.js",
+        "./components/console.js",
         "./app.js"
     ]
 

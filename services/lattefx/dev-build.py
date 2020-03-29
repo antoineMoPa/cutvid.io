@@ -5,6 +5,12 @@ from watchdog.events import LoggingEventHandler
 
 from build import build
 
+# Build once at startup
+build()
+
+# ...
+# Then watch for change in the folder and rebuild
+
 class EventHandler(LoggingEventHandler):
     def dispatch(self, event):
 
@@ -16,6 +22,7 @@ class EventHandler(LoggingEventHandler):
 event_handler = EventHandler()
 observer = Observer()
 observer.schedule(event_handler, "./", recursive=True)
+
 
 try:
     observer.start()

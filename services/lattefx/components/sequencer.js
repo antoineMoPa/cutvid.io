@@ -170,7 +170,7 @@ Vue.component('sequencer', {
 
       API.expose({
         name: "sequencer.get_total_duration",
-        doc: `Get total duration
+        doc: `Get total duration (seconds)
 
         Total duration (in seconds) starts from 0 and goes to the
         end of the last sequence.
@@ -192,6 +192,52 @@ Vue.component('sequencer', {
         }.bind(this)
       });
 
+      API.expose({
+        name: "sequencer.select_all_after_cursor",
+        doc: `Select all sequences after cursor
+
+        `,
+        fn: function(){
+          this.select_all_after_cursor();
+        }.bind(this)
+      });
+
+      API.expose({
+        name: "sequencer.select_all_before_cursor",
+        doc: `Select all sequences before cursor
+        `,
+        fn: function(){
+          this.select_all_before_cursor();
+        }.bind(this)
+      });
+
+      API.expose({
+        name: "sequencer.select_none",
+        doc: `Unselect every sequence
+        `,
+        fn: function(){
+          this.select_none();
+        }.bind(this)
+      });
+
+      API.expose({
+        name: "sequencer.split_at_cursor",
+        doc: `Split at cursor
+        `,
+        fn: function(){
+          this.split_at_cursor();
+        }.bind(this)
+      });
+
+      API.expose({
+        name: "sequencer.get_active_sequence",
+        doc: `Get Active Sequence
+        `,
+        fn: function(){
+          return this.sequences[this.selected[selected.length-1]];
+        }.bind(this),
+        tags: ["no-ui"]
+      });
     },
     async quick_add_sequence(type){
       // Add at minimum 0

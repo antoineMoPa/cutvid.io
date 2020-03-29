@@ -431,7 +431,7 @@ utils.real_bad_error = function(message){
   alert(message);
 };
 
-utils.make_code_mirror = async function(textarea){
+utils.shader_editor = async function(textarea){
   return new Promise(async function(resolve, reject){
 
 
@@ -451,3 +451,14 @@ utils.make_code_mirror = async function(textarea){
     resolve(cm);
   });
 };
+
+window.API.expose({
+  name: "dev.shader_editor",
+  doc: `Effect shader editor
+
+        Launch the fragment shader editor for the current effect.
+        `,
+  fn: function(){
+    return utils.shader_editor()
+  }.bind(this)
+});
