@@ -46,12 +46,22 @@ dev.shader_editor = async function(){
     theme: theme
   });
 
+  cm.setSize(500);
+
   cm.on("change", function(){
     let fragment = cm.getValue();
     // Recompile
     let program = current_sequence.effect.shaderProgram;
     program.compile(program.vertex_shader_code, fragment);
   }.bind(this));
+
+  let close_button = document.createElement("img");
+  close_button.src = "icons/feather/x.svg";
+  close_button.classList.add("close-button");
+  close_button.onmousedown = function(){
+    container.parentNode.removeChild(container);
+  };
+  container.appendChild(close_button);
 
 };
 

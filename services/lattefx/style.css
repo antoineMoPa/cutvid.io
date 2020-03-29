@@ -1745,22 +1745,26 @@ header .render-credits-count{
 
 .shader-editor{
   position:absolute;
-  left:0;
+  left:0px;
   top:50px;
   height:100%;
-  max-height:calc(100% - 55px);
-  width:500px;
+  max-height:calc(100% - 110px);
   overflow-y:auto;
   text-align:left;
-  z-index:3000;
+  cursor:pointer;
+  z-index:1000;
 }
 
 .shader-editor .CodeMirror{
   height: 100%;
+  resize:horizontal;
 }
 
-.shader-edit-codemirror{
-  width:30%;
+.shader-editor .close-button{
+  position:absolute;
+  right:10px;
+  top:0;
+  z-index:1005;
 }
 
 /* END SHADER EDIT */
