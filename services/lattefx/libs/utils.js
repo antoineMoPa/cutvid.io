@@ -425,40 +425,7 @@ utils.flag_error = function(message, options){
   box.classList.add("flag-error");
 };
 
-
 utils.real_bad_error = function(message){
   fetch("/stats/real_bad_error/" + message);
   alert(message);
 };
-
-utils.shader_editor = async function(textarea){
-  return new Promise(async function(resolve, reject){
-
-
-    let codemirror_url = "https://cdn.jsdelivr.net/npm/codemirror@5.52.2/lib/codemirror.min.js";
-
-    await utils.load_script(codemirror_url);
-
-    if(document.querySelectorAll("link[name=codemirror-style]").length == 0){
-      let link = document.createElement("link");
-      link.name = "codemirror-style";
-      link.rel = "stylesheet";
-      link.href = "https://cdn.jsdelivr.net/npm/codemirror@5.41.0/lib/codemirror.min.css";
-      document.head.appendChild(link);
-    }
-
-    let cm = CodeMirror.fromTextArea(textarea);
-    resolve(cm);
-  });
-};
-
-window.API.expose({
-  name: "dev.shader_editor",
-  doc: `Effect shader editor
-
-        Launch the fragment shader editor for the current effect.
-        `,
-  fn: function(){
-    return utils.shader_editor()
-  }.bind(this)
-});

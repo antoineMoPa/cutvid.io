@@ -38,19 +38,6 @@
         watch: {
         },
         async mounted(){
-          await this.$nextTick();
-
-          let textarea = document.createElement("textarea");
-          textarea.value = this.effect.shaderProgram.fragment_shader_code
-          this.$el.appendChild(textarea);
-
-          let cm = await utils.make_code_mirror(textarea);
-          cm.on("change", function(){
-            let fragment = cm.getValue();
-            // Recompile
-            let program = this.effect.shaderProgram;
-            program.compile(program.vertex_shader_code, fragment);
-          }.bind(this));
         }
       }
     };

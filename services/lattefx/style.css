@@ -1743,6 +1743,22 @@ header .render-credits-count{
 
 /* SHADER EDIT */
 
+.shader-editor{
+  position:absolute;
+  left:0;
+  top:50px;
+  height:100%;
+  max-height:calc(100% - 55px);
+  width:500px;
+  overflow-y:auto;
+  text-align:left;
+  z-index:3000;
+}
+
+.shader-editor .CodeMirror{
+  height: 100%;
+}
+
 .shader-edit-codemirror{
   width:30%;
 }
@@ -1751,12 +1767,8 @@ header .render-credits-count{
 
 /* BEGIN CONSOLE */
 
-.console{
-
-}
-
 .console .console-input{
-  background:#555;
+  background:#333;
   border:none;
   margin-top:9px;
   width:280px;
@@ -1765,12 +1777,12 @@ header .render-credits-count{
 }
 
 .console-result{
-  width: 500px;
+  width: 700px;
   max-height: 300px;
   background: #333;
   position: absolute;
   top: 55px;
-  left: calc(50% - 250px);
+  left: calc(50% - 350px);
   z-index: 3000;
   box-shadow:0 0 4px rgba(0,0,0,0.3);
   border-radius:3px;
@@ -1813,7 +1825,17 @@ header .render-credits-count{
 
 .api-result .api-doc{
   text-align:left;
-  line-height:20px;
+  line-height:18px;
+  font-size:13px;
+  color:#bbb;
+  margin-left:19px;
+  max-height:40px;
+  overflow:hidden;
+  transition: all 0.3s;
+}
+
+.api-result .api-doc:hover{
+  max-height:300px;
 }
 
 .console-result .command-output{

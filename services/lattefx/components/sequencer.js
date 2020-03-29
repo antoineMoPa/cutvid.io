@@ -234,7 +234,7 @@ Vue.component('sequencer', {
         doc: `Get Active Sequence
         `,
         fn: function(){
-          return this.sequences[this.selected[selected.length-1]];
+          return this.sequences[this.selected[this.selected.length-1]];
         }.bind(this),
         tags: ["no-ui"]
       });

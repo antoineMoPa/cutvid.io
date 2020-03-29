@@ -12,7 +12,7 @@ Vue.component('console', {
           <div class="api-result" v-on:mousedown="call(api_element)">
             <img src="icons/feather/corner-down-right.svg">
             <p class="api-title">{{doc_title(api_element)}}</p>
-            <p class="api-doc">{{doc_content(api_element)}}</p>
+            <pre class="api-doc">{{doc_content(api_element)}}</pre>
           </div>
           <p class="api-name">API: {{api_element.name}}</p>
         </div>
@@ -35,6 +35,7 @@ Vue.component('console', {
       this.show_console = true;
     },
     on_focus_out(e){
+      // You can comment this when styling the component
       this.show_console = false;
     },
     async call(api_element){
@@ -65,7 +66,10 @@ Vue.component('console', {
     },
     doc_content(api_element){
       // Remove first line
-      return api_element.doc.replace(/.*\n/,"");
+      let doc = api_element.doc.replace(/.*\n/,"");
+
+      // Replace begining indent
+      return doc.replace(/ +/g, " ");
     },
     search(){
       let api = window.API;
