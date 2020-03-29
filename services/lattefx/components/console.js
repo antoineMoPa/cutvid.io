@@ -73,6 +73,7 @@ Vue.component('console', {
     },
     search(){
       let api = window.API;
+      this.show_console = true;
       this.api_results.splice(0);
       this.command_output = null;
 
@@ -105,5 +106,11 @@ Vue.component('console', {
   watch:{
   },
   mounted(){
+    window.addEventListener("keyup", function(e){
+      if(e.key == "Escape"){
+        this.search_string = "";
+        this.show_console = false;
+      }
+    }.bind(this));
   }
 });

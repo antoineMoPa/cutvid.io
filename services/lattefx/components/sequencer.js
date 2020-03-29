@@ -212,6 +212,15 @@ Vue.component('sequencer', {
       });
 
       API.expose({
+        name: "sequencer.select_all",
+        doc: `Select all sequences
+        `,
+        fn: function(){
+          this.select_all();
+        }.bind(this)
+      });
+
+      API.expose({
         name: "sequencer.select_none",
         doc: `Unselect every sequence
         `,
