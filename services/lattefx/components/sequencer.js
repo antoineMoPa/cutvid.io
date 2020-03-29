@@ -80,6 +80,9 @@ Vue.component('sequencer', {
         <div class="time-bar" ref="timeBar">
           <span class="time-indicator" ref="timeIndicator"></span>
         </div>
+        <div class="time-tick" ref="timeTick">
+          <span class="time-tick-indicator" ref="timeTickIndicator"></span>
+        </div>
       <!-- These effects are moved in mounted() -->
       <div class="all-sequences">
         <sequence-effect
@@ -144,7 +147,7 @@ Vue.component('sequencer', {
     return {
       time: {time: 0.0},
       selected: [],
-      visibleDuration: 10,
+      visible_duration: 10,
       add_menu_time: 0,
       add_menu_layer: 0,
       mouseover: false,
@@ -342,7 +345,7 @@ Vue.component('sequencer', {
         });
       }
 
-      this.$nextTick(this.repositionSequences);
+      this.$nextTick(this.reposition_sequences);
     },
     split_at_cursor(){
       let new_sequences = [];
@@ -391,26 +394,26 @@ Vue.component('sequencer', {
     zoom_in(){
       let go_to = this.time.time;
 
-      this.visibleDuration -= 0.2 * this.visibleDuration;
+      this.visible_duration -= 0.2 * this.visible_duration;
       this.time.time = this.time.time + 0.001; // hack to update the timebar
 
-      if(this.visibleDuration < 1){
-        this.visibleDuration = 1;
+      if(this.visible_duration < 1){
+        this.visible_duration = 1;
       }
 
       this.center_time(go_to);
 
-      this.repositionSequences();
+      this.reposition_sequences();
     },
     zoom_out(){
       let go_to = this.time.time;
 
-      this.visibleDuration += 0.2 * this.visibleDuration;
+      this.visible_duration += 0.2 * this.visible_duration;
       this.time.time = this.time.time + 0.001; // hack to update the timebar
 
       this.center_time(go_to);
 
-      this.repositionSequences();
+      this.reposition_sequences();
     },
     center_time(go_to){
       let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
@@ -427,7 +430,7 @@ Vue.component('sequencer', {
         } else {
           this.offset_y += 10;
         }
-        this.repositionSequences();
+        this.reposition_sequences();
       } else {
         e.stopPropagation();
         if(e.deltaY < 0){
@@ -454,7 +457,7 @@ Vue.component('sequencer', {
       // Find number of layers at current time
       let max_layer = 0;
       for(let i in this.sequences){
-        if (this.sequences[i].from - 0.06 * this.visibleDuration > time) {
+        if (this.sequences[i].from - 0.06 * this.visible_duration > time) {
           continue;
         }
         if (this.sequences[i].to < time) {
@@ -465,7 +468,7 @@ Vue.component('sequencer', {
 
       this.add_menu_layer = max_layer;
 
-      this.repositionSequences();
+      this.reposition_sequences();
 
     },
     sequenceBodyDown(index, e, dragFromMiddle){
@@ -605,7 +608,7 @@ Vue.component('sequencer', {
 
       // Fix negative times glitch
       time = Math.max(time, 0.0);
-      let delta = 0.005 * this.visibleDuration; // in second
+      let delta = 0.005 * this.visible_duration; // in second
       let smallest = null;
 
       for(let i = 0; i < this.sequences.length; i++){
@@ -653,7 +656,7 @@ Vue.component('sequencer', {
           seq.from = snap;
         }
 
-        this.repositionSequences();
+        this.reposition_sequences();
         let sequence_component = this.$refs["sequence-effect-"+seq.id][0];
         let effect = sequence_component.effect;
 
@@ -673,7 +676,7 @@ Vue.component('sequencer', {
           seq.to = snap;
         }
 
-        this.repositionSequences();
+        this.reposition_sequences();
       }
 
       if(this.draggingBody){
@@ -698,11 +701,11 @@ Vue.component('sequencer', {
           s.layer = s.layer + layer_diff;
         }
 
-        this.repositionSequences();
+        this.reposition_sequences();
       }
     },
     getScale(){
-      let totalDuration = this.visibleDuration;
+      let totalDuration = this.visible_duration;
       let timeScale = this.$el.clientWidth / totalDuration;
       let layerScale = 25;
 
@@ -718,7 +721,7 @@ Vue.component('sequencer', {
       }
       return maxTo;
     },
-    repositionSequences(){
+    reposition_sequences(){
       let scale = this.getScale();
       let maxTo = 0.0;
       for(let i = 0; i < this.sequences.length; i++){
@@ -743,6 +746,7 @@ Vue.component('sequencer', {
           maxTo = seq.to;
         }
       }
+
       // Make scroll available until 1/3 later than the last sequence
       let timeSpacer = this.$refs["time-spacer"];
       timeSpacer.style.left = (maxTo * scale.timeScale * 1.33) + "px"
@@ -755,6 +759,22 @@ Vue.component('sequencer', {
       add_menu.style.bottom = (5 +
                                this.add_menu_layer * scale.layerScale +
                                this.offset_y) + "px";
+
+    },
+    reposition_time_ticks(){
+      let scale = this.getScale();
+      let visible_duration = this.visible_duration
+      let tick_time;
+
+      if(visible_duration > 80){
+        tick_time = Math.floor(visible_duration / 60) * 60;
+        console.log(tick_time);
+      } else {
+        tick_time = Math.floor(visible_duration * 10.0 * 0.9)/10.0;
+      }
+
+      this.$refs["timeTick"].style.left = (tick_time * scale.timeScale) + "px";
+      this.$refs["timeTickIndicator"].innerText = this.format_time(tick_time);
     },
     resize(height){
       height = (height || 200) + "px";
@@ -813,12 +833,12 @@ Vue.component('sequencer', {
         id: id,
         layer: layer,
         from: from,
-        to: from + this.visibleDuration * 0.2,
+        to: from + this.visible_duration * 0.2,
         initialEffectName: effectName,
         effect: null
       });
 
-      this.$nextTick(this.repositionSequences);
+      this.$nextTick(this.reposition_sequences);
       this.selected = [];
 
       let API = window.API;
@@ -848,7 +868,7 @@ Vue.component('sequencer', {
       });
       this.player.sequences = this.sequences;
       this.player.clear_transparent();
-      this.$nextTick(this.repositionSequences);
+      this.$nextTick(this.reposition_sequences);
       this.selected = [];
       fetch("/stats/lattefx_app_delete_sequence/");
     },
@@ -868,10 +888,11 @@ Vue.component('sequencer', {
       // It would be bright to unzoom
       // to fit the video in the screen
       // With a bit more time so we can see the controls at the right
-      this.visibleDuration = Math.max(this.visibleDuration, info.duration * 1.1);
+      this.visible_duration = Math.max(this.visible_duration, info.duration * 1.1);
       // # tiny thoughts for my users
 
-      this.repositionSequences();
+      this.reposition_sequences();
+      this.reposition_time_ticks();
     },
     select_all(){
       this.selected = [];
@@ -911,6 +932,21 @@ Vue.component('sequencer', {
         }
       }
     },
+    format_time(t){
+      if(isNaN(t)){
+        return "00m00s00";
+      }
+
+      let m = Math.floor(t / 60);
+      let s = Math.floor(t - 60 * m);
+      let cs = Math.floor((t - s - m * 60) * 100);
+
+      s = (s < 10)? "0" + s: s;
+      m = (m < 10)? "0" + m: m;
+      cs = (cs < 10)? "0" + cs: cs;
+
+      return m + "m" + s + "s" + cs;
+    },
     bindShortcuts(){
       let app = this;
       window.addEventListener("keydown", (e) => {
@@ -943,10 +979,10 @@ Vue.component('sequencer', {
           }
         }
         if(e.key == "ArrowLeft"){
-          app.time.time -= 0.008 * app.visibleDuration;
+          app.time.time -= 0.008 * app.visible_duration;
         }
         if(e.key == "ArrowRight"){
-          app.time.time += 0.008 * app.visibleDuration;
+          app.time.time += 0.008 * app.visible_duration;
         }
         if(e.key == "Delete"){
           // We have to find a better solution for this
@@ -980,32 +1016,20 @@ Vue.component('sequencer', {
       handler(){
         let scale = this.getScale();
 
-        function formatTime(t){
-          if(isNaN(t)){
-            return "00m00s00";
-          }
-
-          let m = Math.floor(t / 60);
-          let s = Math.floor(t % 60);
-          let cs = Math.floor((t - s) * 100);
-
-          s = (s < 10)? "0" + s: s;
-          m = (m < 10)? "0" + m: m;
-          cs = (cs < 10)? "0" + cs: cs;
-
-          return m + "m" + s + "s" + cs;
-        }
         // Stop user from putting time bar before 0
         if(this.time.time < 0){
           this.time.time = 0;
         }
         this.$refs["timeBar"].style.left = (this.time.time * scale.timeScale) + "px";
-        this.$refs["timeIndicator"].innerHTML = formatTime(this.time.time);
+        this.$refs["timeIndicator"].innerHTML = this.format_time(this.time.time);
       },
       deep: true
+    },
+    visible_duration(){
+      this.reposition_time_ticks();
     }
   },
-  mounted(){
+  async mounted(){
     this.$nextTick(this.unDrag);
 
     let allSequences = this.$el.querySelectorAll(".all-sequences")[0];
@@ -1019,8 +1043,13 @@ Vue.component('sequencer', {
     allSequencesContainer.appendChild(allSequences);
 
     this.bindShortcuts();
-    this.repositionSequences();
+
+
+    this.reposition_sequences();
     this.resize();
     this.expose();
+
+    await this.$nextTick();
+    this.reposition_time_ticks();
   }
 });
