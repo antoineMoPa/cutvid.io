@@ -29,12 +29,26 @@ Vue.component('sequence-effect', {
   data(){
     return {
       effect: null,
-      moving: false
+      moving: false,
+      vertex_shader: `attribute vec3 position;
+
+varying vec2 UV;
+varying vec2 lastUV;
+varying vec3 v_position;
+uniform vec2 renderBufferRatio;
+
+void main(){
+    v_position = position;
+    UV = vec2((position.x+1.0) / 2.0, (position.y + 1.0)/2.0);
+    lastUV = UV / renderBufferRatio;
+    gl_Position = vec4(v_position.x,v_position.y, 0.0, 1.0);
+}
+`
     };
   },
   props: ["player", "active", "index", "initialEffectGetter", "initialEffectName"],
   methods: {
-    loadPrograms(name, pass_count, onProgramReady) {
+    async loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
 
       function compileProgram(vertex, fragment){
@@ -49,46 +63,14 @@ Vue.component('sequence-effect', {
         return pass;
       }
 
-      let fileLoadPromises = [];
-
       // Random makes sure cache is not using an old version
       // (Ok I maybe once every 200 years this will not work...)
       let rand = utils.randurl_param;
+      let fragment_fetch = await fetch("plugins/" + name + "/fragment.glsl" + rand);
+      let fragment_text = await fragment_fetch.text();
 
-      if(pass_count == 1){
-        fileLoadPromises.push(fetch(
-          "plugins/" + name + "/vertex.glsl" + rand
-        ));
-        fileLoadPromises.push(fetch(
-          "plugins/" + name + "/fragment.glsl" + rand
-        ));
-      } else {
-        for(let i = 1; i <= pass_count; i++){
-          fileLoadPromises.push(fetch(
-            "plugins/" + name + "/vertex"+i+".glsl" + rand
-          ));
-          fileLoadPromises.push(fetch(
-            "plugins/" + name + "/fragment"+i+".glsl" + rand
-          ));
-        }
-      }
-
-
-      Promise.all(fileLoadPromises).then((values) => {
-        let textPromises = values.map((p) => {return p.text()});
-        Promise.all(textPromises)
-          .then((values) => {
-            let programs = [];
-            // Parse all shaders for all passes
-            for(let pass = 0; pass*2 < values.length; pass++){
-              let vertex = values[2*pass+0];
-              let fragment = values[2*pass+1];
-              let program = compileProgram(vertex, fragment);
-              programs.push(program);
-            }
-            onProgramReady(programs);
-          });
-      });
+      let program = compileProgram(app.vertex_shader, fragment_text);
+      onProgramReady(program);
     },
     serialize(){
       return this.serializeEffect(this.effect);
@@ -146,7 +128,7 @@ Vue.component('sequence-effect', {
             pass_count = settings.pass_count;
           }
 
-          app.loadPrograms(effectName, pass_count, function(_shaderPrograms){
+          app.loadPrograms(effectName, pass_count, function(_shaderProgram){
             let container = document.createElement("div");
 
             if(app.last_plugin != undefined){
@@ -172,8 +154,8 @@ Vue.component('sequence-effect', {
             settings.component = componentName;
             plugin.onDuration = app.onDuration;
             settings.id = uniqueEffectComponentID;
-            plugin.shaderProgram = _shaderPrograms[0];
-            plugin.effect.shaderProgram = _shaderPrograms[0];
+            plugin.shaderProgram = _shaderProgram;
+            plugin.effect.shaderProgram = _shaderProgram;
 
 
             // Insert effect in array
@@ -282,6 +264,7 @@ Vue.component('sequence-effect', {
     },
   },
   mounted(){
+
     if(this.initialEffectGetter != undefined){
       let effect = this.initialEffectGetter();
       this.unserialize(effect, false);

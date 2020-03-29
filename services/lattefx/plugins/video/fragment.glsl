@@ -11,6 +11,7 @@ uniform sampler2D video;
 void main(void){
     float x = UV.x * ratio;
     float y = UV.y;
+
     vec2 p = vec2(x,y) - vec2(0.5 * ratio, 0.5);
 
     vec2 videoUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
@@ -34,11 +35,11 @@ void main(void){
 
     vec4 last = texture2D(previous_layer, lastUV);
 
-	if(isLoaded < 0.5){ // Could be optimized!
-	  video = vec4(0.0,0.0,0.0,1.0);
-	}
+    if(isLoaded < 0.5){ // Could be optimized!
+      video = vec4(0.0,0.0,0.0,1.0);
+    }
 
-	video.a *= opacity;
+    video.a *= opacity;
 
     //vec4 col = (1.0 - video.a) * last + video.a * video;
     vec4 col = video * video.a + (1.0 - video.a) * last;
