@@ -991,11 +991,6 @@ Vue.component('sequencer', {
 
         // Skip next actions if mouse is not over sequencer
         if(!app.mouseover){
-          // CTRL+a globally is not nice outside sequencer
-          if(e.key == "a" && e.ctrlKey){
-            e.preventDefault();
-            e.stopPropagation();
-          }
           return;
         }
 
