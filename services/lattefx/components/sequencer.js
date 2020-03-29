@@ -80,8 +80,17 @@ Vue.component('sequencer', {
         <div class="time-bar" ref="timeBar">
           <span class="time-indicator" ref="timeIndicator"></span>
         </div>
-        <div class="time-tick" ref="timeTick">
-          <span class="time-tick-indicator" ref="timeTickIndicator"></span>
+        <div class="time-tick" ref="timeTick1" v-on:click="time_to_tick(1)">
+          <span class="time-tick-indicator" ref="timeTickIndicator1"></span>
+        </div>
+        <div class="time-tick" ref="timeTick2" v-on:click="time_to_tick(2)">
+          <span class="time-tick-indicator" ref="timeTickIndicator2"></span>
+        </div>
+        <div class="time-tick" ref="timeTick3" v-on:click="time_to_tick(3)">
+          <span class="time-tick-indicator" ref="timeTickIndicator3"></span>
+        </div>
+        <div class="time-tick" ref="timeTick4" v-on:click="time_to_tick(4)">
+          <span class="time-tick-indicator" ref="timeTickIndicator4"></span>
         </div>
       <!-- These effects are moved in mounted() -->
       <div class="all-sequences">
@@ -147,7 +156,7 @@ Vue.component('sequencer', {
     return {
       time: {time: 0.0},
       selected: [],
-      visible_duration: 10,
+      visible_duration: 30*1.0/0.9,
       add_menu_time: 0,
       add_menu_layer: 0,
       mouseover: false,
@@ -160,7 +169,7 @@ Vue.component('sequencer', {
       draggingRight: null,
       draggingTimeFrom: null,
       clipboard: null,
-      offset_y: 0,
+      offset_y: 25,
       loading_scene: false,
       add_menu_open: false,
       dragging_selected: null,
@@ -249,6 +258,17 @@ Vue.component('sequencer', {
           return this.sequences[this.selected[this.selected.length-1]];
         }.bind(this),
         tags: ["no-ui"]
+      });
+
+      API.expose({
+        name: "sequencer.get_visible_duration",
+        doc: `Get Visible Duration
+
+        This is the visible part of the viewport.
+        `,
+        fn: function(){
+          return this.visible_duration;
+        }.bind(this)
       });
     },
     async quick_add_sequence(type){
@@ -395,10 +415,11 @@ Vue.component('sequencer', {
       let go_to = this.time.time;
 
       this.visible_duration -= 0.2 * this.visible_duration;
-      this.time.time = this.time.time + 0.001; // hack to update the timebar
 
       if(this.visible_duration < 1){
         this.visible_duration = 1;
+      } else {
+        this.time.time = this.time.time + 0.001; // hack to update the timebar
       }
 
       this.center_time(go_to);
@@ -761,20 +782,30 @@ Vue.component('sequencer', {
                                this.offset_y) + "px";
 
     },
+    time_to_tick(tick_number){
+      this.time.time = this.tick_times[tick_number - 1];
+    },
     reposition_time_ticks(){
       let scale = this.getScale();
       let visible_duration = this.visible_duration
-      let tick_time;
+      this.tick_times = [];
+      for(let i = 1; i <= 4; i++){
+        let tick_time = visible_duration + this.time.time;
 
-      if(visible_duration > 80){
-        tick_time = Math.floor(visible_duration / 60) * 60;
-        console.log(tick_time);
-      } else {
-        tick_time = Math.floor(visible_duration * 10.0 * 0.9)/10.0;
+        tick_time *= i/4;
+
+        if(visible_duration > 80){
+          tick_time = Math.floor(tick_time / 60) * 60;
+        } else {
+          tick_time = Math.floor(tick_time * 10.0 * 0.9)/10.0;
+        }
+
+        // This is used when clicking tick
+        this.tick_times[i-1] = tick_time;
+
+        this.$refs["timeTick" + i].style.left = (tick_time * scale.timeScale) + "px";
+        this.$refs["timeTickIndicator" + i].innerText = this.format_time(tick_time);
       }
-
-      this.$refs["timeTick"].style.left = (tick_time * scale.timeScale) + "px";
-      this.$refs["timeTickIndicator"].innerText = this.format_time(tick_time);
     },
     resize(height){
       height = (height || 200) + "px";
@@ -939,13 +970,13 @@ Vue.component('sequencer', {
 
       let m = Math.floor(t / 60);
       let s = Math.floor(t - 60 * m);
-      let cs = Math.floor((t - s - m * 60) * 100);
+      let ms = Math.floor((t - s - m * 60) * 1000);
 
       s = (s < 10)? "0" + s: s;
       m = (m < 10)? "0" + m: m;
-      cs = (cs < 10)? "0" + cs: cs;
+      ms = (ms < 10)? "0" + ms: ms;
 
-      return m + "m" + s + "s" + cs;
+      return m + "m" + s + "s" + (ms == 0? "": ms + "ms");
     },
     bindShortcuts(){
       let app = this;

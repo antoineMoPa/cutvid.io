@@ -618,17 +618,6 @@ header .render-credits-count{
   z-index:2000;
 }
 
-.time-tick{
-  position:absolute;
-  top:10px;
-  left:0;
-  width:1px;
-  height:calc(100% - 20px);
-  border-left:1px dotted #aaa;
-  opacity:0.5;
-  z-index:2000;
-}
-
 .time-spacer{
   position:absolute;
   top:5px;
@@ -854,6 +843,7 @@ header .render-credits-count{
   position: absolute;
   bottom: 0;
   text-align:left;
+  z-index:1000;
 }
 
 .sequencer .suggestion{
@@ -998,6 +988,17 @@ header .render-credits-count{
   color:#fff;
 }
 
+.time-tick{
+  position:absolute;
+  top:10px;
+  left:0;
+  width:10px;
+  height:calc(100% - 20px);
+  border-left:1px dotted #aaa;
+  opacity:0.5;
+  z-index:0;
+}
+
 .sequencer .time-tick-indicator{
   font-size:10px;
   line-height:20px;
@@ -1006,6 +1007,11 @@ header .render-credits-count{
   left:3px;
   padding: 0 3px;
   color:#fff;
+}
+
+.time-tick:hover .time-tick-indicator{
+  top:0;
+  bottom:auto;
 }
 
 .sequencer .sequencer-loading p{
