@@ -8,6 +8,9 @@ Vue.component('console', {
              v-on:focus="on_focus"
              v-on:focusout="on_focus_out"/>
       <div class="console-result" v-if="show_console">
+        <div class="command-output" v-if="command_output != null">
+          {{ command_output }}
+        </div>
         <div v-for="api_element in api_results">
           <div class="api-result" v-on:mousedown="call(api_element)">
             <img src="icons/feather/corner-down-right.svg">
@@ -15,9 +18,6 @@ Vue.component('console', {
             <pre class="api-doc">{{doc_content(api_element)}}</pre>
           </div>
           <p class="api-name">API: {{api_element.name}}</p>
-        </div>
-        <div class="command-output" v-if="command_output != null">
-          {{ command_output }}
         </div>
       </div>
     </div>`,
@@ -39,8 +39,6 @@ Vue.component('console', {
       this.show_console = false;
     },
     async call(api_element){
-      this.search_string = "";
-
       let api = window.API;
       let result = api.call(api_element.name);
 
@@ -54,7 +52,6 @@ Vue.component('console', {
 
       let title = this.doc_title(api_element);
       this.command_output = title + ": " + result;
-      this.api_results.splice(0);
 
       setTimeout(function(){
         this.command_output = "";
@@ -114,7 +111,6 @@ Vue.component('console', {
   mounted(){
     window.addEventListener("keyup", function(e){
       if(e.key == "Escape"){
-        this.search_string = "";
         this.show_console = false;
       }
     }.bind(this));

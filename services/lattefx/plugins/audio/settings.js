@@ -89,7 +89,7 @@
           },
           async media_getter(){
             if(this.audio_media_id == null){
-              return window.URL.createObjectURL(options.audioFile);
+              return window.URL.createObjectURL(this.audioFile);
             } else {
               let settings = window.lattefx_settings;
               let cloud_url = settings.cloud;
