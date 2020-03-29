@@ -57,9 +57,9 @@ Vue.component('console', {
       this.api_results.splice(0);
 
       setTimeout(function(){
-
-      }.bind(this), 3000);
-
+        this.command_output = "";
+        this.show_console = false;
+      }.bind(this), 1500);
     },
     doc_title(api_element){
       return api_element.doc.split("\n")[0] || "";
