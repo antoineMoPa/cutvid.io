@@ -12,8 +12,6 @@ void main(void){
     float x = UV.x * ratio;
     float y = UV.y;
 
-    vec2 p = vec2(x,y) - vec2(0.5 * ratio, 0.5);
-
     vec2 videoUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
     float videoRatio = videoHeight / videoWidth * ratio;
     // Apply aspect ratio

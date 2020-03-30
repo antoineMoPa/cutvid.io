@@ -182,7 +182,7 @@ Vue.component('sequencer', {
 
       API.expose({
         name: "sequencer.get_total_duration",
-        doc: `Get total duration (seconds)
+        doc: `Get Total Duration (seconds)
 
         Total duration (in seconds) starts from 0 and goes to the
         end of the last sequence.
@@ -194,7 +194,7 @@ Vue.component('sequencer', {
 
       API.expose({
         name: "sequencer.get_cost",
-        doc: `Get cost in render credits
+        doc: `Get Cost in Render Credits
 
         `,
         fn: function(){
@@ -206,7 +206,7 @@ Vue.component('sequencer', {
 
       API.expose({
         name: "sequencer.select_all_after_cursor",
-        doc: `Select all sequences after cursor
+        doc: `Select All Sequences After Cursor
 
         `,
         fn: function(){
@@ -216,7 +216,7 @@ Vue.component('sequencer', {
 
       API.expose({
         name: "sequencer.select_all_before_cursor",
-        doc: `Select all sequences before cursor
+        doc: `Select All Sequences Before Cursor
         `,
         fn: function(){
           this.select_all_before_cursor();
@@ -225,7 +225,7 @@ Vue.component('sequencer', {
 
       API.expose({
         name: "sequencer.select_all",
-        doc: `Select all sequences
+        doc: `Select All Sequences
         `,
         fn: function(){
           this.select_all();
@@ -234,7 +234,7 @@ Vue.component('sequencer', {
 
       API.expose({
         name: "sequencer.select_none",
-        doc: `Unselect every sequence
+        doc: `Unselect Every Sequence
         `,
         fn: function(){
           this.select_none();
@@ -243,7 +243,7 @@ Vue.component('sequencer', {
 
       API.expose({
         name: "sequencer.split_at_cursor",
-        doc: `Split at cursor
+        doc: `Split At Cursor
         `,
         fn: function(){
           this.split_at_cursor();

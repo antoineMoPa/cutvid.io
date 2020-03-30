@@ -42,6 +42,8 @@
   <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.01">
   <label>Opacity</label>
   <input v-model.number="uniforms.opacity.value" type="number" size="4" step="0.1">
+  <label>Rotation</label>
+  <input v-model.number="uniforms.rotate_angle.value" type="number" size="0" step="45">
 
   <label>Mute sound
     <input v-model="muted" type="checkbox">
@@ -101,6 +103,11 @@
                 value: 1,
               },
               isLoaded: {
+                type: "f",
+                len: 0,
+                value: 0,
+              },
+              rotate_angle: {
                 type: "f",
                 len: 0,
                 value: 0,
