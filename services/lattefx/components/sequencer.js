@@ -42,12 +42,6 @@ Vue.component('sequencer', {
           </button>
           <button class="more-suggestion suggestion"
                   v-if="add_menu_open"
-                  v-on:click="quick_add_sequence('image')">
-            <img src="icons/feather/image.svg" class="feather-icon" width="20"/>
-            Image
-          </button>
-          <button class="more-suggestion suggestion"
-                  v-if="add_menu_open"
                   v-on:click="quick_add_sequence('canvas')">
             <img src="icons/feather/edit.svg" class="feather-icon" width="20"/>
             Canvas
