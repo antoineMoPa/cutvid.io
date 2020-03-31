@@ -257,7 +257,7 @@ Vue.component('sequencer', {
         fn: function(){
           return this.sequences[this.selected[this.selected.length-1]];
         }.bind(this),
-        tags: ["no-ui"]
+        no_ui: true
       });
 
       API.expose({

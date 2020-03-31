@@ -33,6 +33,7 @@ Vue.component('console', {
   methods: {
     on_focus(){
       this.show_console = true;
+      this.search();
     },
     on_focus_out(e){
       // You can comment this when styling the component
@@ -68,13 +69,23 @@ Vue.component('console', {
       // Replace begining indent
       return doc.replace(/ +/g, " ");
     },
-    search(){
+    index(){
       let api = window.API;
 
+      this.api_results.splice(0);
+
+      // Show and an index of functions
+      // Indexed by title (first line of doc)
+      let values = Object.values(window.API.the_api).filter(a => a.no_ui != true);
+      this.api_results = values.sort((a,b) => a.doc > b.doc);
+    },
+    search(){
       if(this.search_string == ""){
-        this.show_console = false;
+        this.index();
         return;
       }
+
+      let api = window.API;
 
       this.show_console = true;
       this.api_results.splice(0);
@@ -86,7 +97,7 @@ Vue.component('console', {
       for(let i in api.the_api){
         let has_match = false;
 
-        if(api.the_api[i].tags.indexOf("no-ui") != -1){
+        if(api.the_api[i].no_ui){
           continue;
         }
 

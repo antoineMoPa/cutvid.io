@@ -50,11 +50,13 @@ class API{
     /*
       The method definition is an object that contains:
 
-      - name   : The name used to call this function
+      - name   : The system name used to call this function
       - doc    : A long string to document the method for
-                the user
+                 the user.
 
-      - fn     : The actual function to call
+                 The first line of doc is the title of the function.
+
+      - fn     : The actual function to call.
 
       Optional:
 
