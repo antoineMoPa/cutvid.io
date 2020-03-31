@@ -259,6 +259,59 @@ utils.ask_confirm = Vue.component('ask-confirm', {
   },
 });
 
+utils.ask_file = Vue.component('ask-file', {
+  template:
+  `<div class="popup ask-file">
+     <div v-bind:class="container_class">
+       <div class="close-button" v-on:click="close">
+         <img src="icons/feather-dark/x.svg" width="40"/>
+       </div>
+
+       <h3>
+         {{title}}
+       </h3>
+       <p>{{message}}</p><br/>
+       <p class="text-center">
+         <label>
+           <button v-on:click="button_click" class="dark-button">
+             Upload a file
+           </button>
+           <input type="file" class="hidden" v-on:change="on_file_internal" multiple/>
+         </label>
+       </p><br/>
+     </div>
+   </div>`,
+  data(){
+    return {
+      title: "Upload file",
+      message: "",
+      container_class: ""
+    }
+  },
+  methods: {
+    on_file_internal(e){
+      let files = e.target.files;
+      try{
+        this.on_file(files);
+      } catch (e) {
+        console.error(e);
+      }
+      this.destroy();
+    },
+    button_click(){
+      this.$el.querySelectorAll("input")[0].click();
+    },
+    destroy(){
+      this.$destroy;
+      this.$el.innerHTML = "";
+      document.body.removeChild(this.$el);
+    },
+    close(){
+      this.destroy();
+    }
+  },
+});
+
 
 
 utils.gfont_picker = Vue.component('gfont-picker', {
@@ -350,6 +403,9 @@ utils.ask_interact = Vue.component('ask-interaction', {
   template:
   `<div class="popup ask-interaction">
      <div v-bind:class="container_class">
+       <div class="close-button">
+         <img src="icons/feather-dark/x.svg" width="40"/>
+       </div>
        <h3>
          You need to interact so we can load a video!
        </h3>
@@ -374,7 +430,7 @@ utils.ask_interact = Vue.component('ask-interaction', {
       this.destroy();
     },
     destroy(){
-      this.$destroy;
+      this.$destroy();
       this.$el.innerHTML = "";
       document.body.removeChild(this.$el);
     }

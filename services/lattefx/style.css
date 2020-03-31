@@ -529,6 +529,7 @@ header .render-credits-count{
   margin-bottom:3px;
 }
 
+.dark-button,
 .settings-panel button{
   background:#111;
   border:none;
@@ -1548,7 +1549,7 @@ header .render-credits-count{
 
 /* END  PROJECTS */
 
-/* ASK CONFIRM POPUP */
+/* ASK POPUPS */
 
 .ask-confirm{
   width:600px;
@@ -1566,6 +1567,12 @@ header .render-credits-count{
   margin:0 10px;
   cursor:pointer;
 }
+
+.ask-file input[type=file]{
+    margin:30px;
+}
+
+/* END ASK POPUPS */
 
 .project-confirm-delete .button-yes{
   background:#f33;

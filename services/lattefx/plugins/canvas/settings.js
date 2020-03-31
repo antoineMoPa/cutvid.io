@@ -22,6 +22,10 @@
         <img src="icons/feather/circle.svg"
            class="feather-icon " width="20">
       </button>
+      <button class="canvas-plugin-button" v-on:click="add_image()">
+        <img src="icons/feather/image.svg"
+           class="feather-icon " width="20">
+      </button>
       <button class="canvas-plugin-button" v-on:click="layer_up">
         <img src="icons/feather/arrow-up.svg"
            class="feather-icon " width="20">
@@ -183,6 +187,35 @@
             canvas.add(rect);
             canvas.renderAll();
           },
+          async pick_image(){
+            let ask = new utils.ask_file();
+            let container = document.createElement("div");
+            document.body.appendChild(container);
+            ask.$mount(container);
+            ask.message = "Upload any image from your computer. Yon can also close this popup and paste an image in the canvas.";
+            ask.on_file = function(files){
+              for(let i = 0; i < files.length; i++){
+                this.file_to_image(files[i]);
+              }
+            }.bind(this);
+          },
+          async add_image(image){
+
+            if(image == undefined){
+              this.pick_image();
+              return;
+            }
+
+            canvas = this.canvas;
+
+            let fabric_image = new fabric.Image(image, {
+              top: this.player.height/2 - image.height/2,
+              left: this.player.width/2 - image.width/2
+            });
+
+            canvas.add(fabric_image);
+            canvas.renderAll();
+          },
           add_circle(){
             canvas = this.canvas;
 
@@ -288,6 +321,28 @@
             this.canvas = canvas;
 
             canvas.renderAll();
+          },
+          async file_to_image(f){
+            let reader = new FileReader();
+            reader.onload = function(){
+              let image = new Image();
+              image.onload = function(){
+                this.add_image(image);
+              }.bind(this);
+              image.src = reader.result;
+            }.bind(this);
+            reader.readAsDataURL(f);
+          },
+          on_paste(event){
+            let items = event.clipboardData.items;
+
+            // Receive images
+            for(let i = 0; i < items.length; i++){
+              if(items[i].type.indexOf("image") == -1){
+                continue;
+              }
+              this.file_to_image(items[i].getAsFile());
+            }
           }
         },
         watch: {
@@ -317,13 +372,12 @@
           this.listen_selection();
           this.on_resize();
 
-          window.addEventListener("paste", function(event){
-            console.log(event);
-          }, false);
+          window.addEventListener("paste", this.on_paste, false);
         },
         beforeDestroy(){
           this.canvas_el.parentNode.removeChild(this.canvas_el);
           this.ui.parentNode.removeChild(this.ui);
+          window.removeEventListener("paste", this.on_paste, false);
         }
       }
     };
