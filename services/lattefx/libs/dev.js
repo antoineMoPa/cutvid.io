@@ -1,9 +1,6 @@
 let dev = {};
 
-dev.shader_editor = async function(mode){
-  /*
-     mode is either "vertex" or "fragment"
-  */
+dev.load_codemirror = async function(theme){
   let codemirror_url = "https://cdn.jsdelivr.net/npm/codemirror@5.52.2/lib/codemirror.min.js";
   let codemirror_clike_url = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/clike/clike.min.js";
 
@@ -19,8 +16,6 @@ dev.shader_editor = async function(mode){
     document.head.appendChild(link);
   }
 
-  let theme = "mbo";
-
   if(document.querySelectorAll("link[name=codemirror-theme-stype]").length == 0){
     let link = document.createElement("link");
     link.name = "codemirror-theme-style";
@@ -31,77 +26,157 @@ dev.shader_editor = async function(mode){
       theme + ".min.css";
     document.head.appendChild(link);
   }
+};
 
-  let current_sequence = window.API.call("sequencer.get_active_sequence");
+dev.editor_component = Vue.component('effect-editor', {
+  template: `
+  <div class="effect-editor">
+    <panel-selector ref="panel-selector"
+                    v-bind:panelNames="['settings.js', 'fragment.glsl', 'vertex.glsl (global)']"
+                    v-on:switch="switch_panel"/>
+    <div class="switchable-panel">
+      <p style="color:#eee;">SETTINGS ARE CURRENTLY READ-ONLY</p>
+      <div ref="settings_container"></div>
+    </div>
+    <div class="switchable-panel">
+      <div ref="fragment_container"></div>
+    </div>
+    <div class="switchable-panel">
+      <div ref="vertex_container"></div>
+    </div>
+    <img src="icons/feather/x.svg" class="close-button" v-on:click="close">
+  </div>`,
+  data(){
+    return {
+      width: 500,
+      codemirror_theme: "mbo"
+    };
+  },
+  methods: {
+    switch_panel(i){
+      // Hide previously shown
+      this.$el.querySelectorAll(".switchable-panel-shown").forEach((el) => {
+        el.classList.remove("switchable-panel-shown");
+      });
 
-  if(current_sequence == undefined){
-    utils.flag_error("Please select a sequence before.");
-    return;
-  }
+      let panel = this.$el.querySelectorAll(".switchable-panel");
+      // Show current panel
+      panel[i].classList.add("switchable-panel-shown");
 
-  let container = document.createElement("div");
-  container.classList.add("shader-editor")
-  document.body.appendChild(container);
+      if(i == 0 && this.settings_codemirror){
+        this.settings_codemirror.refresh();
+      }
+      if(i == 1 && this.fragment_codemirror){
+        this.fragment_codemirror.refresh();
+      }
+      if(i == 2 && this.vertex_codemirror){
+        this.vertex_codemirror.refresh();
+      }
 
-  let value;
+    },
+    async init_editor(mode){
+      /*
+        mode is either "settings", "vertex" or "fragment"
+      */
+      let current_sequence = window.API.call("sequencer.get_active_sequence");
 
-  if(mode == "fragment"){
-    value = current_sequence.effect.shaderProgram.fragment_shader_code;
-  } else {
-    value = current_sequence.effect.shaderProgram.vertex_shader_code;
-  }
+      let value;
+      let container = null;
 
-  let cm = CodeMirror(container, {
-    value: value,
-    mode: "text/x-csrc",
-    theme: theme
-  });
+      container = this.$refs[mode + "_container"];
 
-  let width = 640;
+      switch(mode){
+      case "fragment":
+        value = current_sequence.effect.shaderProgram.fragment_shader_code;
+        break;
+      case "vertex":
+        value = current_sequence.effect.shaderProgram.vertex_shader_code;
+        break;
+      case "settings":
+        let url = "plugins/" + current_sequence.effect.effectName + "/settings.js";
+        let script_fetch = await fetch(url);
+        let script = await script_fetch.text();
+        value = script;
+        break;
+      default:
+        console.error("invalid mode");
+      }
 
-  cm.setSize(width);
+      let cm = CodeMirror(container, {
+        value: value,
+        mode: "text/x-csrc",
+        theme: this.codemirror_theme
+      });
 
-  cm.on("change", function(){
-    let code = cm.getValue();
-    // Recompile
-    let program = current_sequence.effect.shaderProgram;
+      this[mode + '_codemirror'] = cm;
 
-    if(mode == "fragment"){
-      program.compile(program.vertex_shader_code, code);
-    } else {
-      program.compile(code, program.fragment_shader_code);
+      let width = this.width;
+
+      cm.setSize(width);
+
+      cm.on("change", function(){
+        let code = cm.getValue();
+        // Recompile
+        let program = current_sequence.effect.shaderProgram;
+
+        if(mode == "fragment"){
+          program.compile(program.vertex_shader_code, code);
+        } else if (mode == "vertex") {
+          program.compile(code, program.fragment_shader_code);
+        } else {
+          console.log("update settings");
+        }
+      }.bind(this));
+
+
+    },
+    close(){
+      window.API.call("player.set_right_panel_width", 0);
+      this.$el.parentNode.removeChild(this.$el);
+      this.$destroy();
     }
-  }.bind(this));
+  },
+  async mounted(){
+    this.$refs['panel-selector'].switch_to(0);
+    this.$el.style.width = this.width + "px";
+    window.API.call("player.set_right_panel_width", this.width);
 
-  let close_button = document.createElement("img");
-  close_button.src = "icons/feather/x.svg";
-  close_button.classList.add("close-button");
-  close_button.onmousedown = function(){
-    container.parentNode.removeChild(container);
-    window.API.call("player.set_right_panel_width", 0);
-  };
-  container.appendChild(close_button);
+    await dev.load_codemirror(this.codemirror_theme);
 
-  window.API.call("player.set_right_panel_width", width);
+    this.init_editor("settings");
+    this.init_editor("fragment");
+    this.init_editor("vertex");
+  }
+});
+
+
+
+dev.effect_editor = async function(){
+  let editor = new dev.editor_component();
+  let container = document.createElement("div");
+  container.classList.add("effect-editor")
+  document.body.appendChild(container);
+  editor.$mount(container);
 };
 
 window.API.expose({
-  name: "dev.shader_editor",
-  doc: `Effect Shader Editor
+  name: "dev.effect_editor",
+  doc: `Effect Editor
 
-        Launch the fragment shader editor for the current effect.
+        Launch the effect editor for the current effect.
+
+        This includes the js editor, fragment shader editor and
+        vertex shader editor.
         `,
   fn: function(){
-    dev.shader_editor("fragment");
-  }.bind(this)
-});
+    let current_sequence = window.API.call("sequencer.get_active_sequence");
 
-window.API.expose({
-  name: "dev.vertex_shader_editor",
-  doc: `Vertex Shader Editor
+    if(current_sequence == undefined){
+      utils.flag_error("Please select a sequence before.");
+      return;
+    }
 
-`,
-  fn: function(){
-    dev.shader_editor("vertex");
+    dev.effect_editor();
+
   }.bind(this)
 });

@@ -1775,9 +1775,9 @@ header .render-credits-count{
 
 /* END APPLICATION MENUS */
 
-/* SHADER EDIT */
+/* EFFECT EDIT */
 
-.shader-editor{
+.effect-editor{
   position:absolute;
   right:0px;
   top:50px;
@@ -1789,18 +1789,31 @@ header .render-credits-count{
   z-index:1000;
 }
 
-.shader-editor .CodeMirror{
+.effect-editor .switchable-panel{
+  height:100%;
+}
+
+.effect-editor .panel-selector{
+  width:100%;
+  margin-bottom:0;
+}
+
+.effect-editor .panel-tab-header{
+  width:33%;
+}
+
+.effect-editor .CodeMirror{
   height: 100%;
 }
 
-.shader-editor .close-button{
+.effect-editor .close-button{
   position:absolute;
   right:10px;
   top:0;
   z-index:1005;
 }
 
-/* END SHADER EDIT */
+/* END EFFECT EDIT */
 
 /* BEGIN CONSOLE */
 
