@@ -57,7 +57,9 @@ dev.shader_editor = async function(mode){
     theme: theme
   });
 
-  cm.setSize(500);
+  let width = 640;
+
+  cm.setSize(width);
 
   cm.on("change", function(){
     let code = cm.getValue();
@@ -76,11 +78,12 @@ dev.shader_editor = async function(mode){
   close_button.classList.add("close-button");
   close_button.onmousedown = function(){
     container.parentNode.removeChild(container);
+    window.API.call("player.set_right_panel_width", 0);
   };
   container.appendChild(close_button);
 
+  window.API.call("player.set_right_panel_width", width);
 };
-
 
 window.API.expose({
   name: "dev.shader_editor",

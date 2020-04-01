@@ -97,7 +97,9 @@ class API{
 
   call(name, args){
     /* call an API method by name, with an argument array */
-    args = args || [];
+    if(args == undefined){
+      args = [];
+    }
 
     if(!(name in this.the_api)){
       console.error("API method not defined (" + (name) + ")");

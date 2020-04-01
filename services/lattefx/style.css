@@ -1779,7 +1779,7 @@ header .render-credits-count{
 
 .shader-editor{
   position:absolute;
-  left:0px;
+  right:0px;
   top:50px;
   height:100%;
   max-height:calc(100% - 110px);
@@ -1791,7 +1791,6 @@ header .render-credits-count{
 
 .shader-editor .CodeMirror{
   height: 100%;
-  resize:horizontal;
 }
 
 .shader-editor .close-button{

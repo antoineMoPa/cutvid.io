@@ -134,6 +134,7 @@ Vue.component('player', {
       width: 1920,
       height: 1080,
       aspect: 1920.0/1080,
+      right_panel_width: 0,
       scale: 1.0,
       user_token: null,
       expert_mode: true,
@@ -158,6 +159,20 @@ Vue.component('player', {
         fn: function(){
           this.$refs['panel-selector'].switch_to(0);
         }.bind(this)
+      });
+
+      API.expose({
+        name: "player.set_right_panel_width",
+        doc: `Set rigth panel width
+
+        This is used to make space for the dev panel.
+
+        `,
+        fn: function(width){
+          this.right_panel_width = width;
+          this.on_resize();
+        }.bind(this),
+        no_ui: true
       });
 
       API.expose({
@@ -215,9 +230,12 @@ Vue.component('player', {
     on_resize(){
       let app = this;
       let left_panel_width = 315;
+      let right_panel_width = this.right_panel_width;
+
       let sequencer = document.querySelectorAll("#main-player .sequencer")[0];
 
-      let x_spacing = 60 + left_panel_width + 40; // left theme settings panel and margin
+      // left theme settings panel and margin
+      let x_spacing = 60 + left_panel_width + right_panel_width + 40;
       let y_spacing = sequencer.clientHeight + 165; // 100: bottom ui
 
       let x_available_space = window.innerWidth;
@@ -241,13 +259,12 @@ Vue.component('player', {
       let canvas_container = document.querySelectorAll("#main-player .canvas-container")[0];
       let player_overlay = document.querySelectorAll("#main-player .player-overlay")[0]
 
-
       sequencer.style.width =
         (x_available_space - x_spacing) + "px";
       sequencer.style.top =
         (y_available_space - y_spacing + 35) + "px";
 
-      sequencer.style.left = (x_spacing - 20) + "px";
+      sequencer.style.left = (x_spacing - right_panel_width - 20) + "px";
 
       player_overlay.style.width =
         app.player.canvas.style.maxWidth =
@@ -265,7 +282,7 @@ Vue.component('player', {
       let x_align_center = parseInt((x_available_space - x_spacing - available_size) / 2);
       player_overlay.style.left =
         canvas_container.style.left =
-        x_spacing - 20 + x_align_center + "px";
+        x_spacing - 20 - right_panel_width + x_align_center + "px";
 
       this.player.call_resize_listeners();
     },
