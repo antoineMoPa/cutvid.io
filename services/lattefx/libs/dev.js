@@ -35,8 +35,13 @@ dev.editor_component = Vue.component('effect-editor', {
                     v-bind:panelNames="['settings.js', 'fragment.glsl', 'vertex.glsl (global)']"
                     v-on:switch="switch_panel"/>
     <div class="switchable-panel">
-      <p style="color:#eee;">SETTINGS ARE CURRENTLY READ-ONLY</p>
       <div ref="settings_container"></div>
+      <button class="reset-effect ui-button"
+              v-on:click="reload_effect">
+        <img class="reload-icon"
+             src="icons/feather/refresh-cw.svg"/>
+        Update Effect
+      </button>
     </div>
     <div class="switchable-panel">
       <div ref="fragment_container"></div>
@@ -44,7 +49,7 @@ dev.editor_component = Vue.component('effect-editor', {
     <div class="switchable-panel">
       <div ref="vertex_container"></div>
     </div>
-    <img src="icons/feather/x.svg" class="close-button" v-on:click="close">
+    <img src="icons/feather/x.svg" class="close-button" v-on:click="close"/>
   </div>`,
   data(){
     return {
@@ -53,6 +58,11 @@ dev.editor_component = Vue.component('effect-editor', {
     };
   },
   methods: {
+    reload_effect(){
+      let new_code = this.settings_codemirror.getValue();
+      eval(new_code);
+      window.API.call("sequencer.reload_sequence", this.sequence);
+    },
     switch_panel(i){
       // Hide previously shown
       this.$el.querySelectorAll(".switchable-panel-shown").forEach((el) => {
@@ -79,6 +89,7 @@ dev.editor_component = Vue.component('effect-editor', {
         mode is either "settings", "vertex" or "fragment"
       */
       let current_sequence = window.API.call("sequencer.get_active_sequence");
+      this.sequence = current_sequence;
 
       let value;
       let container = null;
@@ -124,11 +135,9 @@ dev.editor_component = Vue.component('effect-editor', {
         } else if (mode == "vertex") {
           program.compile(code, program.fragment_shader_code);
         } else {
-          console.log("update settings");
+          // nothing to do before "Update Effect" button press
         }
       }.bind(this));
-
-
     },
     close(){
       window.API.call("player.set_right_panel_width", 0);

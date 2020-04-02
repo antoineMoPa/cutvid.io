@@ -264,6 +264,20 @@ Vue.component('sequencer', {
           return this.visible_duration;
         }.bind(this)
       });
+
+      API.expose({
+        name: "sequencer.reload_sequence",
+        doc: `Reload sequence
+
+        `,
+        fn: async function(sequence){
+          let index = this.sequences.indexOf(sequence);
+          this.selected = [index];
+          await this.$nextTick();
+          window.API.call("sequence_effects.reload_effect", false);
+        }.bind(this),
+        no_ui: true
+      });
     },
     async quick_add_sequence(type){
       // Add at minimum 0
@@ -307,7 +321,6 @@ Vue.component('sequencer', {
       if(this.clipboard != null){
         this.unserialize(this.clipboard, false);
       }
-
     },
     serialize(only_indexes){
       /*

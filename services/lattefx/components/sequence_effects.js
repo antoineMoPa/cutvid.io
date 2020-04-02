@@ -56,6 +56,31 @@ void main(){
   },
   props: ["player", "active", "index", "initialEffectGetter", "initialEffectName"],
   methods: {
+    expose(){
+      let API = window.API;
+
+      API.expose({
+        name: "sequence_effects.reload_effect",
+        doc: `Reload effect
+
+        If load_script is false, we will not reload the script from source.
+
+        An example of when we don't want to reload is the live effect editor,
+        which takes care of reloading with a hacked version.
+        `,
+        fn: function(load_script = true){
+          let data = this.serializeEffect();
+          this.changeEffect(
+            this.effect.effectName,
+            data,
+            true,
+            {load_script: load_script}
+          );
+        }.bind(this),
+        no_ui: true
+      });
+
+    },
     async loadPrograms(name, pass_count, onProgramReady) {
       let app = this;
 
@@ -115,8 +140,10 @@ void main(){
         return promise.then(this.applyEffectChange);
       }
     },
-    changeEffect(effectName, initialData, autoApply){
+    changeEffect(effectName, initialData, autoApply, options){
       let app = this;
+      options = options || {};
+      options.load_script = options.load_script || true;
 
       fetch("/stats/lattefx_app_load_effect/"+effectName);
 
@@ -124,69 +151,69 @@ void main(){
         autoApply = true;
       }
 
-      return new Promise(function(resolve, reject){
-        utils.load_script("plugins/" + effectName + "/settings.js", function(){
-          // Keeping unique components makes sure the components aren't reset
-          let settings = utils.plugins[effectName + "-effectSettings"]();
-          let uniqueEffectComponentID = utils.increment_unique_counter("effectComponent");
-          let componentName = effectName + "-effect-settings";
+      return new Promise(async function(resolve, reject){
+        if(options.load_script){
+          await utils.load_script("plugins/" + effectName + "/settings.js");
+        }
+        // Keeping unique components makes sure the components aren't reset
+        let settings = utils.plugins[effectName + "-effectSettings"]();
+        let uniqueEffectComponentID = utils.increment_unique_counter("effectComponent");
+        let componentName = effectName + "-effect-settings";
 
-          let pass_count = 1;
-          if(settings.pass_count != undefined){
-            pass_count = settings.pass_count;
+        let pass_count = 1;
+        if(settings.pass_count != undefined){
+          pass_count = settings.pass_count;
+        }
+
+        app.loadPrograms(effectName, pass_count, function(_shaderProgram){
+          let container = document.createElement("div");
+
+          if(app.last_plugin != undefined){
+            app.last_plugin.$destroy();
+            app.$refs.componentContainer.innerHTML = "";
           }
 
-          app.loadPrograms(effectName, pass_count, function(_shaderProgram){
-            let container = document.createElement("div");
+          app.$refs.componentContainer.appendChild(container);
+          settings.ui.el = container;
+          let plugin = new Vue(settings.ui);
 
-            if(app.last_plugin != undefined){
-              app.last_plugin.$destroy();
-              app.$refs.componentContainer.innerHTML = "";
+          app.last_plugin = plugin;
+          app.last_el = container;
+
+          // Some of these might not be needed anymore
+          // that could be some phd thesis work to figure out which
+          plugin.effect = settings;
+          plugin.effect.uniforms = plugin.uniforms;
+          plugin.player = app.player;
+          app.plugin = plugin;
+          app.$emit("register", app.index, plugin.effect);
+          settings.effectName = effectName;
+          settings.component = componentName;
+          plugin.onDuration = app.onDuration;
+          settings.id = uniqueEffectComponentID;
+          plugin.shaderProgram = _shaderProgram;
+          plugin.effect.shaderProgram = _shaderProgram;
+
+
+          // Insert effect in array
+          app.effect = settings;
+
+          app.$nextTick(function(){
+            app.updateTexts();
+
+            // Load initial data if it is given in argument
+            if(initialData != undefined){
+              app.unserializeEffect(initialData);
             }
 
-            app.$refs.componentContainer.appendChild(container);
-            settings.ui.el = container;
-            let plugin = new Vue(settings.ui);
+            let component = app.plugin;
+            component.active = this.active;
 
-            app.last_plugin = plugin;
-            app.last_el = container;
+            if(autoApply){
+              app.applyEffectChange();
+            }
 
-            // Some of these might not be needed anymore
-            // that could be some phd thesis work to figure out which
-            plugin.effect = settings;
-            plugin.effect.uniforms = plugin.uniforms;
-            plugin.player = app.player;
-            app.plugin = plugin;
-            app.$emit("register", app.index, plugin.effect);
-            settings.effectName = effectName;
-            settings.component = componentName;
-            plugin.onDuration = app.onDuration;
-            settings.id = uniqueEffectComponentID;
-            plugin.shaderProgram = _shaderProgram;
-            plugin.effect.shaderProgram = _shaderProgram;
-
-
-            // Insert effect in array
-            app.effect = settings;
-
-            app.$nextTick(function(){
-              app.updateTexts();
-
-              // Load initial data if it is given in argument
-              if(initialData != undefined){
-                app.unserializeEffect(initialData);
-              }
-
-              let component = app.plugin;
-              component.active = this.active;
-
-
-              if(autoApply){
-                app.applyEffectChange();
-              }
-
-              resolve();
-            });
+            resolve();
           });
         });
       });
@@ -279,6 +306,8 @@ void main(){
     } else if (this.initialEffectName != undefined){
       this.changeEffect(this.initialEffectName);
     }
+
+    this.expose();
   },
   beforeDestroy(){
     if(this.last_plugin != undefined){
