@@ -333,7 +333,16 @@
             }.bind(this);
             reader.readAsDataURL(f);
           },
+          is_active(){
+            let API = window.API;
+            let active_sequence = API.call("sequencer.get_active_sequence");
+            return active_sequence.effect == this.effect;
+          },
           on_paste(event){
+            if(!this.is_active()){
+              return;
+            }
+
             let items = event.clipboardData.items;
 
             // Receive images
