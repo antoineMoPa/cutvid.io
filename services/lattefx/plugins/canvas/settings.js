@@ -167,6 +167,7 @@
             canvas = this.canvas;
             let text = new fabric.IText('New text', {
               fontSize: 200,
+              fill: '#ffffff',
               fontFamily: 'sans-serif',
               top: this.player.height/2 - 200,
               left: this.player.width/2 - 500,
