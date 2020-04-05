@@ -420,17 +420,18 @@ function cleanup(){
 
   let exec_sync = require('child_process').execSync;
 
-  let command = "rm -rf image-*.png images-*";
+  // Keep a preview
+  exec_sync("cp image-000001.png preview.png");
 
-  const child = exec_sync(
-      command,
-      (error, stdout, stderr) => {
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
-        if (error !== null) {
-          console.log(`exec error: ${error}`);
-        }
-      });
+  exec_sync(
+    "rm -rf image-*.png images-*",
+    (error, stdout, stderr) => {
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+      if (error !== null) {
+        console.log(`exec error: ${error}`);
+      }
+    });
 
 }
 

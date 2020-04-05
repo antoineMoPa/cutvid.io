@@ -713,6 +713,7 @@ header .render-credits-count{
   z-index:2000;
   text-align:left;
   border-radius:3px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 .auth.popup{

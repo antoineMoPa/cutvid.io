@@ -7,8 +7,8 @@ Vue.component('renders', {
      </h3>
      <table class="table">
        <tr>
-         <th class="text-left">
-           Project name
+         <th>
+           First image
          </th>
          <th>
            Status
@@ -19,29 +19,33 @@ Vue.component('renders', {
          <th>
          </th>
        </tr>
-       <tr v-for="render in renders" class="render">
-         <td class="text-left">
-           <span>{{render.name}}</span>
-         </td>
-         <td>
-           <span>{{render.status}}</span>
-         </td>
-         <td>
-           {{parseInt(render.bytecount / 1e6)}}MB
-         </td>
-         <td class="text-right">
-           <a class="delete-render ui-button" v-if="render.status == 'rendered'" v-on:click="delete_render(render)">
-             <img src="icons/feather/trash.svg" class="feather-button" width="24"/>
-             Delete
-           </a>
-           <a class="ui-button"
-             v-on:click="download_video(render)"
-             v-if="render.status == 'rendered' && !downloading">
-             <img src="icons/feather/download.svg" class="feather-button" width="24"/>
-             Download
-           </a>
-         </td>
-       </tr>
+       <template v-for="render in renders" class="render">
+         <tr>
+           <td>
+             <img v-if="render.status == 'rendered'"
+                  v-bind:src="render.preview_url" style="max-height:60px;max-width:200px;"
+                  v-on:click="download_video(render)" />
+           </td>
+           <td>
+             <span>{{render.status}}</span>
+           </td>
+           <td>
+             {{parseInt(render.bytecount / 1e6)}}MB
+           </td>
+           <td class="text-right">
+             <a class="delete-render ui-button" v-if="render.status == 'rendered'" v-on:click="delete_render(render)">
+               <img src="icons/feather/trash.svg" class="feather-button" width="24"/>
+               Delete
+             </a>
+             <a class="ui-button"
+               v-on:click="download_video(render)"
+               v-if="render.status == 'rendered' && !downloading">
+               <img src="icons/feather/download.svg" class="feather-button" width="24"/>
+               Download
+             </a>
+           </td>
+         </tr>
+       </template>
      </table>
      <div v-if="renders.length == 0">
        <p class="renders-no-render">You currently have no renders.<br/></p>
@@ -63,6 +67,7 @@ Vue.component('renders', {
   data(){
     return {
       auth_url: "",
+      cloud_url: "",
       user_info: null,
       renders: [],
       used_bytes: 0,
@@ -78,6 +83,7 @@ Vue.component('renders', {
     async download_video(render){
       let auth = window.auth;
       let cloud_url = this.settings.cloud;
+      this.cloud_url = cloud_url;
 
       if(typeof(auth) == "undefined"){
         return;
@@ -154,6 +160,7 @@ Vue.component('renders', {
       let renders = await req.json();
 
       for(let i in renders){
+        renders[i].preview_url = cloud_url + "/render_preview/" + renders[i].id + "/" + token;
       }
 
       // It is probably a good time to update used storage

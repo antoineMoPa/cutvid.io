@@ -93,6 +93,30 @@ def list_renders():
 
     return json.dumps(render_metas)
 
+@renders.route("/render_preview/<render_id>/<token>", methods=['GET', 'OPTIONS'])
+def get_render_preview(render_id, token):
+    """
+    Read a render
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(token)
+
+    if token is None:
+        return "error 1 bad token"
+
+    render_id = validate_and_sanitize_id(render_id)
+    user_id = int(token['user_id'])
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    render_folder = user_folder + "render-" + str(render_id) + "/"
+    preview_file_path = render_folder + "preview.png"
+
+    return send_file(preview_file_path, as_attachment=True)
+
+
 @renders.route("/render/<render_id>/<token>", methods=['GET', 'OPTIONS'])
 def get_render(render_id, token):
     """
