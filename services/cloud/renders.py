@@ -32,6 +32,25 @@ def apply_cors_headers(response):
     response.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Encoding'
     return response
 
+def delete_old_renders():
+    """
+
+    This takes care of deleting old renders for every users
+
+    """
+    render_folders = glob.glob(USERS_FOLDER + "/*/render-*/")
+
+    keep_for_seconds = 3600 * 24 * 3.5 # Keep for 3 days with
+                                       # half a day grace period
+
+    for render_folder in render_folders:
+        stat = os.stat(render_folder)
+        diff = time.time() - stat.st_mtime
+
+        if diff > keep_for_seconds:
+            shutil.rmtree(render_folder)
+
+
 @renders.route("/list_renders", methods=['GET', 'OPTIONS'])
 def list_renders():
     """
@@ -40,6 +59,9 @@ def list_renders():
 
     if request.method == 'OPTIONS':
         return ""
+
+    # Poor man's cron to delete old renders
+    delete_old_renders()
 
     token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
 
