@@ -10,7 +10,8 @@
         template: `
 <div>
   <label>Your file</label>
-  <input type="file" accept=".mp3,.wav,.ogg,.aac,.flac" class="audio-file-input" v-on:change="onAudio()">
+  <button v-on:click="browse_file">Upload File</button>
+  <input type="file" accept=".mp3,.wav,.ogg,.aac,.flac" style="display:none;" class="audio-file-input" v-on:change="onAudio()">
   <p v-if="error">ERROR: Your browser does not seem to support this audio file encoding.<br>
   </p>
   <label>Trim Before (seconds)<br>
@@ -36,6 +37,9 @@
           };
         },
         methods: {
+          browse_file(){
+            this.$el.querySelectorAll(".audio-file-input")[0].click();
+          },
           loadAudio(){
             let app = this;
             app.error = false;
@@ -88,23 +92,24 @@
             }
           },
           async media_getter(){
+            if(typeof(this.audio_media_id) == "object"){
+              return null;
+            }
+
             if(this.audio_media_id == null){
               return window.URL.createObjectURL(this.audioFile);
             } else {
+
               let settings = window.lattefx_settings;
               let cloud_url = settings.cloud;
               let auth = window.auth;
               let token = await auth.get_token();
               let project_id = window.player.project_id;
               let project_media_url = cloud_url + "/media/" + project_id + "/";
-              let req = await fetch(project_media_url + this.audio_media_id, {
-                headers: {
-                  'Authorization': 'Bearer ' + token,
-                }
-              });
-
+              let url = project_media_url + this.audio_media_id + "/" + token;
+              let req = await fetch(url);
               let blob = await req.blob();
-              let url = window.URL.createObjectURL(blob);
+              let blob_url = window.URL.createObjectURL(blob);
 
               return url;
             }

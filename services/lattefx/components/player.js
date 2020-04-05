@@ -198,6 +198,15 @@ Vue.component('player', {
         }.bind(this)
       });
 
+      API.expose({
+        name: "player.save_project",
+        doc: `Save Project
+
+        `,
+        fn: function(){
+          this.save_video();
+        }.bind(this)
+      });
     },
     browse_file(){
       this.$el.querySelectorAll(".project-file-input")[0].click();

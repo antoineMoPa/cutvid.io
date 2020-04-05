@@ -80,9 +80,15 @@ var app = new Vue({
                  </div>
                  <div class="application-menu project-menu"
                     v-if="project_menu_open && settings != null">
+                   <a v-on:click="browse_projects">
+                     Open a Project
+                   </a><br>
+                   <a v-on:click="api().call('player.save_project')">
+                     Save Project
+                   </a><br>
                    <a v-on:click="api().call('player.reset_trim')">
                      Reset Trim
-                   </a>
+                   </a><br>
                  </div>
                </div>
                <player ref="player" v-bind:settings="settings"></player>
