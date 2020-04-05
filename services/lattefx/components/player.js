@@ -459,6 +459,10 @@ Vue.component('player', {
       data.width = this.width;
       data.height = this.height;
       data.fps = this.fps;
+      data.cut_bottom = this.player.cut_bottom;
+      data.cut_left = this.player.cut_left;
+      data.cut_right = this.player.cut_right;
+      data.cut_top = this.player.cut_top;
       data.scenes = this.$refs['sequencer'].serialize();
 
       return data;

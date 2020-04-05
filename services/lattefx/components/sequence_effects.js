@@ -31,6 +31,8 @@ Vue.component('sequence-effect', {
       effect: null,
       moving: false,
       vertex_shader: `attribute vec3 position;
+/* If you change this, please change it in the renderer too. */
+/* Thank you, have a nice day. */
 
 varying vec2 UV;
 varying vec2 lastUV;

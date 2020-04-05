@@ -55,7 +55,7 @@ async function attach_passes(gl, sequences){
       continue;
     }
 
-    let vertex = fs.readFileSync(plugins_folder + effect_name+"/vertex.glsl");
+    let vertex = fs.readFileSync(code_folder +"/vertex.glsl");
     let fragment = fs.readFileSync(plugins_folder + effect_name+"/fragment.glsl");
     let program = compile_program(gl, vertex, fragment);
 
@@ -196,6 +196,11 @@ function init_player(project_file_content){
   player.sequences = project.scenes;
   player.saved_audio_sequences = project.saved_audio_sequences;
   player.fps = project.fps;
+
+  player.cut_bottom = project.cut_bottom;
+  player.cut_left   = project.cut_left;
+  player.cut_right  = project.cut_right;
+  player.cut_top    = project.cut_top;
 
   return [gl, player];
 }
