@@ -202,6 +202,9 @@ Vue.component('player', {
         name: "player.save_project",
         doc: `Save Project
 
+        Upload the project to cutvid.io's server for future use.
+
+        You can use Project > Open a Project later.
         `,
         fn: function(){
           this.save_video();

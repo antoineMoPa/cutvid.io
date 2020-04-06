@@ -85,7 +85,8 @@ var app = new Vue({
                    </a><br>
                    <a v-on:click="api().call('player.save_project')">
                      Save Project
-                   </a><br>
+                   </a>
+                   <span class="shortcut-hint">Ctrl+S</span><br>
                    <a v-on:click="api().call('player.reset_trim')">
                      Reset Trim
                    </a><br>

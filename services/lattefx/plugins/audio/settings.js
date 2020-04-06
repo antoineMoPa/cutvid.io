@@ -93,7 +93,7 @@
           },
           async media_getter(){
             if(typeof(this.audio_media_id) == "object"){
-              return null;
+              return window.URL.createObjectURL(this.audioFile);
             }
 
             if(this.audio_media_id == null){
