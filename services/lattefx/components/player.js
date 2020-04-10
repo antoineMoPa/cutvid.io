@@ -163,7 +163,7 @@ Vue.component('player', {
 
       API.expose({
         name: "player.set_right_panel_width",
-        doc: `Set rigth panel width
+        doc: `Set Right Panel Width
 
         This is used to make space for the dev panel.
 
@@ -209,6 +209,21 @@ Vue.component('player', {
         fn: function(){
           this.save_video();
         }.bind(this)
+      });
+
+      API.expose({
+        name: "player.render_draft",
+        doc: `Render Draft
+
+        `,
+        fn: function(){
+          return new Promise(function(resolve){
+            this.render("LQ", function(blob){
+              resolve(blob)
+            });
+          }.bind(this));
+        }.bind(this),
+        no_ui: true
       });
     },
     browse_file(){
@@ -334,8 +349,7 @@ Vue.component('player', {
       this.$refs.ui.set_progress(0.0);
 
       this.render("LQ", function(blob){
-        this.$refs.buyVideoLQ.show(blob);
-        fetch("/stats/lattefx_app_lq_render_done/");
+        window.API.call("download_lq.show", blob);
       }.bind(this));
 
       fetch("/stats/lattefx_app_lq_initiate_download/");

@@ -45,6 +45,8 @@ Vue.component('buy-video-lq', {
     </span>
     <span v-if="uploading" style="margin-left:20px;">Uploading video</span>
     <br><br>
+    <video v-bind:src="videoURL" controls></video>
+    <br>
     <span style="font-size:14px;">
       *To allow this service to be sustainable, the shared video page may contain ads from third parties who may install cookies in visiting browsers.
     </span>
@@ -81,6 +83,33 @@ Vue.component('buy-video-lq', {
   },
   props: ["settings", "user_info"],
   methods: {
+    expose(){
+
+      window.API.expose({
+        name: "download_lq.show",
+        doc: `Show a Download UI for a LQ Video
+
+        `,
+        fn: function(blob){
+          this.show(blob);
+        }.bind(this),
+        no_ui: true
+      });
+
+      window.API.expose({
+        name: "download_lq.hot_reload",
+        doc: `Hot Reload Download UI for a LQ Video
+
+        `,
+        fn: async function(){
+          await utils.load_script("components/buy_video_lq.js?" + Math.random());
+          let blob = this.video_blob;
+          await this.$parent.$forceUpdate();
+          window.API.call("download_lq.show", blob);
+        }.bind(this),
+        dev_only: true
+      });
+    },
     email(){
       let name = "antoine.morin.paulhus";
       let at = "@";
@@ -188,6 +217,7 @@ Vue.component('buy-video-lq', {
       fetch("/stats/lattefx_app_hit_close/");
     });
 
+    this.expose();
     window.addEventListener("message", this.onWindowMessage);
   }
 });

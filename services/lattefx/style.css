@@ -1880,8 +1880,9 @@ header .render-credits-count{
   text-align: right;
   color: #ddd;
   font-size: 13px;
-  margin-right:10px;
-  margin-top:0;
+  margin-right:12px;
+  margin-top:12px;
+  padding:2px;
 }
 
 .api-result .api-title{
@@ -1905,6 +1906,16 @@ header .render-credits-count{
 
 .console-result .command-output{
   padding-bottom:10px;
+}
+
+.console .api-tag{
+  background:#f33;
+  color:#fff;
+  border-radius:3px;
+  margin:10px;
+  padding:2px;
+  padding-left:4px;
+  padding-right:4px;
 }
 
 /* END CONSOLE */

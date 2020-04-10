@@ -24,19 +24,10 @@ Vue.component('ui', {
       <a class="ui-button buy-button button-1"
          v-if="!player.rendering &&
                player.sequences.length > 0"
-         v-on:click="renderLQ">
+         v-on:click="render">
         <img class="feather-button"
              src="icons/feather/download.svg"/>
-        Render - <span class="ui-price">FREE</span>
-      </a>
-      <a class="ui-button buy-button button-1"
-         v-if="!player.rendering &&
-               user_info != null &&
-               player.sequences.length > 0"
-         v-on:click="renderHQ">
-        <img class="feather-button"
-             src="icons/feather/download.svg"/>
-        Render HQ - <span class="ui-price">spend render credits</span>
+        Render
       </a>
       <p class="info" v-else-if="player.sequences.length == 0">
         You must add at least 1 sequence to render a video.
@@ -70,6 +61,10 @@ Vue.component('ui', {
     },
     playLooping(){
       this.looping = true;
+    },
+    async render(){
+      await utils.load_script("renderer/render.js");
+      window.API.call("renderer.render");
     },
     renderLQ(){
       this.$emit("renderLQ");

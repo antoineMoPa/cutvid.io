@@ -17,7 +17,15 @@ Vue.component('console', {
             <p class="api-title">{{doc_title(api_element)}}</p>
             <pre class="api-doc">{{doc_content(api_element)}}</pre>
           </div>
-          <p class="api-name">API: {{api_element.name}}</p>
+          <p class="api-name">
+            <span v-if="api_element.dev_only" class="api-tag">
+              dev only
+            </span>
+            <span v-if="api_element.no_ui" class="api-tag">
+              no ui
+            </span>
+            API: {{api_element.name}}
+          </p>
         </div>
       </div>
     </div>`,
@@ -37,11 +45,17 @@ Vue.component('console', {
     },
     on_focus_out(e){
       // You can comment this when styling the component
-      this.show_console = false;
+      //this.show_console = false;
     },
     async call(api_element){
       let api = window.API;
-      let result = api.call(api_element.name);
+      let result;
+
+      if(api_element.no_ui){
+        result = "Cannot this method from UI.";
+      } else {
+        result = api.call(api_element.name);
+      }
 
       if(typeof(result) == "undefined"){
         return;
@@ -92,12 +106,17 @@ Vue.component('console', {
       this.command_output = null;
 
       let searchFor = this.search_string.toLowerCase();
+      let local = window.location.href.indexOf("127.0.0.1") != -1;
 
       // Bad linear search
       for(let i in api.the_api){
         let has_match = false;
 
-        if(api.the_api[i].no_ui){
+        if(api.the_api[i].no_ui && !local){
+          continue;
+        }
+
+        if(api.the_api[i].dev_only && !local){
           continue;
         }
 
