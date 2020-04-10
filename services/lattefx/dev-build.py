@@ -16,7 +16,6 @@ class EventHandler(LoggingEventHandler):
 
         if event.event_type == "modified":
             if event.src_path != "./app.build.js" :
-                print("Rebuilding JS")
                 build()
 
 event_handler = EventHandler()
