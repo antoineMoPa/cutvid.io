@@ -1,3 +1,18 @@
+function expose_settings(settings){
+  let API = window.API;
+
+  API.expose({
+    name: "settings",
+    doc: `Global Settings Object
+
+        `,
+    fn: function(){
+      return settings;
+    }.bind(this),
+    no_ui: true
+  });
+}
+
 var app = new Vue({
   el: '#main_app',
   data: {
@@ -153,6 +168,7 @@ var app = new Vue({
             'Authorization': 'Bearer ' + token,
           }
         });
+
         let data = await req.json();
 
         player.$refs['sequencer'].loading_scene = true;
@@ -169,6 +185,7 @@ var app = new Vue({
 
     fetch("settings.json").then((resp) => {
       resp.json().then((data) => {
+        expose_settings(data);
         this.settings = data;
         // These are settings that never change during an apps
         // lifetime, so might as well set it globally

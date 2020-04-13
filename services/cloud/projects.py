@@ -14,6 +14,8 @@ import random
 import time
 import requests
 import jwt
+import io
+
 from base64 import b64decode
 
 from utils import *
@@ -39,11 +41,9 @@ def list_projects():
     user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
     project_meta_files = glob.glob(user_folder + "/project-*/lattefx_project.meta")
 
-    project_meta_files = sorted(project_meta_files, key=os.path.getatime, reverse=True)
-
     project_metas = []
 
-    for project_meta_file in project_meta_files:
+    for project_meta_file in sorted(project_meta_files, key=os.path.getatime, reverse=True):
         # Extract project id
         project_id = project_meta_path_to_project_id(project_meta_file)
 
@@ -87,6 +87,37 @@ def get_project(project_id):
 
     with open(project_file_path, "r") as f:
         return f.read()
+
+@projects.route("/project/<project_id>/file/<file_name>/<token>", methods=['GET', 'OPTIONS'])
+def get_file(project_id, file_name, token):
+    """
+    Read a project's file
+    """
+
+    if request.method == 'OPTIONS':
+        return ""
+
+    token = read_token(token)
+
+    if token is None:
+        return "error 1 bad token"
+
+    project_id = int(project_id)
+    user_id = int(token['user_id'])
+
+    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
+    project_folder = user_folder + "project-" + str(project_id) + "/"
+    file_path = project_folder + "files/file_"+ file_name.replace("..", "")
+
+    if not os.path.exists(file_path):
+        return "error 8 no file '" + file_path + file_name + "' found"
+
+    with open(file_path, "rb") as f:
+        data = io.BytesIO(f.read())
+        return send_file(data,
+                         attachment_filename="media.media",
+                         mimetype="application/octet-stream")
+
 
 @projects.route("/delete_project/<project_id>", methods=['DELETE', 'OPTIONS'])
 def delete_project(project_id):
@@ -185,6 +216,11 @@ def upload_project(project_id):
     project_folder = user_folder + "project-" + str(project_id) + "/"
     os.makedirs(project_folder, exist_ok=True)
 
+    files_folder = project_folder + "/files/"
+    os.makedirs(files_folder, exist_ok=True)
+
+    for f in request.files:
+        request.files[f].save(files_folder + f.replace("..",""))
 
     project_file_path = project_folder + "lattefx_file.lattefx"
 

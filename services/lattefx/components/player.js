@@ -176,6 +176,16 @@ Vue.component('player', {
       });
 
       API.expose({
+        name: "player.get_project_id",
+        doc: `Get Current Project ID
+        `,
+        fn: function(){
+          return this.project_id;
+        }.bind(this),
+        no_ui: true
+      });
+
+      API.expose({
         name: "player.reset_trim",
         doc: `Reset Trim
 
@@ -383,7 +393,7 @@ Vue.component('player', {
       let form = new FormData();
       form.append('lattefx_file.lattefx', data);
 
-      form.append('cost', cost)
+      form.append('cost', cost);
 
       utils.flag_message("We are uploading your video to the render server!");
 
@@ -500,6 +510,8 @@ Vue.component('player', {
       this.height = data.height;
       this.fps = data.fps;
 
+      this.player.file_store.clear();
+
       this.$refs['sequencer'].unserialize(data.scenes, true);
     },
     launch_template_selector(){
@@ -538,8 +550,14 @@ Vue.component('player', {
 
         data = JSON.stringify(data);
 
+        // We should put this in a function
+        // and reuse for makeHQ
         let form = new FormData();
         form.append('lattefx_file.lattefx', data);
+        let files = this.player.file_store.serialize();
+        for(let file in files){
+          form.append("file_" + file, files[file]);
+        }
 
         fetch(cloud_url + "/upload_project/" + project_id, {
           method: 'POST',

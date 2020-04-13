@@ -41,6 +41,7 @@ class ShaderProgram {
     this.headless = headless || false;
     this.textures = {};
     this.has_vid_in_cache = false;
+    this.file_store = window.API.call("shader_player.get_file_store");
   }
 
   fetch_with_progress(url, body){
@@ -256,27 +257,16 @@ class ShaderProgram {
     let audioElement = null;
     let autoplay = options.autoplay;
 
-    if(options.videoFile != undefined || options.video_media_getter != undefined){
+    if(name == "video"){
       isVideo = true;
       isAudio = true;
-      videoElement = document.createElement("video");
-
-      let panel = document.querySelectorAll(".media-sources-panel")[0];
-
-      // Showing video somewhere improves FPS
-      panel.appendChild(videoElement);
-      videoElement.classList.add("media-source-video");
+      videoElement = await this.file_store.get_video(source);
     }
 
-    if(isVideo || options.audioFile != undefined ||
-       options.audio_media_getter != undefined){
-      // Video also have an audio element for rendering purposes
+    if(name == "audio"){
       isAudio = true;
-      audioElement = document.createElement("audio");
-
-      if(!isVideo){
-        isAudioOnly = true;
-      }
+      isAudioOnly = true;
+      audioElement = await this.file_store.get_audio(source);
     }
 
     if(isVideo){
@@ -414,23 +404,6 @@ class ShaderProgram {
           url
         };
 
-        if(options.video_media_id != null) {
-          app.textures[name].videoDigest = options.video_media_id;
-        } else if (options.audio_media_id != null) {
-          app.textures[name].audioDigest = options.audio_media_id;
-        } else if (isVideo) {
-          await app.get_file_digest(options.videoFile).then((digest) => {
-            app.textures[name].videoDigest = digest;
-            app.textures[name].videoFile = options.videoFile;
-          });
-        } else if (isAudioOnly) {
-          // Create digest for audio-only files
-          await app.get_file_digest(options.audioFile).then((digest) => {
-            app.textures[name].audioDigest = digest;
-            app.textures[name].audioFile = options.audioFile;
-          });
-        }
-
         if(!isAudioOnly && !isVideo){
           gl.texImage2D(
             gl.TEXTURE_2D, level, internalFormat,
@@ -442,7 +415,11 @@ class ShaderProgram {
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         }
 
-        ready();
+        if(!isVideo && !isAudio){
+          // Ready is called elsewhere pour audio
+          // and video textures
+          ready();
+        }
         resolve();
       });
     }
@@ -453,7 +430,7 @@ class ShaderProgram {
     function checkReady(){
       if(timeUpdate && canplay){
         updateVideo();
-        options.ready.bind(videoElement)();
+        ready(videoElement);
 
         // Don't call again
         timeUpdate = false;
@@ -463,21 +440,21 @@ class ShaderProgram {
 
     // Handle videos/canvas texture
     if(isVideo){
-      let video_blob_url = await options.video_media_getter();
+      if(videoElement.readyState == 0){
+        videoElement.addEventListener("timeupdate", function(){
+          timeUpdate = true;
+          checkReady();
+        });
+        videoElement.addEventListener("canplay", function(){
+          canplay = true;
+          checkReady();
+        });
+      } else {
+        updateVideo();
+        ready(videoElement);
+      }
 
-      videoElement.addEventListener("timeupdate", function(){
-        timeUpdate = true;
-        checkReady();
-      });
-      videoElement.addEventListener("canplay", function(){
-        canplay = true;
-        checkReady();
-      });
-
-      videoElement.src = video_blob_url;
-      audioElement.src = video_blob_url;
       videoElement.loop = true;
-      videoElement.muted = true;
 
       videoElement.play().catch(function(error){
         console.error("ShaderProgram video error: " + error);
@@ -490,7 +467,7 @@ class ShaderProgram {
       let audio_blob_url = await options.audio_media_getter();
 
       audioElement.addEventListener("canplay", function(){
-        options.ready.bind(audioElement)();
+        ready(audioElement);
       });
 
       load();
@@ -525,9 +502,11 @@ class ShaderProgram {
     }
 
     if(this.textures[name].isAudio){
-      let el = this.textures[name].audioElement;
-      if(el.parentNode != null){
-        document.body.removeChild(el);
+      if(this.textures[name].audioElement != null){
+        let el = this.textures[name].audioElement;
+        if(el.parentNode != null){
+          document.body.removeChild(el);
+        }
       }
     }
 
@@ -535,9 +514,11 @@ class ShaderProgram {
       // Don't delete texture if audio only
       gl.deleteTexture(this.textures[name].texture);
 
-      let video_element = this.textures[name].videoElement;
-      if(video_element.parentNode != null){
-        video_element.parentNode.removeChild(video_element);
+      if(this.textures[name].videoElement != null){
+        let video_element = this.textures[name].videoElement;
+        if(video_element.parentNode != null){
+          video_element.parentNode.removeChild(video_element);
+        }
       }
     }
 

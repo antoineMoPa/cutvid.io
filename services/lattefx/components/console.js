@@ -45,7 +45,7 @@ Vue.component('console', {
     },
     on_focus_out(e){
       // You can comment this when styling the component
-      //this.show_console = false;
+      this.show_console = false;
     },
     async call(api_element){
       let api = window.API;
@@ -55,6 +55,10 @@ Vue.component('console', {
         result = "Cannot this method from UI.";
       } else {
         result = api.call(api_element.name);
+      }
+
+      if(api_element.no_ui && api_element.dev_only){
+        console.warning("No need to set dev_only if you set no_ui. (${api_element})");
       }
 
       if(typeof(result) == "undefined"){

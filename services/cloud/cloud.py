@@ -130,7 +130,7 @@ def apply_cors_headers(response):
 
     response.headers['Access-Control-Allow-Origin'] = app_domain
     response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Methods'] = 'POST, DELETE'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE'
     response.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Encoding'
     return response
 
@@ -205,48 +205,6 @@ def make_audio_media(vidid):
     render_audio.wait()
 
     return folder + "/audio.mp4"
-
-@projects.route("/upload_project/<project_id>", methods=['POST', 'OPTIONS'])
-def upload_project(project_id):
-    """
-    This could be optimized by using nginx direct uploading
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
-
-    if token is None:
-        return "error 1 bad token"
-
-    project_file = request.form['lattefx_file.lattefx']
-    project_id = int(project_id)
-    user_id = int(token['user_id'])
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    os.makedirs(user_folder, exist_ok=True)
-
-    project_folder = user_folder + "project-" + str(project_id) + "/"
-    os.makedirs(project_folder, exist_ok=True)
-
-
-    project_file_path = project_folder + "lattefx_file.lattefx"
-
-    with open(project_file_path, "w") as f:
-        f.write(project_file)
-
-    project_meta_path = project_folder + "lattefx_project.meta"
-
-    if not os.path.exists(project_meta_path):
-        # Create project meta for new projects
-        project_meta = json.dumps({"name": "Untitled Project"})
-
-        with open(project_meta_path, "w") as f:
-            f.write(project_meta)
-
-    return "success"
-
 
 @app.route("/render_video/", methods=['POST', 'OPTIONS'])
 def render_video():

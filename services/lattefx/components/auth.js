@@ -41,10 +41,21 @@ Vue.component('auth', {
     return {
       auth_url: "",
       user_info: null,
+      token: null
     }
   },
   props: ["settings"],
   methods: {
+    expose(){
+      window.API.expose({
+        name: "auth.get_token",
+        doc: `Get an Authentication Token
+
+        `,
+        fn: this.get_token,
+        no_ui: true
+      });
+    },
     async get_user_info(){
       if(this.settings == null){
         return;
@@ -70,8 +81,18 @@ Vue.component('auth', {
       iframe.src = auth_url + "/users/sign_in";
     },
     async get_token(){
+      if(this.token != null){
+        return this.token;
+      }
+
       let auth_url = this.settings.auth;
       let token = await (await fetch(auth_url + "/jwt_token")).text();
+      this.token = token;
+
+      // Refresh token sometimes
+      setTimeout(function(){
+        this.token = null;
+      }.bind(this),20000);
 
       return token
     },
@@ -143,5 +164,7 @@ Vue.component('auth', {
     });
 
     window.auth = this; // This is in the limited globals approval list
+
+    this.expose();
   }
 });
