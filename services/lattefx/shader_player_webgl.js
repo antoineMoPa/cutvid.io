@@ -98,7 +98,7 @@ class ShaderPlayerWebGL {
     this.past_durations = 0;
     this.shaderProgram = null;
     this.last_frame_time = new Date().getTime();
-
+    this.no_advance_time = false;
 
     this.cut_left = 0;   // This is used to cut a portion of the viewport
     this.cut_right = 0;
@@ -827,7 +827,7 @@ class ShaderPlayerWebGL {
     } else if (!this.paused) {
       let raw_time = new Date().getTime();
       let delta = raw_time - this.last_frame_time;
-      this.time.time += delta / 1000.0;
+      this.time.time += delta / 1000.0 * (this.no_advance_time? 0.0: 1.0);
       if (!this.rendering) {
         this.time.time = this.time.time % duration;
       }
@@ -954,13 +954,15 @@ class ShaderPlayerWebGL {
                   let time_at_seek = this.time.time;
 
                   if(!this.paused){
-                    this.paused = true;
+                    this.no_advance_time = true;
+                    // Improvement idea: pause other media
+                    //                   to prevent sync glitches
                     let still_valid = true;
                     setTimeout(function(){
-                      still_valid = false;
-                    }, 500);
+                      this.no_advance_time = false;
+                    }.bind(this), 500);
                     element.addEventListener("seeked", function(){
-                      if(still_valid){ this.paused = false; }
+                      if(still_valid){ this.no_advance_time = false; }
                     }.bind(this), {once: true})
                   }
 
