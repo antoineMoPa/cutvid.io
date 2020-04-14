@@ -254,7 +254,7 @@ class ShaderPlayerWebGL {
     this.for_each_current_media((m) => {
       // Play video if it is a video
       if(m.isVideo){
-        m.videoElement.muted = false;
+        m.videoElement.muted = m.muted;
         m.videoElement.play().then(function(){
         }).catch(function(error){
           console.log(error);
@@ -935,6 +935,10 @@ class ShaderPlayerWebGL {
               // Get approximate timing
               let mediaElements = [];
               if(tex.isVideo){
+                // Update muted status
+                if(shaderProgram.muted != tex.videoElement.muted){
+                  tex.videoElement.muted = shaderProgram.muted;
+                }
                 mediaElements.push(tex.videoElement);
               } else if (tex.isAudio) {
                 mediaElements.push(tex.audioElement);

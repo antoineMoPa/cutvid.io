@@ -188,11 +188,11 @@
           trimBefore(){
             this.effect.trimBefore = this.trimBefore;
           },
-          muted(m){
-            this.effect.muted = m;
-          },
           effect(){
-            this.effect.muted = this.muted;
+            this.shaderProgram.muted = this.muted;
+          },
+          muted(){
+            this.shaderProgram.muted = this.muted;
           },
           video_name(){
             this.shaderProgram.set_texture('video', this.video_name, this.video_ready);
