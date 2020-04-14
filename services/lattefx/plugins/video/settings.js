@@ -139,18 +139,18 @@
 
             media_recorder.ondataavailable = function(e){
               if (e.data.size > 0) {
-                this.onVideo(e.data);
+                let rand_id = Math.floor(Math.random()*10000000);
+                let name = "video-recording-" + rand_id + ".video";
+                this.file_store.files[name] = e.data;
+
+                this.video_name = name;
+                this.shaderProgram.set_texture('video', name, this.video_ready);
+                this.uniforms.isLoaded.value = 1.0;
                 this.recording = false;
               }
             }.bind(this);
 
             media_recorder.start();
-          },
-          loadVideo(){
-            let app = this;
-
-            app.error = false;
-
           },
           browse_file(){
             this.$el.querySelectorAll(".video-file-input")[0].click();

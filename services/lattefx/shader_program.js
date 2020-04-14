@@ -460,15 +460,17 @@ class ShaderProgram {
         console.error("ShaderProgram video error: " + error);
       });
       if(!autoplay){
-        videoElement.pause();
+        //videoElement.pause();
       }
 
     } else if (isAudioOnly) {
-      let audio_blob_url = await options.audio_media_getter();
-
-      audioElement.addEventListener("canplay", function(){
+      if(audioElement.readyState == 0){
+        audioElement.addEventListener("canplay", function(){
+          ready(audioElement);
+        });
+      } else {
         ready(audioElement);
-      });
+      }
 
       load();
 
@@ -477,10 +479,8 @@ class ShaderProgram {
       });
 
       if(!autoplay){
-        audioElement.pause();
+        //audioElement.pause();
       }
-
-      audioElement.src = audio_blob_url;
 
       load();
     } else if (source.tagName != undefined && source.tagName == "CANVAS"){

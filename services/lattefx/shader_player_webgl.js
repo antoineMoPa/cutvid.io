@@ -954,7 +954,7 @@ class ShaderPlayerWebGL {
                     let still_valid = true;
                     setTimeout(function(){
                       still_valid = false;
-                    }, 1500);
+                    }, 500);
                     element.addEventListener("seeked", function(){
                       if(still_valid){ this.paused = false; }
                     }.bind(this), {once: true})
