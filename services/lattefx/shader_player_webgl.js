@@ -203,7 +203,7 @@ class ShaderPlayerWebGL {
     let streams = [];
 
     this.for_each_textures((t,s) => {
-      if(t.isAudio){
+      if(t.isAudio && t.audioElement != null){
         if(typeof(t.audioElement.captureStream) == "undefined"){
           let track = t.audioElement.mozCaptureStream().getTracks()[0];
           // Firefox is slow on implementing that one
@@ -282,7 +282,7 @@ class ShaderPlayerWebGL {
     this.for_each_textures((t,s) => {
       if (t.isVideo){
         t.videoElement.pause();
-      } else if (t.isAudio) {
+      } else if (t.isAudio && t.audioElement != null) {
         t.audioElement.pause();
       }
     }, false);
@@ -467,7 +467,7 @@ class ShaderPlayerWebGL {
       if(t.isVideo){
         t.videoElement.currentTime = 0;
       }
-      if(t.isAudio){
+      if(t.isAudio && t.audioElement != null){
         t.audioElement.currentTime = 0;
       }
     }, false);
