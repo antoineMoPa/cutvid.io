@@ -1,6 +1,7 @@
 Vue.component('ui', {
   template: `<div class="ui" v-if="player != null">
     <div class="ui-progress" v-bind:style="'width:' + progress_width + 'px'">
+      {{progress_message}}
     </div>
     <div v-if="!player.rendering && player.sequences.length > 0">
       <a class="ui-button play-button"
@@ -48,11 +49,40 @@ Vue.component('ui', {
     return {
       looping: false,
       progress_width: 0,
+      progress_message: "",
       show_render_options: false
     }
   },
   props: ["player", "user_info"],
   methods: {
+    expose(){
+      let API = window.API;
+
+      API.expose({
+        name: "ui.set_progress",
+        doc: `Update Big Progress Bar
+        `,
+        argsdoc: ["Progress from 0.0 to 1.0", "Message to display"],
+        fn: function(progress, message){
+          this.set_progress(progress);
+          this.progress_message = " " + message;
+        }.bind(this),
+        no_ui: true
+      });
+
+      API.expose({
+        name: "ui.clear_progress",
+        doc: `Remove Big Progress Bar
+        `,
+        fn: function(progress, message){
+          this.set_progress(0);
+          this.progress_message = "";
+        }.bind(this),
+        no_ui: true
+      });
+
+
+    },
     play(){
       this.player.play();
     },
@@ -112,5 +142,8 @@ Vue.component('ui', {
         this.show_render_options = false;
       }.bind(this), 10000);
     }
+  },
+  mounted(){
+    this.expose();
   }
 })

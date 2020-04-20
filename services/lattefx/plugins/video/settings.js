@@ -52,7 +52,7 @@
         data: function(){
           return {
             serializeExclude: ["effect", "shaderProgram"],
-            video_name: null,
+            file_name: null,
             recording: false,
             error: false,
             backgroundColor: "#000000",
@@ -97,7 +97,7 @@
               isLoaded: {
                 type: "f",
                 len: 0,
-                value: 0,
+                value: 1.0,
               },
               rotate_angle: {
                 type: "f",
@@ -143,7 +143,7 @@
                 let name = "video-recording-" + rand_id + ".video";
                 this.file_store.files[name] = e.data;
 
-                this.video_name = name;
+                this.file_name = name;
                 this.shaderProgram.set_texture('video', name, this.video_ready);
                 this.uniforms.isLoaded.value = 1.0;
                 this.recording = false;
@@ -163,7 +163,7 @@
 
             this.file_store.files[name] = file;
             this.uniforms.isLoaded.value = 1.0;
-            this.video_name = name;
+            this.file_name = name;
 
             this.shaderProgram.set_texture('video', name, this.video_ready);
           },
@@ -194,8 +194,8 @@
           muted(){
             this.shaderProgram.muted = this.muted;
           },
-          video_name(){
-            this.shaderProgram.set_texture('video', this.video_name, this.video_ready);
+          file_name(){
+            this.shaderProgram.set_texture('video', this.file_name, this.video_ready);
           }
         },
         mounted(){

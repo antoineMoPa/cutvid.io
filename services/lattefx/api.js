@@ -95,7 +95,7 @@ class API{
     this.the_api[method_definition.name] = method_definition;
   }
 
-  call(name, args){
+  call(name, ...args){
     /* call an API method by name, with an argument array */
     if(args == undefined){
       args = [];
@@ -106,7 +106,7 @@ class API{
       return false;
     }
 
-    return this.the_api[name].fn.call(null, args);
+    return this.the_api[name].fn.call(null, ...args);
   }
 
   doc(name){

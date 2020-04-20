@@ -62,7 +62,7 @@ Vue.component('sequencer', {
           </div>
           <div class="sequence-body"
                v-on:mousedown="sequenceBodyDown(index,$event,false)">
-            <span v-if="sequences[index].effect != null">
+            <span v-if="sequences[index].effect != null && dragging == null">
               {{ sequences[index].effect.human_name }}
             </span>
           </div>
@@ -96,7 +96,6 @@ Vue.component('sequencer', {
           v-bind:ref="'sequence-effect-' + sequence.id"
           v-on:register='registerSequenceEffect'
           v-bind:index='sequenceIndex'
-          v-on:ready="effectSettingsReady(sequenceIndex)"
           v-bind:initialEffectGetter="sequence.initialEffectGetter"
           v-bind:initialEffectName="sequence.initialEffectName"
           v-bind:player="player"
@@ -289,10 +288,10 @@ Vue.component('sequencer', {
       if(type == null){
         // Pick from plugins list
         await this.$refs['effectSelector'].open(function(effectName){
-          this.addSequence(effectName, add_at, add_layer);
+          this.add_sequence(effectName, add_at, add_layer);
         }.bind(this));
       } else {
-        this.addSequence(type, add_at, add_layer);
+        this.add_sequence(type, add_at, add_layer);
       }
 
       await this.$nextTick();
@@ -469,7 +468,7 @@ Vue.component('sequencer', {
       }
     },
     clickSequencer(e){
-      let info = this.mouseEventInfo(e);
+      let info = this.mouse_event_info(e);
       let time = info[2];
 
       // Move cursor to this time
@@ -508,7 +507,7 @@ Vue.component('sequencer', {
       this.dragging = index;
       this.dragging_selected = this.selected.slice();
 
-      let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
+      let [x,y,time,layer,seq,duration,scale] = this.mouse_event_info(e);
 
       if(this.selected.indexOf(index) != -1){
         if(e.shiftKey) {
@@ -597,7 +596,7 @@ Vue.component('sequencer', {
         this.dragging_selected = null;
       }
     },
-    mouseEventInfo(e){
+    mouse_event_info(e){
       if(this.player != null && this.player.rendering) { return; }
 
       let scale = this.getScale();
@@ -664,7 +663,7 @@ Vue.component('sequencer', {
 
       if(this.player != null && this.player.rendering) { return; }
 
-      let [x,y,time,layer,seq,duration,scale] = this.mouseEventInfo(e);
+      let [x,y,time,layer,seq,duration,scale] = this.mouse_event_info(e);
 
       // Limit to 21 (including 0)
       layer = Math.min(layer, 20);
@@ -847,10 +846,10 @@ Vue.component('sequencer', {
         },1000);
       }.bind(this));
     },
-    addSequenceAndDrag(){
+    add_sequence_and_drag(){
       if(this.player != null && this.player.rendering) { return; }
       let app = this;
-      this.addSequence();
+      this.add_sequence();
       let index = this.sequences.length - 1;
       window.addEventListener("mousemove", function(e){
         this.sequenceBodyDown(index, e, true);
@@ -860,37 +859,37 @@ Vue.component('sequencer', {
       });
       fetch("/stats/lattefx_app_add_sequence/");
     },
-    addSequence(effectName, from, layer){
+    async add_sequence(effectName, from_time, layer){
+      // Returns the new sequence index
       if(this.player != null && this.player.rendering) { return; }
+
       effectName = effectName || null;
-      from = from || 0.0;
+      from_time = from_time || 0.0;
       let id = utils.increment_unique_counter("sequence");
       layer = layer || id % 3; // Alternate layer to avoid overlapping
 
       this.sequences.push({
         id: id,
         layer: layer,
-        from: from,
-        to: from + this.visible_duration * 0.2,
+        from: from_time,
+        to: from_time + this.visible_duration * 0.2,
         initialEffectName: effectName,
         effect: null
       });
 
-      this.$nextTick(this.reposition_sequences);
+      await this.$nextTick();
+      this.reposition_sequences();
       this.selected = [];
 
       let API = window.API;
       API.call("player.panel.switch_to_effect_settings");
 
       this.recalculate_layer_add_menu();
+      return this.sequences.length - 1;
     },
-    deleteSelected(){
-      let app = this;
-      if(this.player != null && this.player.rendering) { return; }
-
-      let selected = this.selected;
+    delete_sequences(indexes){
       this.sequences = this.sequences.filter(function(row, id){
-        if(selected.indexOf(id) != -1){
+        if(indexes.indexOf(id) != -1){
           let component = app.$refs["sequence-effect-"+id];
 
           if(typeof(component) != "undefined"){
@@ -904,6 +903,14 @@ Vue.component('sequencer', {
         }
         return true;
       });
+    },
+    deleteSelected(){
+      let app = this;
+      if(this.player != null && this.player.rendering) { return; }
+
+      let selected = this.selected;
+      this.delete_sequences(selected);
+
       this.player.sequences = this.sequences;
       this.player.clear_transparent();
       this.$nextTick(this.reposition_sequences);
@@ -1038,6 +1045,52 @@ Vue.component('sequencer', {
         }
 
       });
+    },
+    bind_drag_and_drop(){
+      let added_sequence = null;
+
+      window.addEventListener("dragover", function(e){
+        e.preventDefault();
+        let [x,y,time,layer,seq,duration,scale] = this.mouse_event_info(e);
+        this.time.time = time;
+      }.bind(this), false);
+
+      window.addEventListener("drop", async function(e){
+        e.preventDefault();
+
+        let [x,y,time,layer,seq,duration,scale] = this.mouse_event_info(e);
+
+        let file = e.dataTransfer.files[0];
+        let type = file.type;
+
+        let sequence_type_to_add = null;
+        if(type.indexOf("video") != -1){
+          sequence_type_to_add = "video";
+        } else if(type.indexOf("audio") != -1){
+          sequence_type_to_add = "audio";
+        } else {
+          return;
+        }
+
+        let file_store = window.API.call("shader_player.get_file_store");
+
+        let name = file.name;
+        file_store.files[name] = file;
+
+        let id = utils.increment_unique_counter("sequence");
+
+        this.unserialize([{
+          layer: layer,
+          from: time,
+          to: time + 30,
+          effect: {
+            effectName: sequence_type_to_add,
+            file_name: name
+          }
+        }], false);
+        added_sequence = null;
+
+      }.bind(this), false);
     }
   },
   watch:{
@@ -1077,7 +1130,7 @@ Vue.component('sequencer', {
 
     this.bindShortcuts();
 
-
+    this.bind_drag_and_drop();
     this.reposition_sequences();
     this.resize();
     this.expose();

@@ -6,12 +6,6 @@ Vue.component('player', {
                        'settings-panel-hidden':
                        '')">
       <h3>Rendering in progress</h3>
-      <h4>How does Espresso/LQ rendering work?</h4>
-      <p>Espresso/LQ rendering happens entirely in your browser, which is quick but incurs some limitations. (dropped frames, poor quality). But it's quick and cheap!</p>
-      <h4>How does Latte/HQ rendering work?</h4>
-      <p>In HQ rendering, most of the rendering happens on our server,
-        with high quality frame extraction and audio mixing.
-      </p>
     </div>
     <div v-bind:class="'settings-panel ' +
                        (player != null && player.rendering?
@@ -131,8 +125,8 @@ Vue.component('player', {
   data(){
     return {
       player: null,
-      width: 1920,
-      height: 1080,
+      width: parseInt(1920),
+      height: parseInt(1080),
       aspect: 1920.0/1080,
       right_panel_width: 0,
       scale: 1.0,

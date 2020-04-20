@@ -277,9 +277,13 @@ header .render-credits-count{
   position:absolute;
   top:-10px;
   left:0;
-  height:8px;
+  height:18px;
   background:#3af;
   transition: all 0.3s;
+  color: #fff;
+  font-size: 12px;
+  padding-top:2px;
+  text-align: left;
 }
 
 .ui .is-rendering{
@@ -1916,6 +1920,12 @@ header .render-credits-count{
   padding:2px;
   padding-left:4px;
   padding-right:4px;
+}
+
+@media all and (max-width:1000px){
+  .console-input{
+    margin-left:300px;
+  }
 }
 
 /* END CONSOLE */

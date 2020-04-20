@@ -20,7 +20,7 @@
         data: function(){
           return {
             serializeExclude: ["effect", "shaderProgram"],
-            audio_name: null,
+            file_name: null,
             recording: false,
             error: false,
             trimBefore: 0,
@@ -72,7 +72,7 @@
                 let name = "audio-recording-" + rand_id + ".audio";
 
                 this.file_store.files[name] = e.data;
-                this.audio_name = name;
+                this.file_name = name;
 
                 this.shaderProgram.set_texture('audio', name, this.audio_ready);
                 this.recording = false;
@@ -91,12 +91,15 @@
             let name = file.name;
 
             this.file_store.files[name] = file;
-            this.audio_name = name;
+            this.file_name = name;
 
             this.shaderProgram.set_texture('audio', name, this.audio_ready);
           },
           onTrimLeft(diff){
             this.trimBefore += diff;
+          },
+          set_file_name(new_name){
+            this.file_name = new_name;
           },
           audio_ready(audio){
             // "this" points to <audio> element
@@ -119,8 +122,8 @@
           effect(){
             this.effect.muted = this.muted;
           },
-          audio_name(){
-            this.shaderProgram.set_texture('audio', this.audio_name, this.audio_ready);
+          file_name(){
+            this.shaderProgram.set_texture('audio', this.file_name, this.audio_ready);
           }
         },
         mounted(){

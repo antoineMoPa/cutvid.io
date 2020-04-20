@@ -11,7 +11,16 @@
     const { createWorker } = FFmpeg;
     worker = createWorker({
       corePath: "libs/ffmpeg/ffmpeg-core.js",
-      logger: m => console.log(m)
+      logger: function(m){
+        let match = /frame= *([0-9]*)/.exec(m.message);
+        if(match != null){
+          let frame_num = match[1];
+          let frame_tot = window.API.call("shader_player.get_total_frames");
+          let ratio = frame_num / frame_tot;
+          let message = "Encoding frame " + frame_num + " of " + frame_tot;
+          window.API.call("ui.set_progress", ratio, message);
+        }
+      }
     });
 
     job_counter++;
@@ -33,6 +42,7 @@
       type: "video/mp4"
     });
 
+    window.API.call("ui.clear_progress");
     window.API.call("download_lq.show", blob);
   }
 

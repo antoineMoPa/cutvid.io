@@ -189,8 +189,18 @@ class ShaderPlayerWebGL {
       fn: function(){
         return this.file_store;
       }.bind(this),
-      dev_only: true,
-      no_ui: true
+      dev_only: true
+    });
+
+    window.API.expose({
+      name: "shader_player.get_total_frames",
+      doc: `Get Total Frames
+
+        Get the current total number of frames in the video.
+        `,
+      fn: function(){
+        return parseInt(this.get_total_duration() * this.fps);
+      }.bind(this)
     });
   }
 
