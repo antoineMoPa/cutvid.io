@@ -1064,7 +1064,10 @@ Vue.component('sequencer', {
         let type = file.type;
 
         let sequence_type_to_add = null;
-        if(type.indexOf("video") != -1){
+
+        if(type.indexOf("gif") != -1){
+          sequence_type_to_add = "video";
+        } else if(type.indexOf("video") != -1){
           sequence_type_to_add = "video";
         } else if(type.indexOf("audio") != -1){
           sequence_type_to_add = "audio";
@@ -1075,6 +1078,12 @@ Vue.component('sequencer', {
         let file_store = window.API.call("shader_player.get_file_store");
 
         let name = file.name;
+
+        if(type.indexOf("gif") != -1){
+          file = await utils.gif_to_video(file);
+          name = name + ".mp4";
+        }
+
         file_store.files[name] = file;
 
         let id = utils.increment_unique_counter("sequence");

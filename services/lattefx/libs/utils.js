@@ -485,3 +485,45 @@ utils.real_bad_error = function(message){
   fetch("/stats/real_bad_error/" + message);
   alert(message);
 };
+
+utils.gif_to_video = async function(gif_file){
+  // Converts a gif to a mp4 file
+
+  let worker;
+  let job_counter = 0;
+
+  await Promise.all([
+    utils.load_script("libs/ffmpeg/ffmpeg.min.js")
+  ]);
+
+  const { createWorker } = FFmpeg;
+
+  worker = createWorker({
+    corePath: "libs/ffmpeg/ffmpeg-core.js",
+    logger: function(m){
+      window.API.call("ui.set_progress", 0.5, "Converting gif to video.");
+    }
+  });
+
+  job_counter++;
+  let current_job = job_counter;
+
+  await worker.load(current_job);
+
+  await worker.write(
+    "gif_file.gif",
+    gif_file
+  );
+
+  await worker.run("-i gif_file.gif -pix_fmt yuv420p output.mp4");
+
+  let result = await worker.read("output.mp4");
+
+  window.API.call("ui.clear_progress");
+
+  let blob = new Blob([result.data], {
+    type: "video/mp4"
+  });
+
+  return blob;
+}

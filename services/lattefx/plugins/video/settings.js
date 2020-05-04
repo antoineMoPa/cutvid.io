@@ -21,7 +21,7 @@
 
     <button v-on:click="browse_file">Upload Video</button>
     <input type="file"
-           accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid"
+           accept=".mp4,.avi,.mov,.webm,.ogv,.ogg,.vid,.gif"
            class="video-file-input hidden" v-on:change="on_video_upload()">
   </div>
   <div class="video-option">
@@ -155,11 +155,16 @@
           browse_file(){
             this.$el.querySelectorAll(".video-file-input")[0].click();
           },
-          on_video_upload(){
+          async on_video_upload(){
             let app = this;
             const input = this.$el.querySelectorAll('.video-file-input')[0];
             let file = input.files[0];
             let name = file.name;
+
+            if(name.indexOf(".gif") != -1){
+              file = await utils.gif_to_video(file);
+              name = name + ".mp4";
+            }
 
             this.file_store.files[name] = file;
             this.uniforms.isLoaded.value = 1.0;

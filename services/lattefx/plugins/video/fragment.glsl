@@ -2,6 +2,7 @@ precision highp float;
 
 varying vec2 UV;
 varying vec2 lastUV;
+varying mat2 rot_mat;
 uniform sampler2D previous_layer;
 uniform vec2 mouse;
 uniform float ratio, time, isLoaded, opacity;
@@ -13,15 +14,25 @@ void main(void){
     float y = UV.y;
 
     vec2 videoUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
-    float videoRatio = videoHeight / videoWidth * ratio;
+    float videoRatio = videoHeight / videoWidth;
     // Apply aspect ratio
-    // videoUV.x *= videoRatio;
-
 
     // Apply scale
+    videoUV -= 0.5;
+
+    //videoUV /= videoScale * videoRatio;
+
+    // We have a problem here for EXIF-rotated video
+    // in case of rotation, this is what we should put:
+    // videoUV.x *= videoRatio;
+    // else:
+    videoUV.x /= videoRatio;
+    videoUV *= rot_mat;
+    videoUV.x /= ratio;
     videoUV.x -= offsetLeft;
     videoUV.y -= offsetTop;
-    videoUV *= 1.0/videoScale;
+    videoUV /= videoScale;
+    videoUV += 0.5;
 
     vec4 video = texture2D(video, videoUV);
 
