@@ -286,6 +286,10 @@ header .render-credits-count{
   text-align: left;
 }
 
+.ui-progress .progress-message{
+  padding-left:8px;
+}
+
 .ui .is-rendering{
   color: #fff;
   line-height: 28px;
@@ -1104,6 +1108,11 @@ header .render-credits-count{
   padding: 20px;
   margin: 60px;
   margin-bottom: 60px;
+}
+
+.buy-video video{
+  max-width: calc(100% - 40px);
+  margin-left: -20px;
 }
 
 .buy-video .loading-message{

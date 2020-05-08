@@ -1,7 +1,9 @@
 Vue.component('ui', {
   template: `<div class="ui" v-if="player != null">
     <div class="ui-progress" v-bind:style="'width:' + progress_width + 'px'">
-      {{progress_message}}
+      <div class="progress-message">
+        {{progress_message}}
+      </div>
     </div>
     <div v-if="!player.rendering && player.sequences.length > 0">
       <a class="ui-button play-button"
@@ -93,6 +95,7 @@ Vue.component('ui', {
       this.looping = true;
     },
     async render(){
+      window.API.call("ui.set_progress", 0.05, "Initiating render.");
       await utils.load_script("renderer/render.js");
       window.API.call("renderer.render");
     },

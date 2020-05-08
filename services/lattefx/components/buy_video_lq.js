@@ -30,7 +30,7 @@ Vue.component('buy-video-lq', {
   <p class="text-center" v-if="canDownload">
     <a class="ui-button"
        v-bind:href="videoURL"
-       v-bind:download="'cutvid-io-purchased-video-'+videoTimeStamp()+'.avi'">
+       v-bind:download="'cutvid-io-'+videoTimeStamp()+'.avi'">
       <img src="icons/feather/download.svg" width="25"/>
       Download Video
     </a>
@@ -41,16 +41,12 @@ Vue.component('buy-video-lq', {
       Share Video*
     </a>
     <span v-else-if="shared_video_id == null" style="margin-left:30px;">
-      Sign in to share video*
+      Sign in to share video
     </span>
     <span v-if="uploading" style="margin-left:20px;">Uploading video</span>
     <br><br>
     <video v-bind:src="videoURL" controls></video>
     <br>
-    <span style="font-size:14px;">
-      *To allow this service to be sustainable, the shared video page may contain ads from third parties who may install cookies in visiting browsers.
-    </span>
-
   </p>
   <div class="text-center" v-if="shared_video_url != null">
     <p>Copy/paste this link to share your video:</p>
@@ -62,9 +58,6 @@ Vue.component('buy-video-lq', {
       Warning: Anyone with this link can view the video.
     </p>
   </div>
-  <p v-if="canDownload" class="thank-you">
-    See you soon!<br><br>
-  </p>
 </div>
 `,
   data: function(){
