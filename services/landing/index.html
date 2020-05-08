@@ -81,14 +81,9 @@
 
 /*! minireset.css v0.0.4 | MIT License | github.com/jgthms/minireset.css */
 
-body,h1,h2,h3,h4,h5,h6,html,li,p,ul {
+body,html,li,p,ul {
   margin: 0;
   padding: 0;
-}
-
-h1,h2,h3,h4,h5,h6 {
-  font-size: 100%;
-  font-weight: 400;
 }
 
 ul {
@@ -415,54 +410,6 @@ a.has-text-link:focus,a.has-text-link:hover {
   margin-bottom: 1em;
 }
 
-.content h1,.content h2,.content h3,.content h4,.content h5,.content h6 {
-  color: #363636;
-  font-weight: 600;
-  line-height: 1.125;
-}
-
-.content h1 {
-  font-size: 2em;
-  margin-bottom: .5em;
-}
-
-.content h1:not(:first-child) {
-  margin-top: 1em;
-}
-
-.content h2 {
-  font-size: 1.75em;
-  margin-bottom: .5714em;
-}
-
-.content h2:not(:first-child) {
-  margin-top: 1.1428em;
-}
-
-.content h3 {
-  font-size: 1.5em;
-  margin-bottom: .6666em;
-}
-
-.content h3:not(:first-child) {
-  margin-top: 1.3333em;
-}
-
-.content h4 {
-  font-size: 1.25em;
-  margin-bottom: .8em;
-}
-
-.content h5 {
-  font-size: 1.125em;
-  margin-bottom: .8888em;
-}
-
-.content h6 {
-  font-size: 1em;
-  margin-bottom: 1em;
-}
-
 .content ul {
   list-style: disc outside;
   margin-left: 2em;
@@ -595,40 +542,6 @@ a.has-text-link:focus,a.has-text-link:hover {
   font-size: .75rem;
 }
 
-.card {
-  background-color: #fff;
-  box-shadow: 0 2px 3px rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.1);
-  color: #4a4a4a;
-  max-width: 100%;
-  position: relative;
-}
-
-.card-content {
-  background-color: transparent;
-  padding: 1.5rem;
-}
-
-.card-footer {
-  background-color: transparent;
-  border-top: 1px solid #dbdbdb;
-  align-items: stretch;
-  display: flex;
-}
-
-.card-footer-item {
-  align-items: center;
-  display: flex;
-  flex-basis: 0;
-  flex-grow: 1;
-  flex-shrink: 0;
-  justify-content: center;
-  padding: .75rem;
-}
-
-.card-footer-item:not(:last-child) {
-  border-right: 1px solid #dbdbdb;
-}
-
 .list {
   background-color: #fff;
   border-radius: 4px;
@@ -734,16 +647,16 @@ a.list-item {
 }
 
 @media screen and (min-width:1088px) {
-  .navbar.is-primary .navbar-end .navbar-link,  .navbar.is-primary .navbar-end>.navbar-item,  .navbar.is-primary .navbar-start .navbar-link,  .navbar.is-primary .navbar-start>.navbar-item {
+  .navbar.is-primary .navbar-end .navbar-link,  .navbar.is-primary .navbar-end>.navbar-item {
     color: #fff;
   }
 
-  .navbar.is-primary .navbar-end .navbar-link:hover,  .navbar.is-primary .navbar-end>a.navbar-item:hover,  .navbar.is-primary .navbar-start .navbar-link:hover,  .navbar.is-primary .navbar-start>a.navbar-item:hover {
+  .navbar.is-primary .navbar-end .navbar-link:hover,  .navbar.is-primary .navbar-end>a.navbar-item:hover {
     background-color: #00b89c;
     color: #fff;
   }
 
-  .navbar.is-primary .navbar-end .navbar-link::after,  .navbar.is-primary .navbar-start .navbar-link::after {
+  .navbar.is-primary .navbar-end .navbar-link::after {
     border-color: #fff;
   }
 }
@@ -767,16 +680,16 @@ a.list-item {
 }
 
 @media screen and (min-width:1088px) {
-  .navbar.is-link .navbar-end .navbar-link,  .navbar.is-link .navbar-end>.navbar-item,  .navbar.is-link .navbar-start .navbar-link,  .navbar.is-link .navbar-start>.navbar-item {
+  .navbar.is-link .navbar-end .navbar-link,  .navbar.is-link .navbar-end>.navbar-item {
     color: #fff;
   }
 
-  .navbar.is-link .navbar-end .navbar-link:hover,  .navbar.is-link .navbar-end>a.navbar-item:hover,  .navbar.is-link .navbar-start .navbar-link:hover,  .navbar.is-link .navbar-start>a.navbar-item:hover {
+  .navbar.is-link .navbar-end .navbar-link:hover,  .navbar.is-link .navbar-end>a.navbar-item:hover {
     background-color: #2366d1;
     color: #fff;
   }
 
-  .navbar.is-link .navbar-end .navbar-link::after,  .navbar.is-link .navbar-start .navbar-link::after {
+  .navbar.is-link .navbar-end .navbar-link::after {
     border-color: #fff;
   }
 }
@@ -857,7 +770,7 @@ a.list-item {
 }
 
 @media screen and (min-width:1088px) {
-  .navbar,  .navbar-end,  .navbar-menu,  .navbar-start {
+  .navbar,  .navbar-end,  .navbar-menu {
     align-items: stretch;
     display: flex;
   }
@@ -878,11 +791,6 @@ a.list-item {
   .navbar-menu {
     flex-grow: 1;
     flex-shrink: 0;
-  }
-
-  .navbar-start {
-    justify-content: flex-start;
-    margin-right: auto;
   }
 
   .navbar-end {
@@ -908,22 +816,9 @@ a.list-item {
 }
 
 @media screen and (min-width:769px),print {
-  .column.is-one-quarter {
-    flex: none;
-    width: 25%;
-  }
-
-  .column.is-offset-one-quarter {
-    margin-left: 25%;
-  }
-
   .column.is-1 {
     flex: none;
     width: 8.33333%;
-  }
-
-  .column.is-offset-1 {
-    margin-left: 8.33333%;
   }
 
   .column.is-2 {
@@ -931,17 +826,9 @@ a.list-item {
     width: 16.66667%;
   }
 
-  .column.is-offset-2 {
-    margin-left: 16.66667%;
-  }
-
   .column.is-3 {
     flex: none;
     width: 25%;
-  }
-
-  .column.is-offset-3 {
-    margin-left: 25%;
   }
 
   .column.is-4 {
@@ -949,17 +836,9 @@ a.list-item {
     width: 33.33333%;
   }
 
-  .column.is-offset-4 {
-    margin-left: 33.33333%;
-  }
-
   .column.is-5 {
     flex: none;
     width: 41.66667%;
-  }
-
-  .column.is-offset-5 {
-    margin-left: 41.66667%;
   }
 
   .column.is-6 {
@@ -967,17 +846,9 @@ a.list-item {
     width: 50%;
   }
 
-  .column.is-offset-6 {
-    margin-left: 50%;
-  }
-
   .column.is-7 {
     flex: none;
     width: 58.33333%;
-  }
-
-  .column.is-offset-7 {
-    margin-left: 58.33333%;
   }
 
   .column.is-8 {
@@ -985,17 +856,9 @@ a.list-item {
     width: 66.66667%;
   }
 
-  .column.is-offset-8 {
-    margin-left: 66.66667%;
-  }
-
   .column.is-9 {
     flex: none;
     width: 75%;
-  }
-
-  .column.is-offset-9 {
-    margin-left: 75%;
   }
 
   .column.is-10 {
@@ -1003,46 +866,21 @@ a.list-item {
     width: 83.33333%;
   }
 
-  .column.is-offset-10 {
-    margin-left: 83.33333%;
-  }
-
   .column.is-11 {
     flex: none;
     width: 91.66667%;
-  }
-
-  .column.is-offset-11 {
-    margin-left: 91.66667%;
   }
 
   .column.is-12 {
     flex: none;
     width: 100%;
   }
-
-  .column.is-offset-12 {
-    margin-left: 100%;
-  }
 }
 
 @media screen and (min-width:1088px) {
-  .column.is-one-quarter-desktop {
-    flex: none;
-    width: 25%;
-  }
-
-  .column.is-offset-one-quarter-desktop {
-    margin-left: 25%;
-  }
-
   .column.is-1-desktop {
     flex: none;
     width: 8.33333%;
-  }
-
-  .column.is-offset-1-desktop {
-    margin-left: 8.33333%;
   }
 
   .column.is-2-desktop {
@@ -1050,17 +888,9 @@ a.list-item {
     width: 16.66667%;
   }
 
-  .column.is-offset-2-desktop {
-    margin-left: 16.66667%;
-  }
-
   .column.is-3-desktop {
     flex: none;
     width: 25%;
-  }
-
-  .column.is-offset-3-desktop {
-    margin-left: 25%;
   }
 
   .column.is-4-desktop {
@@ -1068,17 +898,9 @@ a.list-item {
     width: 33.33333%;
   }
 
-  .column.is-offset-4-desktop {
-    margin-left: 33.33333%;
-  }
-
   .column.is-5-desktop {
     flex: none;
     width: 41.66667%;
-  }
-
-  .column.is-offset-5-desktop {
-    margin-left: 41.66667%;
   }
 
   .column.is-6-desktop {
@@ -1086,17 +908,9 @@ a.list-item {
     width: 50%;
   }
 
-  .column.is-offset-6-desktop {
-    margin-left: 50%;
-  }
-
   .column.is-7-desktop {
     flex: none;
     width: 58.33333%;
-  }
-
-  .column.is-offset-7-desktop {
-    margin-left: 58.33333%;
   }
 
   .column.is-8-desktop {
@@ -1104,17 +918,9 @@ a.list-item {
     width: 66.66667%;
   }
 
-  .column.is-offset-8-desktop {
-    margin-left: 66.66667%;
-  }
-
   .column.is-9-desktop {
     flex: none;
     width: 75%;
-  }
-
-  .column.is-offset-9-desktop {
-    margin-left: 75%;
   }
 
   .column.is-10-desktop {
@@ -1122,26 +928,14 @@ a.list-item {
     width: 83.33333%;
   }
 
-  .column.is-offset-10-desktop {
-    margin-left: 83.33333%;
-  }
-
   .column.is-11-desktop {
     flex: none;
     width: 91.66667%;
   }
 
-  .column.is-offset-11-desktop {
-    margin-left: 91.66667%;
-  }
-
   .column.is-12-desktop {
     flex: none;
     width: 100%;
-  }
-
-  .column.is-offset-12-desktop {
-    margin-left: 100%;
   }
 }
 
@@ -1344,12 +1138,6 @@ html {
   font-weight: 300;
 }
 
-h3 {
-  color: #333;
-  padding: 30px;
-  margin: 0;
-}
-
 .main-features-list {
   text-align: center;
   font-size: 18px;
@@ -1369,108 +1157,6 @@ h3 {
 
 .hero-body .text-hero {
   color: #abd0ff!important;
-}
-
-.pricing-hero {
-  background: #000;
-}
-
-.pricing-hero .title {
-  color: #fff;
-  margin-bottom: 40px;
-}
-
-.hero.is-primary.is-lighter {
-  background: #333;
-  background: linear-gradient(#000,#012);
-}
-
-.pricing-hero h2 {
-  color: #fff;
-  font-size: 50px;
-  margin-bottom: 30px;
-}
-
-.pricing-hero p.description {
-  color: #fff;
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-.pricing-hero .premium-effects {
-  font-size: 20px;
-  color: #fff;
-  margin-top: 40px;
-}
-
-.pricing-card {
-  background: #fff;
-  background: linear-gradient(#fff,#e1e1e1);
-  width: 300px;
-  display: inline-block;
-  vertical-align: top;
-  border-radius: 5px;
-  margin: 15px;
-  height: 420px;
-  position: relative;
-}
-
-.pricing-card .button {
-  position: absolute;
-  bottom: 20px;
-  left: calc(50% - 50px);
-}
-
-.pricing-card p {
-  text-align: left;
-  margin-top: 15px;
-}
-
-.pricing-card h3 {
-  color: #000;
-  padding: 0;
-  line-height: 24px;
-  margin-bottom: 10px;
-  font-weight: bold;
-  font-size: 30px;
-}
-
-.pricing-card .button {
-  margin-top: 20px;
-  border-top: none;
-  transition: all 0.2s;
-}
-
-.pricing-card .price-per-year {
-  font-size: 14px;
-  color: #333;
-  line-height: 50px;
-  margin-top: -20px;
-}
-
-.pricing-card .price {
-  color: #0a0e12;
-  height: 60px;
-  text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
-}
-
-.price .dollar-sign {
-  position: relative;
-  top: -17px;
-  left: 3px;
-}
-
-.price .the-price {
-  font-size: 40px;
-  font-weight: 600;
-}
-
-.price .per-what {
-  font-size: 20px;
-}
-
-.pricing-card .button {
-  font-size: 20px;
 }
 
 .hero.is-primary {
@@ -1509,29 +1195,12 @@ link:hover,a.navbar-item:hover {
   color: #fff;
 }
 
-.pricing-card.pro {
-  background: #fff;
-  margin-top: -5px;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  border-top: 10px solid #c96800;
-  border-bottom: 10px solid #c96800;
-}
-
-.pricing-card .button {
-  margin-top: 10px;
-}
-
 .screenshot {
   max-width: 100%;
   transform: skew(0.01turn) scale(0.8);
   box-shadow: 0 0 30px rgba(255,255,255,0.05);
   border-radius: 10px;
   border: 0.5px solid #111;
-}
-
-.screenshot.other-side {
-  transform: skew(0.01turn, 0deg) scale(0.7);
 }
 
 @media all and (min-width:1000px) {
@@ -1581,10 +1250,6 @@ link:hover,a.navbar-item:hover {
 
   .screenshot {
     margin-top: 0;
-  }
-
-  .pricing-card {
-    width: auto;
   }
 }
 
@@ -1641,7 +1306,7 @@ link:hover,a.navbar-item:hover {
     <section class="hero is-primary">
       <div class="hero-body">
         <p class="title">
-          Quick Video Editing
+          Online Video Sequencer
         </p>
         <div class="columns screenshot-block">
           <div class="column">
@@ -1668,170 +1333,13 @@ link:hover,a.navbar-item:hover {
 
       </div>
     </section>
-    <section class="hero">
-      <div class="hero-body has-text-centered container">
-        <div class="columns">
-          <div class="column">
-            <p class="title">
-              Edit
-            </p>
-            <div class="content">
-              <p>
-                Upload a video, move it, cut it, add effects.
-              </p>
-            </div>
-          </div>
-          <div class="column">
-            <p class="title">
-              Render
-            </p>
-            <div class="content">
-              <p>Render for free or pay for more quality.</p>
-            </div>
-          </div>
-          <div class="column">
-            <p class="title">
-              Share
-            </p>
-            <div class="content">
-              <p>Share your creations instantly with a quick link.</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
-
-    <!--
-         <div class="video-container">
-         <video controls loop poster="videos/preview.jpg">
-         <source src="videos/hero.webm" type="video/webm"/>
-         <source src="videos/hero.mp4" type="video/mp4"/>
-         </video>
-         <script>document.querySelectorAll("video")[0].playbackRate = 0.6;</script>
-         </div>
-    -->
-    <!--
-         <section class="hero is-primary is-lighter">
-         <div class="hero-body">
-         <p class="title">
-         From zero to video in seconds
-         </p>
-         <p class="subtitle">
-         The fastest way to make a video online.
-         </p>
-
-         <img class="screenshot other-side" src="images/screenshot2.png">
-
-         <a class="button is-link is-large" href="/app/">Launch</a>
-         </div>
-         </section>
-    -->
-    <section class="hero">
-      <div class="hero-body pricing-hero has-text-centered">
-        <p class="title">
-          Pricing
-        </p>
-        <div class="columns">
-          <div class="column is-one-quarter is-offset-3">
-            <p>
-              <span class="title">
-                Free Renders
-              </span><br/>
-              &nbsp;<!-- Vertical align with other column -->
-            </p>
-            <br/>
-            <p class="description">
-              Powered by your browser
-            </p>
-            <br/>&nbsp;
-            <a class="button is-link" href="/app/">Start editing!</a>
-          </div>
-          <div class="column is-one-quarter">
-            <p>
-              <span class="title">
-                Pro Renders
-              </span>
-            </p>
-            <br/><br/>
-            <p class="description">
-              Powered by our servers
-            </p>
-            <br/>&nbsp;
-            <a class="button is-link" href="/app/?plan_1credit">Buy 1 render for USD $ 1.50</a>
-          </div>
-        </div>
-        <br/><br/>
-        <div class="card-content pricing-card">
-          <h3>Visitor</h3>
-          <p class="has-text-centered">2 Render Credits</p>
-          <br>
-          <div class="price">
-            <span class="dollar-sign">US$</span>
-            <span class="the-price">2.50</span>
-            <span class="per-what"></span>
-          </div>
-          <ul class="features-list">
-            <li>
-              One time purchase.
-            </li>
-            <li>
-              Purchased credits never expire.
-            </li>
-          </ul>
-          <br>
-          <a class="button is-link" href="/app/?plan_2credits">Launch!</a>
-        </div>
-        <div class="card-content pricing-card">
-          <h3>Espresso</h3>
-          <p class="has-text-centered">5 Render Credits</p>
-          <br>
-          <div class="price">
-            <span class="dollar-sign">US$</span>
-            <span class="the-price">4.50</span>
-            <span class="per-what"></span>
-          </div>
-          <ul class="features-list">
-            <li>
-              One time purchase.
-            </li>
-            <li>
-              Purchased credits never expire.
-            </li>
-          </ul>
-          <a class="button is-link" href="/app/?plan_5credits">Launch!</a>
-        </div>
-        <div class="card-content pricing-card">
-          <h3>Latte</h3>
-          <p class="has-text-centered">Pro Subscription</p>
-          <br>
-          <div class="price">
-            <span class="dollar-sign">US$</span>
-            <span class="the-price">42.00</span>
-            <span class="per-what">/year</span>
-          </div>
-          <ul class="features-list">
-            <li>
-              Up to 5 free render credits per week.
-            </li>
-            <li>
-              Up to 1GB storage for 1 year.
-            </li>
-          </ul>
-          <a class="button is-link" href="/app/?plan_premium">Launch!</a>
-        </div>
-        <br><br>
-      </div>
-    </section>
-
     <footer class="footer">
       <div class="content has-text-centered container">
         <div class="columns">
           <div class="column">
             <p class="subtitle">About</p>
-            <p><span class="is-italic">cutvid.io</span> is a browser-based video platform aimed at people who are not video profesionnals but still want to create and share videos.</p>
-            <p>
-              Made in Montreal
-            </p>
+            <p><span class="is-italic">cutvid.io</span> is an open source browser-based video sequencer.</p>
           </div>
           <div class="column">
             <p class="subtitle">Documentation</p>
@@ -1848,22 +1356,6 @@ link:hover,a.navbar-item:hover {
               Licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html" target="_blank">GNU AGPL V3</a>
             </p>
           </div>
-          <!-- not yet
-               <div class="column">
-               <p class="subtitle">Newsletter</p>
-               <p>Be the first to know when we release a new features!</p>
-               </div>
-
-               <div class="column">
-               <p class="subtitle">Application</p>
-               <p>
-               <a class="button is-link ">Launch!</a>
-               </p>
-               <p>
-               <a href="#">templates</a>
-               </p>
-               </div>
-          -->
         </div>
       </div>
     </footer>
