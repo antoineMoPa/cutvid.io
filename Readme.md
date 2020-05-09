@@ -2,7 +2,7 @@
 
 cutvid.io is an open source video sequencer.
 
-#Licence
+# Licence
 
 The code is licensed under GNU AGPL V3 which you can find here: https://www.gnu.org/licenses/agpl-3.0.en.html
 
