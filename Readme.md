@@ -1,8 +1,12 @@
-# Licence
+# About
+
+cutvid.io is an open source video sequencer.
+
+#Licence
 
 The code is licensed under GNU AGPL V3 which you can find here: https://www.gnu.org/licenses/agpl-3.0.en.html
 
-# Coding style
+# Coding Style
 
 From now on:
 
@@ -11,14 +15,14 @@ From now on:
 
 # Dependencies
 
-ruby
-python3
-avconv/ffmpeg
-mediainfo
-rbenv ruby-build
-node
-npm
+    ruby
+    python3
+    avconv/ffmpeg
+    mediainfo
+    rbenv ruby-build
+    node
+    npm
 
-# dev dependencies
+# Dev Dependencies
 
 pip3 install watchdog
