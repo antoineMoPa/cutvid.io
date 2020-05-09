@@ -333,8 +333,9 @@ class ShaderProgram {
 
         if (videoElement.readyState >= 2) { // Fix firefox black screen
           gl.texImage2D(
-            gl.TEXTURE_2D, level, internalFormat,
-            srcFormat, srcType, videoElement);
+            gl.TEXTURE_2D, level, internalFormat, videoElement.width, videoElement.height, 0,
+            srcFormat, srcType, videoElement
+          );
         } else {
           return false;
         }

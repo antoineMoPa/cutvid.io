@@ -44,7 +44,6 @@
   <input v-model.number="uniforms.opacity.value" type="number" size="4" step="0.1">
   <label>Rotation</label>
   <input v-model.number="uniforms.rotate_angle.value" type="number" size="0" step="45">
-
   <label>Mute sound
     <input v-model="muted" type="checkbox">
   </label>
@@ -177,6 +176,7 @@
           },
           video_ready(video){
             // "this" points to <video> element
+
             this.uniforms.videoWidth.value = video.videoWidth;
             this.uniforms.videoHeight.value = video.videoHeight;
 

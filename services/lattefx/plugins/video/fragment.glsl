@@ -20,15 +20,8 @@ void main(void){
     // Apply scale
     videoUV -= 0.5;
 
-    //videoUV /= videoScale * videoRatio;
-
-    // We have a problem here for EXIF-rotated video
-    // in case of rotation, this is what we should put:
-    //videoUV.x *= videoRatio;
-    // else:
-    //videoUV.x /= videoRatio;
     videoUV *= rot_mat;
-    videoUV.x *= ratio;
+    videoUV.x /=  ratio * videoRatio;
     videoUV.x -= offsetLeft;
     videoUV.y -= offsetTop;
     videoUV /= videoScale;
