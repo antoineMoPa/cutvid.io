@@ -172,6 +172,8 @@
                 let can = this.preview_canvas;
                 let ctx = can.getContext("2d");
 
+                let old_image = can.toDataURL();
+
                 // Send initial version
                 // Generally this will be last rendered version
                 // when a re render of the preview is triggered
@@ -181,6 +183,15 @@
                 // Note: changing dims trigger canvas erasure
                 can.width = width;
                 can.height = height;
+
+                await new Promise(function(resolve){
+                  let image = new Image();
+                  image.onload = function(){
+                    ctx.drawImage(image,0,0);
+                    resolve();
+                  };
+                  image.src = old_image;
+                });
 
                 let cancel = false;
 
@@ -210,22 +221,29 @@
                   });
                 }
 
-                let num = parseInt(to - from);
+                let num = parseInt(to - from) + 1;
 
-                for(let i = 0; i < num; i++){
+                for(let i = 0; i <= num; i++){
                   let seek_to = (to - from)/num * i;
 
                   if(cancel){
                     return;
                   }
 
-                  if(video.currentTime != seek_to){
-                    video.currentTime = seek_to + this.trimBefore;
-                    await wait_seek();
-                  }
+                  if(seek_to - this.trimBefore > video.duration){
+                    ctx.fillStyle = "#000000";
+                    ctx.fillRect(parseInt(video.duration/(to-from)*width), 0, width, 40);
+                    updater(can);
+                    break;
+                  } else {
+                    if(video.currentTime != seek_to){
+                      video.currentTime = seek_to + this.trimBefore;
+                      await wait_seek();
+                    }
 
-                  ctx.drawImage(video, width/num*i-20, 0, width/num, 40);
-                  updater(can);
+                    ctx.drawImage(video, width/num*(i-1), 0, width/num, 40);
+                    updater(can);
+                  }
                 }
 
               }.bind(this)

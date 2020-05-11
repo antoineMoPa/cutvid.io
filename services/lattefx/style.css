@@ -938,6 +938,7 @@ header .render-credits-count{
   width:20px;
   overflow:show;
   height:40px;
+  opacity:0.4;
   cursor:pointer;
   background:url(/app/icons/feather/chevron-left.svg) #252525;
   background-size:contain;
@@ -956,7 +957,7 @@ header .render-credits-count{
   right:0;
   width:20px;
   height:40px;
-  opacity:0.7;
+  opacity:0.4;
   cursor:pointer;
   background:url(/app/icons/feather/chevron-right.svg) #252525;
   background-size:contain;
