@@ -155,24 +155,47 @@
           browse_file(){
             this.$el.querySelectorAll(".video-file-input")[0].click();
           },
-          build_preview(width, height, from, to){
+          build_preview(){
             let api = window.API;
+            // We'll use this function to cancel last call if exists
+            let cancel_last = function(){};
 
             api.call(
               "sequencer.set_sequence_preview_maker",
               this.effect.id,
-              async function(width, height, from, to){
-                let can = document.createElement("canvas");
+              async function(width, height, from, to, updater){
+                if(this.preview_canvas == undefined){
+                  // Keep reusing the same canvas
+                  this.preview_canvas = document.createElement("canvas");
+                }
+
+                let can = this.preview_canvas;
+                let ctx = can.getContext("2d");
+
+                // Send initial version
+                // Generally this will be last rendered version
+                // when a re render of the preview is triggered
+                // by a sequencer move, zoom or sequence resize
+                updater(can);
+
+                // Note: changing dims trigger canvas erasure
                 can.width = width;
                 can.height = height;
-                let ctx = can.getContext("2d");
+
+                let cancel = false;
+
+                cancel_last();
+
+                cancel_last = function(){
+                  cancel = true;
+                };
 
                 ctx.fillStyle = "#000000";
 
                 let original_video = this.shaderProgram.textures.video.videoElement;
                 let video = document.createElement("video");
-                video.width = 30;
-                video.height = 20;
+                video.width = 40/16*9;
+                video.height = 40;
                 video.src = original_video.src;
 
                 function wait_seek(){
@@ -183,24 +206,28 @@
                     };
                     video.addEventListener("timeupdate", listener);
 
-                    setTimeout(listener, 2000);
+                    setTimeout(listener, 10000);
                   });
                 }
 
-                let num = 20.0;
+                let num = parseInt(to - from);
 
                 for(let i = 0; i < num; i++){
                   let seek_to = (to - from)/num * i;
 
+                  if(cancel){
+                    return;
+                  }
+
                   if(video.currentTime != seek_to){
-                    video.currentTime = seek_to;
+                    video.currentTime = seek_to + this.trimBefore;
                     await wait_seek();
                   }
 
-                  ctx.drawImage(video, width/num*i, 0, width/num, 20);
+                  ctx.drawImage(video, width/num*i-20, 0, width/num, 40);
+                  updater(can);
                 }
 
-                return can;
               }.bind(this)
             );
           },
@@ -259,6 +286,7 @@
           },
           file_name(){
             this.shaderProgram.set_texture('video', this.file_name, this.video_ready);
+            this.build_preview();
           }
         },
         mounted(){

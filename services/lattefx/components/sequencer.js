@@ -69,7 +69,7 @@ Vue.component('sequencer', {
           <div class="sequence-button-right"
                v-on:mousedown="sequenceRightDown(index)">
           </div>
-          <canvas class="sequence-canvas" height="20"/>
+          <canvas class="sequence-canvas" height="40"/>
         </div>
         <div class="time-spacer" ref="time-spacer">.</div>
         <div class="time-bar" ref="timeBar">
@@ -293,10 +293,11 @@ Vue.component('sequencer', {
           - canvas.height
           - from (Start time)
           - to   (End time)
+          - updater (A callback which accepts the preview)
 
         In your effect plugin, you can obtain the effect id with "this.effect.id"
 
-        The image you return can be a canvas or an image as data URL.
+        The image you give to "updater" can be a canvas or an image as data URL.
         `,
         fn: function(effect_id, maker){
           this.set_sequence_preview_updater(effect_id, maker);
@@ -306,20 +307,39 @@ Vue.component('sequencer', {
       });
 
     },
-    set_sequence_preview_updater(effect_id, maker){
-      let sequence = this.sequences[effect_id];
+    async set_sequence_preview_updater(effect_id, maker){
+      let sequence = null;
+
+      await this.$nextTick();
+
+      // Find sequence according to effect id
+      // effect id is not necessarily the same as effect id
+      for(let i = 0; i < this.sequences.length; i++){
+        if(this.sequences[i].effect == null){
+          continue;
+        }
+        if(this.sequences[i].effect.id == effect_id){
+          sequence = this.sequences[i];
+        }
+      }
+
+      if(sequence == null){
+        console.error("Sequence not found", effect_id);
+        return;
+      }
 
       // Keep track of the updater for when we'll
       // move and resize sequences
       this.sequence_preview_updaters[effect_id] = async function(){
         let element = this.$refs["sequence-"+sequence.id][0];
         let canvas = element.querySelectorAll("canvas")[0];
-
-        let image = await maker(canvas.width, canvas.height,
-                          sequence.from, sequence.to)
-
         let ctx = canvas.getContext("2d");
-        ctx.drawImage(image, 0, 0);
+
+        maker(canvas.width, canvas.height,
+              sequence.from, sequence.to,
+              function(preview){
+                ctx.drawImage(preview, 0, 0);
+              });
       }.bind(this);
 
       // Call it
@@ -783,7 +803,7 @@ Vue.component('sequencer', {
     getScale(){
       let totalDuration = this.visible_duration;
       let timeScale = this.$el.clientWidth / totalDuration;
-      let layerScale = 25;
+      let layerScale = 45;
 
       return {totalDuration, timeScale, layerScale};
     },

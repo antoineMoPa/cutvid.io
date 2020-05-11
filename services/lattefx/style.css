@@ -841,7 +841,7 @@ header .render-credits-count{
 .sequencer .suggestion,
 .sequencer .sequence{
   position:absolute;
-  height:20px;
+  height:40px;
   background:#333;
   border:1px solid #111;
   overflow:hidden;
@@ -897,12 +897,18 @@ header .render-credits-count{
   top:0;
   left:20px;
   width:calc(100% - 45px);
-  height:20px;
-  font-size:10px;
+  height:40px;
+  font-size:15px;
   color:#fff;
-  line-height:20px;
+  line-height:40px;
   cursor:pointer;
   z-index:1;
+  text-shadow:
+  1px 1px 0.5px rgba(0,0,0,0.4),
+  -1px -1px 0.5px rgba(0,0,0,0.4),
+  1px 0px 0.5px rgba(0,0,0,0.4),
+  -1px 0px 0.5px rgba(0,0,0,0.4);
+  text-fill-color: white;
 }
 
 .sequence-canvas{
@@ -931,10 +937,12 @@ header .render-credits-count{
   left:0;
   width:20px;
   overflow:show;
-  height:20px;
+  height:40px;
   cursor:pointer;
   background:url(/app/icons/feather/chevron-left.svg) #252525;
-  background-size:cover;
+  background-size:contain;
+  background-repeat: no-repeat;
+  background-position: 50%;
   z-index:1;
 }
 
@@ -947,11 +955,13 @@ header .render-credits-count{
   top:0;
   right:0;
   width:20px;
-  height:20px;
+  height:40px;
   opacity:0.7;
   cursor:pointer;
   background:url(/app/icons/feather/chevron-right.svg) #252525;
-  background-size:cover;
+  background-size:contain;
+  background-repeat: no-repeat;
+  background-position: 50%;
   z-index:5;
 }
 
