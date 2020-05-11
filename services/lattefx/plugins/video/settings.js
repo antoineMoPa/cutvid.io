@@ -57,7 +57,8 @@
             backgroundColor: "#000000",
             trimBefore: 0,
             durationInitialized: false,
-            durationSent: false,
+            duration_sent: false,
+            preview_built: false,
             player: null,
             effect: null,
             shaderProgram: null,
@@ -154,11 +155,63 @@
           browse_file(){
             this.$el.querySelectorAll(".video-file-input")[0].click();
           },
+          build_preview(width, height, from, to){
+            let api = window.API;
+
+            api.call(
+              "sequencer.set_sequence_preview_maker",
+              this.effect.id,
+              async function(width, height, from, to){
+                let can = document.createElement("canvas");
+                can.width = width;
+                can.height = height;
+                let ctx = can.getContext("2d");
+
+                ctx.fillStyle = "#000000";
+
+                let original_video = this.shaderProgram.textures.video.videoElement;
+                let video = document.createElement("video");
+                video.width = 30;
+                video.height = 20;
+                video.src = original_video.src;
+
+                function wait_seek(){
+                  return new Promise(function(resolve){
+                    let listener = function(){
+                      resolve();
+                      video.removeEventListener("timeupdate", listener);
+                    };
+                    video.addEventListener("timeupdate", listener);
+
+                    setTimeout(listener, 2000);
+                  });
+                }
+
+                let num = 20.0;
+
+                for(let i = 0; i < num; i++){
+                  let seek_to = (to - from)/num * i;
+
+                  if(video.currentTime != seek_to){
+                    video.currentTime = seek_to;
+                    await wait_seek();
+                  }
+
+                  ctx.drawImage(video, width/num*i, 0, width/num, 20);
+                }
+
+                return can;
+              }.bind(this)
+            );
+          },
           async on_video_upload(){
             let app = this;
             const input = this.$el.querySelectorAll('.video-file-input')[0];
             let file = input.files[0];
             let name = file.name;
+
+            this.duration_sent = false;
+            this.preview_built = false;
 
             if(name.indexOf(".gif") != -1){
               file = await utils.gif_to_video(file);
@@ -180,9 +233,14 @@
             this.uniforms.videoWidth.value = video.videoWidth;
             this.uniforms.videoHeight.value = video.videoHeight;
 
-            if(!this.durationSent){
+            if(!this.duration_sent){
               this.onDuration(video.duration);
-              this.durationSent = true;
+              this.duration_sent = true;
+            }
+
+            if(!this.preview_built){
+              this.build_preview();
+              this.preview_built = true;
             }
 
             // Don't resize video after initial resize

@@ -288,6 +288,11 @@ header .render-credits-count{
 
 .ui-progress .progress-message{
   padding-left:8px;
+  min-width: 200px;
+  background: #3af;
+  height: 18px;
+  margin-top: -2px;
+  padding-top: 2px;
 }
 
 .ui .is-rendering{
@@ -897,6 +902,14 @@ header .render-credits-count{
   color:#fff;
   line-height:20px;
   cursor:pointer;
+  z-index:1;
+}
+
+.sequence-canvas{
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:0;
   background:#333;
 }
 
@@ -922,6 +935,7 @@ header .render-credits-count{
   cursor:pointer;
   background:url(/app/icons/feather/chevron-left.svg) #252525;
   background-size:cover;
+  z-index:1;
 }
 
 .sequence-button-left:hover{

@@ -69,6 +69,7 @@ Vue.component('sequencer', {
           <div class="sequence-button-right"
                v-on:mousedown="sequenceRightDown(index)">
           </div>
+          <canvas class="sequence-canvas" height="20"/>
         </div>
         <div class="time-spacer" ref="time-spacer">.</div>
         <div class="time-bar" ref="timeBar">
@@ -161,6 +162,7 @@ Vue.component('sequencer', {
       draggingLeft: null,
       draggingRight: null,
       draggingTimeFrom: null,
+      sequence_preview_updaters: {},
       clipboard: null,
       offset_y: 25,
       loading_scene: false,
@@ -277,6 +279,51 @@ Vue.component('sequencer', {
         }.bind(this),
         no_ui: true
       });
+
+      API.expose({
+        name: "sequencer.set_sequence_preview_maker",
+        doc: `Set Sequence Preview Maker
+
+        Use this to set a preview maker, a function that
+        will generate a preview image.
+
+        The maker is called with:
+
+          - canvas.width
+          - canvas.height
+          - from (Start time)
+          - to   (End time)
+
+        In your effect plugin, you can obtain the effect id with "this.effect.id"
+
+        The image you return can be a canvas or an image as data URL.
+        `,
+        fn: function(effect_id, maker){
+          this.set_sequence_preview_updater(effect_id, maker);
+        }.bind(this),
+        argsdoc: ["effect_id", "getter"],
+        dev_only: true
+      });
+
+    },
+    set_sequence_preview_updater(effect_id, maker){
+      let sequence = this.sequences[effect_id];
+
+      // Keep track of the updater for when we'll
+      // move and resize sequences
+      this.sequence_preview_updaters[effect_id] = async function(){
+        let element = this.$refs["sequence-"+sequence.id][0];
+        let canvas = element.querySelectorAll("canvas")[0];
+
+        let image = await maker(canvas.width, canvas.height,
+                          sequence.from, sequence.to)
+
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(image, 0, 0);
+      }.bind(this);
+
+      // Call it
+      this.sequence_preview_updaters[effect_id]();
     },
     async quick_add_sequence(type){
       // Add at minimum 0
@@ -615,6 +662,8 @@ Vue.component('sequencer', {
       let h = parseInt(this.$el.clientHeight);
       let y = h - y_prime - this.offset_y;
       let layer = Math.floor(y / scale.layerScale + 1.0);
+      // Dont put layer below 0
+      layer = Math.max(layer, 0);
       let time = x / scale.timeScale;
 
       return [x,y,time,layer,seq,duration,scale];
@@ -748,6 +797,16 @@ Vue.component('sequencer', {
       }
       return maxTo;
     },
+    update_preview_canvas(sequence){
+      if(sequence.effect == null){
+        return;
+      }
+
+      let id = sequence.effect.id;
+      if(this.sequence_preview_updaters[id] != undefined){
+        this.sequence_preview_updaters[id]();
+      }
+    },
     reposition_sequences(){
       let scale = this.getScale();
       let maxTo = 0.0;
@@ -765,9 +824,19 @@ Vue.component('sequencer', {
           el.classList.add("sequence-small");
         }
 
-        el.style.left = (seq.from * scale.timeScale) + "px";
-        el.style.width = ((seq.to - seq.from) * scale.timeScale) + "px";
-        el.style.bottom = (5 + (seq.layer) * scale.layerScale + this.offset_y) + "px";
+        let left = (seq.from * scale.timeScale);
+        let w = ((seq.to - seq.from) * scale.timeScale);
+        let bottom = (5 + (seq.layer) * scale.layerScale + this.offset_y);
+
+        el.style.bottom = bottom + "px";
+        el.style.left = left + "px";
+        el.style.width = w + "px";
+
+        let canvas = el.querySelectorAll("canvas")[0];
+        if(parseInt(w) != canvas.width){
+          canvas.width = parseInt(w);
+          this.update_preview_canvas(seq);
+        }
 
         if(seq.to > maxTo){
           maxTo = seq.to;
