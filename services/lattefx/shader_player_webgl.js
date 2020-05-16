@@ -970,7 +970,7 @@ class ShaderPlayerWebGL {
                     let still_valid = true;
                     setTimeout(function(){
                       this.no_advance_time = false;
-                    }.bind(this), 500);
+                    }.bind(this), 5000);
                     element.addEventListener("seeked", function(){
                       if(still_valid){ this.no_advance_time = false; }
                     }.bind(this), {once: true})
