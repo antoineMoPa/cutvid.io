@@ -14,14 +14,15 @@ void main(void){
     float y = UV.y;
 
     vec2 videoUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
-    float videoRatio = videoHeight / videoWidth;
+    float videoRatio = min(videoHeight,videoWidth) / max(videoHeight,videoWidth);
     // Apply aspect ratio
 
     // Apply scale
     videoUV -= 0.5;
 
+    videoUV.x *= ratio;
     videoUV *= rot_mat;
-    videoUV.x /=  ratio * videoRatio;
+    videoUV.x *= videoRatio;
     videoUV.x -= offsetLeft;
     videoUV.y -= offsetTop;
     videoUV /= videoScale;
