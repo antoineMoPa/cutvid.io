@@ -76,6 +76,8 @@ class API{
 
         bla bla bla long documentation you get the point.
         `,
+        argsdoc: ["Amount of pixels to move"],
+        returns: "Returns a random number",
         fn: function(){ this.whatever() }.bind(this)
       });
 

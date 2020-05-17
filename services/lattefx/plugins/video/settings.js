@@ -164,6 +164,12 @@
               "sequencer.set_sequence_preview_maker",
               this.effect.id,
               async function(width, height, from, to, updater){
+                if(this.small_version == undefined){
+                  return;
+                }
+
+                let video = this.small_version;
+
                 if(this.preview_canvas == undefined){
                   // Keep reusing the same canvas
                   this.preview_canvas = document.createElement("canvas");
@@ -172,26 +178,9 @@
                 let can = this.preview_canvas;
                 let ctx = can.getContext("2d");
 
-                let old_image = can.toDataURL();
-
-                // Send initial version
-                // Generally this will be last rendered version
-                // when a re render of the preview is triggered
-                // by a sequencer move, zoom or sequence resize
-                updater(can);
-
                 // Note: changing dims trigger canvas erasure
                 can.width = width;
                 can.height = height;
-
-                await new Promise(function(resolve){
-                  let image = new Image();
-                  image.onload = function(){
-                    ctx.drawImage(image,0,0);
-                    resolve();
-                  };
-                  image.src = old_image;
-                });
 
                 let cancel = false;
 
@@ -201,13 +190,9 @@
                   cancel = true;
                 };
 
-                ctx.fillStyle = "#000000";
-
-                let original_video = this.shaderProgram.textures.video.videoElement;
-                let video = document.createElement("video");
-                video.width = 40/16*9;
-                video.height = 40;
-                video.src = original_video.src;
+                // Erase last version a bit
+                ctx.fillStyle = "rgba(0,0,0,0.8)";
+                ctx.fillRect(0,0,can.width, can.height);
 
                 function wait_seek(){
                   return new Promise(function(resolve){
@@ -221,27 +206,39 @@
                   });
                 }
 
-                let num = parseInt(to - from) + 1;
+                // Get total visible range of sequencer
+                let sequencer_range = window.API.call("sequencer.get_visible_time_range");
 
-                for(let i = 0; i <= num; i++){
-                  let seek_to = (to - from)/num * i;
+                // Determine where we must render previews
+                let sequence_visible_from = Math.max(sequencer_range.from, from);
+                let sequence_visible_to = Math.min(sequencer_range.to, to);
+                let sequence_visible_duration = sequence_visible_to - sequence_visible_from;
 
-                  if(cancel){
-                    return;
-                  }
+                let sequencer_total_visible_duration = sequencer_range.to - sequencer_range.from;
+                let previews_per_second = 1.0/(sequencer_total_visible_duration);
+
+                let delta_time = sequencer_total_visible_duration * 0.04;
+                let delta_px = delta_time * sequencer_range.time_scale;
+
+                for(let t = sequence_visible_from; t <= sequence_visible_to; t += delta_time){
+                  let seek_to = t - this.trimBefore;
+                  let x = t * sequencer_range.time_scale - delta_px;
+
+                  if(cancel){ return; }
 
                   if(seek_to - this.trimBefore > video.duration){
                     ctx.fillStyle = "#000000";
-                    ctx.fillRect(parseInt(video.duration/(to-from)*width), 0, width, 40);
+                    ctx.fillRect(parseInt(x), 0, width, 40);
                     updater(can);
                     break;
                   } else {
                     if(video.currentTime != seek_to){
                       video.currentTime = seek_to + this.trimBefore;
                       await wait_seek();
+                      if(cancel){ return; }
                     }
 
-                    ctx.drawImage(video, width/num*(i-1), 0, width/num, 40);
+                    ctx.drawImage(video, x, 0, delta_px, 40);
                     updater(can);
                   }
                 }
@@ -301,8 +298,26 @@
           muted(){
             this.shaderProgram.muted = this.muted;
           },
-          file_name(){
+          async file_name(file_name){
             this.shaderProgram.set_texture('video', this.file_name, this.video_ready);
+
+            let api = window.API;
+            let small_version = await api.call(
+              "utils.make_small_video",
+              this.file_store.files[file_name]
+            );
+
+            if(small_version == null){
+              // We called the video generator too soon
+              return;
+            }
+
+            let small_video = document.createElement("video");
+            small_video.loop = false;
+            small_video.muted = true;
+            small_video.src = URL.createObjectURL(small_version);
+            this.small_version = small_video;
+
             this.build_preview();
           }
         },

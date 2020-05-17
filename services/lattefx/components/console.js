@@ -70,7 +70,18 @@ Vue.component('console', {
       this.show_console = true;
 
       let title = this.doc_title(api_element);
-      this.command_output = title + ": " + result;
+
+      if(typeof(result) == "object"){
+        let output = [];
+
+        for(let item in result){
+          output.push(item + " : " + result[item]);
+        }
+        this.command_output = output.join(", ");
+      } else {
+        this.command_output = title + ": " + result;
+      }
+
 
       setTimeout(function(){
         this.command_output = "";

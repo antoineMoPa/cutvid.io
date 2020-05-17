@@ -499,6 +499,64 @@ var utils = {};
     alert(message);
   };
 
+  utils.small_videos_cache = {};
+
+  utils.make_small_video = async function(video_file){
+    await Promise.all([
+      utils.load_script("libs/ffmpeg/ffmpeg.min.js")
+    ]);
+
+    let worker;
+
+    const { createWorker } = FFmpeg;
+
+    let last_progress = 0.0;
+
+    worker = createWorker({
+      corePath: "libs/ffmpeg/ffmpeg-core.js",
+      logger: function(m){
+        // What a hardcode though
+        if(m.message == "Conversion failed!"){
+          window.API.call(
+            "utils.flag_error",
+            "We encountered an error while generating video preview."
+          );
+        }
+      }
+    });
+
+    await worker.load();
+
+    await worker.write(
+      "video_to_convert.video",
+      video_file
+    );
+
+    await worker.run("-i video_to_convert.video -vf scale=48x48 -sws_flags neighbor -pix_fmt yuv420p output.mp4");
+
+    let result = await worker.read("output.mp4");
+
+    let blob = new Blob([result.data], {
+      type: "video/mp4"
+    });
+
+    return blob;
+  };
+
+  API.expose({
+    name: "utils.make_small_video",
+    doc: `Make a small preview version of a video
+
+          Makes a small version of a video (for quick seek previews)
+
+          video is around 48:48px at 15 fps (fps may vary greatly)
+          `,
+    argsdoc: ["Original video file"],
+    no_ui: true,
+    fn: utils.make_small_video
+  });
+
+
   utils.gif_to_video = async function(gif_file){
     // Converts a gif to a mp4 file
 

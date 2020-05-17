@@ -244,6 +244,18 @@ Vue.component('sequencer', {
       });
 
       API.expose({
+        name: "sequencer.get_visible_time_range",
+        doc: `Get Visible Time Range
+
+        This is the time range that is scrolled into view.
+        `,
+        returns: "Returns an object {from, to, time_scale}.",
+        fn: function(){
+          return this.get_visible_time_range();
+        }.bind(this)
+      });
+
+      API.expose({
         name: "sequencer.reload_sequence",
         doc: `Reload sequence
 
@@ -475,6 +487,7 @@ Vue.component('sequencer', {
       this.center_time(go_to);
 
       this.reposition_sequences();
+      this.update_all_previews();
     },
     zoom_out(){
       let go_to = this.time.time;
@@ -485,6 +498,7 @@ Vue.component('sequencer', {
       this.center_time(go_to);
 
       this.reposition_sequences();
+      this.update_all_previews();
     },
     center_time(go_to){
       let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
@@ -492,6 +506,16 @@ Vue.component('sequencer', {
       let center = scale.timeScale * go_to;
       let go_to_px = center - scale.totalDuration * scale.timeScale / 2;
       scrollbox.scrollLeft = parseInt(go_to_px);
+      this.update_all_previews();
+    },
+    get_visible_time_range(){
+      let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
+      let scale = this.getScale();
+      let from = scrollbox.scrollLeft / scale.timeScale;
+      let to = from + scale.totalDuration;
+      let time_scale = scale.timeScale;
+
+      return {from, to, time_scale};
     },
     onWheel(e){
       e.stopPropagation();
@@ -802,6 +826,12 @@ Vue.component('sequencer', {
       let id = sequence.effect.id;
       if(this.sequence_preview_updaters[id] != undefined){
         this.sequence_preview_updaters[id]();
+      }
+    },
+    update_all_previews(){
+      for(let i = 0; i < this.sequences.length; i++){
+        let seq = this.sequences[i];
+        this.update_preview_canvas(seq);
       }
     },
     reposition_sequences(){
@@ -1165,6 +1195,8 @@ Vue.component('sequencer', {
     },
     visible_duration(){
       this.reposition_time_ticks();
+      this.update_all_previews();
+
     }
   },
   async mounted(){
@@ -1174,6 +1206,9 @@ Vue.component('sequencer', {
     let allSequencesContainer = document.querySelectorAll(".all-sequences-container")[0];
 
     this.$el.addEventListener("wheel", this.onWheel);
+
+    let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
+    scrollbox.addEventListener("scroll", this.update_all_previews);
 
     // Select first sequence by default
     this.selected = [];
