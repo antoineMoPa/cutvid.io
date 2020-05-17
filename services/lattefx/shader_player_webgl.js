@@ -164,6 +164,8 @@ class ShaderPlayerWebGL {
     }
 
     this.expose();
+
+    this.renderMode = "LQ"; /* TEMPORARY */
   }
 
   expose(){
@@ -357,7 +359,7 @@ class ShaderPlayerWebGL {
 
     switch(this.renderMode){
     case "LQ":
-      this.render_lq(callback);
+      this.render(callback);
       break;
     default:
       console.error("Unhandled render mode");
@@ -422,7 +424,7 @@ class ShaderPlayerWebGL {
   }
 
 
-  render_lq(callback) {
+  render(callback) {
     let app = this;
 
     if(app.canvas.captureStream == undefined){

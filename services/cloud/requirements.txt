@@ -2,5 +2,4 @@ pyjwt
 waitress
 flask
 requests
-zmq
 watchdog

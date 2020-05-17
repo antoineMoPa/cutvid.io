@@ -16,7 +16,6 @@ import zmq
 
 from utils import *
 
-from renders import renders
 from projects import projects
 from share import share
 from media import media
@@ -25,7 +24,6 @@ app = Flask(__name__)
 
 app.register_blueprint(projects)
 app.register_blueprint(media)
-app.register_blueprint(renders)
 app.register_blueprint(share)
 
 settings = json.load(open('../lattefx/settings.json'))
@@ -40,8 +38,6 @@ USERS_FOLDER=os.path.expanduser("~/lattefx-users/")
 if not os.path.exists(USERS_FOLDER):
     os.mkdir(USERS_FOLDER)
 
-
-render_queue = None
 
 @app.route("/get_storage_info", methods=['GET', 'OPTIONS'])
 def get_storage_info():
@@ -205,113 +201,3 @@ def make_audio_media(vidid):
     render_audio.wait()
 
     return folder + "/audio.mp4"
-
-@app.route("/render_video/", methods=['POST', 'OPTIONS'])
-def render_video():
-    """
-    Render a video
-
-    Put audio at places indicated by sequence.lattefx
-
-    returns generated video id
-    """
-
-    if request.method == 'OPTIONS':
-        return ""
-
-    token = read_token(request.headers['Authorization'].replace("Bearer ", ""))
-
-    if token is None:
-        return json.dumps({"status": "error","error": "Bad authentication token"})
-
-    project_file = request.form['lattefx_file.lattefx']
-    render_id = id_generator()
-    user_id = int(token['user_id'])
-    cost = int(request.form['cost'])
-
-    if consume_render_credits(user_id, cost) is False:
-        return json.dumps({"status": "error","error": "No credits left"})
-
-    user_folder = USERS_FOLDER + "user-" + str(user_id) + "/"
-    render_folder = user_folder + "render-" + render_id + "/"
-    project_file_path = render_folder + "lattefx_file.lattefx"
-
-    os.makedirs(user_folder, exist_ok=True)
-    os.makedirs(render_folder, exist_ok=True)
-
-    with open(project_file_path, "w") as f:
-        f.write(project_file)
-
-    extract_media(render_folder)
-
-    with open(project_file_path, "r") as f:
-        project_file = json.loads(f.read())
-
-    project_id = project_file["project_id"]
-    project_name = ""
-
-    if project_id is not None:
-        project_id = int(project_id)
-        copy_medias(user_id, project_id, render_folder + "media/")
-
-        project_folder = user_folder + "project-" + str(project_id) + "/"
-        project_meta_path = project_folder + "lattefx_project.meta"
-
-        if os.path.exists(project_meta_path):
-            with open(project_meta_path, "r") as f:
-                project_meta = json.loads(f.read())
-                project_name = project_meta["name"]
-
-    render_meta_path = render_folder + "lattefx_render.meta"
-
-    # Create render meta for new renders
-    render_meta = json.dumps({
-        "name": project_name,
-        "status": "in queue"
-    })
-
-    with open(render_meta_path, "w") as f:
-        f.write(render_meta)
-
-    auth_port = settings['auth_port']
-    auth_url = "http://127.0.0.1:" + str(auth_port)
-
-    if settings["variant_name"] == "prod":
-        auth_url += "/auth/"
-    elif settings["variant_name"] == "next":
-        auth_url += "/auth-next/"
-
-    notify_url = auth_url + "notify_render/" + str(user_id) + "/" + render_id
-
-    command = [
-        "node", os.getcwd() + "/../renderer/render.js",
-        "lattefx_file.lattefx",
-        notify_url
-    ]
-
-    message = json.dumps({
-        "command": command,
-        "render_folder": render_folder
-    })
-
-    render_queue.send_string(message)
-
-    return json.dumps({"status": "ok", "render_id": render_id})
-
-def start_zmq_server():
-    global render_queue
-
-    context = zmq.Context()
-    render_queue = context.socket(zmq.PUB)
-
-    if settings["variant_name"] == "prod":
-        ipc_channel = "ipc:///tmp/render_queue"
-    elif settings["variant_name"] == "next":
-        ipc_channel = "ipc:///tmp/render_queue_next"
-
-    # When we go distributed, we can change this to tcp
-    # and diligently authenticate our clients/servers
-    # for the moment, we use ipc (inter-process comm.)
-    render_queue.bind(ipc_channel)
-
-start_zmq_server()

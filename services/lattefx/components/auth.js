@@ -20,22 +20,10 @@ Vue.component('auth', {
          <span v-if="user_info != null">
            signed in as {{user_info.email_summary}}
          </span>
-         <span v-if="user_info != null && user_info.premium_tier == 1" class="user-premium-tier">
-           PRO
-         </span>
-         <span v-if="user_info != null" class="render-credits-count"
-           title="Number of render credits in your account | click to buy more"
-           v-on:click="shop_render_credits"
-         >
-           Render credits: {{ user_info.render_credits }}
-         </span>
          <a v-if="user_info != null" v-on:click="sign_out" class="sign-out">Sign out</a>
          <a v-else v-on:click="sign_in" class="sign-in">Sign in</a>
        </p>
      </div>
-     <buy-render-credits ref="buy_render_credits"
-                         v-on:bought="on_render_credits_bought"
-                         v-bind:settings="settings"/>
    </div>`,
   data(){
     return {
@@ -121,15 +109,6 @@ Vue.component('auth', {
     },
     sign_in(){
       this.show_login();
-    },
-    async shop_render_credits(){
-      this.$refs["buy_render_credits"].show();
-    },
-    on_render_credits_bought(){
-      let app = this;
-      this.get_user_info().then((result) => {
-        app.user_info = result;
-      });
     }
   },
   watch: {

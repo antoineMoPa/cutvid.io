@@ -20,14 +20,9 @@ Rails.application.routes.draw do
     devise_for :users
 
     get '/current_user', to: 'user#current_user_info'
-    get '/purchases', to: 'user#purchases'
-    get '/validate_render_credit_order/:order_id', to: 'user#validate_render_credit_order'
-    get '/consume_render_credits/:user_id/:count', to: 'user#consume_render_credits'
     get '/notify_render/:user_id/:render_id', to: 'user#notify_render'
     get '/jwt_token', to: 'user#jwt_token'
     get '/validate_jwt_token', to: 'user#validate_jwt_token'
-
-    get '/simple_order', to: 'simple_order#index'
 
     delete '/sign_out', to: 'user#sign_out_current_user'
   end

@@ -24,7 +24,7 @@ Vue.component('ui', {
       Please be patient while your video is rendering.
     </p>
     <div class="ui-buttons-right">
-      <a class="ui-button buy-button button-1"
+      <a class="ui-button render-button button-1"
          v-if="!player.rendering &&
                player.sequences.length > 0"
          v-on:click="render">
@@ -35,16 +35,6 @@ Vue.component('ui', {
       <p class="info" v-else-if="player.sequences.length == 0">
         You must add at least 1 sequence to render a video.
       </p>
-      <p class="info" v-else>
-        You must sign in to render a HQ video.
-      </p>
-      <a v-if="player.rendering"
-         v-on:click="cancelRender"
-         class="ui-button button-1 cancel-button">
-        <img class="feather-button"
-             src="icons/feather/x.svg"/>
-        Cancel render
-      </a>
     </div>
   </div>`,
   data(){
@@ -98,42 +88,6 @@ Vue.component('ui', {
       window.API.call("ui.set_progress", 0.05, "Initiating render.");
       await utils.load_script("renderer/render.js");
       window.API.call("renderer.render");
-    },
-    renderLQ(){
-      this.$emit("renderLQ");
-      fetch("/stats/lattefx_app_click_render_lq/");
-      this.show_render_options = false;
-    },
-    renderHQ(){
-      let app = this;
-
-      let API = window.API;
-      let cost = API.call("sequencer.get_cost");
-
-      if(this.user_info.render_credits < cost){
-        utils.flag_message("You must have " + cost + " credits to render a video.");
-        window.auth.$refs["buy_render_credits"].show();
-        return;
-      }
-
-      let ask = new utils.ask_confirm();
-      let container = document.createElement("div");
-      document.body.appendChild(container);
-      ask.$mount(container);
-
-      ask.message = "You are about to spend " + cost + " render credit.";
-      ask.button_yes = "Yes, let's go!";
-      ask.button_no = "No, let me tweak some things.";
-      ask.on_yes = () => {
-        this.$emit("renderHQ");
-      };
-      ask.on_no = () => {
-        // Do nothing
-      };
-      ask.container_class = "confirm-spend-credit";
-    },
-    cancelRender(){
-      this.$emit("cancelRender");
     },
     set_progress(progress_ratio){
       this.progress_width = progress_ratio * window.innerWidth;

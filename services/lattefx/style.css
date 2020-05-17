@@ -114,7 +114,6 @@ a:visited{
   -moz-user-select:none;
 }
 
-/* ui-button class is also used in buy popup */
 .ui-button{
   padding:8px;
   background:#333;
@@ -150,7 +149,7 @@ a:visited{
   margin-right:4px;
 }
 
-.ui-button.buy-button{
+.ui-button.render-button{
   background:#3af;
   color:#fff;
 }
@@ -242,35 +241,9 @@ a:visited{
   color: #fff;
 }
 
-header .render-credits-count{
-  background:#af00ff;
-  padding-top:5px;
-  padding-bottom:5px;
-  padding-right:5px;
-  padding-left:10px;
-  border-radius:20px;
-  color:#fff;
-  margin: 0 10px;
-  cursor: pointer;
-}
-
-.render-buy-info{
-  position:absolute;
-  top:0;
-  right:410px;
-  color:#eee;
-  font-size:14px;
-  line-height:30px;
-}
-
 .ui-button.large{
   line-height: 60px;
   padding: 20px;
-}
-
-.buy-video .ui-button img{
-  position: relative;
-  top: 5px;
 }
 
 .ui-progress{
@@ -712,7 +685,7 @@ header .render-credits-count{
 }
 
 /* POPUP --------------- */
-/* (effect selector, theme template selector, buy gif) */
+/* (theme template selector, auth) */
 
 .popup{
   width:100%;
@@ -1127,112 +1100,8 @@ header .render-credits-count{
   max-width: 1018px;
 }
 
-.buy-video .error{
-  color: #fff;
-  background: #cc0050;
-  padding: 20px;
-  margin: 60px;
-  margin-bottom: 60px;
-}
-
-.buy-video video{
-  max-width: calc(100% - 40px);
-  margin-left: -20px;
-}
-
-.buy-video .loading-message{
-  font-size: 18px;
-  text-align: center;
-  margin-left: 0;
-  margin-top: -50px;
-}
-
-.buy-video .loading-icon{
-  animation: rotation 4s infinite linear;
-  vertical-align: middle;
-  margin-left:10px;
-}
-
-.buy-video .ui-button{
-    font-size: 20px;
-}
-
-.buy-video .auth-iframe{
-  border: none;
-  width: 560px;
-  height: 530px;
-}
-
-.buy-video p,
-.buy-video .account-info,
-.buy-video .thank-you,
-.buy-video .how-to-download-info{
-  line-height: 33px;
-  font-size: 19px;
-  color: #333;
-}
-
-.buy-video .number{
-  color: #000;
-}
-
-.payment-container{
-  width: 750px;
-  margin: auto;
-}
-
 .owner-email{
   font-style: italic;
-}
-
-.buy-render-credits .product{
-  display:block;
-  font-size: 18px;
-  background: #f3f3f0;
-  padding: 14px;
-  border-radius: 10px;
-  margin: 0 20px;
-  color:#000;
-  transition:0.2s all;
-  display: block;
-}
-
-.buy-render-credits .product input{
-  margin-right: 12px;
-}
-
-.buy-render-credits .product ul{
-  margin-left: 20px;
-}
-
-.buy-render-credits .buy-credit-info{
-  background: #efefef;
-  padding-top:20px;
-  padding-bottom:20px;
-  border-radius:20px;
-  margin:30px;
-  margin-top:0;
-  font-size:14px;
-}
-
-.buy-render-credits .buy-credit-info h4{
-  margin-top:0;
-  margin-bottom:-5px;
-  font-size:15px;
-}
-
-.buy-render-credits p{
-  line-height: 20px;
-}
-
-.product:active, .product:hover{
-  background: #3af;
-  color: #fff;
-}
-
-.confirm-spend-credit .button-yes{
-  background:#3af;
-  color:#fff;
 }
 
 @keyframes rotation {
@@ -1242,27 +1111,6 @@ header .render-credits-count{
   to {
     transform: rotate(359deg);
   }
-}
-
-.buy-video .goto-hq{
-  text-align: center;
-  line-height: 40px;
-  font-size: 20px;
-}
-
-.buy-video .goto-hq-details{
-  text-align: center;
-  line-height: 18px;
-  font-size: 11px;
-  margin-top: -18px;
-}
-
-.buy-video .goto-hq-button{
-  display:inline-block;
-  margin:5px;
-  background: #3af;
-  color:#fff;
-  font-size:14px;
 }
 
 /* END COMPONENT SPECIFICS */
@@ -1646,6 +1494,14 @@ header .render-credits-count{
 
 /* END ASK CONFIRM POPUP */
 
+
+/* DOWNLOAD VIDEO POPUP */
+
+.download-video video{
+  max-width:600px;
+}
+
+/* END DOWNLOAD VIDEO POPUP*/
 
 /* FLAG MESSAGE */
 

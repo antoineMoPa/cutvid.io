@@ -82,14 +82,6 @@ var app = new Vue({
                  </div>
                  <div class="application-menu file-menu"
                     v-if="file_menu_open && settings != null">
-                   <a v-on:click="browse_projects">
-                     Your Projects
-                   </a><br>
-                   <a v-bind:href="settings.app + '/renders'"
-                      target="_blank">
-                     Render Tracker
-                   </a>
-                   <br>
                    <a v-on:click="player.save_video()">Save to cloud</a>
                    <span class="shortcut-hint">Ctrl+S</span>
                  </div>

@@ -25,16 +25,11 @@ Vue.component('player', {
         <input v-model.number="width" min="10" max="1920" type="number"> x
         <input v-model.number="height" min="10" max="1080" type="number">
         <label>Presets</label>
-        <a class="preset" v-on:click="set_dimensions(1280,720,30)">HD 720p</a>
-        <a class="preset" v-on:click="set_dimensions(540,540,10)">Square 540</a>
-        <a class="preset" v-on:click="set_dimensions(600,315,30)">Instagram Ad</a>
-        <a class="preset" v-on:click="set_dimensions(864,1080,30)">Instagram Video</a>
-        <label>HQ presets (got a good GPU?)</label>
-        <a class="preset" v-on:click="set_dimensions(1920,1080,30)">Full HD 1080p</a>
-        <!-- Let's wait to stress test the server before higher resolutions
-          <a class="preset" v-on:click="set_dimensions(3840,2160,30)">UHD</a>
-          <a class="preset" v-on:click="set_dimensions(4096,2160,30)">Movie 4K</a>
-        -->
+        <a class="preset" v-on:click="set_dimensions(1280,720,30)">HD 720p</a><br/>
+        <a class="preset" v-on:click="set_dimensions(540,540,10)">Square 540</a><br/>
+        <a class="preset" v-on:click="set_dimensions(600,315,30)">Instagram Ad</a><br/>
+        <a class="preset" v-on:click="set_dimensions(864,1080,30)">Instagram Video</a><br/>
+        <a class="preset" v-on:click="set_dimensions(1920,1080,30)">Full HD 1080p</a><br/>
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
         <br><br>
@@ -44,7 +39,7 @@ Vue.component('player', {
             Download
           </button>
           <p>Pssst: To download the video itself, it's not here, <br/>
-                    click one of the "render" buttons</p>
+                    click the "render" button.</p>
 
         <br>
         <h4>Load a .lattefx project</h4>
@@ -81,10 +76,9 @@ Vue.component('player', {
         v-bind:player="player"
      />
     </div>
-    <buy-video-lq ref="buyVideoLQ"
-                 v-bind:settings="settings"
-                 v-bind:user_info="user_info"
-                 v-on:renderHQ="makeHQ"/>
+    <download-video ref="download_video"
+                    v-bind:settings="settings"
+                    v-bind:user_info="user_info"/>
     <div class="ui-auth-container">
       <a class="ui-button button-left-1 button-save"
         v-if="!saving"
@@ -114,8 +108,7 @@ Vue.component('player', {
     </div>
     <ui ref="ui"
         v-on:playAll="playAll"
-        v-on:renderHQ="makeHQ"
-        v-on:renderLQ="makeLQ"
+        v-on:render="makeVideo"
         v-on:cancelRender="onCancelRender"
         v-bind:user_info="user_info"
         v-bind:player="player"/>
@@ -125,8 +118,8 @@ Vue.component('player', {
   data(){
     return {
       player: null,
-      width: parseInt(1920),
-      height: parseInt(1080),
+      width: parseInt(1920/2),
+      height: parseInt(1080/2),
       aspect: 1920.0/1080,
       right_panel_width: 0,
       scale: 1.0,
@@ -216,13 +209,13 @@ Vue.component('player', {
       });
 
       API.expose({
-        name: "player.render_draft",
-        doc: `Render Draft
+        name: "player.render",
+        doc: `Render
 
         `,
         fn: function(){
           return new Promise(function(resolve){
-            this.render("LQ", function(blob){
+            this.render(function(blob){
               resolve(blob)
             });
           }.bind(this));
@@ -331,16 +324,15 @@ Vue.component('player', {
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
     },
-    render(mode, doneCallback) {
+    render(doneCallback) {
       let totalFrames = this.fps * this.player.get_total_duration();
       this.player.rendering = true;
-      this.player.renderMode = mode;
       this.player.pause();
       this.player.render(function(data){
         doneCallback(data[0]);
       });
     },
-    makeLQ(){
+    makeVideo(){
       // Web render with low quality
       this.playAll();
 
@@ -352,81 +344,11 @@ Vue.component('player', {
 
       this.$refs.ui.set_progress(0.0);
 
-      this.render("LQ", function(blob){
-        window.API.call("download_lq.show", blob);
+      this.render(function(blob){
+        window.API.call("download.show", blob);
       }.bind(this));
 
-      fetch("/stats/lattefx_app_lq_initiate_download/");
-    },
-    async makeHQ(){
-      let app = this;
-
-      let project = this.serialize();
-      let user_info = await this.$refs.auth.get_user_info();
-
-      if(user_info == null){
-        utils.flag_message("You must sign in to render videos!", {
-          button_message: "Sign in",
-          button_action: function(){
-            app.$refs.auth.show_login();
-          }
-        });
-        return;
-      }
-
-      let token = await this.$refs.auth.get_token();
-      let cloud_url = this.settings.cloud;
-      let data = this.serialize();
-      let project_id = data.project_id;
-
-      let API = window.API;
-      let cost = API.call("sequencer.get_cost");
-
-      data = JSON.stringify(data);
-
-      let form = new FormData();
-      form.append('lattefx_file.lattefx', data);
-
-      form.append('cost', cost);
-
-      utils.flag_message("We are uploading your video to the render server!");
-
-      fetch(cloud_url + "/render_video/", {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Content-Encoding': 'multipart/form-data'
-        },
-        body: form
-      }).then(async function(resp){
-        app.saving = false;
-        app.show_saved_message = true;
-
-        let json = await resp.json();
-        if(json.status != "ok"){
-          utils.flag_error(json.error);
-          return;
-        }
-
-        setTimeout(()=>{
-          app.show_saved_message = false;
-          let message =
-              "Your video is processing and you'll be notified " +
-              "by email once it's ready. " +
-              "Expect around 15 min for short videos!";
-
-          utils.flag_message(message, {
-            button_message: "Track",
-            button_action: function(){
-              window.open('./renders', '_blank');
-            }
-          });
-
-          app.$refs.auth.update_user_info();
-        }, 2000);
-      });
-
-      fetch("/stats/lattefx_app_initiate_render_hq/");
+      fetch("/stats/lattefx_app_initiate_download/");
     },
     onCancelRender(){
       this.player.cancel_render();

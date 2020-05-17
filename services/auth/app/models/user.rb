@@ -7,38 +7,10 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  has_many :user_purchases
-
   after_create :init_user
 
   def init_user
-    # Set default render credits amount
     UserMailer.new_signup(self).deliver
-  end
-
-  def render_credits
-    if super.nil?
-      self.render_credits = 0
-    else
-      seconds_diff = DateTime.now.to_i - self.render_credits_last_renew_date.to_i
-      one_week = 3600 * 24 * 7
-
-      if seconds_diff > one_week
-        # Only add credits
-
-        if self.render_credits_per_week.nil?
-          self.render_credits_per_week = 0
-        end
-
-        if super < self.render_credits_per_week
-          self.render_credits = self.render_credits_per_week
-          self.render_credits_last_renew_date = DateTime.now
-          self.save!
-        end
-      end
-    end
-
-    return super
   end
 
   def get_jwt_token

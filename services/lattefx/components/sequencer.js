@@ -130,18 +130,7 @@ Vue.component('sequencer', {
           <img src="icons/feather/minus.svg" width="20"/>
           Zoom out
         </button>
-        <!--
-        Templates were too ugly and few
-        <button v-on:click="launch_template_selector()"
-                class="add-button">
-          <img src="icons/feather/plus.svg" title="new sequence from template" width="20"/>
-          Templates
-        </button>
-        -->
       </div>
-      <scene-template-selector
-        ref="scene-template-selector"
-        v-on:start_loading="loading_scene = true"/>
       <effects-selector ref="effectSelector"/>
     </div>
   `,
@@ -184,18 +173,6 @@ Vue.component('sequencer', {
         `,
         fn: function(){
           return this.get_total_duration();
-        }.bind(this)
-      });
-
-      API.expose({
-        name: "sequencer.get_cost",
-        doc: `Get Cost in Render Credits
-
-        `,
-        fn: function(){
-          let duration = this.get_total_duration();
-          let cost = parseInt(duration / 60) + 1;
-          return cost;
         }.bind(this)
       });
 
@@ -911,29 +888,6 @@ Vue.component('sequencer', {
       this.$el.children[0].style.height = height;
 
       this.$emit("resize");
-    },
-    launch_template_selector(){
-      if(this.player != null && this.player.rendering) { return; }
-
-      let app = this;
-
-      this.$refs['scene-template-selector'].open(async function(data){
-        let erase = false;
-        app.loading_scene = true;
-        await app.$nextTick();
-
-        let duration = this.get_total_duration();
-
-        for (let i = 0; i < data.length; i++){
-          data[i].from += duration;
-          data[i].to += duration;
-        }
-
-        app.unserialize(data, erase);
-        setTimeout(function(){
-          app.loading_scene = false;
-        },1000);
-      }.bind(this));
     },
     add_sequence_and_drag(){
       if(this.player != null && this.player.rendering) { return; }
