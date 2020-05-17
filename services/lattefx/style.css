@@ -248,7 +248,7 @@ a:visited{
 
 .ui-progress{
   position:absolute;
-  top:-10px;
+  top:-20px;
   left:0;
   height:18px;
   background:#3af;
@@ -815,11 +815,11 @@ a:visited{
 .sequencer .sequence{
   position:absolute;
   height:40px;
-  background:#333;
   border:1px solid #111;
   overflow:hidden;
   z-index:10;
   opacity:0.9;
+  border-radius:3px;
 }
 
 .sequencer .suggestion .feather-icon{
@@ -889,7 +889,7 @@ a:visited{
   top:0;
   left:0;
   z-index:0;
-  background:#333;
+  background:linear-gradient(#333,#444);
 }
 
 .sequence-small .sequence-button-left{
