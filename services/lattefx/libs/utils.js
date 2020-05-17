@@ -502,9 +502,14 @@ var utils = {};
   utils.small_videos_cache = {};
 
   utils.make_small_video = async function(video_file){
+
+    window.API.call("ui.set_progress", 0.05, "Loading ffmpeg.");
+
     await Promise.all([
       utils.load_script("libs/ffmpeg/ffmpeg.min.js")
     ]);
+
+    window.API.call("ui.set_progress", 0.3, "Building video preview.");
 
     let worker;
 
@@ -519,8 +524,16 @@ var utils = {};
         if(m.message == "Conversion failed!"){
           window.API.call(
             "utils.flag_error",
-            "We encountered an error while generating video preview."
+            "We encountered an error while converting your file."
           );
+          window.API.call("ui.clear_progress");
+          console.log(m);
+        }
+        if(m.message.indexOf("frame=") != -1){
+          // Advance progress a bit
+          last_progress += 0.2;
+          let entertain_progress = 0.3 + (0.7-0.7/(last_progress + 1.0));
+          window.API.call("ui.set_progress", entertain_progress, "Building video preview.");
         }
       }
     });
@@ -539,6 +552,11 @@ var utils = {};
     let blob = new Blob([result.data], {
       type: "video/mp4"
     });
+
+    window.API.call("ui.set_progress", 1.0, "Done!");
+    setTimeout(function(){
+      window.API.call("ui.clear_progress");
+    }, 3000);
 
     return blob;
   };
@@ -563,7 +581,7 @@ var utils = {};
     let worker;
     let job_counter = 0;
 
-    window.API.call("ui.set_progress", 0.05, "Loading gif converter.");
+    window.API.call("ui.set_progress", 0.05, "Loading ffmpeg.");
 
     await Promise.all([
       utils.load_script("libs/ffmpeg/ffmpeg.min.js")
