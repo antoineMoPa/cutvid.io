@@ -261,7 +261,7 @@ a:visited{
 
 .ui-progress .progress-message{
   padding-left:8px;
-  min-width: 200px;
+  min-width: 400px;
   background: #3af;
   height: 18px;
   margin-top: -2px;
