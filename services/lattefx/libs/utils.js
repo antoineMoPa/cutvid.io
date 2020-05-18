@@ -662,6 +662,7 @@ var utils = {};
     window.API.call("ui.set_progress", 0.1, "Initiating gif converter.");
 
     let last_progress = 0.0;
+    let frame_regex = /frame=\s*([0-9]*)/;
 
     worker = createWorker({
       corePath: "libs/ffmpeg/ffmpeg-core.js",
@@ -674,11 +675,14 @@ var utils = {};
           );
           window.API.call("ui.clear_progress");
         }
-        if(m.message.indexOf("frame=") != -1){
+        if(frame_regex.test(m.message)){
+          let match = frame_regex.exec(m.message);
+          let frame = match[1];
           // Advance progress a bit
           last_progress += 0.08;
           let entertain_progress = 0.3 + (0.7-0.7/(last_progress + 1.0));
-          window.API.call("ui.set_progress", entertain_progress, "Converting gif to video.");
+          window.API.call("ui.set_progress", entertain_progress,
+                          `Converting gif to video (Frame ${frame}).`);
         }
       }
     });
