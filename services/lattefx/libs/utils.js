@@ -501,7 +501,15 @@ var utils = {};
 
   utils.small_videos_cache = {};
 
-  utils.make_small_video = async function(video_file){
+  utils.make_small_video = async function(video_file, file_name){
+    let cache_name = file_name;
+
+    if(cache_name != undefined){
+      if(utils.small_videos_cache[cache_name] != undefined &&
+         utils.small_videos_cache[cache_name].status == "rendered"){
+        return utils.small_videos_cache[cache_name].blob;
+      }
+    }
 
     window.API.call("ui.set_progress", 0.05, "Loading ffmpeg.");
 
@@ -558,6 +566,11 @@ var utils = {};
       window.API.call("ui.clear_progress");
     }, 3000);
 
+    utils.small_videos_cache[cache_name] = {
+      "status": "rendered",
+      "blob": blob
+    };
+
     return blob;
   };
 
@@ -569,7 +582,7 @@ var utils = {};
 
           video is around 48:48px at 15 fps (fps may vary greatly)
           `,
-    argsdoc: ["Original video file"],
+    argsdoc: ["Original video file", "Unique name for cache"],
     no_ui: true,
     fn: utils.make_small_video
   });

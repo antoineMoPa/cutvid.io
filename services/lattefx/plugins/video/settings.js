@@ -163,7 +163,7 @@
             api.call(
               "sequencer.set_sequence_preview_maker",
               this.effect.id,
-              async function(width, height, from, to, updater){
+              async function(width, height, sequence_from, sequence_to, updater){
                 if(this.small_version == undefined){
                   return;
                 }
@@ -210,9 +210,10 @@
                 let sequencer_range = window.API.call("sequencer.get_visible_time_range");
 
                 // Determine where we must render previews
-                let sequence_visible_from = Math.max(sequencer_range.from, from);
-                let sequence_visible_to = Math.min(sequencer_range.to, to);
+                let sequence_visible_from = Math.max(sequencer_range.from, sequence_from);
+                let sequence_visible_to = Math.min(sequencer_range.to, sequence_to);
                 let sequence_visible_duration = sequence_visible_to - sequence_visible_from;
+                let sequence_duration = sequence_to - sequence_from;
 
                 let sequencer_total_visible_duration = sequencer_range.to - sequencer_range.from;
                 let previews_per_second = 1.0/(sequencer_total_visible_duration);
@@ -220,9 +221,9 @@
                 let delta_time = sequencer_total_visible_duration * 0.04;
                 let delta_px = delta_time * sequencer_range.time_scale;
 
-                for(let t = sequence_visible_from; t <= sequence_visible_to; t += delta_time){
-                  let seek_to = t - this.trimBefore;
-                  let x = t * sequencer_range.time_scale - delta_px;
+                for(let t = 0; t <= sequence_duration; t += delta_time){
+                  let seek_to = t + this.trimBefore;
+                  let x = t * sequencer_range.time_scale - delta_px/2.0;
 
                   if(cancel){ return; }
 
@@ -233,7 +234,7 @@
                     break;
                   } else {
                     if(video.currentTime != seek_to){
-                      video.currentTime = seek_to + this.trimBefore;
+                      video.currentTime = seek_to;
                       await wait_seek();
                       if(cancel){ return; }
                     }
@@ -304,7 +305,8 @@
             let api = window.API;
             let small_version = await api.call(
               "utils.make_small_video",
-              this.file_store.files[file_name]
+              this.file_store.files[file_name],
+              file_name
             );
 
             if(small_version == null){

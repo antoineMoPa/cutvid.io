@@ -512,7 +512,7 @@ Vue.component('sequencer', {
       let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
       let scale = this.getScale();
       let from = scrollbox.scrollLeft / scale.timeScale;
-      let to = from + scale.totalDuration;
+      let to = from + this.visible_duration;
       let time_scale = scale.timeScale;
 
       return {from, to, time_scale};
