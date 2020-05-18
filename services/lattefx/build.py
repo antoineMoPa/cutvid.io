@@ -7,6 +7,7 @@ def build():
         "./libs/vue.js",
         "./api.js",
         "./libs/utils.js",
+        "./libs/video-utils.js",
         "./libs/dev.js",
         "./shader_program.js",
         "./shader_player_webgl.js",
