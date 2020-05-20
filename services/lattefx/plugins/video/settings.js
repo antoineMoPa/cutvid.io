@@ -157,6 +157,11 @@
           },
           build_preview(){
             let api = window.API;
+
+            if (api.call("sequencer.are_previews_disabled")){
+              return;
+            }
+
             // We'll use this function to cancel last call if exists
             let cancel_last = function(){};
 
@@ -303,6 +308,11 @@
             this.shaderProgram.set_texture('video', this.file_name, this.video_ready);
 
             let api = window.API;
+
+            if (api.call("sequencer.are_previews_disabled")){
+              return;
+            }
+
             let small_version = await api.call(
               "utils.make_small_video",
               this.file_store.files[file_name],

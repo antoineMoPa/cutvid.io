@@ -97,42 +97,6 @@ class ShaderProgram {
     return hashHex;
   }
 
-  async get_video_frame_at_time(texture, fps, trimBefore, from, video_time) {
-    let digest = texture.videoDigest;
-    let base_path = window.lattefx_settings.cloud;
-    let has_video = false;
-    if(this.has_vid_in_cache == false){
-      // Verify if server has file
-      let resp = await fetch(base_path + "/has_vid_in_cache/" + digest, {
-        cache: 'no-cache'
-      });
-
-      this.has_vid_in_cache = (await resp.text() == "true");
-
-      setTimeout(function(){
-        // Clear our cache info sometimes
-        // Don't delete this line
-        this.has_vid_in_cache = false;
-      }.bind(this),10000);
-    }
-
-    if(!this.has_vid_in_cache){
-      // Upload video
-      let form = new FormData();
-      form.append('video.vid', texture.videoFile);
-      this.update_render_status("Uploading a video (0%)");
-
-      await this.fetch_with_progress(base_path + "/upload_video/" + digest, form);
-    }
-
-    let frame_num = leading_zeros(1,6);
-    this.update_render_status("Server is extracting frames");
-    let url = base_path + "/get_video_frame/" +
-        digest + "/" + fps + "/"+video_time;
-
-    return await url_to_image(url);
-  }
-
   compile(vertex_shader_code, fragment_shader_code) {
     // For external use
     this.fragment_shader_code= fragment_shader_code;
@@ -343,18 +307,68 @@ class ShaderProgram {
       return true;
     }
 
+
     async function updateVideoHQ(fps, trimBefore, from, video_time){
       let texture = app.textures[name];
       gl.bindTexture(gl.TEXTURE_2D, texture.texture);
 
-      app.update_render_status("Fetching a frame from server");
-      let image = await app.get_video_frame_at_time(
-        texture, fps, trimBefore, from, video_time
-      );
+      await Promise.all([
+        utils.load_script("libs/ffmpeg/ffmpeg.min.js")
+      ]);
+
+      let worker;
+
+      if(this.worker == undefined){
+        const { createWorker } = FFmpeg;
+
+        // We'll keep the same worker
+        worker = createWorker({
+          corePath: "libs/ffmpeg/ffmpeg-core.js",
+          logger: function(m) { }
+        });
+
+        await worker.load();
+
+        this.file_store = window.API.call("shader_player.get_file_store");
+        await worker.write("video.video", this.file_store.files[this.url]);
+
+        this.worker = worker;
+      } else {
+        worker = this.worker;
+      }
+
+      let command = [
+        "-accurate_seek",
+        "-ss " + (video_time),
+        "-y",
+        "-i video.video",
+        "-frames:v " + 1,
+        "-start_number 0",
+        "-r " + fps,
+        "image.png"
+      ];
+
+      await worker.run(command.join(" "));
+
+      let result = await worker.read("image.png");
+
+      let blob = new Blob([result.data], {
+        type: "image/png"
+      });
+
+
+      let image = await new Promise(function(resolve){
+        let image_url = URL.createObjectURL(blob);
+        let image = new Image;
+
+        image.onload = function(){ resolve(image); };
+        image.src = image_url;
+      });
 
       gl.texImage2D(
-        gl.TEXTURE_2D, level, internalFormat,
-        srcFormat, srcType, image);
+        gl.TEXTURE_2D, level, internalFormat, image.width, image.height, 0,
+        gl.RGBA, gl.UNSIGNED_BYTE, image
+      );
     }
 
     async function load() {

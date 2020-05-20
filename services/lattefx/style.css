@@ -257,15 +257,16 @@ a:visited{
   font-size: 12px;
   padding-top:2px;
   text-align: left;
+  overflow:visible;
 }
 
 .ui-progress .progress-message{
   padding-left:8px;
-  min-width: 400px;
   background: #3af;
   height: 18px;
   margin-top: -2px;
   padding-top: 2px;
+  min-width: 400px;
 }
 
 .ui .is-rendering{

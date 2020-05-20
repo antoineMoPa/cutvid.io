@@ -98,7 +98,7 @@
           let frame = match[1];
           let progress = frame / total_frames;
           window.API.call("ui.set_progress", progress,
-                          `Building video preview : frame ${frame} of ${total_frames}.`);
+                          `Building video preview : frame ${frame} of ${parseInt(total_frames)}.`);
         }
       }
     });

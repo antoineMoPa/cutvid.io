@@ -1,6 +1,7 @@
 Vue.component('ui', {
   template: `<div class="ui" v-if="player != null">
-    <div class="ui-progress" v-bind:style="'width:' + progress_width + 'px'">
+    <div class="ui-progress"
+         v-bind:style="'width:' + progress_width + 'px; max-width: '+progress_width+'px'">
       <div class="progress-message" v-if="progress_message != ''">
         {{progress_message}}
       </div>

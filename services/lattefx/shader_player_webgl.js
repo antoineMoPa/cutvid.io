@@ -351,22 +351,7 @@ class ShaderPlayerWebGL {
     this.update();
   }
 
-  render(callback) {
-    let app = this;
-    app.rendering = true;
-
-    this.pause();
-
-    switch(this.renderMode){
-    case "LQ":
-      this.render(callback);
-      break;
-    default:
-      console.error("Unhandled render mode");
-    }
-  }
-
-  async render_hq(callback) {
+  async render(callback) {
     /* render high quality video */
 
     let app = this;
@@ -376,9 +361,24 @@ class ShaderPlayerWebGL {
     let vid_id = this.gen_vid_id();
     let base_path = "";
 
-    if(!this.headless){
-      base_path = window.lattefx_settings.cloud;
-    }
+    this.pause();
+
+    await Promise.all([
+      utils.load_script("libs/ffmpeg/ffmpeg.min.js")
+    ]);
+
+    let worker;
+
+    const { createWorker } = FFmpeg;
+
+    worker = createWorker({
+      corePath: "libs/ffmpeg/ffmpeg-core.js",
+      logger: function(m){
+        console.log(m);
+      }
+    });
+
+    await worker.load();
 
     for(let frame = 0; frame < total_frames; frame++){
       if(app.cancel_hq_render){
@@ -390,41 +390,36 @@ class ShaderPlayerWebGL {
       }
 
       let time = frame / fps;
-      this.update_render_status("Rendering frame " + frame + " of " + parseInt(total_frames));
 
-      if(this.headless){
-        await this.draw_gl(time);
-        await this.image_saver(frame, this.width, this.height);
-      }
+      window.API.call("ui.set_progress",
+                      frame/total_frames * 0.5, // Other half is for encoding
+                      "Rendering frame " + frame + " of " + parseInt(total_frames));
+
+      await this.draw_gl(time);
+
+      let image_file = await this.get_canvas_blob();
+
+      await worker.write(
+        `image-${(frame+"").padStart(6,0)}.png`,
+        image_file
+      );
     }
 
-    this.time.time = 0;
-    this.pause();
+    await worker.run("-i image-%06d.png -vf fps=fps=20 -pix_fmt yuv420p  video.mp4");
 
-    if(this.headless){
-      callback();
-      // We are done
-      return;
-    }
-
-    let form = new FormData();
-    form.append("audio-sequences", JSON.stringify(this.export_audio_sequences()));
-
-    this.update_render_status("Server is rendering video");
-    let resp = await fetch(base_path + "/render_video/" + vid_id + "/" + fps, {
-      method: "POST",
-      mode: "cors",
-      cache: "no-cache",
-      body: form
+    let result = await worker.read("video.mp4");
+    let blob = new Blob([result.data], {
+      type: "video/mp4"
     });
 
-    let vidid = await resp.text();
+    window.API.call("ui.clear_progress");
+    window.API.call("download.show", blob);
 
-    callback([vidid]);
+    this.rendering = false;
+    this.time.time = 0;
   }
 
-
-  render(callback) {
+  render_old(callback) {
     let app = this;
 
     if(app.canvas.captureStream == undefined){
@@ -934,8 +929,8 @@ class ShaderPlayerWebGL {
 
             current_medias.push(tex.url);
 
-            if(this.headless){
-              await tex.updateVideo(
+            if(this.rendering && tex.isVideo){
+              await tex.updateVideoHQ(
                 this.fps,
                 trimBefore,
                 timeFrom - trimBefore,
@@ -1124,7 +1119,9 @@ class ShaderPlayerWebGL {
       }
 
       if (time >= duration && this.renderMode == "LQ") {
-        this.media_recorder.stop();
+        if (false) { // old render mode
+          this.media_recorder.stop();
+        }
         this.rendering = false;
         this.time.time = 0;
         this.pause();
@@ -1151,13 +1148,17 @@ class ShaderPlayerWebGL {
     this.anim_already_started = true;
 
     function _animate() {
-      // Make sure to render when focussed or rendering
-      if (player.rendering || player.window_focused) {
+      // Make sure to render when focussed
+      if (player.window_focused) {
         try{
           player.draw_gl();
         } catch (e) {
           console.error(e);
         }
+      }
+
+      if (player.rendering){
+        return;
       }
 
       window.requestAnimationFrame(_animate.bind(this));

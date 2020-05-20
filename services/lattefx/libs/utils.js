@@ -494,6 +494,17 @@ var utils = {};
     fn: utils.flag_error
   });
 
+  API.expose({
+    name: "utils.flag_message",
+    doc: `Show a message
+
+       `,
+    argsdoc: ["Message to display"],
+    no_ui: true,
+    fn: utils.flag_message
+  });
+
+
   utils.real_bad_error = function(message){
     fetch("/stats/real_bad_error/" + message);
     alert(message);

@@ -215,9 +215,7 @@ Vue.component('player', {
         `,
         fn: function(){
           return new Promise(function(resolve){
-            this.render(function(blob){
-              resolve(blob)
-            });
+            this.render();
           }.bind(this));
         }.bind(this),
         no_ui: true
@@ -324,13 +322,11 @@ Vue.component('player', {
       // Show current panel
       panel[i].classList.add("switchable-panel-shown");
     },
-    render(doneCallback) {
+    render() {
       let totalFrames = this.fps * this.player.get_total_duration();
       this.player.rendering = true;
       this.player.pause();
-      this.player.render(function(data){
-        doneCallback(data[0]);
-      });
+      this.player.render();
     },
     makeVideo(){
       // Web render with low quality

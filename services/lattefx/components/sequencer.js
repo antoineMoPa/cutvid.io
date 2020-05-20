@@ -157,7 +157,8 @@ Vue.component('sequencer', {
       loading_scene: false,
       add_menu_open: false,
       dragging_selected: null,
-      sequences: []
+      sequences: [],
+      disable_previews: false
     };
   },
   methods: {
@@ -174,6 +175,28 @@ Vue.component('sequencer', {
         fn: function(){
           return this.get_total_duration();
         }.bind(this)
+      });
+
+      API.expose({
+        name: "sequencer.disable_previews",
+        doc: `Disable Sequencer Previews
+
+              Disable sequencer previews for current session (until reload).`,
+        fn: function(){
+          this.disable_previews = true;
+
+          window.API.call("utils.flag_message", "Sequencer previews are now disabled!");
+        }.bind(this)
+      });
+
+      API.expose({
+        name: "sequencer.are_previews_disabled",
+        doc: `Are Sequencer Previews Disabled?`,
+        returns: "A boolean",
+        fn: function(){
+          return this.disable_previews;
+        }.bind(this),
+        no_ui: true
       });
 
       API.expose({
@@ -819,6 +842,10 @@ Vue.component('sequencer', {
       return maxTo;
     },
     update_preview_canvas(sequence){
+      if(this.disable_previews){
+        return;
+      }
+
       if(sequence.effect == null){
         return;
       }
