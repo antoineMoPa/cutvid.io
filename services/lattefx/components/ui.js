@@ -28,10 +28,6 @@ Vue.component('ui', {
              src="icons/feather/pause.svg"/>
       </a>
     </div>
-    <p v-else-if="player.rendering"
-       class="is-rendering">
-      Please be patient while your video is rendering.
-    </p>
     <div class="ui-buttons-right">
       <a class="ui-button render-button button-1"
          v-if="!player.rendering &&
@@ -138,7 +134,11 @@ Vue.component('ui', {
           time_message += ` | Started ${seconds} seconds ago.`;
         }
         if(seconds > 10 && progress_ratio < 0.99){
-          time_message += ` Approx. ${seconds_left_estimate} seconds to go.`;
+          if(seconds > 30 && seconds_left_estimate < 30){
+            time_message += " Only a few seconds left!";
+          } else {
+            time_message += ` Approx. ${seconds_left_estimate} seconds to go.`;
+          }
         }
       }
 

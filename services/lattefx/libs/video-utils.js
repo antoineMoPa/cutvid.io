@@ -86,8 +86,10 @@
 
     let fps_regex = /\s*([0-9]*) fps/;
     let duration_regex = /Duration: ([0-9]*):([0-9]*):([0-9\.]*)/;
+    let stream_regex = /Stream #(.*)$/;
     let fps = null;
     let duration_in_seconds = null;
+    let has_audio = false;
 
     let data = await utils.run_ffmpeg_task({
       arguments: ["-i", "video_to_convert.video"],
@@ -105,15 +107,20 @@
           duration_in_seconds = match[3];
           duration_in_seconds += match[2] * 60;
           duration_in_seconds += match[1] * 60 * 60;
-        } else {
-          console.log(m);
+        }
+        if(stream_regex.test(m)){
+          let match = stream_regex.exec(m);
+
+          if(match[0].indexOf("Audio") != -1){
+            has_audio = true;
+          }
         }
       }
     }, "metadata");
 
     let total_frames = fps * duration_in_seconds;
 
-    return {total_frames, fps};
+    return {total_frames, fps, has_audio};
   };
 
   utils.make_small_video = async function(video_file, file_name){
@@ -139,6 +146,7 @@
         window.API.call("ui.set_progress", 0.02, "Preparing to build preview.",
                         function cancel_action(){
                           utils.cancel_workers_by_type("metadata");
+                          utils.cancel_workers_by_type("preview");
                           window.API.call(
                             "utils.flag_error",
                             "Video preview cancelled."
@@ -297,7 +305,7 @@
     return blob;
   }
 
-  utils.build_ffmpeg_audio_args = function (audio_sequences){
+  utils.build_ffmpeg_audio_args = async function (audio_sequences){
     /*
       Build ffmpeg audio handling:
 
@@ -315,7 +323,16 @@
     let audio_filter_graph = "";
 
     for(let i in audio_sequences){
+
       let sequence = audio_sequences[i];
+      let name = sequence.file_name;
+      let file_store = window.API.call("shader_player.get_file_store");
+      let info = await utils.get_video_info(file_store.files[name]);
+
+      if(!info.has_audio){
+        continue;
+      }
+
       let time_from = parseFloat(sequence['from']);
       let time_to = parseFloat(sequence['to']);
       let trim_before = parseFloat(sequence['trimBefore']);
@@ -377,6 +394,8 @@
       audio_args = [];
       audio_filter_graph = "";
       map_args = [];
+
+      return [[], [], []];
     } else {
       audio_filter_graph +=  audio_mix + "amix=inputs=" + audio_index + ":duration=longest[a]";
 
@@ -391,8 +410,6 @@
 
     return [audio_args, audio_filter_graph, map_args];
   }
-
-
 
   utils.build_ffmpeg_image_to_video_args = function(fps, audio_args, audio_filter_graph, map_args){
 

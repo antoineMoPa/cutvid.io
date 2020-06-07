@@ -41,7 +41,75 @@ class ShaderProgram {
     this.headless = headless || false;
     this.textures = {};
     this.has_vid_in_cache = false;
+    this.frames_cache = null;
     this.file_store = window.API.call("shader_player.get_file_store");
+  }
+
+  async extract_frames(file_name, fps, trimBefore, from, video_time, max_time_to_extract){
+    if(this.frames_cache != null){
+      return this.frames_cache;
+    }
+
+    this.file_store = window.API.call("shader_player.get_file_store");
+
+    window.API.call("ui.begin_progress");
+    let frame_regex = /frame=\s*([0-9]*)/;
+
+    let total_frames = fps * max_time_to_extract;
+
+    let result = await utils.run_ffmpeg_task({
+      arguments: [
+        "-accurate_seek",
+        "-ss", video_time+"",
+        "-y",
+        "-i", "video.video",
+        "-frames:v", parseInt(Math.ceil(max_time_to_extract * fps))+"",
+        //"-start_number", "0",
+        "-r", fps + "",
+        "image-%06d.png"
+      ],
+      MEMFS: [{
+        name: "video.video", data: await this.file_store.files[file_name].arrayBuffer()
+      }],
+      logger: function(m){
+        if(m == "Conversion failed!"){
+          window.API.call(
+            "utils.flag_error",
+            "We encountered an error while converting your file."
+          );
+          window.API.call("ui.clear_progress");
+        }
+        if(frame_regex.test(m)){
+          let match = frame_regex.exec(m);
+          let frame = match[1];
+          let progress = frame / total_frames;
+          window.API.call(
+            "ui.set_progress",
+            progress, `Extracting video : frame ${frame} of ${parseInt(total_frames)}.`,
+            function cancel_action(){
+              utils.cancel_workers_by_type("preview");
+
+              window.API.call(
+                "utils.flag_error",
+                "Video preview cancelled."
+              );
+            }
+          );
+        }
+        if(/Invalid data found when processing input/.test(m)){
+          window.API.call(
+            "utils.flag_error",
+            "This video file type is not supported."
+          );
+          window.API.call("ui.clear_progress");
+          resolve(null);
+        }
+      },
+    }, "render");
+
+    this.frames_cache = result.MEMFS;
+
+    return result.MEMFS;
   }
 
   fetch_with_progress(url, body){
@@ -307,32 +375,30 @@ class ShaderProgram {
       return true;
     }
 
+    async function update_video_hq(fps, trimBefore, from, video_time, max_time_to_extract){
+      let frames = await app.extract_frames(this.url, fps, trimBefore,
+                                            from, video_time, max_time_to_extract);
 
-    async function updateVideoHQ(fps, trimBefore, from, video_time){
       let texture = app.textures[name];
-      gl.bindTexture(gl.TEXTURE_2D, texture.texture);
+      let frame_num = parseInt(video_time * fps);
+      let frame_file_name = `image-${(frame_num+"").padStart(6,0)}.png`
+      let frame_data = null;
 
-      this.file_store = window.API.call("shader_player.get_file_store");
-
-      let result = await utils.run_ffmpeg_task({
-        arguments: [
-          "-accurate_seek",
-          "-ss", video_time+"",
-          "-y",
-          "-i", "video.video",
-          "-frames:v", "1",
-          "-start_number", "0",
-          "-r", fps + "",
-          "image.png"
-        ],
-        MEMFS: [{
-          name: "video.video", data: await this.file_store.files[this.url].arrayBuffer()
-        }],
-        logger: function(m){
+      for(let i = 0; i < frames.length; i++){
+        if(frames[i].name == frame_file_name){
+          frame_data = frames[i].data;
+          break;
         }
-      });
+      }
 
-      let blob = new Blob([result.MEMFS[0].data], {
+      console.log(frame_data, frame_file_name, frames);
+
+      if(frame_data == null){
+        console.error("Video frame ${frame_num} (${frame_file_name}) file not found.");
+        return;
+      }
+
+      let blob = new Blob([frame_data], {
         type: "image/png"
       });
 
@@ -344,6 +410,7 @@ class ShaderProgram {
         image.src = image_url;
       });
 
+      gl.bindTexture(gl.TEXTURE_2D, texture.texture);
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat, image.width, image.height, 0,
         gl.RGBA, gl.UNSIGNED_BYTE, image
@@ -394,7 +461,7 @@ class ShaderProgram {
           videoElement: videoElement,
           audioElement: audioElement,
           updateVideo: updateVideo,
-          updateVideoHQ: updateVideoHQ,
+          update_video_hq: update_video_hq,
           url
         };
 
@@ -473,7 +540,7 @@ class ShaderProgram {
       });
 
       if(!autoplay){
-        //audioElement.pause();
+        audioElement.pause();
       }
 
       load();

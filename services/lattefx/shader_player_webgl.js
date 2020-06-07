@@ -390,7 +390,7 @@ class ShaderPlayerWebGL {
     let app = this;
     let duration = this.get_total_duration();
     let fps = this.fps;
-    let total_frames = fps * duration;
+    let total_frames = Math.ceil(fps * duration);
     let vid_id = this.gen_vid_id();
     let base_path = "";
 
@@ -429,7 +429,7 @@ class ShaderPlayerWebGL {
     }
 
     let audio_sequences = window.API.call("player.export_audio_sequences");
-    let [audio_args, audio_filter_graph, map_args] = utils.build_ffmpeg_audio_args(audio_sequences);
+    let [audio_args, audio_filter_graph, map_args] = await utils.build_ffmpeg_audio_args(audio_sequences);
     let ffmpeg_command = utils.build_ffmpeg_image_to_video_args(30, audio_args, audio_filter_graph, map_args);
 
     for(let sequence in audio_sequences){
@@ -446,17 +446,46 @@ class ShaderPlayerWebGL {
       });
     }
 
-    // "Breakpoint"
     window.MEMFS = MEMFS; window.ffmpeg_command = ffmpeg_command;
     console.log(MEMFS, ffmpeg_command, utils.run_ffmpeg_task);
+    let frame_regex = /frame=\s*([0-9]*)/;
 
     let result = await utils.run_ffmpeg_task({
       arguments: ffmpeg_command,
       MEMFS,
       logger: function(m){
-        console.log(m);
+        if(m == "Conversion failed!"){
+          window.API.call(
+            "utils.flag_error",
+            "We encountered an error while encoding your video."
+          );
+          window.API.call("ui.clear_progress");
+        }
+        if(frame_regex.test(m)){
+          let match = frame_regex.exec(m);
+          let frame = match[1];
+          let progress = frame / total_frames * 0.5 + 0.5; // Previous half is for rendering
+
+          let message = `Encoding video : frame ${frame} of ${parseInt(total_frames)}.`
+
+          if(frame >= total_frames){
+            message = "Finalizing video!";
+          }
+
+          window.API.call(
+            "ui.set_progress",
+            progress, message,
+            function cancel_action(){
+              utils.cancel_workers_by_type("render");
+              window.API.call(
+                "utils.flag_error",
+                "Render cancelled."
+              );
+            }
+          );
+        }
       }
-    });
+    }, "render");
 
     let blob = new Blob([result.MEMFS[0].data], {
       type: "video/mp4"
@@ -982,13 +1011,14 @@ class ShaderPlayerWebGL {
             current_medias.push(tex.url);
 
             if(this.rendering && tex.isVideo){
-              await tex.updateVideoHQ(
+              await tex.update_video_hq(
                 this.fps,
                 trimBefore,
                 timeFrom - trimBefore,
-                shouldBeTime
+                shouldBeTime,
+                seq.to - seq.from
               ).catch((e) => {
-                console.log("Error in video update: " + e)
+                console.log("Error in video update.", e)
               });
             } else {
               // Get approximate timing
@@ -1027,7 +1057,7 @@ class ShaderPlayerWebGL {
 
                   element.currentTime = shouldBeTime;
 
-                  if (!this.paused) {
+                  if (!this.paused && !this.rendering) {
                     try{
                       element.play();
                     } catch (e) {
