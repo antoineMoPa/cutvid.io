@@ -5,7 +5,7 @@ Vue.component('player', {
                        (player == null || !player.rendering?
                        'settings-panel-hidden':
                        '')">
-      <h3>Rendering in progress</h3>
+      <p>Rendering in progress</p>
     </div>
     <div v-bind:class="'settings-panel ' +
                        (player != null && player.rendering?
@@ -217,6 +217,16 @@ Vue.component('player', {
           return new Promise(function(resolve){
             this.render();
           }.bind(this));
+        }.bind(this),
+        no_ui: true
+      });
+
+      API.expose({
+        name: "player.export_audio_sequences",
+        doc: `Get all audio sequences for mixing/rendering
+        `,
+        fn: function(){
+          return this.player.export_audio_sequences();
         }.bind(this),
         no_ui: true
       });

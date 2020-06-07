@@ -312,50 +312,29 @@ class ShaderProgram {
       let texture = app.textures[name];
       gl.bindTexture(gl.TEXTURE_2D, texture.texture);
 
-      await Promise.all([
-        utils.load_script("libs/ffmpeg/ffmpeg.min.js")
-      ]);
+      this.file_store = window.API.call("shader_player.get_file_store");
 
-      let worker;
-
-      if(this.worker == undefined){
-        const { createWorker } = FFmpeg;
-
-        // We'll keep the same worker
-        worker = createWorker({
-          corePath: "libs/ffmpeg/ffmpeg-core.js",
-          logger: function(m) { }
-        });
-
-        await worker.load();
-
-        this.file_store = window.API.call("shader_player.get_file_store");
-        await worker.write("video.video", this.file_store.files[this.url]);
-
-        this.worker = worker;
-      } else {
-        worker = this.worker;
-      }
-
-      let command = [
-        "-accurate_seek",
-        "-ss " + (video_time),
-        "-y",
-        "-i video.video",
-        "-frames:v " + 1,
-        "-start_number 0",
-        "-r " + fps,
-        "image.png"
-      ];
-
-      await worker.run(command.join(" "));
-
-      let result = await worker.read("image.png");
-
-      let blob = new Blob([result.data], {
-        type: "image/png"
+      let result = await utils.run_ffmpeg_task({
+        arguments: [
+          "-accurate_seek",
+          "-ss", video_time+"",
+          "-y",
+          "-i", "video.video",
+          "-frames:v", "1",
+          "-start_number", "0",
+          "-r", fps + "",
+          "image.png"
+        ],
+        MEMFS: [{
+          name: "video.video", data: await this.file_store.files[this.url].arrayBuffer()
+        }],
+        logger: function(m){
+        }
       });
 
+      let blob = new Blob([result.MEMFS[0].data], {
+        type: "image/png"
+      });
 
       let image = await new Promise(function(resolve){
         let image_url = URL.createObjectURL(blob);

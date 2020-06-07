@@ -16,6 +16,9 @@
 
 
  */
+
+;
+
 class FileStore{
   constructor(){
     this.files = {};
@@ -168,6 +171,17 @@ class ShaderPlayerWebGL {
     this.renderMode = "LQ"; /* TEMPORARY */
   }
 
+  reload(){
+    utils.load_script("./shader_player_webgl.js?" + Math.random());
+    for(let i in ShaderPlayerWebGL.prototype){
+      this[i] = ShaderPlayerWebGL.prototype[i];
+    }
+  }
+
+  test(){
+    console.log("a");
+  }
+
   expose(){
     window.API.expose({
       name: "shader_player.get_shader_player",
@@ -204,6 +218,25 @@ class ShaderPlayerWebGL {
         return parseInt(this.get_total_duration() * this.fps);
       }.bind(this)
     });
+
+    window.API.expose({
+      name: "shader_player.render",
+      doc: `Render Scene
+        `,
+      fn: function(){
+        this.render();
+      }.bind(this)
+    });
+
+    window.API.expose({
+      name: "shader_player.reload_engine",
+      doc: `Reload Shader Engine
+        `,
+      fn: function(){
+        this.reload();
+      }.bind(this)
+    });
+
   }
 
   /*
@@ -362,23 +395,9 @@ class ShaderPlayerWebGL {
     let base_path = "";
 
     this.pause();
+    this.rendering = true;
 
-    await Promise.all([
-      utils.load_script("libs/ffmpeg/ffmpeg.min.js")
-    ]);
-
-    let worker;
-
-    const { createWorker } = FFmpeg;
-
-    worker = createWorker({
-      corePath: "libs/ffmpeg/ffmpeg-core.js",
-      logger: function(m){
-        console.log(m);
-      }
-    });
-
-    await worker.load();
+    let MEMFS = [];
 
     for(let frame = 0; frame < total_frames; frame++){
       if(app.cancel_hq_render){
@@ -397,18 +416,47 @@ class ShaderPlayerWebGL {
 
       await this.draw_gl(time);
 
-      let image_file = await this.get_canvas_blob();
+      let image_file = await this.get_canvas_blob("image/png");
 
-      await worker.write(
-        `image-${(frame+"").padStart(6,0)}.png`,
-        image_file
-      );
+      MEMFS.push({
+        name: `image-${(frame+"").padStart(6,0)}.png`,
+        data: await image_file.arrayBuffer()
+      });
+
+      console.log("FRAME RENDERED");
     }
 
-    await worker.run("-i image-%06d.png -vf fps=fps=20 -pix_fmt yuv420p  video.mp4");
+    let audio_sequences = window.API.call("player.export_audio_sequences");
+    let [audio_args, audio_filter_graph, map_args] = utils.build_ffmpeg_audio_args(audio_sequences);
+    let ffmpeg_command = utils.build_ffmpeg_image_to_video_args(30, audio_args, audio_filter_graph, map_args);
 
-    let result = await worker.read("video.mp4");
-    let blob = new Blob([result.data], {
+    for(let sequence in audio_sequences){
+      let name = audio_sequences[sequence].file_name;
+
+      if(this.file_store.files[name] == undefined){
+        console.error("Cannot find file " + name + " in file store.");
+        continue;
+      }
+
+      MEMFS.push({
+        name: name,
+        data: await this.file_store.files[name].arrayBuffer()
+      });
+    }
+
+    // "Breakpoint"
+    window.MEMFS = MEMFS; window.ffmpeg_command = ffmpeg_command;
+    console.log(MEMFS, ffmpeg_command, utils.run_ffmpeg_task);
+
+    let result = await utils.run_ffmpeg_task({
+      arguments: ffmpeg_command,
+      MEMFS,
+      logger: function(m){
+        console.log(m);
+      }
+    });
+
+    let blob = new Blob([result.MEMFS[0].data], {
       type: "video/mp4"
     });
 
@@ -501,14 +549,14 @@ class ShaderPlayerWebGL {
     }, 10);
   }
 
-  get_canvas_blob() {
+  get_canvas_blob(format) {
     let app = this;
     // Thanks to stack overflow
     // https://stackoverflow.com/questions/42458849/
     return new Promise(function(resolve, reject) {
       app.canvas.toBlob(function(blob) {
         resolve(blob)
-      }, "image/png")
+      }, format)
     });
   }
 
@@ -549,7 +597,8 @@ class ShaderPlayerWebGL {
             from: seq.from,
             to: seq.to,
             trimBefore: effect.trimBefore || 0,
-            digest: vid.videoDigest
+            digest: vid.videoDigest,
+            file_name: textures.video.url
           });
         }
       }
@@ -562,7 +611,8 @@ class ShaderPlayerWebGL {
             from: seq.from,
             to: seq.to,
             trimBefore: effect.trimBefore || 0,
-            digest: aud.audioDigest
+            digest: aud.audioDigest,
+            file_name: textures.audio.url
           });
         }
       }

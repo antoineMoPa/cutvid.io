@@ -48,6 +48,7 @@ Vue.component('ui', {
       looping: false,
       progress_width: 0,
       progress_message: "",
+      progress_start_time = null;
       show_render_options: false,
       cancel_action: null
     }
@@ -78,11 +79,10 @@ Vue.component('ui', {
           this.set_progress(0);
           this.progress_message = "";
           this.cancel_action = null;
+          progress_start_time = 0;
         }.bind(this),
         no_ui: true
       });
-
-
     },
     on_cancel(){
       this.cancel_action();
@@ -105,7 +105,12 @@ Vue.component('ui', {
       await utils.load_script("renderer/render.js");
 
     },
+    begin_progress(){
+      this.progress_start_time = new Date().getTime();
+    },
     set_progress(progress_ratio){
+
+      // TODO: Multiple progress bars, independently cancellable
       this.progress_width = progress_ratio * window.innerWidth;
     }
   },

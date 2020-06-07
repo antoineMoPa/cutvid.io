@@ -1,16 +1,13 @@
 (function(){
 
   let worker;
-  let job_counter = 0;
 
   async function render(){
-    await Promise.all([
-      utils.load_script("libs/ffmpeg/ffmpeg.min.js")
-    ]);
+    console.error("old render func");
+    return;
+    await utils.ensure_ffmpeg_loaded();
 
-    const { createWorker } = FFmpeg;
-    worker = createWorker({
-      corePath: "libs/ffmpeg/ffmpeg-core.js",
+    worker = await utils.create_ffmpeg_worker({
       logger: function(m){
         let match = /frame= *([0-9]*)/.exec(m.message);
 
@@ -25,11 +22,6 @@
         }
       }
     });
-
-    job_counter++;
-    let current_job = job_counter;
-
-    await worker.load(current_job);
 
     let draft = await window.API.call("player.render");
 
