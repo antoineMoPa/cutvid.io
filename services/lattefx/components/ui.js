@@ -1,7 +1,10 @@
 Vue.component('ui', {
   template: `<div class="ui" v-if="player != null">
     <div class="ui-progress"
-         v-bind:style="'width:' + progress_width + 'px; max-width: '+progress_width+'px'">
+         v-if="progress_width > 0">
+      <div class="progress-bar"
+           v-bind:style="'width:' + progress_width + 'px; max-width: '+progress_width+'px'">
+      </div>
       <div class="progress-message" v-if="progress_message != ''">
         {{progress_message}}
         <button class="progress-cancel-button"
@@ -59,6 +62,18 @@ Vue.component('ui', {
       let API = window.API;
 
       API.expose({
+        name: "ui.begin_progress",
+        doc: `Begin Progress Bar
+
+        Sets the initial time to estimate time left.
+        `,
+        fn: function(progress, message, cancel_action){
+          this.begin_progress();
+        }.bind(this),
+        no_ui: true
+      });
+
+      API.expose({
         name: "ui.set_progress",
         doc: `Update Big Progress Bar
         `,
@@ -102,7 +117,6 @@ Vue.component('ui', {
       window.API.call("ui.set_progress", 0.05, "Initiating render.");
       window.API.call("shader_player.render");
       await utils.load_script("renderer/render.js");
-
     },
     begin_progress(){
       this.progress_start_time = new Date().getTime();
@@ -111,10 +125,24 @@ Vue.component('ui', {
       // TODO: Multiple progress bars, independently cancellable
       this.progress_width = progress_ratio * window.innerWidth;
 
-      let time = progress_start_time - new Date().getTime();
-      let seconds = parseInt(time);
 
-      this.progress_message = " " + message + ` started ${time} seconds ago.`;
+      let time_message = "";
+
+      if(this.progress_start_time != null){
+        let time = new Date().getTime() - this.progress_start_time;
+        let seconds = parseInt(time/1000);
+        let progress_speed = (progress_ratio / time);
+        let seconds_left_estimate = parseInt((1.0 - progress_ratio) / progress_speed / 1000);
+
+        if(seconds > 3){
+          time_message += ` | Started ${seconds} seconds ago.`;
+        }
+        if(seconds > 10 && progress_ratio < 0.99){
+          time_message += ` Approx. ${seconds_left_estimate} seconds to go.`;
+        }
+      }
+
+      this.progress_message = " " + message + time_message;
 
     }
   },

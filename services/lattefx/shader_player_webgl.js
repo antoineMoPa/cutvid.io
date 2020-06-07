@@ -399,6 +399,8 @@ class ShaderPlayerWebGL {
 
     let MEMFS = [];
 
+    window.API.call("ui.begin_progress");
+
     for(let frame = 0; frame < total_frames; frame++){
       if(app.cancel_hq_render){
         app.cancel_hq_render = false;

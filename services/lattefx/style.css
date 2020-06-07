@@ -251,22 +251,34 @@ a:visited{
   top:-20px;
   left:0;
   height:18px;
-  background:#3af;
+  background:#666;
   transition: all 0.3s;
   color: #fff;
   font-size: 12px;
   padding-top:2px;
   text-align: left;
+  width:100%;
   overflow:visible;
+  z-index:1;
 }
 
 .ui-progress .progress-message{
   padding-left:8px;
-  background: #3af;
   height: 18px;
   margin-top: -2px;
   padding-top: 2px;
   min-width: 400px;
+  position:relative;
+  z-index:2;
+}
+
+.ui-progress .progress-bar{
+  position:absolute;
+  background:#3af;
+  top:0;
+  left:0;
+  height:20px;
+  z-index:-1;
 }
 
 .ui .is-rendering{

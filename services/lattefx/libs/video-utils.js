@@ -132,6 +132,8 @@
     utils.small_videos_cache[cache_name] = {
       status: "rendering",
       promise: new Promise(async function(resolve, reject){
+
+        window.API.call("ui.begin_progress");
         window.API.call("ui.set_progress", 0.01, "Loading ffmpeg.");
 
         window.API.call("ui.set_progress", 0.02, "Preparing to build preview.",
@@ -247,6 +249,7 @@
   utils.gif_to_video = async function(gif_file){
     // Converts a gif to a mp4 file
 
+    window.API.call("ui.begin_progress");
     window.API.call("ui.set_progress", 0.05, "Loading ffmpeg.");
 
     window.API.call("ui.set_progress", 0.1, "Initiating gif converter.");
