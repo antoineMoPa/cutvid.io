@@ -48,7 +48,7 @@ Vue.component('ui', {
       looping: false,
       progress_width: 0,
       progress_message: "",
-      progress_start_time = null,
+      progress_start_time: null,
       show_render_options: false,
       cancel_action: null
     }
@@ -64,8 +64,7 @@ Vue.component('ui', {
         `,
         argsdoc: ["Progress from 0.0 to 1.0", "Message to display"],
         fn: function(progress, message, cancel_action){
-          this.set_progress(progress);
-          this.progress_message = " " + message;
+          this.set_progress(progress, " " + message);
           this.cancel_action = cancel_action || null;
         }.bind(this),
         no_ui: true
@@ -108,10 +107,15 @@ Vue.component('ui', {
     begin_progress(){
       this.progress_start_time = new Date().getTime();
     },
-    set_progress(progress_ratio){
-
+    set_progress(progress_ratio, message){
       // TODO: Multiple progress bars, independently cancellable
       this.progress_width = progress_ratio * window.innerWidth;
+
+      let time = progress_start_time - new Date().getTime();
+      let seconds = parseInt(time);
+
+      this.progress_message = " " + message + ` started ${time} seconds ago.`;
+
     }
   },
   watch:{
