@@ -48,7 +48,7 @@ Vue.component('ui', {
       looping: false,
       progress_width: 0,
       progress_message: "",
-      progress_start_time = null;
+      progress_start_time = null,
       show_render_options: false,
       cancel_action: null
     }
