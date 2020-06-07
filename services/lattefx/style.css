@@ -279,6 +279,21 @@ a:visited{
   margin-bottom:-2px;
 }
 
+.progress-cancel-button{
+  height:16px;
+  font-size:12px;
+  line-height:16px;
+  padding:2px;
+  border-radius:0;
+  border:none;
+  padding:0 4px;
+  border-radius:3px;
+  margin-left:10px;
+  color:#333;
+  background:#fff;
+  cursor:pointer;
+}
+
 .play-all-button{
   left:10px;
   cursor:pointer;

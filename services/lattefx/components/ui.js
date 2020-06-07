@@ -4,6 +4,11 @@ Vue.component('ui', {
          v-bind:style="'width:' + progress_width + 'px; max-width: '+progress_width+'px'">
       <div class="progress-message" v-if="progress_message != ''">
         {{progress_message}}
+        <button class="progress-cancel-button"
+                v-if="cancel_action != null"
+                v-on:click="on_cancel()">
+          Cancel
+        </button>
       </div>
     </div>
     <div v-if="!player.rendering && player.sequences.length > 0">
@@ -43,7 +48,8 @@ Vue.component('ui', {
       looping: false,
       progress_width: 0,
       progress_message: "",
-      show_render_options: false
+      show_render_options: false,
+      cancel_action: null
     }
   },
   props: ["player", "user_info"],
@@ -56,9 +62,10 @@ Vue.component('ui', {
         doc: `Update Big Progress Bar
         `,
         argsdoc: ["Progress from 0.0 to 1.0", "Message to display"],
-        fn: function(progress, message){
+        fn: function(progress, message, cancel_action){
           this.set_progress(progress);
           this.progress_message = " " + message;
+          this.cancel_action = cancel_action || null;
         }.bind(this),
         no_ui: true
       });
@@ -70,11 +77,18 @@ Vue.component('ui', {
         fn: function(progress, message){
           this.set_progress(0);
           this.progress_message = "";
+          this.cancel_action = null;
         }.bind(this),
         no_ui: true
       });
 
 
+    },
+    on_cancel(){
+      this.cancel_action();
+      this.set_progress(0);
+      this.progress_message = "";
+      this.cancel_action = null;
     },
     play(){
       this.player.play();
@@ -87,8 +101,9 @@ Vue.component('ui', {
     },
     async render(){
       window.API.call("ui.set_progress", 0.05, "Initiating render.");
+      window.API.call("shader_player.render");
       await utils.load_script("renderer/render.js");
-      window.API.call("renderer.render");
+
     },
     set_progress(progress_ratio){
       this.progress_width = progress_ratio * window.innerWidth;
