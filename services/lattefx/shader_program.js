@@ -56,6 +56,7 @@ class ShaderProgram {
     let frame_regex = /frame=\s*([0-9]*)/;
 
     let total_frames = fps * max_time_to_extract;
+    let cancelled = false;
 
     let result = await utils.run_ffmpeg_task({
       arguments: [
@@ -88,7 +89,8 @@ class ShaderProgram {
             progress, `Extracting video : frame ${frame} of ${parseInt(total_frames)}.`,
             function cancel_action(){
               utils.cancel_workers_by_type("preview");
-
+              window.player.player.cancel_hq_render = true;
+              cancelled = true;
               window.API.call(
                 "utils.flag_error",
                 "Video preview cancelled."
@@ -107,7 +109,9 @@ class ShaderProgram {
       },
     }, "render");
 
-    this.frames_cache = result.MEMFS;
+    if(!cancelled){
+      this.frames_cache = result.MEMFS;
+    }
 
     return result.MEMFS;
   }
@@ -390,8 +394,6 @@ class ShaderProgram {
           break;
         }
       }
-
-      console.log(frame_data, frame_file_name, frames);
 
       if(frame_data == null){
         console.error("Video frame ${frame_num} (${frame_file_name}) file not found.");

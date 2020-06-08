@@ -414,7 +414,10 @@ class ShaderPlayerWebGL {
 
       window.API.call("ui.set_progress",
                       frame/total_frames * 0.5, // Other half is for encoding
-                      "Rendering frame " + frame + " of " + parseInt(total_frames));
+                      "Rendering frame " + frame + " of " + parseInt(total_frames),
+                     function(){
+                       app.cancel_hq_render = true;
+                     });
 
       await this.draw_gl(time);
 
@@ -447,7 +450,7 @@ class ShaderPlayerWebGL {
     }
 
     window.MEMFS = MEMFS; window.ffmpeg_command = ffmpeg_command;
-    console.log(MEMFS, ffmpeg_command, utils.run_ffmpeg_task);
+
     let frame_regex = /frame=\s*([0-9]*)/;
 
     let result = await utils.run_ffmpeg_task({
@@ -477,6 +480,9 @@ class ShaderPlayerWebGL {
             progress, message,
             function cancel_action(){
               utils.cancel_workers_by_type("render");
+              app.rendering = false;
+              app.pause();
+              app.time.time = 0;
               window.API.call(
                 "utils.flag_error",
                 "Render cancelled."
@@ -1064,8 +1070,6 @@ class ShaderPlayerWebGL {
                       console.error(e);
                     }
                   }
-                } else if (this.rendering) {
-                  element.play();
                 }
               }
 
@@ -1230,17 +1234,16 @@ class ShaderPlayerWebGL {
     this.anim_already_started = true;
 
     function _animate() {
-      // Make sure to render when focussed
-      if (player.window_focused) {
-        try{
-          player.draw_gl();
-        } catch (e) {
-          console.error(e);
-        }
-      }
 
-      if (player.rendering){
-        return;
+      if (!player.rendering){
+        // Make sure to render when focussed
+        if (player.window_focused) {
+          try{
+            player.draw_gl();
+          } catch (e) {
+            console.error(e);
+          }
+        }
       }
 
       window.requestAnimationFrame(_animate.bind(this));

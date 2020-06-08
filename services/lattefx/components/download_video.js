@@ -98,6 +98,7 @@ Vue.component('download-video', {
           await this.$parent.$forceUpdate();
           window.API.call("download.show", blob);
         }.bind(this),
+        no_ui: true,
         dev_only: true
       });
     },
