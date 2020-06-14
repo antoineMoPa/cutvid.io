@@ -45,7 +45,7 @@ class ShaderProgram {
     this.file_store = window.API.call("shader_player.get_file_store");
   }
 
-  async extract_frames(file_name, fps, trimBefore, from, video_time, max_time_to_extract){
+  async extract_frames(file_name, fps, trim_before, from, video_time, max_time_to_extract){
     if(this.frames_cache != null){
       return this.frames_cache;
     }
@@ -57,6 +57,8 @@ class ShaderProgram {
 
     let total_frames = fps * max_time_to_extract;
     let cancelled = false;
+    let frame_num = Math.ceil(max_time_to_extract * fps);
+    let frame_start = fps * trim_before;
 
     let result = await utils.run_ffmpeg_task({
       arguments: [
@@ -64,8 +66,8 @@ class ShaderProgram {
         "-ss", video_time+"",
         "-y",
         "-i", "video.video",
-        "-frames:v", parseInt(Math.ceil(max_time_to_extract * fps))+"",
-        //"-start_number", "0",
+        "-frames:v", parseInt(frame_num) + "",
+        "-start_number", parseInt(frame_start) + "",
         "-r", fps + "",
         "image-%06d.png"
       ],
@@ -379,8 +381,8 @@ class ShaderProgram {
       return true;
     }
 
-    async function update_video_hq(fps, trimBefore, from, video_time, max_time_to_extract){
-      let frames = await app.extract_frames(this.url, fps, trimBefore,
+    async function update_video_hq(fps, trim_before, from, video_time, max_time_to_extract){
+      let frames = await app.extract_frames(this.url, fps, trim_before,
                                             from, video_time, max_time_to_extract);
 
       let texture = app.textures[name];
@@ -412,7 +414,6 @@ class ShaderProgram {
         image.src = image_url;
       });
 
-      gl.bindTexture(gl.TEXTURE_2D, texture.texture);
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat, image.width, image.height, 0,
         gl.RGBA, gl.UNSIGNED_BYTE, image

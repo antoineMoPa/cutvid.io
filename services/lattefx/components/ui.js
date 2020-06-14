@@ -134,7 +134,7 @@ Vue.component('ui', {
           time_message += ` | Started ${seconds} seconds ago.`;
         }
         if(seconds > 10 && progress_ratio < 0.99){
-          if(seconds > 30 && seconds_left_estimate < 30){
+          if(seconds > 30 && seconds_left_estimate < 3){
             time_message += " Only a few seconds left!";
           } else {
             time_message += ` Approx. ${seconds_left_estimate} seconds to go.`;

@@ -35,6 +35,9 @@
        target="_blank">online-convert.com
     </a>
   </p>
+  <br/><br/>
+  <a v-if="file_name != null" v-on:click="download">Download Source Video</a>
+
   <label>Video Scale</label>
   <input type="number" v-model="uniforms.videoScale.value" min="0.0" max="2.0" step="0.05">
   <label>Offset the video X, Y</label>
@@ -114,7 +117,7 @@
             }
           },
           async record_screen(){
-            let options = {};
+            let options = {video: true, audio:true};
             let capture_stream = null;
 
             try {
@@ -142,7 +145,6 @@
                 let rand_id = Math.floor(Math.random()*10000000);
                 let name = "video-recording-" + rand_id + ".video";
                 this.file_store.files[name] = e.data;
-
                 this.file_name = name;
                 this.shaderProgram.set_texture('video', name, this.video_ready);
                 this.uniforms.isLoaded.value = 1.0;
@@ -155,12 +157,15 @@
           browse_file(){
             this.$el.querySelectorAll(".video-file-input")[0].click();
           },
-          build_preview(){
+          async build_preview(){
             let api = window.API;
 
             if (api.call("sequencer.are_previews_disabled")){
               return;
             }
+
+            // Necessary when unserializing
+            await this.file_store.get_video(this.file_name);
 
             // We'll use this function to cancel last call if exists
             let cancel_last = function(){};
@@ -272,10 +277,13 @@
 
             this.shaderProgram.set_texture('video', name, this.video_ready);
           },
+          download(){
+            window.open(URL.createObjectURL(this.file_store.files[this.file_name]));
+          },
           onTrimLeft(diff){
             this.trimBefore += diff;
           },
-          video_ready(video){
+          async video_ready(video){
             // "this" points to <video> element
             this.uniforms.videoWidth.value = video.videoWidth;
             this.uniforms.videoHeight.value = video.videoHeight;
@@ -312,6 +320,9 @@
             if (api.call("sequencer.are_previews_disabled")){
               return;
             }
+
+            // Necessary when unserializing:
+            await this.file_store.get_video(file_name);
 
             let small_version = await api.call(
               "utils.make_small_video",

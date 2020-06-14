@@ -42,8 +42,13 @@ class FileStore{
       let token = await api.call("auth.get_token");
       let project_id = api.call("player.get_project_id");
       let cloud = api.call("settings").cloud;
+      let url = cloud + `/project/${project_id}/file/${name}/${token}`;
+      let request = await fetch(url);
+      let blob = await request.blob();
 
-      src = cloud + `/project/${project_id}/file/${name}/${token}`;
+      this.files[name] = new File([blob], name);
+
+      src = URL.createObjectURL(blob);
     } else {
       src = URL.createObjectURL(this.files[name]);
     }
@@ -472,7 +477,7 @@ class ShaderPlayerWebGL {
           let message = `Encoding video : frame ${frame} of ${parseInt(total_frames)}.`
 
           if(frame >= total_frames){
-            message = "Finalizing video!";
+            message = "Finalizing video...";
           }
 
           window.API.call(
