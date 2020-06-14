@@ -231,18 +231,31 @@ link:hover, a.navbar-item.is-active, a.navbar-item:hover {
   margin-top:10px;
 }
 
-.screenshot{
-  max-width: 100%;
-  transform: skew(0.01turn) scale(0.8);
-  box-shadow: 0 0 30px rgba(255,255,255,0.05);
-  border-radius:10px;
-  border:0.5px solid #111;
+#landing-svg{
+  transition: all 0.2s;
+  transform: skewX(10deg) skewY(-3deg);
 }
 
-.screenshot.other-side{
-  transform: skew(0.01turn, 0deg) scale(0.7);
+#landing-svg:active{
+  transform: scale(1.1) skewX(10deg) skewY(-3deg);
 }
 
+#landing-svg:active #annotations{
+  transform: translateX(-3px);
+}
+
+#landing-svg #annotations{
+  opacity: 0;
+}
+
+#landing-svg:hover #annotations{
+  opacity: 1;
+}
+
+#landing-svg rect,
+#landing-svg g{
+  transition: all 0.3s;
+}
 
 @media all and (min-width:1000px){
   .pull-screenshot-right{
