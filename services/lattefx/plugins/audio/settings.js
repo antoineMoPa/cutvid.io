@@ -11,6 +11,8 @@
   <label>Your file</label>
   <button v-on:click="browse_file">Upload File</button>
   <input type="file" accept=".mp3,.wav,.ogg,.aac,.flac" style="display:none;" class="audio-file-input" v-on:change="on_audio_upload()">
+  <label>Sound Volume</label>
+  <input type="number" v-model="uniforms.volume.value" min="0.0" max="1.0" step="0.1">
   <p v-if="error">ERROR: Your browser does not seem to support this audio file encoding.<br>
   </p>
   <label>Trim Before (seconds)<br>
@@ -30,7 +32,14 @@
             effect: null,
             shaderProgram: null,
             muted: false,
-            uniforms: {}
+            volume: 1,
+            uniforms: {
+              volume: {
+                type: "f",
+                len: 0,
+                value: 1,
+              }
+            }
           };
         },
         methods: {

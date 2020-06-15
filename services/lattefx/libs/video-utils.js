@@ -367,9 +367,9 @@
 
       audio_index += 1;
 
+      let volume = parseFloat(sequence.volume);
       audio_filter_graph += "[" + audio_index + ":a]";
-      audio_filter_graph += "volume=1.0:eval=frame";
-
+      audio_filter_graph += "volume="+volume+":eval=frame";
 
       if(atrim != ""){
         audio_filter_graph += ",";

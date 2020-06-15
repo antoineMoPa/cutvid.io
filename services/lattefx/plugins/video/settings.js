@@ -35,11 +35,13 @@
        target="_blank">online-convert.com
     </a>
   </p>
-  <br/><br/>
-  <a v-if="file_name != null" v-on:click="download">Download Source Video</a>
-
+  <div v-if="file_name != null">
+    <a v-on:click="download">Download Source Video</a>
+  </div>
   <label>Video Scale</label>
   <input type="number" v-model="uniforms.videoScale.value" min="0.0" max="2.0" step="0.05">
+  <label>Sound Volume</label>
+  <input type="number" v-model="uniforms.volume.value" min="0.0" max="1.0" step="0.1">
   <label>Offset the video X, Y</label>
   <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.01">
   <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.01">
@@ -106,6 +108,11 @@
                 type: "f",
                 len: 0,
                 value: 0,
+              },
+              volume: {
+                type: "f",
+                len: 0,
+                value: 1,
               }
             }
           };

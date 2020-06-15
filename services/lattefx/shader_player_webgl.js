@@ -640,7 +640,8 @@ class ShaderPlayerWebGL {
             to: seq.to,
             trimBefore: effect.trimBefore || 0,
             digest: vid.videoDigest,
-            file_name: textures.video.url
+            file_name: textures.video.url,
+            volume: effect.uniforms.volume.value
           });
         }
       }
@@ -1039,8 +1040,10 @@ class ShaderPlayerWebGL {
                 if(shaderProgram.muted != tex.videoElement.muted){
                   tex.videoElement.muted = shaderProgram.muted;
                 }
+                tex.videoElement.volume = seq.uniforms.volume.value;
                 mediaElements.push(tex.videoElement);
               } else if (tex.isAudio) {
+                tex.audioElement.volume = seq.uniforms.volume.value;
                 mediaElements.push(tex.audioElement);
               }
 
