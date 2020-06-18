@@ -46,7 +46,10 @@
       let worker = new Worker("libs/ffmpeg.js/ffmpeg-worker-mp4.js");
 
       utils.cancellable_workers_by_type[cancellable_worker_type].push(worker);
-
+      // what a hack
+      utils.cancellable_workers_by_type[cancellable_worker_type].push({
+        terminate: function(){ resolve(null); }
+      });
       // TODO: Reject promise on cancel
       // TODO: Manage rejection in methods that use utils.run_ffmpeg_task
 
@@ -198,6 +201,8 @@
                     "utils.flag_error",
                     "Video preview cancelled."
                   );
+
+                  resolve(null);
                 }
               );
             }
@@ -305,6 +310,8 @@
     return blob;
   }
 
+  // TODO: it is a bit ugly to have these sort of function in a utils file
+  //       instead of some library
   utils.build_ffmpeg_audio_args = async function (audio_sequences){
     /*
       Build ffmpeg audio handling:
@@ -411,7 +418,14 @@
     return [audio_args, audio_filter_graph, map_args];
   }
 
-  utils.build_ffmpeg_image_to_video_args = function(fps, audio_args, audio_filter_graph, map_args){
+  utils.build_ffmpeg_image_to_video_args = function(
+    fps,
+    audio_args,
+    audio_filter_graph,
+    map_args,
+    output_format_extension
+  ){
+    output_format_extension = output_format_extension || "mp4";
 
     let command = [
       "-framerate", fps+"",
@@ -430,7 +444,7 @@
       "-ac", "2",
     ]).concat(
       map_args
-    ).concat(["./video.mp4"]);
+    ).concat(["./video." + output_format_extension]);
 
     return command;
   }

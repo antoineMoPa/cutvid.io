@@ -90,12 +90,10 @@ class ShaderProgram {
             "ui.set_progress",
             progress, `Extracting video : frame ${frame} of ${parseInt(total_frames)}.`,
             function cancel_action(){
-              utils.cancel_workers_by_type("preview");
-              window.player.player.cancel_hq_render = true;
-              cancelled = true;
+              utils.cancel_workers_by_type("render");
               window.API.call(
-                "utils.flag_error",
-                "Video preview cancelled."
+                "shader_player.cancel_render",
+                "Render cancelled."
               );
             }
           );

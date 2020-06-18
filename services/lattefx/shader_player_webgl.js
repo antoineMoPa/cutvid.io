@@ -19,67 +19,6 @@
 
 ;
 
-class FileStore{
-  constructor(){
-    this.files = {};
-    this.video_elements = {};
-    this.audio_elements = {};
-  }
-
-  serialize(){
-    return this.files;
-  }
-
-  clear(){
-    this.files = {};
-  }
-
-  async get_video(name){
-    let src = "";
-
-    if(this.files[name] == undefined){
-      let api = window.API;
-      let token = await api.call("auth.get_token");
-      let project_id = api.call("player.get_project_id");
-      let cloud = api.call("settings").cloud;
-      let url = cloud + `/project/${project_id}/file/${name}/${token}`;
-      let request = await fetch(url);
-      let blob = await request.blob();
-
-      this.files[name] = new File([blob], name);
-
-      src = URL.createObjectURL(blob);
-    } else {
-      src = URL.createObjectURL(this.files[name]);
-    }
-
-    if(this.video_elements[name] == undefined){
-      let el = document.createElement("video");
-      el.src = src;
-      el.crossOrigin = true;
-      this.video_elements[name] = el;
-
-      let panel = document.querySelectorAll(".media-sources-panel")[0];
-      // Showing video somewhere improves FPS
-      panel.appendChild(el);
-      el.classList.add("media-source-video");
-
-    }
-
-    return this.video_elements[name];
-  }
-
-  get_audio(name){
-    if(this.audio_elements[name] == undefined){
-      let el = document.createElement("audio");
-      el.src = URL.createObjectURL(this.files[name]);
-      this.audio_elements[name] = el;
-    }
-
-    return this.audio_elements[name];
-  }
-}
-
 class ShaderPlayerWebGL {
   constructor(canvas, gl, width, height) {
     this.fps = 30;
@@ -242,6 +181,15 @@ class ShaderPlayerWebGL {
       }.bind(this)
     });
 
+    window.API.expose({
+      name: "shader_player.cancel_render",
+      doc: `Cancel render
+        `,
+      fn: function(){
+        this.cancel_render();
+      }.bind(this),
+      no_ui: true
+    });
   }
 
   /*
@@ -409,6 +357,7 @@ class ShaderPlayerWebGL {
     for(let frame = 0; frame < total_frames; frame++){
       if(app.cancel_hq_render){
         app.cancel_hq_render = false;
+        utils.cancel_workers_by_type("render");
         this.time.time = 0;
         this.pause();
         this.rendering = false;
@@ -438,7 +387,16 @@ class ShaderPlayerWebGL {
 
     let audio_sequences = window.API.call("player.export_audio_sequences");
     let [audio_args, audio_filter_graph, map_args] = await utils.build_ffmpeg_audio_args(audio_sequences);
-    let ffmpeg_command = utils.build_ffmpeg_image_to_video_args(30, audio_args, audio_filter_graph, map_args);
+
+    let extension = "mp4";
+
+    let ffmpeg_command = utils.build_ffmpeg_image_to_video_args(
+      30,
+      audio_args,
+      audio_filter_graph,
+      map_args,
+      extension
+    );
 
     for(let sequence in audio_sequences){
       let name = audio_sequences[sequence].file_name;
@@ -499,14 +457,26 @@ class ShaderPlayerWebGL {
     }, "render");
 
     let blob = new Blob([result.MEMFS[0].data], {
-      type: "video/mp4"
+      type: "video/" + extension
     });
 
     window.API.call("ui.clear_progress");
-    window.API.call("download.show", blob);
+    window.API.call("download.show", blob, extension);
 
     this.rendering = false;
     this.time.time = 0;
+  }
+
+  cancel_render() {
+    this.cancel_hq_render = true;
+    this.time.time = 0;
+    this.pause();
+    this.rendering = false;
+
+    window.API.call(
+      "utils.flag_error",
+      "Render cancelled."
+    );
   }
 
   render_old(callback) {
@@ -701,20 +671,6 @@ class ShaderPlayerWebGL {
         return;
       }
       seq.saved_uniforms = JSON.parse(JSON.stringify(seq.effect.uniforms));
-    }
-  }
-
-  cancel_render() {
-    if(this.rendering){
-      if(this.renderMode == "LQ"){
-        if(this.media_recorder != undefined){
-          this.media_recorder.onstop = null;
-          this.media_recorder.stop();
-        }
-        this.time.time = 0;
-        this.pause();
-        this.rendering = false;
-      }
     }
   }
 

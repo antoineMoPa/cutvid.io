@@ -108,8 +108,6 @@ Vue.component('player', {
     </div>
     <ui ref="ui"
         v-on:playAll="playAll"
-        v-on:render="makeVideo"
-        v-on:cancelRender="onCancelRender"
         v-bind:user_info="user_info"
         v-bind:player="player"/>
     <auth ref="auth" v-bind:settings="settings" v-on:user_info="on_user_info"/>
@@ -337,24 +335,6 @@ Vue.component('player', {
       this.player.rendering = true;
       this.player.pause();
       this.player.render();
-    },
-    makeVideo(){
-      // Web render with low quality
-      this.playAll();
-
-      if (this.player.rendering) {
-        return;
-      }
-
-      this.player.rendering = true;
-
-      this.$refs.ui.set_progress(0.0);
-
-      this.render(function(blob){
-        window.API.call("download.show", blob);
-      }.bind(this));
-
-      fetch("/stats/lattefx_app_initiate_download/");
     },
     onCancelRender(){
       this.player.cancel_render();

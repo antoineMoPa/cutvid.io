@@ -26,7 +26,7 @@ Vue.component('download-video', {
   <p class="text-center" v-if="canDownload">
     <a class="ui-button"
        v-bind:href="videoURL"
-       v-bind:download="'cutvid-io-'+videoTimeStamp()+'.avi'">
+       v-bind:download="'cutvid-io-'+videoTimeStamp()+'.'+file_extension">
       <img src="icons/feather/download.svg" width="25"
            style="position:relative;top: 6px;"/>
       Download Video
@@ -68,6 +68,7 @@ Vue.component('download-video', {
       shared_video_id: null,
       shared_video_url: null,
       uploading: false,
+      file_extension: "",
       error: null,
       stats: null
     };
@@ -81,8 +82,8 @@ Vue.component('download-video', {
         doc: `Show a Download UI for a video
 
         `,
-        fn: function(blob){
-          this.show(blob);
+        fn: function(blob, extension){
+          this.show(blob, extension);
         }.bind(this),
         no_ui: true
       });
@@ -108,7 +109,8 @@ Vue.component('download-video', {
       let host = "g" + "ma" + "il" + "." + "com";
       return name + at + host;
     },
-    show(blob){
+    show(blob, extension){
+      this.file_extension = extension || "avi";
       this.$el.classList.remove("hidden");
       let url = "";
 

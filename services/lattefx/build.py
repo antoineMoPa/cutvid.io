@@ -9,6 +9,7 @@ def build():
         "./libs/utils.js",
         "./libs/video-utils.js",
         "./libs/dev.js",
+        "./FileStore.js",
         "./shader_program.js",
         "./shader_player_webgl.js",
         "./components/sequence_effects.js",
