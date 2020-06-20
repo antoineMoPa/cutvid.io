@@ -1,5 +1,10 @@
 """
 Combine all javascript files into one
+
+This should only combine a minimal set of files for the app to boot.
+
+Big scripts that can be loaded on demand should be loaded on demand with
+utils.load_script.
 """
 
 def build():
@@ -17,6 +22,7 @@ def build():
         "./components/panel_selector.js",
         "./components/effects_selector.js",
         "./components/download_video.js",
+        "./components/render_settings.js",
         "./components/sequencer.js",
         "./components/auth.js",
         "./components/projects.js",

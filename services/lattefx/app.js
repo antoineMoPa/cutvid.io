@@ -142,31 +142,7 @@ var app = new Vue({
       }
     },
     browse_projects(){
-      let cloud_url = this.settings.cloud;
-      let player = this.$refs["player"];
-
-      player.$refs['projects'].open();
-      player.$refs['projects'].on_open_project = async (project) => {
-        let auth = window.auth;
-        let token = await auth.get_token();
-        player.project_id = project.id;
-
-        player.$refs['sequencer'].loading_scene = true;
-
-        await player.$nextTick();
-
-        let req = await fetch(cloud_url + "/project/" + project.id, {
-          headers: {
-            'Authorization': 'Bearer ' + token,
-          }
-        });
-
-        let data = await req.json();
-
-        player.$refs['sequencer'].loading_scene = true;
-        player.unserialize(data);
-        player.$refs['sequencer'].loading_scene = false;
-      };
+      this.$refs["player"].$refs['projects'].open();
     }
   },
   mounted(){

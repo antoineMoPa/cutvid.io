@@ -42,18 +42,40 @@ Vue.component('projects', {
       used_bytes: 0,
       available_bytes: 0,
       used_percent: 0,
-      on_open_project: () => {},
       storage_full: false
     }
   },
   props: ["settings"],
   methods: {
+    async on_open_project(project_id){
+      let cloud_url = this.settings.cloud;
+      let auth = window.auth;
+      let token = await auth.get_token();
+      let player = window.player;
+      player.project_id = project_id;
+
+      player.$refs['sequencer'].loading_scene = true;
+
+      await player.$nextTick();
+
+      let req = await fetch(cloud_url + "/project/" + project_id, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+        }
+      });
+
+      let data = await req.json();
+
+      player.$refs['sequencer'].loading_scene = true;
+      player.unserialize(data);
+      player.$refs['sequencer'].loading_scene = false;
+    },
     async open(){
       this.$el.classList.remove("hidden");
       this.projects = await this.fetch_projects();
     },
     open_project_button(project){
-      this.on_open_project(project);
+      this.on_open_project(project.id);
       this.close();
     },
     close(){
@@ -163,6 +185,22 @@ Vue.component('projects', {
       // Update project list
       this.projects = await this.fetch_projects();
     },
+    expose(){
+
+      window.API.expose({
+        name: "projects.open",
+        doc: `Open a project by id
+
+        This async function returns the render settings.
+        `,
+        fn: function(project_id){
+          this.on_open_project(project_id);
+        }.bind(this),
+        args: ["Project id"],
+        dev_only: true
+      });
+
+    },
     async rename_project(project){
       project.renaming = false;
 
@@ -193,16 +231,27 @@ Vue.component('projects', {
     },
     begin_renaming(project){
       project.renaming = true;
+    },
+    load_initial_project(){
+      let result = /\?project=([0-9]*)/.exec(window.location.href);
+
+      if (result != null && result.length == 2){
+        let project_id = parseInt(result[1]);
+        window.API.call("projects.open", project_id);
+      }
     }
   },
   watch: {
     settings(){
       let app = this;
+      this.load_initial_project();
     }
   },
   mounted() {
     let close_button = this.$el.querySelectorAll(".close-button")[0];
     let el = this.$el;
+
+    this.expose();
 
     close_button.addEventListener("click", function(){
       el.classList.add("hidden");

@@ -76,6 +76,7 @@ Vue.component('player', {
         v-bind:player="player"
      />
     </div>
+    <render-settings/>
     <download-video ref="download_video"
                     v-bind:settings="settings"
                     v-bind:user_info="user_info"/>
