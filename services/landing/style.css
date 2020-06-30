@@ -234,7 +234,7 @@ link:hover, a.navbar-item.is-active, a.navbar-item:hover {
 #landing-svg{
   transition: all 0.2s;
   transform: skewX(10deg) skewY(-3deg);
-  max-width:100%;
+  max-width:60%;
 }
 
 #landing-svg:active{
@@ -247,10 +247,6 @@ link:hover, a.navbar-item.is-active, a.navbar-item:hover {
 
 #landing-svg #annotations{
   opacity: 0;
-}
-
-#landing-svg:hover #annotations{
-  opacity: 1;
 }
 
 #landing-svg rect,
