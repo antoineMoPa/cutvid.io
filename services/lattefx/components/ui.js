@@ -112,7 +112,6 @@ Vue.component('ui', {
     async render(){
       window.API.call("ui.set_progress", 0.05, "Initiating render.");
       window.API.call("shader_player.render");
-      await utils.load_script("renderer/render.js");
     },
     begin_progress(){
       this.progress_start_time = new Date().getTime();

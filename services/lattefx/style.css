@@ -1523,6 +1523,26 @@ a:visited{
 
 /* END ASK CONFIRM POPUP */
 
+/* RENDER SETTINGS POPUP */
+
+.render-settings label{
+  margin-left:30px;
+  line-height:30px;
+}
+
+.render-settings .file-type-detail{
+  color:#555;
+}
+
+.render-settings h4{
+  margin-bottom: 10px;
+}
+
+.render-settings .render-button{
+  margin-right: 5px;
+}
+
+/* END RENDER SETTINGS VIDEO POPUP*/
 
 /* DOWNLOAD VIDEO POPUP */
 

@@ -8,11 +8,30 @@ Vue.component('render-settings', {
     <img src="icons/feather-dark/download-cloud.svg" width="30"/>
     Render Settings
   </h3>
+  <div>
+  <h4>File type</h4>
+  <label>
+    <input type="radio" value="mp4" v-model="export_file_type">
+    MP4 <span class="file-type-detail">(video)</span>
+  </label>
+  <br/>
+  <label>
+    <input type="radio" value="gif" v-model="export_file_type">
+    GIF <span class="file-type-detail">(animated image with no sound)</span>
+  </label>
+  <br/><br/>
+  <div class="text-right">
+    <button class="ui-button render-button" v-on:click="render">Render</button>
+  </div>
+  <br/>
+  </div>
 </div>
 `,
   data: function(){
     return {
-
+      export_file_type: "mp4",
+      resolve: function(){},
+      reject: function(){}
     };
   },
   props: ["settings", "user_info"],
@@ -24,15 +43,26 @@ Vue.component('render-settings', {
 
         This async function returns the render settings.
         `,
-        fn: async function(blob, extension){
-          return await this.show(blob, extension);
+        fn: async function(){
+          return await this.show();
         }.bind(this),
         dev_only: true
       });
     },
-    async show(blob){
+    async show(){
       this.$el.classList.remove("hidden");
+
+      return new Promise(function(resolve, reject){
+        this.resolve = resolve;
+        this.reject = reject;
+      }.bind(this));
     },
+    render(){
+      this.$el.classList.add("hidden");
+      this.resolve({
+        export_file_type: this.export_file_type
+      });
+    }
   },
   watch: {
   },
@@ -45,6 +75,7 @@ Vue.component('render-settings', {
     let el = this.$el;
 
     close_button.addEventListener("click", function(){
+      this.reject();
       el.classList.add("hidden");
       window.player.player.rendering = false;
       let videos = el.querySelectorAll("video");

@@ -29,7 +29,8 @@ Vue.component('download-video', {
        v-bind:download="'cutvid-io-'+videoTimeStamp()+'.'+file_extension">
       <img src="icons/feather/download.svg" width="25"
            style="position:relative;top: 6px;"/>
-      Download Video
+      Download<span v-if="file_extension == 'gif'"></span>
+              <span v-else>Video</span>
     </a>
     <a class="ui-button"
        v-if="user_info != null && shared_video_id == null && !uploading"
@@ -43,7 +44,12 @@ Vue.component('download-video', {
     </span>
     <span v-if="uploading" style="margin-left:20px;">Uploading video</span>
     <br><br>
-    <video v-bind:src="videoURL" controls></video>
+    <div v-if="file_extension == 'gif'" class="text-center">
+      <img v-bind:src="videoURL"/>
+    </div>
+    <div v-else>
+      <video v-bind:src="videoURL" controls></video>
+    </div>
     <br>
   </p>
   <div class="text-center" v-if="shared_video_url != null">

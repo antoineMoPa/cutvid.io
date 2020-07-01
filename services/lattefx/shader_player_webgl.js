@@ -348,7 +348,10 @@ class ShaderPlayerWebGL {
     let base_path = "";
 
     this.pause();
+
     this.rendering = true;
+
+    let render_settings = await window.API.call("render_settings.show");
 
     let MEMFS = [];
 
@@ -388,7 +391,7 @@ class ShaderPlayerWebGL {
     let audio_sequences = window.API.call("player.export_audio_sequences");
     let [audio_args, audio_filter_graph, map_args] = await utils.build_ffmpeg_audio_args(audio_sequences);
 
-    let extension = "mp4";
+    let extension = render_settings.export_file_type;
 
     let ffmpeg_command = utils.build_ffmpeg_image_to_video_args(
       30,

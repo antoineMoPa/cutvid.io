@@ -35,7 +35,7 @@
        target="_blank">online-convert.com
     </a>
   </p>
-  <div v-if="file_name != null">
+  <div v-if="file_name != null" style="margin-top:5px;">
     <a v-on:click="download">Download Source Video</a>
   </div>
   <label>Video Scale</label>
