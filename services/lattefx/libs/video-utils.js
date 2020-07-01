@@ -26,6 +26,8 @@
       }
     }
 
+    window.API.call("ui.clear_progress");
+
     utils.cancellable_workers_by_type[type] = [];
   }
 
@@ -300,7 +302,6 @@
     let blob = new Blob([result.MEMFS[0].data], {
       type: "video/mp4"
     });
-
 
     window.API.call("ui.set_progress", 0.99, "Gif converted!");
     setTimeout(function(){
