@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="400px" src="https://cutvid.io/images/logo.svg"/>
+    <a href="https://cutvid.io"><img width="400px" src="https://cutvid.io/images/logo.svg"/></a>
 </p>
 
 # About
