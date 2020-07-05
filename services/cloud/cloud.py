@@ -12,7 +12,6 @@ import random
 import time
 import requests
 import jwt
-import zmq
 
 from utils import *
 
