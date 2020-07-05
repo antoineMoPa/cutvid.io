@@ -23,6 +23,6 @@ From now on:
 Clone repo and run this inside repo:
 
     docker build -t cutvid.io -f docker-images/all-in-one/Dockerfile .
-    docker run --network="host" -v $(pwd):/cutvid.io  -it cutvid.io
+    docker run --network="host" -v $(pwd):/cutvid.io -it cutvid.io
 
 You can then visit http://127.0.0.1:8000/app/, make videos, user accounts and renders.
