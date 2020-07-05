@@ -26,9 +26,3 @@ Clone repo and run this inside repo:
     docker run --network="host" -v $(pwd):/cutvid.io  -it cutvid.io
 
 You can then visit http://127.0.0.1:8000/app/, make videos, user accounts and renders.
-
-# Dev Dependencies
-
-```
-pip3 install watchdog
-```
