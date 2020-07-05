@@ -18,29 +18,17 @@ From now on:
 2. Variable & function names are in snake_case.
 3. Creating value is more important than arguing about code style.
 
-# Dependencies
+# Running with Docker:
 
-Some dependencies are not included within the repo and must be installed with your package manager :
+Clone repo and run this inside repo:
 
-    ruby
-    python3
-    avconv/ffmpeg
-    mediainfo
-    rbenv ruby-build
-    node
-    npm
+    docker build -t cutvid.io -f docker-images/all-in-one/Dockerfile .
+    docker run --network="host" -it cutvid.io
 
-ffmpeg.js is too large to include in the repo and my build is quite experimental. You can try getting it straight from the server:
+You can then visit http://127.0.0.1:8000/app/, make videos, user accounts and renders.
 
-    mkdir services/lattefx/libs/ffmpeg.js
-    cd services/lattefx/libs/ffmpeg.js
-    FFMPEG_DIST_URL=https://cutvid.io/app/libs/ffmpeg.js/
-    FILES="ffmpeg-mp4.js ffmpeg-mp4.wasm ffmpeg-webm.js ffmpeg-webm.wasm ffmpeg-worker-mp4.js ffmpeg-worker-mp4.wasm ffmpeg-worker-webm.js ffmpeg-worker-webm.wasm"
-    for i in $FILES; do echo wget $FFMPEG_DIST_URL/$i; done
-   
 # Dev Dependencies
 
 ```
 pip3 install watchdog
 ```
-

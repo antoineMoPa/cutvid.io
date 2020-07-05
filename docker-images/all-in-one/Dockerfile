@@ -1,4 +1,4 @@
-# antoinemopa/lattefx
+# antoinemopa/cutvid.io
 #
 # VERSION               0.1
 
@@ -21,30 +21,38 @@ RUN git submodule update
 RUN npm install
 RUN npm run rebuild
 
-RUN git clone https://gitlab.com/antoineMoPa/lattefx.git /lattefx && \
-	cd /lattefx && \
-	git checkout 3f2d77179e000d8d9950512854eb21cf20b7d5c1
+# This is a symlink to the project root
+ADD . /cutvid.io
+WORKDIR /cutvid.io
+RUN git clean -f
 
-COPY docker-settings.json /lattefx/services/lattefx/settings.json
+COPY docker-images/all-in-one/docker-settings.json /cutvid.io/services/lattefx/settings.json
 
-WORKDIR /lattefx/services/auth
+WORKDIR /cutvid.io/services/auth
 
 RUN bundle install
 RUN rake db:create
 RUN rails db:migrate && \
 	rails db:seed
 
-WORKDIR /lattefx/services/renderer
+WORKDIR /cutvid.io/services/renderer
 RUN npm install
 
-WORKDIR /lattefx/services/cloud
+WORKDIR /cutvid.io/services/cloud
 
 RUN pip3 install -r requirements.txt
 
-WORKDIR /lattefx/services/lattefx
+WORKDIR /cutvid.io/services/lattefx
 
 RUN python3 build.py
 
-WORKDIR /lattefx
+WORKDIR /cutvid.io
+
+# Not guaranteed to work forever
+RUN mkdir services/lattefx/libs/ffmpeg.js; \
+          cd services/lattefx/libs/ffmpeg.js; \
+          FFMPEG_DIST_URL=https://cutvid.io/app/libs/ffmpeg.js/; \
+          FILES="ffmpeg-mp4.js ffmpeg-mp4.wasm ffmpeg-webm.js ffmpeg-webm.wasm ffmpeg-worker-mp4.js ffmpeg-worker-mp4.wasm ffmpeg-worker-webm.js ffmpeg-worker-webm.wasm"; \
+          for i in $FILES; do wget $FFMPEG_DIST_URL/$i; done
 
 ENTRYPOINT bash dev-server.sh && /bin/bash
