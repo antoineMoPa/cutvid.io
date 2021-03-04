@@ -14,11 +14,9 @@ From now on:
 2. Variable & function names are in camelCase (js), snake_case (python).
 3. Creating value is more important than arguing about code style.
 
-# Running with Docker:
+# Running
 
-Clone repo and run this inside repo:
+    cd services/cutvid.io
+    python3 serve.py
 
-    docker build -t cutvid.io -f docker-images/all-in-one/Dockerfile .
-    ./start.sh
-
-You can then visit http://127.0.0.1:8000/app/, make videos, user accounts and renders.
+Then visit 127.0.0.1:8000
