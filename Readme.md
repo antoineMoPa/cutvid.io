@@ -1,7 +1,3 @@
-<p align="center">
-    <a href="https://cutvid.io"><img width="400px" src="https://cutvid.io/images/logo.svg"/></a>
-</p>
-
 # About
 
 cutvid.io is an Open Source video sequencer that runs in your browser.
@@ -15,7 +11,7 @@ The code is licensed under GNU AGPL V3: https://www.gnu.org/licenses/agpl-3.0.en
 From now on:
 
 1. Indent in JS is 2 spaces.
-2. Variable & function names are in snake_case.
+2. Variable & function names are in camelCase (js), snake_case (python).
 3. Creating value is more important than arguing about code style.
 
 # Running with Docker:
