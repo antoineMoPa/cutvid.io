@@ -1,0 +1,1 @@
+- quand on clique/drag le timeline, ça devrait dragger la barre de temps

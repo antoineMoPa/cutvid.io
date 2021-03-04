@@ -1,7 +1,0 @@
-{
-  "name": "auth",
-  "private": true,
-  "dependencies": {
-    "yarn": "^1.19.1"
-  }
-}

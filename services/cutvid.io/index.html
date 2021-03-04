@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <link rel="stylesheet" href="./style.css?v=0.0.7">
+    <link rel="stylesheet" href="./libs/animate.css?v=0.0.7">
+    <title>cutvid.io video editor</title>
+  </head>
+  <body>
+    <div id="main_app">
+    </div>
+
+    <!--    <script type="text/javascript" src="./app.build.js?v=0.0.7"></script> -->
+
+    <script type="text/javascript" src="./libs/vue.js"></script>
+    <script type="text/javascript" src="./api.js"></script>
+    <script type="text/javascript" src="./libs/utils.js"></script>
+    <script type="text/javascript" src="./libs/video-utils.js"></script>
+    <script type="text/javascript" src="./libs/dev.js"></script>
+    <script type="text/javascript" src="./FileStore.js"></script>
+    <script type="text/javascript" src="./shader_program.js"></script>
+    <script type="text/javascript" src="./shader_player_webgl.js"></script>
+    <script type="text/javascript" src="./components/sequence_effects.js"></script>
+    <script type="text/javascript" src="./components/text_box.js"></script>
+    <script type="text/javascript" src="./components/panel_selector.js"></script>
+    <script type="text/javascript" src="./components/effects_selector.js"></script>
+    <script type="text/javascript" src="./components/download_video.js"></script>
+    <script type="text/javascript" src="./components/render_settings.js"></script>
+    <script type="text/javascript" src="./components/sequencer.js"></script>
+    <script type="text/javascript" src="./components/ui.js"></script>
+    <script type="text/javascript" src="./components/player.js"></script>
+    <script type="text/javascript" src="./components/console.js"></script>
+    <script type="text/javascript" src="./app.js"></script>
+
+    <script type="text/javascript">
+     fetch("/stats/lattefx_app_page_view/");
+
+     function beforeUnload(){
+       window.player.player.gl.getExtension('WEBGL_lose_context').loseContext();
+       fetch("/stats/lattefx_app_page_leave/");
+     };
+
+     window.onpagehide = beforeUnload;
+
+    </script>
+
+
+
+
+    <div id="ask-confirm-placeholder"></div>
+  </body>
+</html>

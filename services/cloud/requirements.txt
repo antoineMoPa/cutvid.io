@@ -1,5 +1,0 @@
-pyjwt
-waitress
-flask
-requests
-watchdog

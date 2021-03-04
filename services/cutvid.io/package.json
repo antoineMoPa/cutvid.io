@@ -1,0 +1,14 @@
+{
+  "name": "cutvid.io",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "start": "python3 serve.py",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "@ffmpeg/core": "^0.8.5",
+    "@ffmpeg/ffmpeg": "^0.9.7"
+  }
+}
