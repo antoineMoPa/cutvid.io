@@ -19,4 +19,4 @@ From now on:
     cd services/cutvid.io
     python3 serve.py
 
-Then visit 127.0.0.1:8000
+Then visit http://127.0.0.1:8000
