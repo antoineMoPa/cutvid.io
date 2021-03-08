@@ -415,48 +415,14 @@ class ShaderPlayerWebGL {
       });
     }
 
-    window.MEMFS = MEMFS; window.ffmpeg_command = ffmpeg_command;
-
     let frame_regex = /frame=\s*([0-9]*)/;
+
+     window.API.call("ui.set_progress", 0.6, "Beginning video encoding.");
 
     let result = await utils.run_ffmpeg_task({
       arguments: ffmpeg_command,
       MEMFS,
-      logger: function(m){
-        if(m == "Conversion failed!"){
-          window.API.call(
-            "utils.flag_error",
-            "We encountered an error while encoding your video."
-          );
-          window.API.call("ui.clear_progress");
-        }
-        if(frame_regex.test(m)){
-          let match = frame_regex.exec(m);
-          let frame = match[1];
-          let progress = frame / total_frames * 0.5 + 0.5; // Previous half is for rendering
-
-          let message = `Encoding video : frame ${frame} of ${parseInt(total_frames)}.`
-
-          if(frame >= total_frames){
-            message = "Finalizing video...";
-          }
-
-          window.API.call(
-            "ui.set_progress",
-            progress, message,
-            function cancel_action(){
-              utils.cancel_workers_by_type("render");
-              app.rendering = false;
-              app.pause();
-              app.time.time = 0;
-              window.API.call(
-                "utils.flag_error",
-                "Render cancelled."
-              );
-            }
-          );
-        }
-      }
+      message: "Encoding video..."
     }, "render");
 
     let blob = new Blob([result("readFile", `video.${extension}`)])

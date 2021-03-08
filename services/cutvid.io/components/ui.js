@@ -120,7 +120,6 @@ Vue.component('ui', {
       // TODO: Multiple progress bars, independently cancellable
       this.progress_width = progress_ratio * window.innerWidth;
 
-
       let time_message = "";
 
       if(this.progress_start_time != null){

@@ -35,7 +35,7 @@ Vue.component('player', {
         <br>
           <h4>Download a .cutvidio project</h4>
           <p>Includes sequences, videos, etc.</p>
-          <button v-on:click="save_lattefx_file">
+          <button v-on:click="save_cutvidio_file">
             Download
           </button>
           <p>Pssst: To download the video itself, it's not here, <br/>
@@ -47,7 +47,7 @@ Vue.component('player', {
           <button v-on:click="browse_file">Upload Existing Project</button>
           <input type="file"
                  class="hidden project-file-input"
-                 v-on:change="onLoadLatteFxFile"/>
+                 v-on:change="onLoadCutvidioFile"/>
         </label>
       </div>
       <div class="switchable-panel media-sources-panel">
@@ -102,6 +102,17 @@ Vue.component('player', {
   methods: {
     expose(){
       let API = window.API;
+
+      API.expose({
+        name: "player.panel.save_cutvidio_file",
+        doc: `Save current project file
+
+        You can use this file to keep a copy of the project and re-import it later.
+        `,
+        fn: function(){
+          this.save_cutvidio_file();
+        }.bind(this)
+      });
 
       API.expose({
         name: "player.panel.switch_to_effect_settings",
@@ -283,7 +294,7 @@ Vue.component('player', {
     onCancelRender(){
       this.player.cancel_render();
     },
-    save_lattefx_file(){
+    save_cutvidio_file(){
       let data = JSON.stringify(this.serialize());
 
       let a = document.createElement("a");
@@ -293,9 +304,9 @@ Vue.component('player', {
       a.download = "videodata.cutvidio";
       document.body.appendChild(a);
       a.click();
-      fetch("/stats/lattefx_save_file/");
+      fetch("/stats/cutvidio_save_file/");
     },
-    onLoadLatteFxFile(e){
+    onLoadCutvidioFile(e){
       let app = this;
       let file = e.target.files[0];
       var reader = new FileReader();
@@ -304,9 +315,9 @@ Vue.component('player', {
       });
       reader.readAsText(file);
 
-      fetch("/stats/lattefx_load_file/");
+      fetch("/stats/cutvidio_load_file/");
     },
-    loadLatteFxFile(url){
+    loadCutvidioFile(url){
       let app = this;
 
       this.$refs['sequencer'].loading_scene = true;

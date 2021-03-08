@@ -44,12 +44,11 @@ var app = new Vue({
                </header>
                <div class="application-menus">
                  <div class="application-menu file-menu" v-if="file_menu_open">
-                   <p>File</p>
+                   <a onclick="window.API.call('player.panel.save_cutvidio_file')">
+                     Download a .cutvidio project
+                   </a>
                  </div>
                  <div class="application-menu resources-menu" v-if="resources_menu_open">
-                   <a href="https://cutvid.io/docs/"
-                      target="_blank">Documentation</a><br>
-                   <p>Free content for your videos</p>
                    <a href="https://www.bensound.com/"
                       target="_blank"
                       class="external-link">Free music - Bensound</a><br>

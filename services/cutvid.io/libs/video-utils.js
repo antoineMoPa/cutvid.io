@@ -31,6 +31,31 @@
     utils.cancellable_workers_by_type[type] = [];
   }
 
+  utils.parse_ffmpeg_duration = function (line) {
+    let duration_regex = /Duration: ([0-9]*:[0-9]*:[0-9\.]*)/;
+
+    if (!duration_regex.test(line))
+      return;
+
+    return utils.parse_ffmpeg_time(duration_regex.exec(line)[1]);
+  }
+
+  utils.parse_ffmpeg_time = function (text) {
+    let time_regex = /([0-9]*):([0-9]*):([0-9\.]*)/;
+    let time_in_seconds = 0;
+
+    if(time_regex.test(text)){
+      let match = time_regex.exec(text);
+
+      time_in_seconds = match[3];
+      time_in_seconds += match[2] * 60;
+      time_in_seconds += match[1] * 60 * 60;
+    }
+
+    return time_in_seconds;
+  }
+
+
   /* Single entry point in case ffmpeg path/library changes again
 
      options example:
@@ -38,7 +63,6 @@
      {
        MEMFS: [{name: "file.webm", data: data}],
        arguments: ["-i", "file.webm"],
-       logger: function(msgtxt, msg) { console.log(msg) }
      }
 
    */
@@ -47,18 +71,57 @@
     return new Promise(async function(resolve){
       await utils.load_script("node_modules/@ffmpeg/ffmpeg/dist/ffmpeg.min.js");
       const {createFFmpeg} = FFmpeg;
+
+      window.API.call("ui.set_progress", 0.1, "Loading ffmpeg.wasm...");
+
       const ffmpeg = await createFFmpeg({log: true, corePath: "node_modules/@ffmpeg/core/dist/ffmpeg-core.js"});
       await ffmpeg.load();
 
-      ffmpeg.setProgress(({ ratio }) => {
-        window.API.call("ui.set_progress", ratio, "Crunshing video.");
+      let total_duration = 0;
+
+      ffmpeg.setLogger(function ({type, message}) {
+        try {
+          if (message.indexOf("Duration") != -1) {
+            total_duration = utils.parse_ffmpeg_duration(message);
+          }
+
+          if (message == "Conversion failed!") {
+            window.API.call(
+              "utils.flag_error",
+              "We encountered an error while converting your file."
+            );
+            window.API.call("ui.clear_progress");
+          }
+
+          let time_regex = /.*time=\s*([:0-9]*).*/;
+
+          if (time_regex.test(message)) {
+            let match = time_regex.exec(message);
+            let time = utils.parse_ffmpeg_time(match[1]);
+            let ratio = time / total_duration;
+            window.API.call("ui.set_progress", ratio, options.message || "Crunshing video.");
+          }
+          if (/Invalid data found when processing input/.test(message)) {
+            window.API.call(
+              "utils.flag_error",
+              "This video file type is not supported."
+            );
+            window.API.call("ui.clear_progress");
+          }
+        } catch (e) {
+          console.log("Error in Logger (setLogger)" + e);
+        }
       });
 
-      for(let f of options.MEMFS) {
+      for (let f of options.MEMFS) {
         ffmpeg.FS('writeFile', f.name, new Uint8Array(f.data));
       }
 
-      await ffmpeg.run.apply(ffmpeg, options.arguments);
+      try {
+        await ffmpeg.run.apply(ffmpeg, options.arguments);
+      } catch (e) {
+        utils.flag_error(e);
+      }
 
       resolve(ffmpeg.FS);
     });
@@ -123,10 +186,6 @@
     utils.small_videos_cache[cache_name] = {
       status: "rendering",
       promise: new Promise(async function(resolve, reject){
-        // TEMP. BYPASS
-        resolve();
-        return;
-
         window.API.call("ui.begin_progress");
         window.API.call("ui.set_progress", 0.01, "Loading ffmpeg.");
 
@@ -142,7 +201,7 @@
                         });
 
         let info = await utils.get_video_info(video_file);
-        let preview_fps = 8;
+        let preview_fps = 30;
         let fps_ratio = info.fps / preview_fps;
         let total_frames = info.total_frames / fps_ratio;
 
@@ -163,51 +222,14 @@
             name: "video_to_convert.video",
             data: await video_file.arrayBuffer()
           }],
-          logger: function(m){
-            if(m == "Conversion failed!"){
-              window.API.call(
-                "utils.flag_error",
-                "We encountered an error while converting your file."
-              );
-              window.API.call("ui.clear_progress");
-            }
-            if(frame_regex.test(m)){
-              let match = frame_regex.exec(m);
-              let frame = match[1];
-              let progress = frame / total_frames;
-              window.API.call(
-                "ui.set_progress",
-                progress, `Building video preview : frame ${frame} of ${parseInt(total_frames)}.`,
-                function cancel_action(){
-                  utils.cancel_workers_by_type("preview");
-
-                  window.API.call(
-                    "utils.flag_error",
-                    "Video preview cancelled."
-                  );
-
-                  resolve(null);
-                }
-              );
-            }
-            if(/Invalid data found when processing input/.test(m)){
-              window.API.call(
-                "utils.flag_error",
-                "This video file type is not supported."
-              );
-              window.API.call("ui.clear_progress");
-              resolve(null);
-            }
-          }
+          message: "Creating small video preview..."
         }, "preview");
 
         if (result === false) {
           return null;
         }
 
-        window.API.call("ui.set_progress", 0.15, "Generating preview: You can keep working.");
-
-        let blob = new Blob([result.MEMFS[0].data], {
+        let blob = new Blob([result("readFile", "output.mp4")], {
           type: "video/mp4"
         });
 
