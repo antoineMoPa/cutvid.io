@@ -17,6 +17,6 @@ From now on:
 # Running
 
     cd services/cutvid.io
-    python3 serve.py
+    npm start
 
 Then visit http://127.0.0.1:8000
