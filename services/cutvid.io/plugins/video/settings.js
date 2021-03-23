@@ -165,6 +165,10 @@
             this.$el.querySelectorAll(".video-file-input")[0].click();
           },
           async build_preview(){
+
+            if (!config.features.video_preview)
+              return;
+
             let api = window.API;
 
             if (api.call("sequencer.are_previews_disabled")){
@@ -330,6 +334,9 @@
 
             // Necessary when unserializing:
             await this.file_store.get_video(file_name);
+
+            if (!config.features.video_preview)
+              return;
 
             let small_version = await api.call(
               "utils.make_small_video",

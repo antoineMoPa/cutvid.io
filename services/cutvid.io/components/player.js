@@ -59,10 +59,10 @@ Vue.component('player', {
       <div class="canvas-container">
       </div>
       <div class="player-overlay">
-        <div class="dragger right-dragger"></div>
-        <div class="dragger bottom-dragger"></div>
-        <div class="dragger top-dragger"></div>
-        <div class="dragger left-dragger"></div>
+        <div v-if="enable_resize_draggers" class="dragger right-dragger"></div>
+        <div v-if="enable_resize_draggers" class="dragger bottom-dragger"></div>
+        <div v-if="enable_resize_draggers" class="dragger top-dragger"></div>
+        <div v-if="enable_resize_draggers" class="dragger left-dragger"></div>
       </div>
       <sequencer
         ref="sequencer"
@@ -95,7 +95,8 @@ Vue.component('player', {
       project_id: null,
       user_info: null,
       saving: false,
-      show_saved_message: false
+      show_saved_message: false,
+      enable_resize_draggers: config.features.resize_draggers
     };
   },
   props: ["settings"],
@@ -374,6 +375,9 @@ Vue.component('player', {
       this.$refs['sequencer'].launch_template_selector();
     },
     init_draggers(){
+      if (!config.features.resize_draggers)
+        return;
+
       let player_overlay = this.$el.querySelectorAll(".player-overlay")[0];
 
       let sides = [{

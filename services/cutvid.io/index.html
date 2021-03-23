@@ -12,7 +12,17 @@
     </div>
 
     <!--    <script type="text/javascript" src="./app.build.js?v=0.0.7"></script> -->
-
+    <script type="text/javascript">
+     // Let's admit that some features are not yet stable enough
+     // keeping stuff in a git branch would mean more synchronization work
+     // so instead there is this config:
+     let config = {
+       "features": {
+         "video_preview": false,
+         "resize_draggers": false
+       }
+     };
+    </script>
     <script type="text/javascript" src="./libs/vue.js"></script>
     <script type="text/javascript" src="./api.js"></script>
     <script type="text/javascript" src="./libs/utils.js"></script>
