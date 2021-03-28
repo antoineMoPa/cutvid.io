@@ -8,6 +8,14 @@
     return true;
   };
 
+  utils.safe_pause = function(domElement) {
+    // Source :
+    // https://stackoverflow.com/questions/6877403
+    const d = domElement;
+    if (d.currentTime > 0 && !d.paused && !d.ended && d.readyState > 2)
+      d.pause();
+  }
+
   utils.cancellable_workers_by_type = {
     "metadata": [],
     "preview": [],

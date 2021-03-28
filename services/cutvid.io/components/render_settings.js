@@ -80,7 +80,7 @@ Vue.component('render-settings', {
       window.player.player.rendering = false;
       let videos = el.querySelectorAll("video");
       if(videos.length > 0){
-        videos[0].pause();
+        utils.safe_pause(videos[0]);
       }
       fetch("/stats/lattefx_app_hit_close/render_settings");
     });

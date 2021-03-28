@@ -372,7 +372,7 @@ class ShaderProgram {
 
         if (videoElement.readyState >= 2) { // Fix firefox black screen
           gl.texImage2D(
-            gl.TEXTURE_2D, level, internalFormat, videoElement.width, videoElement.height, 0,
+            gl.TEXTURE_2D, level, internalFormat, videoElement.videoWidth, videoElement.videoHeight, 0,
             srcFormat, srcType, videoElement
           );
         } else {
@@ -518,11 +518,14 @@ class ShaderProgram {
 
       videoElement.play().catch(function(error){
         console.error("ShaderProgram video error: " + error);
-      });
-      if(!autoplay){
-        //videoElement.pause();
-      }
+      })
 
+        /*.then(function(){
+        if(!autoplay){
+          utils.safe_pause(videoElement);
+        }
+      });
+      */
     } else if (isAudioOnly) {
       if(audioElement.readyState == 0){
         audioElement.addEventListener("canplay", function(){
@@ -538,9 +541,8 @@ class ShaderProgram {
         console.error("Shader program audio error:" + error);
       });
 
-      if(!autoplay){
-        audioElement.pause();
-      }
+      if (!autoplay)
+        utils.safe_pause(audioElement);
 
       load();
     } else if (source.tagName != undefined && source.tagName == "CANVAS"){

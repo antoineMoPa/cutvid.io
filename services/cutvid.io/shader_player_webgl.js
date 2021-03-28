@@ -278,11 +278,8 @@ class ShaderPlayerWebGL {
     }
 
     this.for_each_textures((t,s) => {
-      if (t.isVideo){
-        t.videoElement.pause();
-      } else if (t.isAudio && t.audioElement != null) {
-        t.audioElement.pause();
-      }
+      if (t.isVideo || (t.isAudio && t.audioElement != null))
+        utils.safe_pause(t.videoElement);
     }, false);
   }
 
@@ -769,11 +766,11 @@ class ShaderPlayerWebGL {
     for(let media in medias){
       let key = medias[media];
       if(current_medias.indexOf(key) == -1){
-        if(key in this.file_store.video_elements){
-          this.file_store.video_elements[key].pause();
+        if (key in this.file_store.video_elements) {
+          utils.safe_pause(this.file_store.video_elements[key]);
         }
         if(key in this.file_store.audio_elements){
-          this.file_store.audio_elements[key].pause();
+          utils.safe_pause(this.file_store.audio_elements[key]);
         }
       }
     }
@@ -975,7 +972,7 @@ class ShaderPlayerWebGL {
 
                 // Attempt: dont sync while rendering
                 if (Math.abs(shouldBeTime - currTime) > 0.2) {
-                  element.pause();
+                  utils.safe_pause(element);
 
                   let time_at_seek = this.time.time;
 
