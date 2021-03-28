@@ -89,6 +89,13 @@
 
       ffmpeg.setLogger(function ({type, message}) {
         try {
+
+          if (options.logger) {
+            // Call "legacy" logger from options if present
+            // I only say legacy because the arguments changed when I moved to ffmpeg.wasm
+            options.logger(message);
+          }
+
           if (message.indexOf("Duration") != -1) {
             total_duration = utils.parse_ffmpeg_duration(message);
           }
