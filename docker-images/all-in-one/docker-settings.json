@@ -1,9 +1,0 @@
-{
-  "use_xvfb": true,
-  "variant_name": "prod",
-  "app": "http://127.0.0.1:8888/app/",
-  "cloud": "http://127.0.0.1:8888/cloud/",
-  "auth": "http://127.0.0.1:8888/auth/",
-  "auth_port": 8888,
-  "paypal_client_id": ""
-}

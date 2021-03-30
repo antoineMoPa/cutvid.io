@@ -149,7 +149,7 @@ void main(){
       options = options || {};
       options.load_script = options.load_script || true;
 
-      fetch("/stats/lattefx_app_load_effect/"+effectName);
+      fetch("/stats/cutvid_app_load_effect/"+effectName);
 
       if(autoApply == undefined){
         autoApply = true;

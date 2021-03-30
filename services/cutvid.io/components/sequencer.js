@@ -960,7 +960,7 @@ Vue.component('sequencer', {
       }.bind(this),{
         once: true
       });
-      fetch("/stats/lattefx_app_add_sequence/");
+      fetch("/stats/cutvid_app_add_sequence/");
     },
     async add_sequence(effectName, from_time, layer){
       // Returns the new sequence index
@@ -1018,7 +1018,7 @@ Vue.component('sequencer', {
       this.player.clear_transparent();
       this.$nextTick(this.reposition_sequences);
       this.selected = [];
-      fetch("/stats/lattefx_app_delete_sequence/");
+      fetch("/stats/cutvid_app_delete_sequence/");
     },
     registerSequenceEffect(index, effect){
       // Ok we use your version of the array

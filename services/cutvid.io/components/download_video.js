@@ -145,7 +145,7 @@ Vue.component('download-video', {
       if(videos.length > 0){
         videos[0].pause();
       }
-      fetch("/stats/lattefx_app_hit_close/");
+      fetch("/stats/cutvid_app_hit_close/");
     });
 
     this.expose();

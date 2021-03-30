@@ -44,11 +44,11 @@
     <script type="text/javascript" src="./app.js"></script>
 
     <script type="text/javascript">
-     fetch("/stats/lattefx_app_page_view/");
+     fetch("/stats/cutvid_app_page_view/");
 
      function beforeUnload(){
        window.player.player.gl.getExtension('WEBGL_lose_context').loseContext();
-       fetch("/stats/lattefx_app_page_leave/");
+       fetch("/stats/cutvid_app_page_leave/");
      };
 
      window.onpagehide = beforeUnload;

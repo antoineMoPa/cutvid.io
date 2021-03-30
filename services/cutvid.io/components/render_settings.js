@@ -82,7 +82,7 @@ Vue.component('render-settings', {
       if(videos.length > 0){
         utils.safe_pause(videos[0]);
       }
-      fetch("/stats/lattefx_app_hit_close/render_settings");
+      fetch("/stats/cutvid_app_hit_close/render_settings");
     });
 
     this.expose();
