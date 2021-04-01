@@ -110,7 +110,6 @@ Vue.component('ui', {
       this.looping = true;
     },
     async render(){
-      window.API.call("ui.set_progress", 0.05, "Initiating render.");
       window.API.call("shader_player.render");
     },
     begin_progress(){

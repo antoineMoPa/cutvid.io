@@ -114,7 +114,11 @@
             let match = time_regex.exec(message);
             let time = utils.parse_ffmpeg_time(match[1]);
             let ratio = time / total_duration;
-            window.API.call("ui.set_progress", ratio, options.message || "Crunshing video.");
+
+            // At least leave some space to give the text a chance to be displayed
+            ratio = Math.max(0.1, ratio);
+
+            window.API.call("ui.set_progress", ratio, options.message || "Extracting video frames.");
           }
           if (/Invalid data found when processing input/.test(message)) {
             window.API.call(
