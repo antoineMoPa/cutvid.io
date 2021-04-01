@@ -49,6 +49,9 @@ var app = new Vue({
                    </a>
                  </div>
                  <div class="application-menu resources-menu" v-if="resources_menu_open">
+                   <a href="https://cutvid.io/docs/"
+                      target="_blank"
+                      class="external-link">cutvid.io</a><br>
                    <a href="https://www.bensound.com/"
                       target="_blank"
                       class="external-link">Free music - Bensound</a><br>
