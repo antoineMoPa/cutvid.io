@@ -318,7 +318,7 @@
       }
     });
 
-    let blob = new Blob([result.MEMFS[0].data], {
+    let blob = new Blob([result("readFile", "output.mp4")], {
       type: "video/mp4"
     });
 
