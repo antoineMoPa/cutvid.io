@@ -27,7 +27,7 @@ var app = new Vue({
   template: `<div>
                <header>
                  <a href="https://cutvid.io/" target="_blank">
-                   <img src="images/logo.png" class="header-logo" alt="Latte fx"/>
+                   <img src="images/logo.png" class="header-logo" alt="cutvid.io"/>
                  </a>
                  <div class="app-menu-links">
                    <a href="#" v-on:click="toggle_menu('file_menu_open')">
