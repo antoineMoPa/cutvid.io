@@ -6,6 +6,31 @@ class FileStore{
     this.audio_elements = {};
   }
 
+  async _export() {
+    return new Promise(async (resolve, reject) => {
+      let result = {};
+      for (let filename in this.files) {
+        let string = await utils.file_to_base64(this.files[filename]);
+        result[filename] = string;
+      }
+      resolve(result);
+    });
+  }
+
+  async _import (data) {
+    return new Promise(async function (resolve, reject) {
+      for (let filename in data) {
+        try {
+          let file = await fetch(data[filename]);
+          this.files[filename] = await file.blob();
+        } catch (e) {
+          utils.flag_error("Error while reading an included file.");
+        }
+      }
+      resolve();
+    }.bind(this));
+  }
+
   serialize(){
     return this.files;
   }

@@ -108,6 +108,17 @@ Vue.component('player', {
       });
 
       API.expose({
+        name: "player.panel.open_cutvidio_file",
+        doc: `Open a current project file
+
+        Re-import a cutvidio project file.
+        `,
+        fn: function(){
+          this.browse_file();
+        }.bind(this)
+      });
+
+      API.expose({
         name: "player.panel.switch_to_effect_settings",
         doc: `Go to the "effects settings" panel
 
@@ -287,11 +298,17 @@ Vue.component('player', {
     onCancelRender(){
       this.player.cancel_render();
     },
-    save_cutvidio_file(){
-      let data = JSON.stringify(this.serialize());
+    async save_cutvidio_file(){
+      let data = this.serialize();
+      let file_store = await this.player.file_store._export();
+
+      let data_plus_file_store = JSON.stringify({
+        data: data,
+        file_store: file_store
+      });
 
       let a = document.createElement("a");
-      var blob = new Blob([data], {type : 'text/json'});
+      var blob = new Blob([data_plus_file_store], {type : 'text/json'});
       var url = URL.createObjectURL(blob);
       a.href = url;
       a.download = "videodata.cutvidio";
@@ -300,19 +317,20 @@ Vue.component('player', {
       fetch("/stats/cutvidio_save_file/");
     },
     onLoadCutvidioFile(e){
-      let app = this;
       let file = e.target.files[0];
       var reader = new FileReader();
-      reader.addEventListener("loadend", function() {
-        app.unserialize(JSON.parse(reader.result));
-      });
+      reader.addEventListener("loadend", async function() {
+        let data_plus_file_store = JSON.parse(reader.result);
+        this.player.file_store._import(data_plus_file_store.file_store);
+        this.unserialize(data_plus_file_store.data);
+      }.bind(this));
       reader.readAsText(file);
 
       fetch("/stats/cutvidio_load_file/");
     },
     loadCutvidioFile(url){
       let app = this;
-
+      console.error("This function is probably broken.");
       this.$refs['sequencer'].loading_scene = true;
 
       this.$nextTick(() => {
@@ -358,8 +376,6 @@ Vue.component('player', {
       this.width = data.width;
       this.height = data.height;
       this.fps = data.fps;
-
-      this.player.file_store.clear();
 
       this.$refs['sequencer'].unserialize(data.scenes, true);
     },

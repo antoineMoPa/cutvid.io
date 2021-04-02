@@ -7,7 +7,7 @@ var utils = {};
   utils.loaded_gfonts = {};
 
   utils.file_to_base64 = async function (file) {
-    /* Reverse operation: just use fetch */
+    /* For reverse operation: just use fetch */
     return new Promise((resolve, reject) => {
       // Thanks SO: https://stackoverflow.com/questions/36280818/
       const reader = new FileReader();

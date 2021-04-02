@@ -46,6 +46,9 @@ var app = new Vue({
                  <div class="application-menu file-menu" v-if="file_menu_open">
                    <a onclick="window.API.call('player.panel.save_cutvidio_file')">
                    📥 Download a .cutvidio project
+                   </a><br/>
+                   <a onclick="window.API.call('player.panel.open_cutvidio_file')">
+                   📁 Open a .cutvidio project
                    </a>
                  </div>
                  <div class="application-menu resources-menu" v-if="resources_menu_open">
