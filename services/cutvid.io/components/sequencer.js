@@ -1240,8 +1240,7 @@ Vue.component('sequencer', {
     let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
     scrollbox.addEventListener("scroll", this.update_all_previews);
 
-    // Select first sequence by default
-    this.selected = [];
+    this.quick_add_sequence('video');
 
     allSequencesContainer.appendChild(allSequences);
 
