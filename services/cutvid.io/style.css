@@ -486,7 +486,7 @@ a:visited{
   height:20px;
 }
 
-.settings-panel input:not([size]):not([type=checkbox]){
+.settings-panel input:not([size]):not([type=checkbox]):not([type=color]){
   width:100px;
 }
 
@@ -495,7 +495,13 @@ a:visited{
 }
 
 .settings-panel input[type="color"]{
-  height: 33px;
+  height: 23px;
+  width: 24px;
+  border: none;
+  padding: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: inline-block;
 }
 
 .settings-panel input[type="checkbox"]{
@@ -503,7 +509,7 @@ a:visited{
   vertical-align: middle;
 }
 
-.settings-panel input:not([type=file]):not([type=checkbox]){
+.settings-panel input:not([type=file]):not([type=checkbox]):not([type="color"]){
   height:25px;
   margin-top:5px;
   background:#222;
@@ -608,15 +614,6 @@ a:visited{
 
 .sequence-effects-hidden{
   display:none;
-}
-
-.sequence-effects input[type=color]{
-  border:none;
-  padding: 0;
-  margin-right: 20px;
-  margin-left: auto;
-  width:60px;
-  display:inline-block;
 }
 
 .time-bar{
@@ -1553,7 +1550,6 @@ a:visited{
 .application-menu a{
   color:#333;
   width:100%;
-  text-decoration: underline;
 }
 
 .application-menu a:hover{

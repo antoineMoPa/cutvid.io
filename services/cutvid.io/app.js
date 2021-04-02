@@ -45,40 +45,40 @@ var app = new Vue({
                <div class="application-menus">
                  <div class="application-menu file-menu" v-if="file_menu_open">
                    <a onclick="window.API.call('player.panel.save_cutvidio_file')">
-                     Download a .cutvidio project
+                   📥 Download a .cutvidio project
                    </a>
                  </div>
                  <div class="application-menu resources-menu" v-if="resources_menu_open">
                    <a href="https://cutvid.io/docs/"
                       target="_blank"
-                      class="external-link">cutvid.io</a><br>
+                      class="external-link">📖 cutvid.io docs</a><br>
                    <a href="https://www.bensound.com/"
                       target="_blank"
-                      class="external-link">Free music - Bensound</a><br>
+                      class="external-link">🎵 Free music - Bensound</a><br>
                    <a href="https://www.pexels.com/videos/"
                       target="_blank"
-                      class="external-link">Free stock videos - Pexels</a>
+                      class="external-link">🎞️ Free stock videos - Pexels</a>
                  </div>
                  <div class="application-menu edit-menu" v-if="edit_menu_open">
-                   <a v-on:click="sequencer.copy()">Copy Sequences</a>
+                   <a v-on:click="sequencer.copy()">✂️ Copy Sequences</a>
                    <span class="shortcut-hint">Ctrl+C</span>
                    <br>
-                   <a v-on:click="sequencer.paste()">Paste Sequences</a>
+                   <a v-on:click="sequencer.paste()">📋 Paste Sequences</a>
                    <span class="shortcut-hint">Ctrl+V</span>
                    <br>
                    <hr>
-                   <a v-on:click="sequencer.select_none()">Clear Selection</a><br>
-                   <a v-on:click="sequencer.select_all()">Select All</a>
+                   <a v-on:click="sequencer.select_none()">□ Clear Selection</a><br>
+                   <a v-on:click="sequencer.select_all()">▣ Select All</a>
                    <span class="shortcut-hint">Ctrl +A</span>
                    <br>
                    <a v-on:click="sequencer.select_all_after_cursor()">
-                     Select All After Cursor
+                     ▶ Select All After Cursor
                    </a><br>
                    <a v-on:click="sequencer.select_all_before_cursor()">
-                     Select All Before Cursor
+                     ◀ Select All Before Cursor
                    </a><br>
                    <a v-on:click="sequencer.select_inverse()">
-                     Invert Selection
+                     ◪ Invert Selection
                    </a>
                  </div>
                </div>

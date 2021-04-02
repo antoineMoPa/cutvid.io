@@ -33,14 +33,11 @@ Vue.component('player', {
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
         <br>
-          <h4>Download a .cutvidio project</h4>
-          <p>Includes sequences, videos, etc.</p>
-          <button v-on:click="save_cutvidio_file">
-            Download
-          </button>
-          <p>Pssst: To download the video itself, it's not here, <br/>
-                    click the "render" button.</p>
-
+        <h4>Download a .cutvidio project</h4>
+        <p>Includes sequences, videos, etc.</p>
+        <button v-on:click="save_cutvidio_file">
+          Download
+        </button>
         <h4>Load a .cutvidio project</h4>
         <p>If you saved a project to your computer, you can upload it here.</p>
         <label>
