@@ -1240,8 +1240,6 @@ Vue.component('sequencer', {
     let scrollbox = this.$el.querySelectorAll(".sequencer-scrollbox")[0];
     scrollbox.addEventListener("scroll", this.update_all_previews);
 
-    this.quick_add_sequence('video');
-
     allSequencesContainer.appendChild(allSequences);
 
     this.bindShortcuts();
@@ -1253,5 +1251,6 @@ Vue.component('sequencer', {
 
     await this.$nextTick();
     this.reposition_time_ticks();
+    this.quick_add_sequence('video');
   }
 });
