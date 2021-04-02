@@ -25,11 +25,11 @@ Vue.component('player', {
         <input v-model.number="width" min="10" max="1920" type="number"> x
         <input v-model.number="height" min="10" max="1080" type="number">
         <label>Presets</label>
-        <a class="preset" v-on:click="set_dimensions(1280,720,30)">HD 720p</a><br/>
-        <a class="preset" v-on:click="set_dimensions(540,540,10)">Square 540</a><br/>
-        <a class="preset" v-on:click="set_dimensions(600,315,30)">Instagram Ad</a><br/>
-        <a class="preset" v-on:click="set_dimensions(864,1080,30)">Instagram Video</a><br/>
-        <a class="preset" v-on:click="set_dimensions(1920,1080,30)">Full HD 1080p</a><br/>
+        <a class="preset" v-on:click="set_dimensions(1280,720,30)">HD 720p</a> -
+        <a class="preset" v-on:click="set_dimensions(1280,720,30)">Facebook video</a> -
+        <a class="preset" v-on:click="set_dimensions(600,315,30)">Instagram Ad</a> -
+        <a class="preset" v-on:click="set_dimensions(864,1080,30)">Instagram Video</a> -
+        <a class="preset" v-on:click="set_dimensions(1920,1080,30)">Full HD 1080p</a>
         <label>FPS (frames per seconds)</label>
         <input v-model.number="fps" type="number">
         <br>
