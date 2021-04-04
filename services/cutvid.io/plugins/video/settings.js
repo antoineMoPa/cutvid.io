@@ -289,7 +289,10 @@
             this.shaderProgram.set_texture('video', name, this.video_ready);
           },
           download(){
-            window.open(URL.createObjectURL(this.file_store.files[this.file_name]));
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(this.file_store.files[this.file_name]);
+            link.download = "cutvidio-video-source-" + this.file_name;
+            link.click();
           },
           onTrimLeft(diff){
             this.trimBefore += diff;
