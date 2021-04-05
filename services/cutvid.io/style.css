@@ -1719,3 +1719,37 @@ a:visited{
 }
 
 /* END CONSOLE */
+
+/* BEGIN MOBILE LANDING */
+.mobile-landing {
+  display: none;
+  color:#fff;
+}
+
+.mobile-landing p {
+  max-width:90%;
+  margin:auto;
+}
+
+.mobile-screenshot {
+  max-width:90%;
+  margin-top:20px;
+  box-shadow:0 0 10px rgba(255,255,255,0.1);
+  border-radius:3px;
+
+}
+
+@media all and (max-width:1000px) {
+  .mobile-landing {
+    display:block;
+    width: 100%;
+    height: 100%;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:10000;
+    background:#333;
+  }
+}
+
+/* END MOBILE LANDING */
