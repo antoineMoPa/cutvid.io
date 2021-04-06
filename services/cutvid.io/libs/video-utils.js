@@ -12,7 +12,8 @@
     // Source :
     // https://stackoverflow.com/questions/6877403
     const d = domElement;
-    if (d.currentTime > 0 && !d.paused && !d.ended && d.readyState > 2)
+
+    if (d != null && d.currentTime > 0 && !d.paused && !d.ended && d.readyState > 2)
       d.pause();
   }
 

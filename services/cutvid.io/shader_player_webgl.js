@@ -589,7 +589,8 @@ class ShaderPlayerWebGL {
             to: seq.to,
             trimBefore: effect.trimBefore || 0,
             digest: aud.audioDigest,
-            file_name: textures.audio.url
+            file_name: textures.audio.url,
+            volume: effect.uniforms.volume.value
           });
         }
       }
