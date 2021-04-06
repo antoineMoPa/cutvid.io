@@ -1740,6 +1740,9 @@ a:visited{
 }
 
 @media all and (max-width:1000px) {
+  body {
+    overflow-x: hidden;
+  }
   .mobile-landing {
     display:block;
     width: 100%;
