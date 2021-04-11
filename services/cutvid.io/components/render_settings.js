@@ -83,7 +83,7 @@ Vue.component('render-settings', {
         utils.safe_pause(videos[0]);
       }
       fetch("/stats/cutvid_app_hit_close/render_settings");
-    });
+    }.bind(this));
 
     this.expose();
     window.addEventListener("message", this.onWindowMessage);
