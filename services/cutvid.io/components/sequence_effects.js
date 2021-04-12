@@ -18,11 +18,6 @@ Vue.component('sequence-effect', {
         <img src="icons/feather/plus.svg" width="20"/>
         Add video or effects
       </button>
-      <button v-else
-              v-on:click="onChangeEffect">
-        <img src="icons/feather/edit.svg" width="20"/>
-        Change Sequence Type
-      </button>
     </div>
     <effects-selector ref="effectSelector" v-on:chooseEffect="changeEffect"/>
   </div>`,
