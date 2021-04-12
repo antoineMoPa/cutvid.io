@@ -20,7 +20,7 @@ Vue.component('sequencer', {
                   v-if="!add_menu_open"
                   v-on:click="add_menu_open = true">
             <img src="icons/feather/plus.svg" class="feather-icon" width="20"/>
-            Add
+            Add New Sequence
           </button>
           <button class="more-suggestion suggestion close-button"
                   v-else
