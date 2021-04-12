@@ -43,8 +43,8 @@
   <label>Sound Volume</label>
   <input type="number" v-model="uniforms.volume.value" min="0.0" max="1.0" step="0.1">
   <label>Offset the video X, Y</label>
-  <input v-model.number="uniforms.offsetLeft.value" type="number" size="4" step="0.01">
-  <input v-model.number="uniforms.offsetTop.value" type="number" size="4" step="0.01">
+  <input v-model.number="uniforms.offsetLeft.value" type="number" size="5" step="0.01">
+  <input v-model.number="uniforms.offsetTop.value" type="number" size="5" step="0.01">
   <label>Opacity</label>
   <input v-model.number="uniforms.opacity.value" type="number" size="4" step="0.1">
   <label>Rotation</label>
