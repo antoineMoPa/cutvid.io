@@ -126,12 +126,6 @@ a:visited{
   right:10px;
 }
 
-.ui-button.play-button,
-.ui-button.pause-button{
-  position:absolute;
-  bottom:12px;
-}
-
 .ui .ui-buttons-right .ui-button {
   display: inline-block;
 }
@@ -139,15 +133,6 @@ a:visited{
 .ui .feather-button{
   margin-bottom:-5px;
   margin-right:4px;
-}
-
-.ui-button.render-button{
-  background:#3af;
-  color:#fff;
-}
-
-.ui-button .feather-button {
-  margin-bottom: -7px;
 }
 
 .ui .info{
@@ -179,16 +164,6 @@ a:visited{
 
 .ui-button.ui-disabled{
   opacity:0.4;
-}
-
-.ui-button-paypal-part{
-  background: #fff;
-  display: inline-block;
-  margin-right:5px;
-}
-
-.ui .ui-price{
-  font-weight: 600;
 }
 
 .ui-button.button-save{
@@ -314,20 +289,6 @@ a:visited{
   font-size:10px;
 }
 
-.play-button, .pause-button{
-  left:calc(50% + 25px);
-  cursor:pointer;
-  width:25px;
-  height:25px;
-  top:9px;
-  border-radius:25px;
-}
-
-.play-button img{
-  position:relative;
-  left:2px;
-}
-
 .close-button{
   position:absolute;
   top:10px;
@@ -402,6 +363,39 @@ a:visited{
   width:100%;
   cursor: ns-resize;
 }
+
+.play-button,
+.pause-button{
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  top: auto;
+}
+
+.pause-button img,
+.play-button img{
+  position:relative;
+  left:2px;
+  width:25px;
+  height:25px;
+}
+
+
+.render-button{
+  padding:4px;
+  background:#3af;
+  color:#fff;
+  position:absolute;
+  bottom:8px;
+  right:8px;
+}
+
+.render-button img {
+  width: 15px;
+  height: 15px;
+  margin-bottom: -2px;
+}
+
 
 /* END PLAYER --------------- */
 

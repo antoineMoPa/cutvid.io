@@ -1,3 +1,12 @@
+/**
+ * UI
+ *
+ * The UI compomponent displays progress bars and some messages.
+ * It used to contain the play/render button, but I got feedback
+ * that these buttons were not visible enough.
+ */
+
+
 Vue.component('ui', {
   template: `<div class="ui" v-if="player != null">
     <div class="ui-progress"
@@ -14,30 +23,8 @@ Vue.component('ui', {
         </button>
       </div>
     </div>
-    <div v-if="!player.rendering && player.sequences.length > 0">
-      <a class="ui-button play-button"
-         v-on:click="play()"
-         v-if="this.player.paused">
-        <img class="play-icon feather-button"
-             src="icons/feather/play.svg"/>
-      </a>
-      <a v-else
-         class="ui-button pause-button"
-         v-on:click="pause()">
-        <img class="pause-icon feather-button"
-             src="icons/feather/pause.svg"/>
-      </a>
-    </div>
     <div class="ui-buttons-right">
-      <a class="ui-button render-button button-1"
-         v-if="!player.rendering &&
-               player.sequences.length > 0"
-         v-on:click="render">
-        <img class="feather-button"
-             src="icons/feather/download.svg"/>
-        Render
-      </a>
-      <p class="info" v-else-if="player.sequences.length == 0">
+      <p class="info" v-if="player.sequences.length == 0">
         You must add at least 1 sequence to render a video.
       </p>
     </div>
@@ -99,12 +86,6 @@ Vue.component('ui', {
       this.set_progress(0);
       this.progress_message = "";
       this.cancel_action = null;
-    },
-    play(){
-      this.player.play();
-    },
-    pause(){
-      this.player.pause();
     },
     playLooping(){
       this.looping = true;

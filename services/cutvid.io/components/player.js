@@ -55,6 +55,28 @@ Vue.component('player', {
         <div v-if="enable_resize_draggers" class="dragger bottom-dragger"></div>
         <div v-if="enable_resize_draggers" class="dragger top-dragger"></div>
         <div v-if="enable_resize_draggers" class="dragger left-dragger"></div>
+        <template v-if="player != null && !player.rendering && player.sequences.length > 0">
+          <a class="play-button"
+             v-on:click="play()"
+             v-if="player.paused">
+             <img class="play-icon feather-button"
+                  src="icons/feather/play.svg"/>
+          </a>
+          <a v-else
+             class="pause-button"
+             v-on:click="pause()">
+             <img class="pause-icon feather-button"
+                  src="icons/feather/pause.svg"/>
+          </a>
+          <a class="ui-button render-button button-1"
+             v-if="!player.rendering &&
+                   player.sequences.length > 0"
+             v-on:click="render">
+            <img class="feather-button"
+                 src="icons/feather/download.svg"/>
+              Render
+          </a>
+        </template>
       </div>
       <sequencer
         ref="sequencer"
@@ -197,6 +219,9 @@ Vue.component('player', {
       this.fps = fps;
       this.update_dimensions();
     },
+    play(){
+      this.player.play();
+    },
     playAll(){
       this.player.animate_force_scene = null;
       this.player.play();
@@ -255,12 +280,20 @@ Vue.component('player', {
 
       sequencer.style.left = (x_spacing - right_panel_width - 20) + "px";
 
-      player_overlay.style.width =
+      player_overlay.style.maxWidth =
         app.player.canvas.style.maxWidth =
         (displayed_w) + "px";
-      player_overlay.style.height =
+      player_overlay.style.maxHeight =
         app.player.canvas.style.maxHeight =
         (displayed_h) + "px";
+
+      player_overlay.style.width =
+        app.player.canvas.style.width =
+        (displayed_w) + "px";
+      player_overlay.style.height =
+        app.player.canvas.style.height =
+        (displayed_h) + "px";
+
 
       player_overlay.style.position =
         canvas_container.style.position = "absolute";
