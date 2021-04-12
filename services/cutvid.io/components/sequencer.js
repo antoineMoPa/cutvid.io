@@ -1251,6 +1251,5 @@ Vue.component('sequencer', {
 
     await this.$nextTick();
     this.reposition_time_ticks();
-    this.quick_add_sequence('video');
   }
 });
