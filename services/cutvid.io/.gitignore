@@ -1,3 +1,5 @@
 settings.json
 app.build.js
 __pycache__
+node_modules
+app.build.js.map

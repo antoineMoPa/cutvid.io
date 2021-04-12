@@ -3,12 +3,16 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "start": "python3 serve.py",
+    "start": "node dev-builder.js & python3 serve.py",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "dependencies": {
     "@ffmpeg/core": "^0.8.5",
-    "@ffmpeg/ffmpeg": "^0.9.7"
+    "@ffmpeg/ffmpeg": "^0.9.7",
+    "node-watch": "^0.7.1",
+    "source-map-concat": "^1.0.1",
+    "source-map-dummy": "^1.0.0",
+    "source-map-resolve": "^0.6.0"
   }
 }
