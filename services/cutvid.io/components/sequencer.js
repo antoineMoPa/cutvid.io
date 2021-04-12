@@ -605,7 +605,7 @@ Vue.component('sequencer', {
           this.selected = this.selected.filter(function(row) {
             return row != index;
           });
-        } else {
+        } else if (this.sequences.length != 1) {
           this.selected = [];
         }
       } else {
