@@ -24,3 +24,21 @@ Example nginx proxy configuration:
             proxy_pass http://127.0.0.1:10001;
             proxy_set_header X-Forwarded-For $remote_addr;
         }
+
+
+Example systemd configuration `/etc/systemd/system/cutvid.io.service`:
+
+    [Unit]
+    Description=cutvid.io services
+
+    [Service]
+    User=cutvidio
+    ExecStart=/home/cutvidio/cutvid.io/services/stats/stats
+
+    [Install]
+    WantedBy=multi-user.target
+
+Run `chmod +x cutvid.io.service`
+
+systemctl start cutvid.io
+systemctl enable cutvid.io
