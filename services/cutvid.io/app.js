@@ -41,6 +41,14 @@ var app = new Vue({
                    </a>
                  </div>
                  <console></console>
+                 <div class="social-menus">
+                   <a href="https://twitter.com/cutvidio" class="twitter" target="_blank">
+                     @cutvid.io
+                   </a>
+                   <a href="https://github.com/antoineMoPa/cutvid.io" class="github" target="_blank">
+                     @antoineMoPa/cutvid.io
+                   </a>
+                 </div>
                </header>
                <div class="application-menus">
                  <div class="application-menu file-menu" v-if="file_menu_open">
@@ -60,7 +68,10 @@ var app = new Vue({
                       class="external-link">🎵 Free music - Bensound</a><br>
                    <a href="https://www.pexels.com/videos/"
                       target="_blank"
-                      class="external-link">🎞️ Free stock videos - Pexels</a>
+                      class="external-link">🎞️ Free stock videos - Pexels</a><br>
+                   <a href="https://www.gnu.org/licenses/agpl-3.0.en.html"
+                      target="_blank"
+                      class="external-link">⚖️ License - AGPLv3.0</a>
                  </div>
                  <div class="application-menu edit-menu" v-if="edit_menu_open">
                    <a v-on:click="sequencer.copy()">✂️ Copy Sequences</a>

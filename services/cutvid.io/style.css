@@ -192,6 +192,43 @@ a:visited{
   background:rgba(255,255,255,0.02);
 }
 
+.social-menus{
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 50px;
+  line-height: 50px;
+}
+
+.social-menus a{
+  margin-right:10px;
+}
+
+.social-menus a.twitter{
+  color: #fff;
+  border-radius: 15px;
+  padding: 7px 10px;
+  padding-left: 10px;
+  padding-left: 36px;
+  font-size: 13px;
+  height: 30px;
+  background: url(./icons/feather/twitter.svg) no-repeat #3af 10px 6px;
+  background-size: 20px;
+}
+
+.social-menus a.github{
+  color: #333;
+  border-radius: 15px;
+  padding: 7px 10px;
+  padding-left: 10px;
+  padding-left: 36px;
+  font-size: 13px;
+  height: 30px;
+  background: url(./icons/feather-dark/github.svg) no-repeat #eee 10px 6px;
+  background-size: 20px;
+}
+
 .header-user-links{
   position: absolute;
   right: 20px;
