@@ -33,6 +33,7 @@ Example systemd configuration `/etc/systemd/system/cutvid.io.service`:
 
     [Service]
     User=cutvidio
+    WorkingDirectory=/home/cutvidio/
     ExecStart=/home/cutvidio/cutvid.io/services/stats/stats
 
     [Install]
