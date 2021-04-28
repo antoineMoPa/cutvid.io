@@ -1,3 +1,4 @@
+
 package main
 
 import (
@@ -34,7 +35,7 @@ func Stats(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 func main() {
 	router := httprouter.New()
 	router.GET("/", Index)
-	router.GET("/stats/:stat", Stats)
+	router.GET("/stats/*stat", Stats)
 
 	log.Printf("Stats about to listen on port 10001")
 	log.Fatal(http.ListenAndServe(":10001", router))
