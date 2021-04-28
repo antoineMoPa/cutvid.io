@@ -27,7 +27,7 @@ func anonymize(ip string) string {
 	country := getCountry(ip)
 	bytes := []byte(ip)
 	hash := sha256.Sum256(bytes)
-	return base64.URLEncoding.EncodeToString(hash[:])[0:10] + country
+	return base64.URLEncoding.EncodeToString(hash[:])[0:10] + "-" + country
 }
 
 // Guess an ip address's country.
@@ -57,7 +57,7 @@ func Stats(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	formattedTime := currentTime.Format("2006.01.02 15:04:05")
 	forwardedIp := r.Header.Get("X-Forwarded-For")
 	defer f.Close()
-	if _, err := fmt.Fprintf(filewriter, "%s - %s - %s\n", formattedTime, anonymize(forwardedIp) + forwardedIp, ps.ByName("stat")); err != nil {
+	if _, err := fmt.Fprintf(filewriter, "%s - %s - %s\n", formattedTime, anonymize(forwardedIp), ps.ByName("stat")); err != nil {
 		log.Println(err)
 	}
 	filewriter.Flush()
