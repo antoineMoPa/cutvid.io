@@ -453,9 +453,15 @@ Vue.component('sequencer', {
       this.$nextTick(this.reposition_sequences);
     },
     split_at_cursor(){
+      // If there is a selection, we'll only split the selected
+      // sequences.
+      let split_all = this.selected.length == 0;
       let new_sequences = [];
 
-      for(let i in this.sequences){
+      for(let i = 0; i < this.sequences.length; i++){
+        if (this.selected.indexOf(i) == -1 && !split_all)
+          continue;
+
         let sequence = this.sequences[i];
         let from = sequence.from;
         let to = sequence.to;
@@ -490,10 +496,14 @@ Vue.component('sequencer', {
           }
         }
 
-        this.unserialize(JSON.parse(JSON.stringify(data)), false);
+        new_sequences.push(JSON.parse(JSON.stringify(data)));
 
         // Finally, update initial sequence's end
         sequence.to = time;
+      }
+
+      for (let i = 0; i < new_sequences.length; i++) {
+        this.unserialize(new_sequences[i], false);
       }
     },
     zoom_in(){
