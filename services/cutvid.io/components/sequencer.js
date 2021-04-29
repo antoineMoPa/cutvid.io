@@ -1016,6 +1016,12 @@ Vue.component('sequencer', {
         }
         return true;
       });
+
+      // Video should be translated to the left when no more videos exists to the left
+      if (this.sequences.length == 1) {
+        this.sequences[0].to -= this.sequences[0].from;
+        this.sequences[0].from = 0;
+      }
     },
     deleteSelected(){
       let app = this;
