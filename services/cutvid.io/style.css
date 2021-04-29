@@ -209,11 +209,13 @@ a:visited{
   color: #fff;
   border-radius: 15px;
   padding: 7px 10px;
-  padding-left: 10px;
   padding-left: 36px;
   font-size: 13px;
   height: 30px;
-  background: url(./icons/feather/twitter.svg) no-repeat #3af 10px 6px;
+  background-color: #3af;
+  background-image: url(./icons/feather/twitter.svg);
+  background-repeat: no-repeat;
+  background-position: 10px 6px;
   background-size: 20px;
 }
 
@@ -221,11 +223,13 @@ a:visited{
   color: #333;
   border-radius: 15px;
   padding: 7px 10px;
-  padding-left: 10px;
   padding-left: 36px;
   font-size: 13px;
   height: 30px;
-  background: url(./icons/feather-dark/github.svg) no-repeat #eee 10px 6px;
+  background-color: #eee;
+  background-image: url(./icons/feather-dark/github.svg);
+  background-repeat: no-repeat;
+  background-position: 10px 6px;
   background-size: 20px;
 }
 
