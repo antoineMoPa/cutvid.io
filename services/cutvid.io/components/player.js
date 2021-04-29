@@ -354,7 +354,7 @@ Vue.component('player', {
       var reader = new FileReader();
       reader.addEventListener("loadend", async function() {
         let data_plus_file_store = JSON.parse(reader.result);
-        this.player.file_store._import(data_plus_file_store.file_store);
+        await this.player.file_store._import(data_plus_file_store.file_store);
         this.unserialize(data_plus_file_store.data);
       }.bind(this));
       reader.readAsText(file);
