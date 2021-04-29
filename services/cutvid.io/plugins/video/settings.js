@@ -97,7 +97,7 @@
               opacity: {
                 type: "f",
                 len: 0,
-                value: 1,
+                value: 0,
               },
               isLoaded: {
                 type: "f",
@@ -284,6 +284,7 @@
 
             this.file_store.files[name] = file;
             this.uniforms.isLoaded.value = 1.0;
+            this.uniforms.opacity.value = 1.0;
             this.file_name = name;
 
             this.shaderProgram.set_texture('video', name, this.video_ready);
