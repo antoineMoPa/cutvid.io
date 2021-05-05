@@ -62,6 +62,7 @@
             backgroundColor: "#000000",
             trimBefore: 0,
             durationInitialized: false,
+            videoHasLoadedOnce: false,
             duration_sent: false,
             preview_built: false,
             player: null,
@@ -283,8 +284,6 @@
             }
 
             this.file_store.files[name] = file;
-            this.uniforms.isLoaded.value = 1.0;
-            this.uniforms.opacity.value = 1.0;
             this.file_name = name;
 
             this.shaderProgram.set_texture('video', name, this.video_ready);
@@ -299,8 +298,14 @@
             this.trimBefore += diff;
           },
           async video_ready(video){
-            this.uniforms.videoWidth.value = video.videoWidth;
-            this.uniforms.videoHeight.value = video.videoHeight;
+            if (!this.videoHasLoadedOnce) {
+              this.uniforms.isLoaded.value = 1.0;
+              this.uniforms.opacity.value = 1.0;
+              this.uniforms.videoWidth.value = video.videoWidth;
+              this.uniforms.videoHeight.value = video.videoHeight;
+            }
+
+            this.videoHasLoadedOnce = true;
 
             if(!this.duration_sent){
               this.onDuration(video.duration);
@@ -328,6 +333,7 @@
           },
           async file_name(file_name){
             this.shaderProgram.set_texture('video', this.file_name, this.video_ready);
+            this.videoHasLoadedOnce = false;
 
             let api = window.API;
 

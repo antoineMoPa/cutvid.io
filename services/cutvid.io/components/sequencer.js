@@ -1172,6 +1172,8 @@ Vue.component('sequencer', {
         e.preventDefault();
         let [x,y,time,layer,seq,duration,scale] = this.mouse_event_info(e);
         this.time.time = time;
+
+        return false;
       }.bind(this), false);
 
       window.addEventListener("drop", async function(e){
@@ -1191,7 +1193,7 @@ Vue.component('sequencer', {
         } else if(type.indexOf("audio") != -1){
           sequence_type_to_add = "audio";
         } else {
-          return;
+          return false;
         }
 
         let file_store = window.API.call("shader_player.get_file_store");
@@ -1218,6 +1220,7 @@ Vue.component('sequencer', {
         }], false);
         added_sequence = null;
 
+        return false;
       }.bind(this), false);
     }
   },
@@ -1259,19 +1262,7 @@ Vue.component('sequencer', {
     allSequencesContainer.appendChild(allSequences);
 
     this.bindShortcuts();
-
-    if (false /* Video upload has a problem */) {
-      this.bind_drag_and_drop();
-    }
-
-    window.addEventListener("dragover", function(e){
-      e.preventDefault();
-    });
-
-    window.addEventListener("drop", function(e){
-      e.preventDefault();
-      console.log("drop!");
-    });
+    this.bind_drag_and_drop();
 
     this.reposition_sequences();
     this.resize();

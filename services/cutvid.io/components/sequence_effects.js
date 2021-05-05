@@ -193,7 +193,6 @@ void main(){
           plugin.shaderProgram = _shaderProgram;
           plugin.effect.shaderProgram = _shaderProgram;
 
-
           // Insert effect in array
           app.effect = settings;
 
