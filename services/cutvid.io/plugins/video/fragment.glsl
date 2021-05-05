@@ -14,7 +14,7 @@ void main(void){
     float y = UV.y;
 
     vec2 videoUV = UV * vec2(1.0, -1.0) + vec2(0.0, 1.0);
-    float videoRatio = min(videoHeight,videoWidth) / max(videoHeight,videoWidth);
+    float videoRatio = videoHeight/videoWidth;
     // Apply aspect ratio
 
     // Apply scale

@@ -299,7 +299,6 @@
             this.trimBefore += diff;
           },
           async video_ready(video){
-            // "this" points to <video> element
             this.uniforms.videoWidth.value = video.videoWidth;
             this.uniforms.videoHeight.value = video.videoHeight;
 
