@@ -1260,7 +1260,19 @@ Vue.component('sequencer', {
 
     this.bindShortcuts();
 
-    this.bind_drag_and_drop();
+    if (false /* Video upload has a problem */) {
+      this.bind_drag_and_drop();
+    }
+
+    window.addEventListener("dragover", function(e){
+      e.preventDefault();
+    });
+
+    window.addEventListener("drop", function(e){
+      e.preventDefault();
+      console.log("drop!");
+    });
+
     this.reposition_sequences();
     this.resize();
     this.expose();
