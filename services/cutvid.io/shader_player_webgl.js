@@ -966,13 +966,19 @@ class ShaderPlayerWebGL {
                   let time_at_seek = this.time.time;
                   this.no_advance_time = true;
 
-                  let afterSeek = function () {
+                  let afterSeek = () => {
+
                     element.play().catch((e) => {
                       console.error(e);
+                    }).then(() => {
+                      if (this.paused) {
+                        element.pause();
+                      }
                     });
+
                     this.no_advance_time = false;
                     this.time.time = time_at_seek;
-                  }.bind(this);
+                  };
 
                   element.currentTime = shouldBeTime;
 

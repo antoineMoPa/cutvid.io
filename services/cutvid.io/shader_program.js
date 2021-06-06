@@ -516,17 +516,27 @@ class ShaderProgram {
 
       videoElement.loop = true;
 
+      let pauseIfNeeded = (element) => {
+        if (!autoplay)
+          utils.safe_pause(element);
+      };
+
       videoElement.play().catch(function(error){
         let askInteract = new utils.ask_interact();
         askInteract.on_interact = function() {
           videoElement.play().catch(function(error){
             console.error("ShaderProgram video error on second attempt: " + error);
+          }).then(() => {
+            pauseIfNeeded(videoElement);
           });
         };
         let container = document.createElement("div");
         document.body.appendChild(container);
         askInteract.$mount(container);
+      }).then(() => {
+        pauseIfNeeded(videoElement);
       });
+
     } else if (isAudioOnly) {
       if(audioElement.readyState == 0){
         audioElement.addEventListener("canplay", function(){
@@ -540,10 +550,9 @@ class ShaderProgram {
 
       audioElement.play().catch(function(error){
         console.error("Shader program audio error:" + error);
+      }).then(() => {
+        pauseIfNeeded(videoElement);
       });
-
-      if (!autoplay)
-        utils.safe_pause(audioElement);
 
       load();
     } else if (source.tagName != undefined && source.tagName == "CANVAS"){
