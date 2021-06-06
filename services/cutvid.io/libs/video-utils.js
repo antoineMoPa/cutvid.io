@@ -284,6 +284,14 @@
     fn: utils.make_small_video
   });
 
+  utils.seek_to = async function (element, shouldBeTime) {
+    await new Promise(function(resolve, _) {
+      element.addEventListener("seeked", function() {
+        resolve();
+      }.bind(this), {once: true});
+      element.currentTime = shouldBeTime;
+    });
+  };
 
   utils.gif_to_video = async function(gif_file){
     // Converts a gif to a mp4 file
