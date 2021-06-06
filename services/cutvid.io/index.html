@@ -48,7 +48,7 @@
      // Load a project file from url
      async function loadInitialProject() {
        let projectUrlMatches = window.location.href.match(/\?project=((.*).cutvidio)/);
-       if (projectUrlMatches.length > 1) {
+       if (projectUrlMatches != null && projectUrlMatches.length > 1) {
          let projectUrl = projectUrlMatches[1];
          let projectReq = await fetch(projectUrl);
          let project = await projectReq.json();
