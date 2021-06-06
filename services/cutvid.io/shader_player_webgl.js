@@ -33,7 +33,6 @@ class ShaderPlayerWebGL {
     this.past_durations = 0;
     this.shaderProgram = null;
     this.last_frame_time = new Date().getTime();
-    this.no_advance_time = false;
 
     this.cut_left = 0;   // This is used to cut a portion of the viewport
     this.cut_right = 0;
@@ -836,7 +835,7 @@ class ShaderPlayerWebGL {
     } else if (!this.paused) {
       let raw_time = new Date().getTime();
       let delta = raw_time - this.last_frame_time;
-      this.time.time += delta / 1000.0 * (this.no_advance_time? 0.0: 1.0);
+      this.time.time += delta / 1000.0;
       if (!this.rendering) {
         this.time.time = this.time.time % duration;
       }
@@ -959,40 +958,14 @@ class ShaderPlayerWebGL {
               for (let element of mediaElements){
                 let currTime = element.currentTime;
 
-                if (Math.abs(shouldBeTime - currTime) > 0.2) {
-                  console.warn("Out of sync.");
-                  utils.safe_pause(element);
-
-                  let time_at_seek = this.time.time;
-                  this.no_advance_time = true;
-
-                  let afterSeek = () => {
-
-                    element.play().catch((e) => {
-                      console.error(e);
-                    }).then(() => {
-                      if (this.paused) {
-                        element.pause();
-                      }
-                    });
-
-                    this.no_advance_time = false;
-                    this.time.time = time_at_seek;
-                  };
-
-                  element.currentTime = shouldBeTime;
-
-                  if (!element.seeking) {
-                    afterSeek();
-                  } else {
-                    element.addEventListener("seeked", function() {
-                      afterSeek();
-                    }.bind(this), {once: true});
-                  }
-                }
-
                 if (element.paused && !this.paused) {
                   element.play();
+                }
+
+                if (Math.abs(shouldBeTime - currTime) > 0.4) {
+                  console.warn(`Out of sync app time ${shouldBeTime}, video time ${currTime}`)
+                  await utils.seek_to(element, shouldBeTime);
+                  this.last_frame_time = new Date().getTime();
                 }
               }
 
@@ -1156,13 +1129,13 @@ class ShaderPlayerWebGL {
 
     this.anim_already_started = true;
 
-    function _animate() {
+    async function _animate() {
 
       if (!player.rendering){
         // Make sure to render when focussed
         if (player.window_focused) {
           try{
-            player.draw_gl();
+            await player.draw_gl();
           } catch (e) {
             console.error(e);
           }
