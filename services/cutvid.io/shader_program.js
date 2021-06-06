@@ -372,7 +372,7 @@ class ShaderProgram {
 
         if (videoElement.readyState >= 2) { // Fix firefox black screen
           gl.texImage2D(
-            gl.TEXTURE_2D, level, internalFormat, videoElement.videoWidth, videoElement.videoHeight, 0,
+            gl.TEXTURE_2D, level, internalFormat,
             srcFormat, srcType, videoElement
           );
         } else {
@@ -517,15 +517,16 @@ class ShaderProgram {
       videoElement.loop = true;
 
       videoElement.play().catch(function(error){
-        console.error("ShaderProgram video error: " + error);
-      })
-
-        /*.then(function(){
-        if(!autoplay){
-          utils.safe_pause(videoElement);
-        }
+        let askInteract = new utils.ask_interact();
+        askInteract.on_interact = function() {
+          videoElement.play().catch(function(error){
+            console.error("ShaderProgram video error on second attempt: " + error);
+          });
+        };
+        let container = document.createElement("div");
+        document.body.appendChild(container);
+        askInteract.$mount(container);
       });
-      */
     } else if (isAudioOnly) {
       if(audioElement.readyState == 0){
         audioElement.addEventListener("canplay", function(){

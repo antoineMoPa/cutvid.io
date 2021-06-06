@@ -1,21 +1,9 @@
 /*
   For the history, this file has mostly underscore case
   because it was copied from shadergif's shader player
- */
-/* Note: I actually downgraded to webgl1 to support more devices */
-/* Note 2: This should be renamed engine or something */
 
-
-/*
-
-  Objective of the file store:
-
-  Centralize file managmenent for 1 movie
-  Have only one <video> element for a file (e.g even after cuts)
-  Simplify file management to avoid bugs
-
-
- */
+  Note: I actually downgraded to webgl1 to support more devices
+  Note 2: This should be renamed engine or something */
 
 ;
 
@@ -971,34 +959,34 @@ class ShaderPlayerWebGL {
               for (let element of mediaElements){
                 let currTime = element.currentTime;
 
-                // Attempt: dont sync while rendering
                 if (Math.abs(shouldBeTime - currTime) > 0.2) {
+                  console.warn("Out of sync.");
                   utils.safe_pause(element);
 
                   let time_at_seek = this.time.time;
+                  this.no_advance_time = true;
 
-                  if(!this.paused){
-                    this.no_advance_time = true;
-                    // Improvement idea: pause other media
-                    //                   to prevent sync glitches
-                    let still_valid = true;
-                    setTimeout(function(){
-                      this.no_advance_time = false;
-                    }.bind(this), 5000);
-                    element.addEventListener("seeked", function(){
-                      if(still_valid){ this.no_advance_time = false; }
-                    }.bind(this), {once: true})
-                  }
+                  let afterSeek = function () {
+                    element.play().catch((e) => {
+                      console.error(e);
+                    });
+                    this.no_advance_time = false;
+                    this.time.time = time_at_seek;
+                  }.bind(this);
 
                   element.currentTime = shouldBeTime;
 
-                  if (!this.paused && !this.rendering) {
-                    try{
-                      element.play();
-                    } catch (e) {
-                      console.error(e);
-                    }
+                  if (!element.seeking) {
+                    afterSeek();
+                  } else {
+                    element.addEventListener("seeked", function() {
+                      afterSeek();
+                    }.bind(this), {once: true});
                   }
+                }
+
+                if (element.paused && !this.paused) {
+                  element.play();
                 }
               }
 

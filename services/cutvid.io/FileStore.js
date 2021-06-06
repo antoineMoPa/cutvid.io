@@ -1,3 +1,12 @@
+/*
+
+  Objective of the file store:
+
+  Centralize file managmenent for 1 movie
+  Have only one <video> element for a file (e.g even after cuts)
+  Simplify file management to avoid bugs
+
+ */
 
 class FileStore{
   constructor(){
