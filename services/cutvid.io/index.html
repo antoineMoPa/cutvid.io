@@ -45,6 +45,19 @@
 
      window.onpagehide = beforeUnload;
 
+     // Load a project file from url
+     async function loadInitialProject() {
+       let projectUrlMatches = window.location.href.match(/\?project=((.*).cutvidio)/);
+       if (projectUrlMatches.length > 1) {
+         let projectUrl = projectUrlMatches[1];
+         let projectReq = await fetch(projectUrl);
+         let project = await projectReq.json();
+         await player.player.file_store._import(project.file_store);
+         player.unserialize(project.data);
+       }
+     }
+     loadInitialProject();
+
     </script>
 
 
