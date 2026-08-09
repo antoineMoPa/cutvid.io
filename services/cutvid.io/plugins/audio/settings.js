@@ -16,7 +16,7 @@
   <p v-if="error">ERROR: Your browser does not seem to support this audio file encoding.<br>
   </p>
   <label>Trim Before (seconds)<br>
-    <input v-model="trimBefore" step="any" min="0" type="number">
+    <input v-model="trimBefore" step="any" min="0" :max="duration" type="number">
   </label>
 </div>`,
         data: function(){
@@ -26,6 +26,7 @@
             recording: false,
             error: false,
             trimBefore: 0,
+            duration: 0,
             durationInitialized: false,
             durationSent: false,
             player: null,
@@ -105,7 +106,7 @@
             this.shaderProgram.set_texture('audio', name, this.audio_ready);
           },
           onTrimLeft(diff){
-            this.trimBefore += diff;
+            this.trimBefore = Math.min(this.trimBefore + diff, this.duration);
           },
           set_file_name(new_name){
             this.file_name = new_name;
@@ -113,6 +114,7 @@
           audio_ready(audio){
             // "this" points to <audio> element
             if(!this.durationSent){
+              this.duration = audio.duration;
               this.onDuration(audio.duration);
               this.durationSent = true;
             }
